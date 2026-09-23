@@ -8,7 +8,7 @@ const id=addKit(input,null,{colours:'duncan',position:'neck'}),before=readBasket
 assert.equal(before.schemaVersion,3);assert.equal(before.components[0].componentId,'pot-short-cts-a');assert.equal(before.components[0].quantity,4);
 assert.equal(before.diagram.configuration.colours,'duncan');assert.equal(before.template.volumeControls,2);assert.equal(before.diagram.circuit.connections.length>0,true);
 assert.equal(before.pricing.total,10598);assert.equal(before.components.find(c=>c.role==='trebleBleeds').quantity,2);
-lesPaul.basePrice=1;lesPaul.bleed.duncan.label='Changed';lesPaul.bleed.duncan.price=99999;lesPaul.shaft.short.component.name='Changed pot';
+lesPaul.basePrice=1;lesPaul.bleed.duncan.label='Changed';lesPaul.bleed.duncan.price=99999;lesPaul.builderModel.components.find(component=>component.id==='pot-short-cts-a').name='Changed pot';
 assert.deepEqual(readBasket()[0].record,before);changeQuantity(id,2);addComponent('bleed-prs');assert.deepEqual(readBasket()[0].record,before);
 const saved=JSON.parse(storage.get('apparition.basket.v1'));assert.deepEqual(saved.items[0].record,before);
 addKit(input);assert.equal(readBasket().filter(i=>i.product==='les-paul').length,2,'changed price creates separate line');

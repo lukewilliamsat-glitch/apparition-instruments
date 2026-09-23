@@ -1,4 +1,5 @@
 import {lesPaul,defaults,upgradeLabel} from './config.mjs';
+import {availableKitValues} from '../wiring-kits/kit-data.mjs';
 const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 export function renderKitFields(form){
  const heading=form.querySelector('.form-heading');form.replaceChildren(heading);
@@ -16,8 +17,8 @@ export function renderKitFields(form){
   fs.append(choices);if(!Object.values(entries).some(o=>o.enabled!==false))fs.append(el('p','option-note','No eligible options are currently available.'));if(note)fs.append(el('p','option-note',note));form.append(section);return fs;
  }
  const wiring=group('wiring','Wiring style',lesPaul.wiring);const wiringNote=el('p','option-note');wiringNote.id='wiring-note';wiring.append(wiringNote);
- group('pots','Potentiometers',lesPaul.pots);
- group('shaft','Shaft length',lesPaul.shaft);
+ group('pots',lesPaul.builderModel.groups.find(group=>group.key==='pots')?.label||'Potentiometers',lesPaul.pots);
+ group('shaft',lesPaul.builderModel.groups.find(group=>group.key==='shaft')?.label||'Shaft length',lesPaul.shaft);
  group('matching','Precision matching',lesPaul.matching);
  const caps=group('caps','Tone capacitors',Object.fromEntries([...Object.entries(lesPaul.capacitors).map(([id,o])=>[id,{...o,price:o.price*2,label:'2 × '+o.label}]),['mixed',{label:'Mixed pair',price:0,description:'Choose the neck and bridge tone capacitors separately.'}]]),{info:true,note:'One tone capacitor for each pickup circuit. Capacitance changes the tone-control response; series identifies component construction and specification.'});
  const mixed=el('div','mixed-values');mixed.id='mixed-values';mixed.hidden=true;
@@ -29,11 +30,12 @@ export function renderKitFields(form){
 }
 
 export function updateFieldSummaries(form,state){
+ for(const group of lesPaul.builderModel.groups){const available=availableKitValues(lesPaul,group.key,state);for(const input of form.elements.namedItem(group.key) instanceof RadioNodeList?form.elements.namedItem(group.key):[form.elements.namedItem(group.key)]){if(!input)continue;const disabled=!available.has(input.value);input.disabled=disabled;input.setAttribute('aria-hidden',String(disabled));input.closest('.choice-with-info').hidden=disabled&&!input.checked;}}
  for(const section of form.querySelectorAll('[data-option]')){
   const name=section.dataset.option,output=section.querySelector('[data-selected-option]');
   let label;
   if(name==='caps')label=state.caps==='mixed'?'Mixed pair · neck / bridge': '2 × '+lesPaul.capacitors[state.caps].label;
-  else {const option=lesPaul[name][state[name]];label=option.label+' · '+(option.enabled===false?'Unavailable':upgradeLabel(option.price));}
+  else {const option=lesPaul[name][state[name]],input=section.querySelector(`input[value="${CSS.escape(state[name])}"]`);label=option.label+' · '+(option.enabled===false||input?.disabled?'Unavailable':upgradeLabel(option.price));}
   output.textContent=label;
   for(const input of section.querySelectorAll('input[type=radio]')){
    const unavailable=input.getAttribute('aria-hidden')==='true';

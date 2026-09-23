@@ -6,7 +6,7 @@ import {addKit,addComponent,readBasket,changeQuantity,resetBasket} from '../dist
 assert.equal(priceKit({}).total,5999);
 assert.equal(priceKit({wiring:'modern',matching:'precision',bleed:'premium',jack:'pureTone',selector:'switchcraft'}).total,10898);
 assert.equal(priceKit({jack:'epiphone'}).total,6499);
-assert.equal(normaliseKit({pots:'Alpha'}).pots,'CTS');
+assert.equal(normaliseKit({pots:'Alpha'}).pots,'Alpha');assert(Number.isNaN(priceKit({pots:'Alpha'}).total),'An ineligible mapped variant must not silently fall back to CTS');
 assert.equal(normaliseKit({caps:'0.033'}).caps,'nissei-033');
 for(const wiring of ['50s','60s','modern'])for(const bleed of Object.keys(lesPaul.bleed)){
  const s=normaliseKit({wiring,bleed}),svg=diagramMarkup(s);
