@@ -1,0 +1,24 @@
+.build-sheet{max-width:1300px}.sheet-header{border-bottom:1px solid #555;padding:24px 0}.sheet-header h1{font:500 38px 'Space Grotesk',sans-serif;margin:12px 0}.sheet-header h2{font:500 28px 'Space Grotesk',sans-serif;color:#b89b5e}.build-sheet dl>div{display:grid;grid-template-columns:minmax(150px,.6fr) minmax(0,1.4fr);gap:20px;padding:8px 0;border-bottom:1px solid #333;font-size:15px;line-height:1.6}.build-sheet dt{color:#aeb8c4}.build-sheet dd{margin:0;overflow-wrap:anywhere}.build-sheet dl dl{margin:0}.build-sheet #choose-build{margin:22px 0;align-items:end}.sheet-note{font-size:14px;color:#aeb8c4}.build-sheet h3{font:500 24px 'Space Grotesk',sans-serif}.build-sheet section{margin-top:30px;padding-top:12px;border-top:1px solid #444}#build-error{color:#efafa0}.build-sheet [hidden]{display:none!important}@media(max-width:650px){.build-sheet dl>div{grid-template-columns:1fr;gap:3px}}
+
+.build-sheet section>p,.production-message{font-size:14px;line-height:1.6}.production-message{color:#b89b5e}.build-sheet table{min-width:760px}.build-sheet td{overflow-wrap:anywhere}.build-sheet td:nth-child(3){max-width:320px}.build-sheet .bom-child td{background:#181818}.bom-choice{max-width:420px;margin-top:12px;font-size:14px}.bom-choice p{font-size:14px}.bom-choice select{margin:12px 0}.build-sheet .bom-caption td{color:#b89b5e}.picked-label{font-size:13px}
+.build-diagram{overflow:auto;border:1px solid var(--border,#393731);margin:24px 0}.build-diagram svg{display:block;width:100%;min-width:1000px;height:auto}.production-form{display:grid;gap:16px;max-width:900px}.production-form label{display:grid;gap:8px}.production-form textarea{width:100%;min-height:120px;background:#151615;color:#d5dce0;border:1px solid #555;padding:12px;font:inherit}.production-form button{justify-self:start}
+.production-form input:not([type=checkbox]),.production-form select{font:inherit;background:#151615;color:#d5dce0;border:1px solid #555;padding:10px;min-width:0;width:100%}.production-form fieldset{border:1px solid #555;display:grid;gap:14px;padding:18px;min-width:0}.production-form legend{padding:0 8px}.production-form .qc-check{display:flex;align-items:center;gap:12px}.qc-check input{width:20px;height:20px;accent-color:#b9a77c;flex:none}
+.print-value,.print-diagram-details{display:none}
+@page{size:A4 portrait;margin:13mm}
+@page wiring-details{size:A4 landscape;margin:12mm}
+@media print{
+ html,body{background:white!important;color:#111!important;font:10pt Arial,sans-serif!important}
+ body>.site-header,body>.mobile-nav,body>footer,.skip,.screen-tools,.production-form button,.production-form [role=status],.production-message{display:none!important}
+ .build-sheet{max-width:none!important;width:auto!important;margin:0!important;padding:0!important}
+ .build-sheet *:not(svg *){color:#111!important;background:transparent!important;box-shadow:none!important;text-shadow:none!important}
+ .sheet-header{padding:0 0 5mm}.sheet-header h1{font-size:22pt}.sheet-header h2{font-size:18pt}
+ .build-sheet h2,.build-sheet h3{font-size:15pt;break-after:avoid}.build-sheet section{margin-top:6mm;padding-top:3mm}
+ .build-sheet dl>div{grid-template-columns:38% 62%;gap:0;font-size:10pt;line-height:1.35;padding:2mm 0;break-inside:avoid}
+ .sheet-note,.build-sheet section>p{font-size:9pt!important;line-height:1.4}.build-sheet .admin-table-scroll{overflow:visible}
+ .build-sheet table{min-width:0;width:100%;table-layout:fixed;font-size:9pt;border-collapse:collapse}.build-sheet th,.build-sheet td{padding:2mm;border:1px solid #bbb;white-space:normal!important}
+ .build-sheet th:first-child{width:7%}.build-sheet th:last-child{width:12%}.build-sheet tr{break-inside:avoid}.build-sheet thead{display:table-header-group}
+ #component-picking input{display:none}.build-diagram{overflow:visible;break-inside:avoid;border:0}.build-diagram svg{min-width:0;width:100%;height:auto;print-color-adjust:exact}
+ .production-form{max-width:none;gap:3mm;display:block}.production-form label{margin:3mm 0;break-inside:avoid;font-size:10pt}.production-form fieldset{margin:5mm 0;padding:3mm;display:block}.production-form legend{font-size:11pt}.production-form input,.production-form select,.production-form textarea{display:none!important}
+ .print-value{display:block;white-space:pre-wrap;overflow-wrap:anywhere;font-weight:normal;line-height:1.4;min-height:5mm}.qc-check .print-value{display:inline-block;min-width:8mm}.production-form .qc-check{display:flex;break-inside:avoid}
+ .wiring-section{break-before:page}.qc-section{break-before:page}.print-diagram-details{display:block}.diagram-print-page{page:wiring-details;break-before:page;break-after:page;break-inside:avoid}.diagram-print-page h2{font-size:12pt}.diagram-print-page p{font-size:9pt;margin:2mm 0}.diagram-print-page svg{display:block;width:100%;height:auto;max-height:172mm;print-color-adjust:exact}
+}

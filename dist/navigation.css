@@ -1,0 +1,7 @@
+@media (min-width:681px) and (max-width:1180px){
+ .header nav,.header-shop{display:none}
+ .menu-button{display:block;border:0;background:none;color:var(--ink);padding:10px 0 10px 15px;font-size:14px}
+ .menu-button span{margin-left:15px;color:var(--teal)}
+ .mobile-nav{position:absolute;top:103px;left:0;right:0;padding:25px 6%;background:#111914;z-index:12;display:grid;gap:18px;border-bottom:1px solid var(--line);font-size:17px}
+ .mobile-nav[hidden]{display:none}
+}

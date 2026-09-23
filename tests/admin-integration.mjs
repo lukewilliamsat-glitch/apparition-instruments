@@ -1,0 +1,34 @@
+import assert from 'node:assert/strict';
+import {createComponentStore,storageKey,parseGBP} from '../dist/admin/data.mjs';
+import {configuredKitDefinitions} from '../dist/wiring-kits/kit-data.mjs';
+import {readImage} from '../dist/admin/images.mjs';
+const memory=new Map(),storage={getItem:k=>memory.get(k)??null,setItem:(k,v)=>memory.set(k,v)};
+const store=createComponentStore(storage);store.list();
+const get=id=>store.list().find(p=>p.id===id);
+const update=(id,patch)=>store.save({...get(id),...patch},id);
+for(const [v,n] of [['4.99',499],['12.50',1250],['25.00',2500],['',null]])assert.equal(parseGBP(v),n);
+for(const v of ['-1','1.234','Infinity'])assert.throws(()=>parseGBP(v));
+// Migrate the approved foundation records without resetting edits or stock.
+const old=JSON.parse(memory.get(storageKey));for(const p of old.items){delete p.salePrice;delete p.kitPrice;delete p.image;}old.items[0].stock=17;memory.set(storageKey,JSON.stringify(old));assert.equal(store.list()[0].stock,17);
+update('bleed-duncan',{salePrice:1250,kitPrice:777});
+assert.equal(configuredKitDefinitions(store.list())['les-paul'].bleed.duncan.price,777);
+update('bleed-duncan',{salePrice:9999});assert.equal(configuredKitDefinitions(store.list())['les-paul'].bleed.duncan.price,777);
+update('bleed-duncan',{individually:false,inKits:false});assert.equal(get('bleed-duncan').salePrice,9999);assert.equal(get('bleed-duncan').kitPrice,777);assert.equal(configuredKitDefinitions(store.list())['les-paul'].bleed.duncan.enabled,false);
+update('bleed-duncan',{individually:true,inKits:true});
+const image=await readImage(new Blob([Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jX1sAAAAASUVORK5CYII=','base64')],{type:'image/png'}));
+update('bleed-duncan',{image});assert.equal(createComponentStore(storage).list().find(p=>p.id==='bleed-duncan').image,image);
+const replacement=await readImage(new Blob([new Uint8Array([255,216,255,224])],{type:'image/jpeg'}));update('bleed-duncan',{image:replacement});assert.equal(get('bleed-duncan').image,replacement);update('bleed-duncan',{image:null});assert.equal(get('bleed-duncan').image,null);
+await assert.rejects(()=>readImage(new Blob(['bad'],{type:'image/png'})));await assert.rejects(()=>readImage(new Blob(['x'],{type:'image/svg+xml'})));await assert.rejects(()=>readImage(new Blob([new Uint8Array(8*1024*1024+1)],{type:'image/png'})));
+update('bleed-duncan',{kitPrice:null});assert(Number.isNaN(configuredKitDefinitions(store.list())['les-paul'].bleed.duncan.price));
+update('bleed-duncan',{kitPrice:777,image});
+update('bleed-prs',{active:false});update('bleed-cap',{individually:false});
+update('sbe-200',{stock:0});
+globalThis.window={localStorage:storage};
+const {catalogue}=await import('../dist/components/catalogue.mjs?integration');
+assert(!catalogue.some(p=>p.id==='bleed-prs'));assert(!catalogue.some(p=>p.id==='bleed-cap'));assert(catalogue.some(p=>p.id==='sbe-200'&&p.stock===0));
+const product=catalogue.find(p=>p.id==='bleed-duncan');assert.equal(product.price,9999);assert.equal(product.image,image);
+assert.equal(configuredKitDefinitions(store.list())['les-paul'].basePrice,5999);
+store.changeStock('bleed-duncan',4);store.changeStock('bleed-duncan',-1,'adjust');assert.equal(get('bleed-duncan').stock,3);assert.throws(()=>store.changeStock('bleed-duncan',-4,'adjust'));assert.equal(get('bleed-duncan').salePrice,9999);
+console.log('Admin integration: independent prices, migration, image upload/replace/remove/persistence and validation, storefront eligibility/stock/retail/image, kit eligibility/surcharge/base, stock editing passed.');
+
+const boundary=new Uint8Array(8*1024*1024);boundary.set([137,80,78,71,13,10,26,10]);assert((await readImage(new Blob([boundary],{type:'image/png'}))).startsWith('data:image/png;base64,'));console.log('8 MB accepted; above 8 MB rejected.');

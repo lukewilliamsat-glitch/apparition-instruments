@@ -1,0 +1,17 @@
+# Admin Wiring Kit Master
+
+`/admin/wiring-kit-master/` is an internal planning and costing surface, linked from the existing Admin tabs. It does not alter the customer Builder, commerce, circuit renderer, Designer or existing component records on load.
+
+All selectors read active central components marked `inKits`, filtered by their existing category. Bridge and neck rows have independent IDs, include flags, quantities and charge flags. Consumables select Other records manually, with explicit metre stock units for wire/heat shrink and the record's unit for solder. Quantities may be decimal. No consumable records are fabricated.
+
+Optional `internalUnitCost` (integer GBP pence per stock unit), `stockUnit` (item/m/g), and `kitPriceQuantity` (for unbound records only) are edited on the existing central component record. These fields do not replace internal names, retail prices, kit charges or stock. Stock editing remains whole-number physical units, with decimal consumption requirements allowed for planning. Changing a unit label does not convert stock; the UI says to confirm its basis.
+
+Existing customer kit pricing has established bundle units: a shaft/pot charge covers four pots, a treble-bleed charge covers two assemblies, and capacitor/hardware charges cover one item. The Master converts these into per-unit kit rates, displaying the saved charge basis on each line. Unbound records use their explicitly configurable covered quantity (default one). No retail price is used. Individual line amounts round to pence. Consumable add-ons are disabled by default.
+
+Base price initializes from the existing central Les Paul definition and is editable for the internal draft. Packaging, labour and eBay fee inputs start explicitly at development zero values. Missing component costs/add-on prices remain unknown; affected totals/profits are not calculated. All formulas are shown in the UI. Channels other than eBay have zero marketplace fees. Margins are undefined for a zero sale price. VAT and other overheads are not separately modelled.
+
+`model.mjs` exports role definitions, eligibility, draft persistence, typed kit summary and structured calculation output, including current component records/SKUs, unit costs and prices, line totals, stock requirements and financial totals. Kit type classifies the existing technical Type specification for push/pull pots, not just total quantity. Drafts use `apparition.admin.wiring-kit-master.v1` in browser storage. Corrupt drafts are preserved and not overwritten. No Orders or Invoices are created.
+
+Shared BOM requirement aggregation was extracted into `aggregateRequirements` in the existing assemblies module. Assembly behaviour remains integer-only and regression-tested; the Master requests fractional aggregation for consumables. Repeated parts are aggregated across all rows before stock warnings. Stock calculations are informational only; no reservations or deductions occur.
+
+Completed checkpoints: Designer discovery links (Hub and Treble Bleeds category), then Master. Designer source/model/layout were unchanged. Tests cover central dynamic options, independent selections, typed summary, both pricing systems, missing values, fees/labour/profit, divide-by-zero, decimal wire, stock shortfalls, no deduction and persistence. Existing assemblies, Admin image/price integration, product content, kit system, Designer and route/import audits passed. Browser visual/click QA remains unverified for the static project's supervised-preview limitation.

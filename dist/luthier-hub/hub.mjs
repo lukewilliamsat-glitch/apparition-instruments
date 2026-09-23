@@ -1,0 +1,2 @@
+const cards=[...document.querySelectorAll('[data-formats]')],buttons=[...document.querySelectorAll('[data-filter]')];
+buttons.forEach(button=>button.addEventListener('click',()=>{const filter=button.dataset.filter;buttons.forEach(b=>b.setAttribute('aria-pressed',String(b===button)));let count=0;cards.forEach(card=>{card.hidden=filter!=='all'&&!card.dataset.formats.split(' ').includes(filter);if(!card.hidden)count++;});document.querySelector('#hub-count').textContent=`${count} upcoming ${filter==='video'?'videos':filter==='article'?'articles':'guides'}`;}));

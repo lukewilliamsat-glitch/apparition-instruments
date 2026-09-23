@@ -1,0 +1,15 @@
+# Treble Bleed Designer 01
+
+Standalone `/treble-bleed-designer/`. No products, Admin, inventory, basket, Kit Builder or Wiring Generator data is imported by the Designer. The existing header/footer is reused without changing other pages. Direct access is via the tool URL; no new commercial navigation or product integration was added.
+
+Modules separate topology/default/validation definitions (`circuits.mjs`), complex electrical calculations and taper (`engine.mjs`), input state (`app.mjs`) and SVG graph rendering (`graph.mjs`). Defaults are explicitly examples. Tone is held at 10, using the full entered tone resistance in series with the tone capacitor, connected to volume input (modern topology). A zero tone capacitance disconnects this branch. Pickup source has series R/L followed by shunt Cp. Cable capacitance and amplifier resistance load the wiper. The treble bleed is connected between volume input and wiper, as a capacitor, parallel RC or series RC network. Custom selects one of those topologies. There are no commercial presets.
+
+Volume taper is `(81^(knob/10)-1)/80`, with 10% electrical fraction at midpoint. Endpoints are handled analytically: volume zero is shorted to ground; volume ten joins input and wiper and bypasses the bleed. Complex impedances are reduced without arbitrary EQ curves. The full-volume reference recomputes with circuit values but is independent of current knob position. The graph uses fixed source-relative dB, not per-curve normalisation. Display limits are -100 to +40 dB; zero is explicitly muted. The SVG uses responsive pixel-based geometry and fewer axis labels at mobile widths, and numeric response samples provide a text alternative.
+
+Technical references (conceptual topology; not claimed empirical calibration):
+- https://macalisterelectronics.com/guitar-pickup-equivalent-circuits.html
+- https://www.seymourduncan.com/blog/latest-updates/3-popular-treble-bleed-mods-what-you-need-to-know
+
+Validation: `tests/treble-bleed-designer.mjs` compares resistor-only analytic limits and an independent 2-node KCL solution, verifies basic network admittances, taper, all inputs, supported bounds, zero-volume behaviour, custom topology equivalence, fixed reference curves, and graph coordinates at desktop/tablet/mobile widths. Existing Admin image integration, assemblies, Kit Builder and site route/import audits also pass. Actual browser interaction and responsive visual testing remain unverified because this static project has no compatible supervised preview; no framework conversion was attempted.
+
+Image upload checkpoint: accepts PNG/JPEG/WEBP up to 8*1024*1024 bytes, rejects above that boundary, and preserves the existing data-URL/local-storage adapter. Browser storage quota may still prevent a large accepted upload from being saved; the existing quota error preserves previously saved data. No compression or storage migration was introduced. Existing image preview/replace/remove paths remain unchanged. Boundary and adapter tests passed.

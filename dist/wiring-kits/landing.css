@@ -1,0 +1,45 @@
+/* R02B: Wiring Kits landing page hierarchy only. */
+.wiring-kits-landing .page-main{padding-top:44px}
+.wiring-kits-landing .wiring-entrance{margin-bottom:38px}
+.wiring-kits-landing .wiring-entrance h1{margin-bottom:18px}
+.wiring-kits-landing .wiring-entrance>p:last-child{margin-bottom:0}
+
+.wiring-kits-landing .wiring-routes{gap:20px;margin:0 0 68px}
+.wiring-kits-landing .wiring-route{min-height:340px;padding:clamp(28px,3.6vw,46px)}
+.wiring-kits-landing .wiring-route h2{margin:22px 0 14px}
+.wiring-kits-landing .wiring-route p{max-width:440px;margin-bottom:32px}
+.wiring-kits-landing .wiring-route:first-child{border-color:var(--gold)}
+.wiring-kits-landing .wiring-route:first-child .route-cta{color:var(--gold)}
+.wiring-kits-landing .guided-route{border-color:#673333}
+.wiring-kits-landing .route-cta{padding-top:18px;border-top:1px solid var(--line)}
+
+.wiring-kits-landing .collection-heading{margin-bottom:24px}
+.wiring-kits-landing .collection-heading .eyebrow{color:var(--gold)}
+.wiring-kits-landing .collection-heading h2{margin:12px 0 0}
+.wiring-kits-landing .family-browser{margin-bottom:48px}
+.wiring-kits-landing .family-row{grid-template-columns:minmax(180px,.75fr) minmax(0,1.25fr);padding:20px 0}
+.wiring-kits-landing .family-row>div{align-items:flex-start}
+.wiring-kits-landing .family-row a{padding-left:16px;border-left:2px solid var(--gold)}
+.wiring-kits-landing .family-row>div>span{color:var(--technical)}
+.wiring-kits-landing .family-row>div>span small{color:#727b85}
+
+.wiring-kits-landing .fitment-panel{margin-top:0;padding:26px 28px}
+.wiring-kits-landing .fitment-panel>summary strong{margin-bottom:4px}
+.wiring-kits-landing .fitment-panel>p{max-width:900px;margin:20px 0}
+.wiring-kits-landing .fitment-checks{gap:12px;margin-top:22px}
+.wiring-kits-landing .fitment-checks label{padding:16px}
+.wiring-kits-landing .passport-disclosure{margin-top:22px}
+
+@media(max-width:700px){
+ .wiring-kits-landing .page-main{padding-top:30px}
+ .wiring-kits-landing .wiring-entrance{margin-bottom:30px}
+ .wiring-kits-landing .wiring-routes{gap:14px;margin-bottom:52px}
+ .wiring-kits-landing .wiring-route{min-height:0;padding:26px 22px}
+ .wiring-kits-landing .wiring-route h2{font-size:2rem}
+ .wiring-kits-landing .wiring-route p{font-size:1rem;margin-bottom:24px}
+ .wiring-kits-landing .family-row{grid-template-columns:1fr;gap:14px;padding:18px 0}
+ .wiring-kits-landing .family-row>div{gap:18px 28px}
+ .wiring-kits-landing .family-browser{margin-bottom:38px}
+ .wiring-kits-landing .fitment-panel{padding:21px 18px}
+ .wiring-kits-landing .fitment-panel>summary strong{font-size:1.65rem;line-height:1.2}
+}

@@ -1,0 +1,73 @@
+/* R02A: homepage hierarchy only. */
+.home-page .hero-bottom{max-width:940px;justify-content:space-between}
+.home-page .hero-bottom p{max-width:570px;font-size:1rem;line-height:1.75}
+.home-page .hero-bottom .button{flex:0 0 auto}
+.home-page .hero-art,.home-page .hero-content{will-change:transform}
+.home-page .hero-shade{background:linear-gradient(90deg,rgba(6,7,8,.82) 0%,rgba(6,7,8,.48) 52%,rgba(6,7,8,.18) 100%),linear-gradient(0deg,rgba(6,7,8,.48),transparent 42%)}
+.home-page .collection{padding-bottom:80px}
+.home-page .collection-intro{margin-bottom:52px}
+.home-page .collection-foot{margin-top:30px}
+
+.home-page .home-generator{grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:18px 60px;margin-top:54px;padding:42px 0;border-block:1px solid var(--gold)}
+.home-page .home-generator>span,.home-page .home-generator>h3,.home-page .home-generator>p{grid-column:1}
+.home-page .home-generator .home-circuit-preview{grid-column:2;grid-row:1 / span 4;align-self:center;min-width:0;background:var(--surface);border:1px solid var(--line);overflow:hidden}
+.home-page .home-generator .home-circuit-preview img{display:block;width:100%;height:250px;object-fit:contain;opacity:.9}
+.home-page .home-generator h3{margin-bottom:12px}
+.home-page .home-generator .card-link{align-self:end;padding-top:8px}
+.home-page .home-generator,.home-page .home-circuit-preview,.home-page .product summary,.home-page .button{transition:transform .35s ease,border-color .35s ease,box-shadow .35s ease,background-color .35s ease}
+
+@media(hover:hover){
+ .home-page .home-generator:hover{border-color:var(--gold);}
+ .home-page .home-generator:hover .home-circuit-preview{transform:translateY(-3px);border-color:var(--gold);box-shadow:0 18px 38px rgba(0,0,0,.22)}
+ .home-page .product summary:hover{transform:translateX(4px)}
+ .home-page .button:hover{transform:translateY(-2px)}
+}
+
+.motion-ready.home-page .section-top.reveal{transition-duration:.65s}
+.motion-ready.home-page .product-list .product:nth-child(2).reveal{transition-delay:.055s}
+.motion-ready.home-page .product-list .product:nth-child(3).reveal{transition-delay:.11s}
+.motion-ready.home-page .principles article:nth-child(2).reveal{transition-delay:.055s}
+.motion-ready.home-page .principles article:nth-child(3).reveal{transition-delay:.11s}
+.motion-ready.home-page .hub-preview-grid .editorial-card:nth-child(2).reveal{transition-delay:.07s}
+
+.home-page .hub-preview{padding-block:74px}
+.home-page .editorial-card{min-height:310px}
+.home-page .editorial-card .card-link{color:var(--gold)}
+
+.home-page .guitar-teaser.section{max-width:1320px;padding-block:38px}
+.home-page .guitar-teaser>div{display:grid;grid-template-columns:minmax(240px,.8fr) minmax(0,1.2fr);gap:12px 60px;align-items:start}
+.home-page .guitar-teaser h2{grid-row:1 / span 3;margin:8px 0;font-size:clamp(1.9rem,3vw,2.7rem);color:#d7d7d7}
+.home-page .guitar-teaser p:not(.eyebrow){margin:0}
+.home-page .guitar-teaser small{margin-top:8px}
+
+@media(max-width:900px){
+ .home-page .hero-bottom{align-items:flex-start}
+ .home-page .home-generator{gap:20px 34px;grid-template-columns:minmax(0,1fr) minmax(230px,.8fr)}
+ .home-page .home-generator .home-circuit-preview img{height:220px}
+}
+
+@media(max-width:680px){
+ .home-page .hero{min-height:820px}
+ .home-page .hero-content{padding-bottom:130px}
+ .home-page .hero-bottom p{font-size:1rem}
+ .home-page .hero-bottom .button{width:100%;justify-content:center}
+ .home-page .collection{padding-bottom:55px}
+ .home-page .collection-intro{margin-bottom:36px}
+ .home-page .home-generator{grid-template-columns:1fr;gap:0;margin-top:38px;padding:30px 0}
+ .home-page .home-generator .home-circuit-preview{grid-column:1;grid-row:3;margin:18px 0 20px}
+ .home-page .home-generator .home-circuit-preview img{height:190px}
+ .home-page .home-generator>p{grid-row:4}
+ .home-page .home-generator>.card-link{grid-row:5;padding-top:5px}
+ .home-page .hub-preview{padding-block:55px}
+ .home-page .editorial-card{min-height:0}
+ .home-page .guitar-teaser.section{padding-block:30px}
+ .home-page .guitar-teaser>div{display:block}
+ .home-page .guitar-teaser h2{font-size:1.9rem;margin:10px 0 16px}
+}
+
+@media(prefers-reduced-motion:reduce){
+ .home-page .hero-art,.home-page .hero-content{transform:none!important;will-change:auto}
+ .motion-ready.home-page .reveal{opacity:1;transform:none;transition:none;transition-delay:0s}
+ .home-page .home-generator,.home-page .home-circuit-preview,.home-page .product summary,.home-page .button{transition:none}
+ .home-page .home-generator:hover,.home-page .home-generator:hover .home-circuit-preview,.home-page .product summary:hover,.home-page .button:hover{transform:none;box-shadow:none}
+}

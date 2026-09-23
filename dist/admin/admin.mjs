@@ -1,0 +1,67 @@
+import {renderAssemblies} from './assembly-ui.mjs';
+import {moveSpecification} from './product-content.mjs';
+import {createComponentStore,categories,specificationFields,fieldLabels,storageKey,parseGBP,priceInput} from './data.mjs';
+import {readImage} from './images.mjs';
+import {kitBindings} from './kit-bindings.mjs';
+const $=s=>document.querySelector(s),el=(tag,value)=>{const n=document.createElement(tag);if(value!==undefined)n.textContent=value;return n;};
+let store,view=new URLSearchParams(location.search).get('view')==='assemblies'?'assemblies':'components',editing=null,stockId=null,draftSpecs={},draftProductSpecs=[],draftImage=null,imageVersion=0;
+const form=$('#component-form'),field=n=>form.elements.namedItem(n),stockForm=$('#stock-form');
+for(const [id,label] of Object.entries(categories))for(const target of [$('#category-filter'),field('category')]){const o=el('option',label);o.value=id;target.append(o);}
+function message(text){$('#status').textContent=text;}
+function run(action){try{return action();}catch(e){message(e.message);return null;}}
+function render(){
+ const assemblies=view==='assemblies';document.querySelector('h1').textContent=assemblies?'Products / Assemblies':'Inventory';document.title=(assemblies?'Products / Assemblies':'Inventory')+' | Apparition Admin';for(const link of document.querySelectorAll('[data-admin-destination]')){if(link.dataset.adminDestination===(assemblies?'assemblies':'inventory'))link.setAttribute('aria-current','page');else link.removeAttribute('aria-current');}$('#add-component').hidden=assemblies;$('#add-assembly').hidden=!assemblies;$('#category-filter').closest('label').hidden=assemblies;
+ if(assemblies){renderAssemblies($('#search').value.toLowerCase().trim());return;}$('#empty').textContent='No components match your search.';
+
+ const items=store.list(),q=$('#search').value.toLowerCase().trim(),category=$('#category-filter').value;
+ const visible=items.filter(p=>(!category||p.category===category)&&(!q||[p.name,p.sku,p.manufacturer,...Object.values(p.specs)].join(' ').toLowerCase().includes(q)));
+ $('#count').textContent=visible.length+' components';$('#table-caption').textContent='Inventory';
+ const row=el('tr');for(const heading of view==='stock'?['Component','Category','Current stock','Update']:['Component','Category','Specification','Stock','Retail / Wiring Kit add-on','Active','Actions'])row.append(el('th',heading));$('#table-head').replaceChildren(row);$('#table-body').replaceChildren();$('#empty').hidden=visible.length!==0;
+ for(const p of visible){const tr=el('tr'),name=el('td',p.name);name.append(el('small',p.sku));tr.append(name);
+  if(view==='components'){name.append(el('small',p.manufacturer||''));tr.append(el('td',categories[p.category]),el('td',Object.entries(p.specs).map(([k,v])=>(fieldLabels[k]||k)+': '+v).join(' · ')||'Not specified'),el('td',String(p.stock)));const prices=el('td');prices.className='numeric';prices.append(el('span',p.salePrice==null?'Retail: Not set':'Retail: £'+priceInput(p.salePrice)),el('small',p.kitPrice==null?'Kit add-on: Not set':'Kit add-on: +£'+priceInput(p.kitPrice)));tr.append(prices);const active=el('td'),input=el('input');input.type='checkbox';input.checked=p.active;input.setAttribute('aria-label','Active: '+p.name);input.addEventListener('change',()=>{const ok=run(()=>{const fresh=store.list().find(x=>x.id===p.id);store.save({...fresh,active:input.checked},p.id);message('Active status saved.');return true;});if(!ok)input.checked=!input.checked;});active.append(input);tr.append(active);}
+  else tr.append(el('td',categories[p.category]),el('td',String(p.stock)));
+  const actions=el('td'),button=el('button',view==='stock'?'Update stock':'Edit');button.type='button';button.setAttribute('aria-label',(view==='stock'?'Update stock for ':'Edit ')+p.name);button.addEventListener('click',()=>run(()=>view==='stock'?openStock(p.id):openEditor(p.id)));actions.append(button);if(view!=='stock'){const stock=el('button','Update stock');stock.type='button';stock.setAttribute('aria-label','Update stock for '+p.name);stock.addEventListener('click',()=>run(()=>openStock(p.id)));actions.append(stock);}tr.append(actions);$('#table-body').append(tr);
+ }
+}
+function collectSpecs(){for(const input of $('#spec-fields').querySelectorAll('input'))draftSpecs[input.dataset.spec]=input.value;}
+function renderSpecs(){const root=$('#spec-fields');root.replaceChildren();for(const key of specificationFields[field('category').value]||[]){const label=el('label',fieldLabels[key]||key),input=el('input');input.dataset.spec=key;input.value=draftSpecs[key]||'';input.maxLength=300;label.append(input);root.append(label);}}
+function openEditor(id=null){editing=id;const item=id?store.list().find(x=>x.id===id):{sku:'',name:'',manufacturer:'',category:'potentiometers',description:'',stock:0,active:true,individually:false,inKits:false,specs:{}};if(!item)throw new Error('Component not found.');form.reset();form.querySelector('[type=submit]').disabled=false;for(const key of ['sku','name','manufacturer','category','description','stock','productTitle','shortDescription','fullDescription'])field(key).value=item[key]??'';for(const key of ['active','individually','inKits'])field(key).checked=!!item[key];draftSpecs={...item.specs};draftProductSpecs=structuredClone(item.productSpecifications??[]);renderProductSpecs();$('#product-spec-status').textContent='';draftImage=item.image??null;imageVersion++;$('#image-file').value='';$('#image-error').textContent='';field('internalUnitCost').value=priceInput(item.internalUnitCost);field('stockUnit').value=item.stockUnit||'item';field('kitPriceQuantity').value=item.kitPriceQuantity||1;$('#master-price-quantity').hidden=!!kitBindings[id];field('stockUnit').disabled=item.category!=='other';field('salePrice').value=priceInput(item.salePrice);field('kitPrice').value=priceInput(item.kitPrice);priceVisibility();imagePreview();renderSpecs();$('#editor-title').textContent=id?'Edit component':'Add component';$('#editor-error').textContent='';$('#component-dialog').showModal();}
+field('category').addEventListener('change',()=>{collectSpecs();field('stockUnit').disabled=field('category').value!=='other';renderSpecs();});
+form.addEventListener('submit',e=>{e.preventDefault();try{collectSpecs();const data={internalUnitCost:parseGBP(field('internalUnitCost').value),stockUnit:field('stockUnit').value,kitPriceQuantity:Number(field('kitPriceQuantity').value),productSpecifications:draftProductSpecs,specs:draftSpecs,image:draftImage,salePrice:parseGBP(field('salePrice').value),kitPrice:parseGBP(field('kitPrice').value)};for(const k of ['sku','name','manufacturer','category','description','stock','productTitle','shortDescription','fullDescription'])data[k]=field(k).value;for(const k of ['active','individually','inKits'])data[k]=field(k).checked;store.save(data,editing);render();$('#component-dialog').close();message('Component saved in this browser.');}catch(error){$('#editor-error').textContent=error.message;}});
+function stockMode(){const adjust=stockForm.elements.mode.value==='adjust';stockForm.elements.quantity.min=adjust?'':0;$('#stock-help').textContent=adjust?'Enter a positive quantity to add stock, or a negative quantity to remove it.':'Enter the total quantity on hand.';}
+function openStock(id){const item=store.list().find(x=>x.id===id);if(!item)throw new Error('Component not found.');stockId=id;stockForm.reset();stockForm.elements.mode.value='set';stockForm.elements.quantity.value=item.stock;$('#stock-item').textContent=item.name+' · Current stock: '+item.stock;$('#stock-error').textContent='';stockMode();$('#stock-dialog').showModal();}
+stockForm.elements.mode.addEventListener('change',()=>{stockMode();stockForm.elements.quantity.value=stockForm.elements.mode.value==='adjust'?0:store.list().find(x=>x.id===stockId).stock;});
+stockForm.addEventListener('submit',e=>{e.preventDefault();try{store.changeStock(stockId,stockForm.elements.quantity.value,stockForm.elements.mode.value);render();$('#stock-dialog').close();message('Stock saved in this browser.');}catch(error){$('#stock-error').textContent=error.message;}});
+for(const b of document.querySelectorAll('[data-close]'))b.addEventListener('click',()=>$('#'+b.dataset.close).close());
+$('#add-component').addEventListener('click',()=>run(()=>openEditor()));
+for(const b of document.querySelectorAll('[data-view]'))b.addEventListener('click',()=>{view=b.dataset.view;for(const x of document.querySelectorAll('[data-view]'))x.setAttribute('aria-pressed',String(x===b));run(render);});
+$('#search').addEventListener('input',()=>run(render));$('#category-filter').addEventListener('change',()=>run(render));
+window.addEventListener('storage',e=>{if(e.key===storageKey)run(render);});
+run(()=>{store=createComponentStore(window.localStorage);render();$('#add-component').disabled=false;});
+
+function priceVisibility(){
+ $('#sale-price-field').hidden=!field('individually').checked;$('#kit-price-field').hidden=!field('inKits').checked;
+ const binding=kitBindings[editing];$('#kit-price-basis').textContent=binding?'Charge covers '+binding.basis+'. Independent of retail price.':'Not linked to an existing kit option. Price is saved for later compatibility assignment.';
+}
+function imagePreview(){const image=$('#image-preview');image.hidden=!draftImage;if(draftImage)image.src=draftImage;else image.removeAttribute('src');$('#no-image').hidden=!!draftImage;$('#remove-image').hidden=!draftImage;$('#image-upload-label').textContent=draftImage?'Replace image':'Upload image';}
+for(const key of ['individually','inKits'])field(key).addEventListener('change',priceVisibility);
+$('#image-file').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;const request=++imageVersion;form.querySelector('[type=submit]').disabled=true;$('#image-error').textContent='';try{const image=await readImage(file);if(request!==imageVersion)return;draftImage=image;imagePreview();}catch(error){if(request===imageVersion)$('#image-error').textContent=error.message;}finally{if(request===imageVersion)form.querySelector('[type=submit]').disabled=false;}});
+$('#remove-image').addEventListener('click',()=>{imageVersion++;draftImage=null;$('#image-file').value='';$('#image-error').textContent='';form.querySelector('[type=submit]').disabled=false;imagePreview();});
+
+function renderProductSpecs(focusIndex=null,action=null){
+ const root=$('#product-specifications');root.replaceChildren();
+ draftProductSpecs.forEach((row,index)=>{
+  const group=el('div');group.className='product-spec-row';group.setAttribute('role','group');group.setAttribute('aria-label','Specification '+(index+1));
+  for(const key of ['label','value']){const label=el('label',key==='label'?'Label':'Value'),input=el('input');input.value=row[key];input.maxLength=key==='label'?300:1000;input.setAttribute('aria-label','Specification '+(index+1)+' '+key);input.addEventListener('input',()=>{row[key]=input.value;});label.append(input);group.append(label);}
+  const actions=el('div');actions.className='product-spec-actions';
+  for(const [name,direction] of [['Move up',-1],['Move down',1],['Remove',0]]){const button=el('button',name);button.type='button';button.dataset.action=name;button.setAttribute('aria-label',name+' specification '+(index+1));button.disabled=direction===-1&&index===0||direction===1&&index===draftProductSpecs.length-1;button.addEventListener('click',()=>{
+   if(direction)draftProductSpecs=moveSpecification(draftProductSpecs,index,direction);else draftProductSpecs.splice(index,1);
+   renderProductSpecs(Math.min(Math.max(0,index+direction),draftProductSpecs.length-1),name);$('#product-spec-status').textContent=direction?'Specification moved. Save component to keep this order.':'Specification removed. Save component to keep this change.';
+  });actions.append(button);}group.append(actions);root.append(group);
+ });
+ $('#add-product-specification').disabled=draftProductSpecs.length>=100;
+ if(focusIndex!==null){const group=root.children[focusIndex],target=group?.querySelector(`[data-action="${action}"]:not(:disabled)`);(target||group?.querySelector('input')||$('#add-product-specification')).focus();}
+}
+$('#add-product-specification').addEventListener('click',()=>{if(draftProductSpecs.length>=100)return;draftProductSpecs.push({label:'',value:''});renderProductSpecs(draftProductSpecs.length-1);});
+
+document.addEventListener('assemblies-changed',()=>{if(view==='assemblies')run(render);});
