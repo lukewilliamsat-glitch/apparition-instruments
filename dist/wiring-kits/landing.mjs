@@ -1,7 +1,7 @@
 import {populateFitment} from './fitment.mjs';
 document.body.classList.add('wiring-kits-landing');
 const stylesheet=document.createElement('link');
-stylesheet.rel='stylesheet';stylesheet.href='/wiring-kits/landing.css';document.head.append(stylesheet);
+stylesheet.rel='stylesheet';stylesheet.href=new URL('./landing.css',import.meta.url).href;document.head.append(stylesheet);
 const routes=document.querySelectorAll('.wiring-route p');
 routes[0].textContent='Already know your guitar layout and component choices? Configure the kit directly.';
 routes[1].textContent='Unsure about fitment or component choices? Answer a few questions for a sensible starting specification.';

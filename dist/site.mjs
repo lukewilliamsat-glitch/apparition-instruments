@@ -1,15 +1,26 @@
 import {basketCount} from './commerce.mjs';
-// Root-relative URLs are canonical for the production Site. When this module is
-// served from a project subpath (for example GitHub Pages), keep those existing
-// routes and assets inside the module's deployment root.
+// Keep existing root-relative routes inside a project subpath when the site is
+// hosted below the domain root (for example on GitHub Pages).
 const deploymentRoot=new URL('.',import.meta.url);
-if(deploymentRoot.pathname!=='/'){
- document.querySelectorAll('[href^="/"],[src^="/"]').forEach(element=>{
-  for(const attribute of ['href','src']){
-   const value=element.getAttribute(attribute);
-   if(value?.startsWith('/'))element.setAttribute(attribute,new URL(value.slice(1),deploymentRoot).pathname);
+function keepInDeploymentRoot(element){
+ for(const attribute of ['href','src','action']){
+  const value=element.getAttribute?.(attribute);
+  if(value?.startsWith('/')){
+   const url=new URL(value.slice(1),deploymentRoot);
+   element.setAttribute(attribute,url.pathname+url.search+url.hash);
   }
- });
+ }
+}
+if(deploymentRoot.pathname!=='/'){
+ document.querySelectorAll('[href^="/"],[src^="/"],[action^="/"]').forEach(keepInDeploymentRoot);
+ new MutationObserver(records=>records.forEach(record=>{
+  if(record.type==='attributes')keepInDeploymentRoot(record.target);
+  record.addedNodes.forEach(node=>{
+   if(node.nodeType!==Node.ELEMENT_NODE)return;
+   keepInDeploymentRoot(node);
+   node.querySelectorAll?.('[href^="/"],[src^="/"],[action^="/"]').forEach(keepInDeploymentRoot);
+  });
+ })).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['href','src','action']});
 }
 const menu=document.querySelector('.menu-button'),mobileNav=document.querySelector('#mobile-nav');
 function closeMenu(){if(!menu||!mobileNav)return;menu.setAttribute('aria-expanded','false');mobileNav.hidden=true;menu.querySelector('span').textContent='+';}
