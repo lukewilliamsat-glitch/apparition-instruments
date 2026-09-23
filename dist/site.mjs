@@ -5,7 +5,7 @@ const deploymentRoot=new URL('.',import.meta.url);
 function keepInDeploymentRoot(element){
  for(const attribute of ['href','src','action']){
   const value=element.getAttribute?.(attribute);
-  if(value?.startsWith('/')){
+  if(value?.startsWith('/')&&!value.startsWith(deploymentRoot.pathname)){
    const url=new URL(value.slice(1),deploymentRoot);
    element.setAttribute(attribute,url.pathname+url.search+url.hash);
   }
