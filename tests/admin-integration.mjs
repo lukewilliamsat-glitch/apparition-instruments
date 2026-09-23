@@ -23,8 +23,7 @@ update('bleed-duncan',{kitPrice:null});assert(Number.isNaN(configuredKitDefiniti
 update('bleed-duncan',{kitPrice:777,image});
 update('bleed-prs',{active:false});update('bleed-cap',{individually:false});
 update('sbe-200',{stock:0});
-globalThis.window={localStorage:storage};
-const {catalogue}=await import('../dist/components/catalogue.mjs?integration');
+const {catalogue,refreshCatalogue}=await import('../dist/components/catalogue.mjs?integration');await refreshCatalogue({list:async()=>store.list()});
 assert(!catalogue.some(p=>p.id==='bleed-prs'));assert(!catalogue.some(p=>p.id==='bleed-cap'));assert(catalogue.some(p=>p.id==='sbe-200'&&p.stock===0));
 const product=catalogue.find(p=>p.id==='bleed-duncan');assert.equal(product.price,9999);assert.equal(product.image,image);
 assert.equal(configuredKitDefinitions(store.list())['les-paul'].basePrice,5999);

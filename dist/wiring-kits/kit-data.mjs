@@ -1,5 +1,5 @@
 import {kitDefinitions as original} from './kit-seed.mjs';
-import {currentComponents} from '../admin/data.mjs';
+import {componentRepository} from '../admin/component-repository.mjs';
 import {kitBindings} from '../admin/kit-bindings.mjs';
 export function configuredKitDefinitions(records){
  const definitions=structuredClone(original),kit=definitions['les-paul'];
@@ -12,7 +12,8 @@ export function configuredKitDefinitions(records){
  kit.pots.CTS.enabled=Object.values(kit.shaft).some(o=>o.enabled);
  return definitions;
 }
-export const kitDefinitions=configuredKitDefinitions(currentComponents());
+export async function loadConfiguredKitDefinitions(repository=componentRepository()){return configuredKitDefinitions(await repository.list());}
+export const kitDefinitions=await loadConfiguredKitDefinitions();
 export const lesPaul=kitDefinitions['les-paul'];
 export const formatKitPrice=pence=>Number.isFinite(pence)?new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(pence/100):'Price unavailable';
 export const upgradeLabel=pence=>Number.isFinite(pence)?pence===0?'Included':'+'+formatKitPrice(pence):'Price not set';

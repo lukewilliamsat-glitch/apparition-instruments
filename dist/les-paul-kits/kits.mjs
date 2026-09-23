@@ -4,6 +4,8 @@ import {defaults,normaliseKit,describeKit,specification,lesPaul,priceKit,formatK
 import {diagramMarkup,componentDescription} from './diagram.mjs';
 import {readBasket,addKit} from '../commerce.mjs';
 import {deploymentPath} from '../deployment.mjs';
+import {refreshCatalogue} from '../components/catalogue.mjs';
+await refreshCatalogue();
 const form=document.querySelector('#kit-options'),field=name=>form.elements.namedItem(name),$=selector=>document.querySelector(selector);
 let drawing={};try{drawing=readGeneratorURL(location.search).state;}catch{}
 renderKitFields(form);$('#base-includes').textContent='Base kit includes: '+lesPaul.included;

@@ -1,8 +1,9 @@
-import {catalogue,money} from './catalogue.mjs';
+import {money} from './catalogue.mjs';
 import {categories} from '../admin/data.mjs';
+import {imageSource} from '../admin/images.mjs';
 import {deploymentPath} from '../deployment.mjs';
 const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
-export function renderComponentCards(){
+export function renderComponentCards(catalogue){
  const all=location.pathname.replace(/\/$/,'')===deploymentPath('/components'),fallbacks=new Map();
  for(const section of document.querySelectorAll('.component-section')){const mark=section.querySelector('.component-mark');if(mark)fallbacks.set(section.id,mark.cloneNode(true));}
  if(all)for(const category of [...new Set(catalogue.map(p=>p.category))])if(!document.getElementById(category)){
@@ -15,7 +16,7 @@ export function renderComponentCards(){
    const card=el('article','component-card');card.id=p.id;card.dataset.product=p.id;
    const fallback=fallbacks.get(p.category)?.cloneNode(true)||el('div','component-mark');if(!fallback.firstChild)fallback.append(el('span','',categories[p.category]));
    const markValue=fallback.querySelector('span');if(markValue)markValue.textContent=p.specs.Resistance||p.specs.Value||p.specs.Capacitor||categories[p.category];
-   if(p.image){const image=el('img','component-image');image.src=p.image;image.alt=p.name;image.loading='lazy';image.addEventListener('error',()=>image.replaceWith(fallback),{once:true});card.append(image);}else card.append(fallback);
+   const source=imageSource(p.image);if(source){const image=el('img','component-image');image.src=source;image.alt=p.name;image.loading='lazy';image.addEventListener('error',()=>image.replaceWith(fallback),{once:true});card.append(image);}else card.append(fallback);
    const body=el('div','component-card-body');body.append(el('p','component-stock'+(p.stock===0?' stock-empty':''),p.stock===0?'Out of stock':'In stock'),el('h3','',p.name));
    if(p.cardDescription)body.append(el('p','component-description',p.cardDescription));
    const dl=el('dl');for(const {label:key,value} of p.displaySpecifications){const row=el('div');row.append(el('dt','',key),el('dd','',value));dl.append(row);}body.append(dl);

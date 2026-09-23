@@ -1,9 +1,10 @@
 import {renderComponentCards} from './cards.mjs';
 import {categories} from '../admin/data.mjs';
-import {catalogue,productById} from './catalogue.mjs';
+import {catalogue,productById,refreshCatalogue} from './catalogue.mjs';
 import {addComponent} from '../commerce.mjs';
 import {deploymentPath} from '../deployment.mjs';
-renderComponentCards();
+const status=document.querySelector('#component-status');
+try{status.textContent='Loading components…';await refreshCatalogue();renderComponentCards(catalogue);}catch(error){status.textContent=error.message;throw error;}
 const filters=['shaft','brand','type'].map(key=>document.querySelector('#filter-'+key));
 function filterPots(){let count=0;for(const product of catalogue.filter(p=>p.category==='potentiometers')){if(!document.getElementById(product.id))continue;const visible=(filters[0].value==='all'||product.specs.Shaft===filters[0].value)&&(filters[1].value==='all'||product.manufacturer===filters[1].value)&&(filters[2].value==='all'||product.specs.Type===filters[2].value);document.getElementById(product.id).hidden=!visible;if(visible)count++;}document.querySelector('#pot-count').textContent=`${count} option${count===1?'':'s'}`;}
 if(filters[1]){const selected=filters[1].value;filters[1].replaceChildren();for(const brand of ['all',...new Set(catalogue.filter(p=>p.category==='potentiometers').map(p=>p.manufacturer).filter(Boolean))]){const option=document.createElement('option');option.value=brand;option.textContent=brand==='all'?'All manufacturers':brand;filters[1].append(option);}filters[1].value='all';}
