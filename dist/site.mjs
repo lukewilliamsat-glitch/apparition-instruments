@@ -4,7 +4,7 @@ import {basketCount} from './commerce.mjs';
 const deploymentRoot=new URL('.',import.meta.url);
 function keepInDeploymentRoot(element){
  for(const attribute of ['href','src','action']){
-  const value=element.getAttribute?.(attribute);
+  const value=element?.getAttribute?.(attribute);
   if(value?.startsWith('/')&&!value.startsWith(deploymentRoot.pathname)){
    const url=new URL(value.slice(1),deploymentRoot);
    element.setAttribute(attribute,url.pathname+url.search+url.hash);
@@ -13,14 +13,8 @@ function keepInDeploymentRoot(element){
 }
 if(deploymentRoot.pathname!=='/'){
  document.querySelectorAll('[href^="/"],[src^="/"],[action^="/"]').forEach(keepInDeploymentRoot);
- new MutationObserver(records=>records.forEach(record=>{
-  if(record.type==='attributes')keepInDeploymentRoot(record.target);
-  record.addedNodes.forEach(node=>{
-   if(node.nodeType!==Node.ELEMENT_NODE)return;
-   keepInDeploymentRoot(node);
-   node.querySelectorAll?.('[href^="/"],[src^="/"],[action^="/"]').forEach(keepInDeploymentRoot);
-  });
- })).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['href','src','action']});
+ document.addEventListener('click',event=>keepInDeploymentRoot(event.target.closest?.('a[href^="/"]')),true);
+ document.addEventListener('submit',event=>keepInDeploymentRoot(event.target),true);
 }
 const menu=document.querySelector('.menu-button'),mobileNav=document.querySelector('#mobile-nav');
 function closeMenu(){if(!menu||!mobileNav)return;menu.setAttribute('aria-expanded','false');mobileNav.hidden=true;menu.querySelector('span').textContent='+';}
