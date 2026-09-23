@@ -5,10 +5,11 @@ import {mountPicking} from './picking.mjs';
 import {browserOrderStore,channels,statuses} from '../model.mjs';
 import {el,definition,date} from '../view.mjs';
 import {buildContext,assemblyLines,buildSheetURL} from './model.mjs';
+import {deploymentPath} from '../../../deployment.mjs';
 const $=s=>document.querySelector(s),params=new URLSearchParams(location.search);
 try{
  const order=browserOrderStore().get(params.get('order')),context=buildContext(order,params.get('item'),params.get('unit')||1);
- $('#back-order').href='/admin/orders/?id='+encodeURIComponent(order.id);
+ $('#back-order').href=deploymentPath('/admin/orders/?id='+encodeURIComponent(order.id));
  $('#build-reference').textContent=context.reference;
  $('#build-header').append(definition([['Order date',date(context.createdAt)],['Sales channel',channels[context.channel]],['Order status',statuses[context.orderStatus]],['Customer',context.customer],['Kit',context.kitName],['Production unit',context.unit+' of '+context.quantity+' · order item '+(context.itemIndex+1)]]));
  for(const {item,index} of assemblyLines(order)){const option=el('option',item.name+' · '+item.quantity+' ordered');option.value=index;$('#build-item').append(option);}$('#build-item').value=context.itemIndex;$('#build-unit').value=context.unit;$('#build-unit').max=context.quantity;

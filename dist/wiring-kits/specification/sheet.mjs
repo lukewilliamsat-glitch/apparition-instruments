@@ -4,6 +4,7 @@ import {readGeneratorURL} from '../../wiring-generator/session.mjs';
 import {configurationFromURL,describeKit,specLabels,priceKit,formatKitPrice,upgradeLabel,lesPaul,builderURL} from '../../les-paul-kits/config.mjs';
 import {diagramMarkup} from '../../les-paul-kits/diagram.mjs';
 import {populateFitment} from '../fitment.mjs';
+import {deploymentPath} from '../../deployment.mjs';
 const $=selector=>document.querySelector(selector);
 function row(root,label,value){const div=document.createElement('div'),dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label;dd.textContent=value;div.append(dt,dd);root.append(div);}
 try{
@@ -20,6 +21,6 @@ try{
  $('#sheet-diagram').innerHTML=saved?.diagram?.circuit?drawCircuit(saved.diagram.circuit,{exporting:true,view:'full'}):diagramMarkup(config,'all',null,readGeneratorURL(location.search).state,true);
  // This is a printable drawing, not another interactive visualiser.
  $('#sheet-diagram').querySelectorAll('[data-component]').forEach(part=>{part.removeAttribute('tabindex');part.removeAttribute('role');});
- $('#edit-sheet').href=basketId?'/les-paul-kits/?edit='+encodeURIComponent(basketId):builderURL(config);$('#sheet-content').hidden=false;$('#print-sheet').disabled=false;
+ $('#edit-sheet').href=basketId?deploymentPath('/les-paul-kits/?edit='+encodeURIComponent(basketId)):builderURL(config);$('#sheet-content').hidden=false;$('#print-sheet').disabled=false;
  $('#print-sheet').addEventListener('click',()=>window.print());
 }catch(error){$('#sheet-status').textContent=error.message;}

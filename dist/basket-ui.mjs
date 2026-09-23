@@ -2,8 +2,9 @@ import {generatorURL,installationGuideURL} from './wiring-generator/session.mjs'
 import {productById,money} from './components/catalogue.mjs';
 import {specLabels} from './les-paul-kits/config.mjs';
 import {basketCount} from './commerce.mjs';
+import {deploymentPath} from './deployment.mjs';
 export function el(tag,cls,text){const node=document.createElement(tag);if(cls)node.className=cls;if(text!==undefined)node.textContent=text;return node;}
-export function link(text,href,cls='text-link'){const a=el('a',cls,text);a.href=href;return a;}
+export function link(text,href,cls='text-link'){const a=el('a',cls,text);a.href=deploymentPath(href);return a;}
 export function emptyBasket(){const box=el('section','empty-basket');box.append(el('p','eyebrow','YOUR NEXT UPGRADE STARTS HERE'),el('h2','','Your basket is waiting.'),el('p','','Explore components and wiring kits to plan your next upgrade.'),link('Explore components ↗','/components/','button'),link('Explore wiring kits','/wiring-kits/'));return box;}
 export function itemCard(item,{editable=false,onQuantity,onRemove}={}){
  const product=item.product==='component'?productById(item.sku):null;

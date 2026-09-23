@@ -3,6 +3,7 @@ import {basketOrderItems} from './handoff.mjs';
 import {createComponentStore,parseGBP,priceInput} from '../data.mjs';
 import {readBasket} from '../../commerce.mjs';
 import {el,money,showItem} from './view.mjs';
+import {deploymentPath} from '../../deployment.mjs';
 const query=new URLSearchParams(location.search);
 if(query.get('new')==='1')setup();
 function setup(){
@@ -50,7 +51,7 @@ function setup(){
  try{
   const deliveryPrice=parseGBP(field('deliveryPrice').value);if(deliveryPrice===null)throw new Error('Enter delivery/postage, including 0 if free.');
   const input={channel:field('channel').value,status:field('status').value,customer:{name:field('customerName').value,email:field('email').value,phone:field('phone').value},delivery:Object.fromEntries(['recipient','line1','line2','city','region','postcode','country','method'].map(k=>[k,field(k).value])),deliveryPrice,externalReference:field('externalReference').value,notes:field('notes').value,items:rows.map(asItem)};
-  const record=await browserOrderStore().create(input,requestId);dirty=false;location.assign('/admin/orders/?id='+encodeURIComponent(record.id));
+  const record=await browserOrderStore().create(input,requestId);dirty=false;location.assign(deploymentPath('/admin/orders/?id='+encodeURIComponent(record.id)));
  }catch(error){message(error);busy=false;$('#save-order').disabled=false;}
  });
  try{refresh();if(query.has('basket'))importBasket();else render();}catch(e){message(e);}

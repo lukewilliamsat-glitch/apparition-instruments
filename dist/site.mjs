@@ -1,14 +1,11 @@
 import {basketCount} from './commerce.mjs';
+import {deploymentPath,deploymentRoot} from './deployment.mjs';
 // Keep existing root-relative routes inside a project subpath when the site is
 // hosted below the domain root (for example on GitHub Pages).
-const deploymentRoot=new URL('.',import.meta.url);
 function keepInDeploymentRoot(element){
  for(const attribute of ['href','src','action']){
   const value=element?.getAttribute?.(attribute);
-  if(value?.startsWith('/')&&!value.startsWith(deploymentRoot.pathname)){
-   const url=new URL(value.slice(1),deploymentRoot);
-   element.setAttribute(attribute,url.pathname+url.search+url.hash);
-  }
+  if(value?.startsWith('/'))element.setAttribute(attribute,deploymentPath(value));
  }
 }
 if(deploymentRoot.pathname!=='/'){

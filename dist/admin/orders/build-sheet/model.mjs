@@ -1,3 +1,4 @@
+import {deploymentPath} from '../../../deployment.mjs';
 // Purchased content is read exclusively from the immutable order snapshot.
 export function assemblyLines(order){return order.items.map((item,index)=>({item,index})).filter(x=>x.item.type==='kit');}
 export function buildContext(order,itemIndex=null,unit=1){
@@ -8,7 +9,7 @@ export function buildContext(order,itemIndex=null,unit=1){
  if(!item.snapshot?.configuration||!item.snapshot?.specification)throw new Error('The saved order does not contain a complete kit specification.');
  return {key:order.id+':'+index+':'+unit,orderId:order.id,itemIndex:index,unit,quantity:item.quantity,reference:order.reference,createdAt:order.createdAt,channel:order.channel,orderStatus:order.status,customer:order.customer.name||'Not supplied',kitName:item.snapshot.kitName||item.name,snapshot:structuredClone(item.snapshot)};
 }
-export function buildSheetURL(orderId,itemIndex=null,unit=1){const q=new URLSearchParams({order:orderId,unit:String(unit)});if(itemIndex!==null)q.set('item',String(itemIndex));return '/admin/orders/build-sheet/?'+q;}
+export function buildSheetURL(orderId,itemIndex=null,unit=1){const q=new URLSearchParams({order:orderId,unit:String(unit)});if(itemIndex!==null)q.set('item',String(itemIndex));return deploymentPath('/admin/orders/build-sheet/?'+q);}
 
 import {aggregateRequirements} from '../../assemblies.mjs';
 export function pickList(context){

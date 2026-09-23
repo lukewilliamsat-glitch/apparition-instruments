@@ -1,5 +1,6 @@
 import {lesPaul,formatKitPrice,specLabels} from '../../les-paul-kits/config.mjs';
 import {recommend} from './recommend.mjs';
+import {deploymentPath} from '../../deployment.mjs';
 const group=(key,title,choices,note='')=>({key,title,choices,note});
 const unsure=['unsure',"I’m not sure"];
 const steps=[
@@ -28,7 +29,7 @@ function showResult(){
  const why=el('details','recommendation-why');why.open=true;why.append(el('summary','','Why these choices?'));const list=el('ul');result.reasons.forEach(reason=>list.append(el('li','',reason)));why.append(list);mount.append(why);
  const check=el('aside','fitment-check');check.append(el('h2','','Before you build'));result.checks.forEach(note=>check.append(el('p','',note)));mount.append(check);
  const a=el('a','button','CONFIGURE THIS KIT →');a.href=result.url;mount.append(a);
- }else{mount.append(el('p','guide-note',result.message));const a=el('a','button',result.route.startsWith('/components')?'Explore components →':'Explore planned kits →');a.href=result.route;mount.append(a);}
+ }else{mount.append(el('p','guide-note',result.message));const a=el('a','button',result.route.startsWith('/components')?'Explore components →':'Explore planned kits →');a.href=deploymentPath(result.route);mount.append(a);}
  const actions=el('div','guide-actions');actions.append(button('← Review answers',()=>render()),button('Start again',()=>{for(const key of Object.keys(answers))delete answers[key];index=0;render();}));mount.append(actions);focusHeading();
 }
 render(false);

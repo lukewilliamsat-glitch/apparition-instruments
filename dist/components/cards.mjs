@@ -1,12 +1,13 @@
 import {catalogue,money} from './catalogue.mjs';
 import {categories} from '../admin/data.mjs';
+import {deploymentPath} from '../deployment.mjs';
 const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 export function renderComponentCards(){
- const all=location.pathname.replace(/\/$/,'')==='/components',fallbacks=new Map();
+ const all=location.pathname.replace(/\/$/,'')===deploymentPath('/components'),fallbacks=new Map();
  for(const section of document.querySelectorAll('.component-section')){const mark=section.querySelector('.component-mark');if(mark)fallbacks.set(section.id,mark.cloneNode(true));}
  if(all)for(const category of [...new Set(catalogue.map(p=>p.category))])if(!document.getElementById(category)){
   const section=el('section','component-section');section.id=category;const heading=el('div','component-section-heading');heading.append(el('p','eyebrow','COMPONENTS'),el('h2','',categories[category]));section.append(heading,el('div','component-grid'));document.querySelector('.component-section:last-of-type').after(section);
-  const filters=document.querySelector('.component-filters');if(filters){const link=el('a','',categories[category]);link.href='/components/?category='+category;link.dataset.categoryFilter=category;filters.append(link);}
+  const filters=document.querySelector('.component-filters');if(filters){const link=el('a','',categories[category]);link.href=deploymentPath('/components/?category='+category);link.dataset.categoryFilter=category;filters.append(link);}
  }
  for(const section of document.querySelectorAll('.component-section')){
   const grid=section.querySelector('.component-grid');grid.replaceChildren();

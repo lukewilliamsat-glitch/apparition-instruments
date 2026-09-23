@@ -1,4 +1,5 @@
 import {lesPaul,formatKitPrice,upgradeLabel} from '../wiring-kits/kit-data.mjs';
+import {deploymentPath} from '../deployment.mjs';
 export {lesPaul,formatKitPrice,upgradeLabel};
 export const defaults=Object.freeze({...lesPaul.defaults});
 export const options=Object.freeze({...Object.fromEntries(['wiring','pots','shaft','matching','bleed','jack','selector'].map(k=>[k,Object.keys(lesPaul[k])])),caps:[...Object.keys(lesPaul.capacitors),'mixed'],neckCap:Object.keys(lesPaul.capacitors),bridgeCap:Object.keys(lesPaul.capacitors)});
@@ -29,7 +30,7 @@ export function kitRecord(value){
  return {schemaVersion:3,kitType:kitTemplate.id,kitName:lesPaul.name,template:structuredClone(kitTemplate),configuration,specification:describeKit(s),components,potSpecification:{manufacturer:lesPaul.pots[s.pots].label,resistanceOhms:500000,taper:'audio',shaft:lesPaul.shaft[s.shaft].label},toneCapacitors:{neck:{optionId:s.caps==='mixed'?s.neckCap:s.caps,valueMicrofarads:Number(c.neck.value)},bridge:{optionId:s.caps==='mixed'?s.bridgeCap:s.caps,valueMicrofarads:Number(c.bridge.value)}},trebleBleed:{optionId:s.bleed,topology:lesPaul.bleed[s.bleed].topology||lesPaul.bleed[s.bleed].circuit||'none',quantity:s.bleed==='none'?0:2},precisionMatching:{optionId:s.matching,name:lesPaul.matching[s.matching].label,kitAddOn:lesPaul.matching[s.matching].price},pricing:{...priceKit(s),basePrice:lesPaul.basePrice}};
 }
 export function specification(value){const s=describeKit(value),p=priceKit(value);return [lesPaul.name,...Object.entries(s).map(([k,v])=>`${specLabels[k]}: ${v}`),'',...p.lines.map(l=>`${l.label}: ${l.key==='base'?formatKitPrice(l.price):upgradeLabel(l.price)}`),`KIT TOTAL: ${formatKitPrice(p.total)}`,'Delivery additional, to be confirmed. Online ordering coming soon.'].join('\n');}
-export function builderURL(value){return lesPaul.builder+'?'+new URLSearchParams({kit:'les-paul',config:JSON.stringify(normaliseKit(value))}).toString();}
+export function builderURL(value){return deploymentPath(lesPaul.builder+'?'+new URLSearchParams({kit:'les-paul',config:JSON.stringify(normaliseKit(value))}).toString());}
 export function configurationFromURL(search){const params=new URLSearchParams(search);if(!params.has('config'))return null;if(params.get('kit')!=='les-paul')throw new Error('This kit type is not available in this builder.');const raw=params.get('config');if(raw.length>3000)throw new Error('That configuration link could not be read.');let value;try{value=JSON.parse(raw);}catch{throw new Error('That configuration link could not be read.');}if(!value||Array.isArray(value)||typeof value!=='object')throw new Error('That configuration link could not be read.');return normaliseKit(value);}
 
-export function specificationURL(value){const url=builderURL(value);return '/wiring-kits/specification/'+url.slice(url.indexOf('?'));}
+export function specificationURL(value){const url=builderURL(value);return deploymentPath('/wiring-kits/specification/'+url.slice(url.indexOf('?')));}
