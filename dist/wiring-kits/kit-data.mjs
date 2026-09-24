@@ -1,10 +1,10 @@
 import {kitDefinitions as original} from './kit-seed.mjs';
 import {componentRepository} from '../admin/component-repository.mjs';
-import {createAssemblyStore,lesPaulKitAssembly,lesPaulKitDefinitionId,normaliseKitDefinition} from '../admin/assemblies.mjs';
+import {lesPaulKitAssembly,lesPaulKitDefinitionId,normaliseKitDefinition} from '../admin/assemblies.mjs';
+import {assemblyRepository} from '../admin/assembly-repository.mjs';
 import {resolveMappedComponent,availableBuilderValues} from './builder-options.mjs';
 import {extendPotentiometerDefinition} from './kit-component-discovery.mjs';
 const componentSnapshot=component=>({id:component.id,sku:component.sku,name:component.name,productTitle:component.productTitle||component.name,manufacturer:component.manufacturer,active:component.active,inKits:component.inKits,category:component.category,stock:component.stock,description:component.description||'',specification:structuredClone(component.specs||{}),kitPrice:component.kitPrice});
-const currentKitAssembly=()=>{if(typeof window==='undefined')return lesPaulKitAssembly;return createAssemblyStore(window.localStorage).list().find(assembly=>assembly.id===lesPaulKitDefinitionId||assembly.kind==='wiring-kit'&&assembly.kitDefinition?.family==='les-paul')||lesPaulKitAssembly;};
 export function configuredKitDefinitions(records,assembly=lesPaulKitAssembly){
  const definitions=structuredClone(original),kit=definitions['les-paul'];
  const definition=extendPotentiometerDefinition(normaliseKitDefinition(assembly.kitDefinition),records),groups=definition.builderOptions,resolver=definition.componentResolvers.find(item=>item.key==='potentiometers'),resolverGroups=resolver.groupKeys.map(key=>groups.find(group=>group.key===key)),mappings=resolver.mappings,permittedComponentIds=definition.permittedComponentIds,components=records.filter(item=>mappings.some(mapping=>mapping.componentId===item.id)).map(componentSnapshot);kit.builderEnabled=!!(assembly.active&&definition.builderEnabled);const builderModel={groups:resolverGroups,mappings,permittedComponentIds,components,resolverKey:resolver.key,enabled:kit.builderEnabled};
@@ -28,7 +28,12 @@ export function configuredKitDefinitions(records,assembly=lesPaulKitAssembly){
 }
 export function resolveKitComponent(kit,selection){return resolveMappedComponent(kit.builderModel,selection,kit.builderModel.components);}
 export function availableKitValues(kit,groupKey,selection){return availableBuilderValues(kit.builderModel,groupKey,selection,kit.builderModel.components);}
-export async function loadConfiguredKitDefinitions(repository=componentRepository(),assembly=currentKitAssembly()){return configuredKitDefinitions(await repository.list(),assembly);}
+export async function loadConfiguredKitDefinitions(repository=componentRepository(),assembly=null,definitions=assemblyRepository()){
+ const [records,kits]=await Promise.all([repository.list(),assembly?Promise.resolve([assembly]):definitions.list()]);
+ const selected=assembly||kits.find(item=>item.id===lesPaulKitDefinitionId||item.kind==='wiring-kit'&&item.kitDefinition?.family==='les-paul');
+ if(!selected)throw new Error('Les Paul Wiring Kit Definition is unavailable.');
+ return configuredKitDefinitions(records,selected);
+}
 export const kitDefinitions=await loadConfiguredKitDefinitions();
 export const lesPaul=kitDefinitions['les-paul'];
 export const formatKitPrice=pence=>Number.isFinite(pence)?new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(pence/100):'Price unavailable';

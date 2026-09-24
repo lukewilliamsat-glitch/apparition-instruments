@@ -3,7 +3,7 @@ import {readFileSync} from 'node:fs';
 import {spawnSync} from 'node:child_process';
 import {Window} from 'happy-dom';
 
-const scenarios=['base','price-base','defaults','permissions','stock','zero-stock','stock-default','price-difference','zero-code'];
+const scenarios=['base','price-base','defaults','permissions','stock','zero-stock','stock-default','price-difference','zero-code','hidden-listing','disabled-builder','inactive'];
 if(!process.argv[2]){
  for(const scenario of scenarios){const result=spawnSync(process.execPath,[new URL(import.meta.url).pathname,scenario],{encoding:'utf8'});if(result.status!==0)throw new Error(scenario+' DOM runtime failed:\n'+result.stderr+'\n'+result.stdout);console.log(result.stdout.trim());}
  process.exit(0);
@@ -28,6 +28,9 @@ if(scenario==='price-base')kit.kitDefinition.basePrice=7350;
 kit.kitDefinition.defaults.wiring='modern';
 kit.kitDefinition.defaults.componentIds.neckCapacitor='sbe-200';
 kit.kitDefinition.defaults.componentIds.bridgeCapacitor='cde-022';
+if(scenario==='hidden-listing')kit.kitDefinition.showOnWiringKits=false;
+if(scenario==='disabled-builder')kit.kitDefinition.builderEnabled=false;
+if(scenario==='inactive')kit.active=false;
 if(scenario==='defaults'){
  kit.kitDefinition.builderOptions.find(g=>g.key==='pots').defaultValue='Alpha';
  kit.kitDefinition.builderOptions.find(g=>g.key==='shaft').defaultValue='long';
@@ -48,9 +51,13 @@ if(scenario==='zero-code'){
 }
 assemblies.save(kit,kit.id);
 const errors=[];window.addEventListener('error',event=>errors.push(event.error||event.message));
-await import('../dist/les-paul-kits/kits.mjs');
+await import('../dist/wiring-kits/builder-entry.mjs');
 assert.deepEqual(errors,[],'no exception in actual Builder entry');
 const $=selector=>document.querySelector(selector);
+if(['disabled-builder','inactive'].includes(scenario)){
+ assert.equal($('.kit-main').hidden,true);assert.equal($('#builder-status').hidden,false);assert.match($('#builder-status').textContent,/not currently available/);assert.equal($('#add-to-basket').disabled,true);await window.happyDOM.abort();console.log('Builder DOM '+scenario+': direct disabled route fails safely.');process.exit(0);
+}
+assert.equal($('#builder-status').hidden,true);assert.equal($('.kit-main').hidden,false);
 assert.notEqual($('#kit-price').textContent,'Calculating…');
 assert.equal($('#kit-price').textContent,$('#builder-total').textContent);
 assert.equal($('#kit-price').textContent,scenario==='defaults'?'£88.00':scenario==='price-base'?'£73.50':'£71.00');

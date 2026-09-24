@@ -1,0 +1,58 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {Window} from 'happy-dom';
+import {createAssemblyStore,lesPaulKitDefinitionId,assemblyStorageKey} from '../dist/admin/assemblies.mjs';
+import {createLocalAssemblyRepository,setAssemblyRepository} from '../dist/admin/assembly-repository.mjs';
+import {createKitFamilyRepository,familyAdapters} from '../dist/wiring-kits/family-repository.mjs';
+import {startKitBuilder} from '../dist/wiring-kits/builder-shell.mjs';
+
+const memory=new Map(),storage={getItem:key=>memory.get(key)??null,setItem:(key,value)=>memory.set(key,value)};
+const store=createAssemblyStore(storage),repository=createLocalAssemblyRepository(storage);
+const first=repository.list();assert(first instanceof Promise);const lesPaul=(await first).find(item=>item.id===lesPaulKitDefinitionId);
+assert.equal((await repository.get(lesPaulKitDefinitionId)).kitDefinition.family,'les-paul');
+const families=createKitFamilyRepository(repository);
+assert.deepEqual((await families.visible()).map(item=>item.id),[lesPaulKitDefinitionId]);
+assert.equal((await families.get('les-paul')).slug,'les-paul');
+assert.equal((await families.builder('les-paul')).route,'/les-paul-kits/');
+assert.deepEqual((await families.builders()).map(item=>item.id),[lesPaulKitDefinitionId]);
+const edit=(patch,definition={})=>store.save({...store.list().find(item=>item.id===lesPaulKitDefinitionId),...patch,kitDefinition:{...store.list().find(item=>item.id===lesPaulKitDefinitionId).kitDefinition,...definition}},lesPaulKitDefinitionId);
+edit({}, {showOnWiringKits:false});assert.equal((await families.visible()).length,0);assert(await families.builder('les-paul'),'hiding the listing does not disable a direct Builder route');
+edit({}, {showOnWiringKits:true});assert.equal((await families.visible()).length,1);
+edit({}, {builderEnabled:false});assert.equal((await families.visible()).length,1);assert.equal(await families.builder('les-paul'),null);
+assert.equal((await families.builders()).length,0);
+edit({}, {builderEnabled:true});assert(await families.builder('les-paul'));
+edit({active:false});assert.equal((await families.visible()).length,0);assert.equal(await families.builder('les-paul'),null);
+edit({active:true});assert.equal((await families.visible()).length,1);assert(await families.builder('les-paul'));
+
+const synthetic=structuredClone(lesPaul);Object.assign(synthetic,{name:'Test Family Wiring Kit',sku:'KIT-TEST'});synthetic.kitDefinition.family='test-family';const syntheticId=store.save(synthetic).id;
+const testAdapter={collection:'Test collection',capabilities:{optionGroups:['test'],diagram:false,basket:false},async load(){return {resolve:()=>({}),mount:async()=>{}};}};
+const extended=createKitFamilyRepository(repository,{...familyAdapters,'test-family':testAdapter});
+assert((await extended.visible()).some(item=>item.id===syntheticId&&item.route==='/wiring-kits/build/?family=test-family'));
+assert.equal((await families.visible()).length,1,'unregistered family must not be offered as a broken customer Builder');
+const incomplete={...testAdapter,load:async()=>({resolve:()=>({})})},incompleteRepository=createKitFamilyRepository(repository,{...familyAdapters,'test-family':incomplete});
+const status={textContent:'',hidden:false},main={hidden:false};
+assert.equal((await startKitBuilder('test-family',{repository:incompleteRepository,status,main})).status,'unavailable');
+assert.equal(main.hidden,true);assert.match(status.textContent,/not ready/);
+assert.equal((await startKitBuilder('unsupported',{repository:extended,status,main})).status,'unavailable');
+
+for(const path of ['dist/wiring-kits/family-repository.mjs','dist/wiring-kits/builder-shell.mjs','dist/wiring-kits/builder-entry.mjs','dist/wiring-kits/landing.mjs','dist/wiring-kits/kit-data.mjs'])assert(!readFileSync(new URL('../'+path,import.meta.url),'utf8').includes('localStorage'),path+' must use a repository boundary');
+assert(!readFileSync(new URL('../dist/wiring-kits/index.html',import.meta.url),'utf8').includes('<a href="/les-paul-kits/">Les Paul'));
+assert(readFileSync(new URL('../dist/wiring-kits/build/index.html',import.meta.url),'utf8').includes('builder-entry.mjs'));
+assert(readFileSync(new URL('../dist/les-paul-kits/index.html',import.meta.url),'utf8').includes('builder-entry.mjs'));
+const admin=readFileSync(new URL('../dist/admin/admin.mjs',import.meta.url),'utf8');assert(admin.includes("$('#add-assembly').hidden=true"));
+
+const window=new Window({url:'https://example.test/wiring-kits/'});
+window.happyDOM.settings.disableJavaScriptEvaluation=true;window.happyDOM.settings.disableCSSFileLoading=true;window.happyDOM.settings.disableJavaScriptFileLoading=true;
+for(const key of ['window','document','location','CSS','Event'])Object.defineProperty(globalThis,key,{value:key==='window'?window:window[key],configurable:true,writable:true});
+document.write(readFileSync(new URL('../dist/wiring-kits/index.html',import.meta.url),'utf8'));
+setAssemblyRepository(repository);
+await import('../dist/wiring-kits/landing.mjs');
+assert.equal(document.querySelector('[data-kit-direct]').hidden,false);
+assert.equal(document.querySelector('[data-kit-direct]').getAttribute('href'),'/les-paul-kits/');
+assert.equal(document.querySelectorAll('.family-browser a[href="/les-paul-kits/"]').length,1);
+assert(!document.querySelector('.family-browser').textContent.includes('Test Family'),'unsupported family must not publish');
+await window.happyDOM.abort();
+const unreadable=new Map([[assemblyStorageKey,'{"version":3,"items":']]),badStorage={getItem:key=>unreadable.get(key)??null,setItem:(key,value)=>unreadable.set(key,value)};
+await assert.rejects(()=>createLocalAssemblyRepository(badStorage).list(),/No data was reset/);
+assert.equal(unreadable.get(assemblyStorageKey),'{"version":3,"items":');
+console.log('P04B repository, family identity/discovery, visibility flags, unsupported-family safety and landing DOM passed.');

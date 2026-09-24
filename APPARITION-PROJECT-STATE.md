@@ -59,6 +59,14 @@ The Wiring Diagram Generator retains its known routing and readability issue aff
 
 Invoicing is not yet implemented.
 
+## Wiring Kit family foundation
+
+Les Paul is the only active production Wiring Kit family. Customer family discovery and Builder loading use the existing Assembly / Kit Definition through an asynchronous repository boundary. Family-specific electrical resolution remains in its adapter; physical products remain Component and Kit Definition data.
+
+Known accepted limitation: adding a third potentiometer brand in Components does not automatically create a new customer-facing brand choice. Admin can discover and map the Component, but the existing Alpha/CTS customer choice dimensions remain as configured. Do not patch this by hard-coding another brand.
+
+During the future shared-backend migration, structured Component attributes and Kit Definition data must support generating new customer option dimensions without source-code registration. This is deferred; no shared backend is implemented.
+
 ## Next architecture phase
 
 The next major architecture phase is:

@@ -27,3 +27,4 @@
 @media(max-width:420px){.kit-summary dl>div,.mixed-values{grid-template-columns:minmax(0,1fr)}.kit-summary dd{text-align:left}.kit-page .kit-summary{padding:18px}.kit-summary h2{font-size:31px}.kit-page .form-heading{flex-wrap:wrap}}
 
 .kit-form .choice strong,.kit-form .section-selection{overflow-wrap:anywhere}
+.kit-main[hidden]{display:none}
