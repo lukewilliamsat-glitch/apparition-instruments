@@ -3,6 +3,7 @@ import {moveSpecification} from './product-content.mjs';
 import {categories,specificationFields,fieldLabels,parseGBP,priceInput} from './data.mjs';
 import {componentRepository} from './component-repository.mjs';
 import {prepareComponentExport} from './component-export.mjs';
+import {prepareAssemblyExport} from './assembly-export.mjs';
 import {readImage,imageSource} from './images.mjs';
 import {kitBindings} from './kit-bindings.mjs';
 const $=s=>document.querySelector(s),el=(tag,value)=>{const n=document.createElement(tag);if(value!==undefined)n.textContent=value;return n;};
@@ -57,6 +58,27 @@ $('#download-component-export').addEventListener('click',()=>{
   link.href=url;link.download='apparition-components-inventory-'+pendingExport.payload.exportedAt.slice(0,10)+'.json';document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
   $('#component-export-summary').textContent='Private export downloaded. Keep the JSON file intact for migration review.';
  }catch(error){$('#component-export-summary').textContent=error.message;}
+});
+let pendingAssemblyExport=null;
+$('#preview-assembly-export').addEventListener('click',()=>{
+ pendingAssemblyExport=null;$('#download-assembly-export').hidden=true;
+ try{
+  const snapshot=prepareAssemblyExport(window.localStorage);
+  pendingAssemblyExport=snapshot;
+  const {assemblyCount,kitDefinitionCount,bomRows,storedVersion,kitDefinitions,lesPaulFound}=snapshot.summary;
+  $('#assembly-export-summary').textContent=`Saved v${storedVersion}: ${assemblyCount} Assemblies, ${kitDefinitionCount} Kit Definitions, ${bomRows} BOM rows. Les Paul: ${lesPaulFound?'present':'not found'}. ${kitDefinitions.map(kit=>kit.name+' ('+kit.family+')').join('; ')||'No wiring kits'}. No data changed.`;
+  $('#download-assembly-export').hidden=false;
+ }catch(error){$('#assembly-export-summary').textContent=error.message;}
+});
+$('#download-assembly-export').addEventListener('click',()=>{
+ try{
+  if(!pendingAssemblyExport)throw new Error('Preview the Assembly export first.');
+  const latest=prepareAssemblyExport(window.localStorage);
+  if(latest.payload.raw!==pendingAssemblyExport.payload.raw){pendingAssemblyExport=null;$('#download-assembly-export').hidden=true;throw new Error('Assembly data changed since preview. Preview again to export current values.');}
+  const blob=new Blob([JSON.stringify(pendingAssemblyExport.payload)],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');
+  link.href=url;link.download='apparition-assemblies-kit-definitions-'+pendingAssemblyExport.payload.exportedAt.slice(0,10)+'.json';document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+  $('#assembly-export-summary').textContent='Private Assembly export downloaded. Keep the JSON intact for migration validation.';
+ }catch(error){$('#assembly-export-summary').textContent=error.message;}
 });
 for(const b of document.querySelectorAll('[data-view]'))b.addEventListener('click',()=>{view=b.dataset.view;for(const x of document.querySelectorAll('[data-view]'))x.setAttribute('aria-pressed',String(x===b));run(render);});
 $('#search').addEventListener('input',()=>run(render));$('#category-filter').addEventListener('change',()=>run(render));
