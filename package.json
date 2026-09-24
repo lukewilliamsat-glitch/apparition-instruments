@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "test:kit-runtime": "node tests/kit-builder-dom.mjs",
-    "test:kit-families": "node tests/kit-families.mjs"
+    "test:kit-families": "node tests/kit-families.mjs",
+    "test:backend-foundation": "node tests/backend-foundation.mjs"
   },
   "devDependencies": {
     "happy-dom": "^20.14.5"
