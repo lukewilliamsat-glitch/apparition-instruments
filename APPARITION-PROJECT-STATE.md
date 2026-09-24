@@ -63,9 +63,9 @@ Invoicing is not yet implemented.
 
 Les Paul is the only active production Wiring Kit family. Customer family discovery and Builder loading use the existing Assembly / Kit Definition through an asynchronous repository boundary. Family-specific electrical resolution remains in its adapter; physical products remain Component and Kit Definition data.
 
-Known accepted limitation: adding a third potentiometer brand in Components does not automatically create a new customer-facing brand choice. Admin can discover and map the Component, but the existing Alpha/CTS customer choice dimensions remain as configured. Do not patch this by hard-coding another brand.
+P06A discovers supported active, kit-eligible Components from Supabase by category and structured specifications. A new potentiometer brand/shaft, supported tone capacitor, treble bleed, 3-way toggle or mono output jack becomes a Kit Definition candidate without a source edit; kit-specific permission is still required before customer use. Existing saved resolver mappings and defaults remain authoritative. Zero stock affects availability, not configuration eligibility. Existing Generator tone-capacitor values remain 0.022, 0.033 and 0.047 µF; other values await Generator support.
 
-Future Kit Definition work must support generating new customer option dimensions without source-code registration. Component, Inventory and existing Kit Definition persistence are complete.
+Admin may permanently delete an unused Component after confirmation. A transactional Supabase function checks Assembly BOM, Kit Definition permissions, defaults and resolver references; referenced Components cannot be deleted. The database policy also blocks a direct Admin DELETE of referenced Components. Inventory is removed atomically with an unused Component. Deactivation with `Active = false` remains the non-destructive alternative. Existing browser-local order snapshots are not a shared database dependency ledger.
 
 ## Next architecture phase
 

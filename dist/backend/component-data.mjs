@@ -62,7 +62,18 @@ export function createAdminComponentRepository(transport){
   await write('inventory','PATCH',idQuery(id)+'&quantity=eq.'+before.quantity,{quantity:next});
   return (await list()).find(item=>item.id===id);
  };
- return Object.freeze({list,changeStock,async save(input,originalId=null){
+ return Object.freeze({list,changeStock,async remove(id){
+  if(typeof id!=='string'||!id.trim())throw new Error('Choose a Component to delete.');
+  const response=await transport.send('rpc/delete_unused_component',{method:'POST',body:{p_component_id:id}});
+  if(!response.ok)throw new Error('Component deletion is unavailable ('+response.status+'). No data was removed.');
+  const result=await response.json();
+  if(result?.deleted===true)return result;
+  if(Array.isArray(result?.dependencies)&&result.dependencies.length){
+   const reasons=result.dependencies.map(item=>item.assembly+' — '+item.reason);
+   throw new Error('Cannot delete this Component. Used by: '+reasons.join('; ')+'. Remove or change those dependencies first.');
+  }
+  throw new Error(result?.reason||'Component was not deleted. Refresh Admin.');
+ },async save(input,originalId=null){
   const items=await list(),record=normaliseComponentInput(input,items,originalId),old=items.find(item=>item.id===originalId);
   const component={id:record.id,sku:record.sku,name:record.name,category:record.category,
    manufacturer:record.manufacturer,description:record.description,specs:record.specs,

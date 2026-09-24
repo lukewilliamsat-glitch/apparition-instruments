@@ -3,16 +3,16 @@ import {componentRepository} from '../admin/component-repository.mjs';
 import {lesPaulKitAssembly,lesPaulKitDefinitionId,normaliseKitDefinition} from '../admin/assemblies.mjs';
 import {assemblyRepository} from '../admin/assembly-repository.mjs';
 import {resolveMappedComponent,availableBuilderValues} from './builder-options.mjs';
-import {extendPotentiometerDefinition} from './kit-component-discovery.mjs';
+import {extendPotentiometerDefinition,discoverKitCandidates,toneCapacitance} from './kit-component-discovery.mjs';
 const componentSnapshot=component=>({id:component.id,sku:component.sku,name:component.name,productTitle:component.productTitle||component.name,manufacturer:component.manufacturer,active:component.active,inKits:component.inKits,category:component.category,stock:component.stock,description:component.description||'',specification:structuredClone(component.specs||{}),kitPrice:component.kitPrice});
 export function configuredKitDefinitions(records,assembly=lesPaulKitAssembly){
  const definitions=structuredClone(original),kit=definitions['les-paul'];
  const definition=extendPotentiometerDefinition(normaliseKitDefinition(assembly.kitDefinition),records),groups=definition.builderOptions,resolver=definition.componentResolvers.find(item=>item.key==='potentiometers'),resolverGroups=resolver.groupKeys.map(key=>groups.find(group=>group.key===key)),mappings=resolver.mappings,permittedComponentIds=definition.permittedComponentIds,components=records.filter(item=>mappings.some(mapping=>mapping.componentId===item.id)).map(componentSnapshot);kit.builderEnabled=!!(assembly.active&&definition.builderEnabled);const builderModel={groups:resolverGroups,mappings,permittedComponentIds,components,resolverKey:resolver.key,enabled:kit.builderEnabled};
  kit.basePrice=definition.basePrice;kit.id=assembly.id;kit.name=assembly.name;kit.family=definition.family;kit.showOnWiringKits=!!(assembly.active&&definition.showOnWiringKits);kit.builderModel=builderModel;kit.records=records.map(componentSnapshot);kit.defaults={...kit.defaults,...definition.defaults};kit.defaultWarnings=[];
  for(const group of groups){kit[group.key]=Object.fromEntries(group.values.map(value=>{const enabled=kit.builderEnabled&&value.enabled&&mappings.some(mapping=>mapping.selection[group.key]===value.key&&resolveMappedComponent(builderModel,mapping.selection,records));return [value.key,{label:value.label,price:0,description:'',enabled}];}));kit.defaults[group.key]=group.defaultValue;}
- const eligible=(item,category)=>item?.category===category&&item.active&&item.inKits&&permittedComponentIds.includes(item.id);
- const catalogue=(category)=>records.filter(item=>eligible(item,category)).sort((a,b)=>(a.productTitle||a.name).localeCompare(b.productTitle||b.name));
- const physical=(item,quantity=1)=>({label:item.productTitle||item.name,description:item.description||'',componentId:item.id,component:componentSnapshot(item),price:Number.isSafeInteger(item.kitPrice)?item.kitPrice:NaN,quantity,enabled:kit.builderEnabled,value:item.specs?.Value||item.specs?.Capacitor||'',series:item.specs?.Series||'',topology:item.specs?.Topology||''});
+ const discovered=discoverKitCandidates(records);
+ const catalogue=category=>discovered[category].filter(item=>permittedComponentIds.includes(item.id)).sort((a,b)=>(a.productTitle||a.name).localeCompare(b.productTitle||b.name));
+ const physical=(item,quantity=1)=>({label:item.productTitle||item.name,description:item.description||'',componentId:item.id,component:componentSnapshot(item),price:Number.isSafeInteger(item.kitPrice)?item.kitPrice:NaN,quantity,enabled:kit.builderEnabled,value:item.category==='capacitors'?toneCapacitance(item):item.specs?.Capacitor||'',series:item.specs?.Series||'',topology:item.specs?.Topology||''});
  kit.capacitors=Object.fromEntries(catalogue('capacitors').map(item=>[item.id,physical(item)]));
  if(!Object.keys(kit.capacitors).length){kit.capacitors.unavailable={label:'No eligible tone capacitors',description:'Permit an active capacitor in the Kit Definition.',componentId:null,price:NaN,value:'0.022',enabled:false};kit.defaultWarnings.push('No eligible tone capacitors are configured.');}
  kit.bleed={none:{...kit.bleed.none,componentId:null,quantity:0},...Object.fromEntries(catalogue('treble-bleeds').map(item=>[item.id,physical(item,2)]))};
@@ -23,7 +23,7 @@ export function configuredKitDefinitions(records,assembly=lesPaulKitAssembly){
  for(const [key,role] of [['bleed','trebleBleed'],['selector','selector'],['jack','jack']]){const id=definition.defaults.componentIds?.[role];kit.defaults[key]=id?preferred(role,kit[key]):'none';}
  if(kit.defaults.wiring==='50s'&&kit.defaults.bleed!=='none')kit.defaultWarnings.push('Treble bleed default cannot be used with 50s wiring; None is selected.');
  const potDefault=resolveMappedComponent(builderModel,{pots:kit.defaults.pots,shaft:kit.defaults.shaft},components);
- if(!potDefault){kit.defaultWarnings.push('Unavailable default potentiometer and shaft combination.');const first=mappings.find(mapping=>resolveMappedComponent(builderModel,mapping.selection,components));if(first)Object.assign(kit.defaults,first.selection);}
+ if(!potDefault)kit.defaultWarnings.push('Unavailable default potentiometer and shaft combination. Select a valid configuration before adding to basket.');
  return definitions;
 }
 export function resolveKitComponent(kit,selection){return resolveMappedComponent(kit.builderModel,selection,kit.builderModel.components);}
