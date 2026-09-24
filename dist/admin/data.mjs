@@ -55,6 +55,15 @@ function validate(item,items,originalId){
  if(item.kitPriceQuantity!=null&&(!Number.isSafeInteger(item.kitPriceQuantity)||item.kitPriceQuantity<1))throw new Error('Kit price quantity must be a positive whole number.');
  return {...item,...productContent(item),salePrice:item.salePrice??null,kitPrice:item.kitPrice??null,image:validateImage(item.image),sku,name,stock,manufacturer:clean(item.manufacturer),description:clean(item.description,5000),active:!!item.active,individually:!!item.individually,inKits:!!item.inKits,specs};
 }
+// Share the existing validation/normalisation with the network repository.
+export function normaliseComponentInput(input,items,originalId=null){
+ const previous=items.find(item=>item.id===originalId);
+ if(originalId&&!previous)throw new Error('Component no longer exists. Refresh the list.');
+ const record=validate({...previous,...input},items,originalId);
+ record.id=originalId||record.sku;
+ if(!originalId&&items.some(item=>item.id===record.id))throw new Error('That identifier is already in use.');
+ return record;
+}
 export function createComponentStore(storage){
  function write(items){try{storage.setItem(storageKey,JSON.stringify({version:1,items}));}catch{throw new Error('Changes could not be saved. Browser storage may be full or disabled.');}return items;}
  function list(){let raw;try{raw=storage.getItem(storageKey);}catch{throw new Error('Browser storage is unavailable. Enable it to manage components.');}

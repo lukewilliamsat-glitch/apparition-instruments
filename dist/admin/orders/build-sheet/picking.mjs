@@ -3,7 +3,7 @@ import {specLabels} from '../../../les-paul-kits/config.mjs';
 import {pickList,captureBOM} from './model.mjs';
 import {browserProductionStore} from './production.mjs';
 import {createAssemblyStore} from '../../assemblies.mjs';
-import {createComponentStore} from '../../data.mjs';
+import {componentRepository} from '../../component-repository.mjs';
 export function mountPicking(root,context){
  const store=browserProductionStore(),section=el('section');section.id='build-specification';section.append(el('h3','Build specification'),definition(Object.entries(context.snapshot.specification).map(([k,v])=>[specLabels[k]||k,v])));root.append(section);
  const picks=el('section');picks.id='component-picking';picks.append(el('h3','Component pick list'),el('p','Quantities below are for this one kit unit. Picking is a checklist only; nothing is reserved or deducted.'));
@@ -17,7 +17,7 @@ export function mountPicking(root,context){
   const select=el('select');select.setAttribute('aria-label','Production BOM for '+p.name);const none=el('option','Use finished assembly as listed');none.value='';select.append(none);
   let assemblies=[];try{assemblies=createAssemblyStore(localStorage).list().filter(a=>a.active);}catch(e){details.append(el('p',e.message));}
   for(const a of assemblies){const o=el('option',a.name+' · '+a.sku);o.value=a.id;select.append(o);}if(plan&&!assemblies.some(a=>a.id===plan.assemblyId)){const o=el('option',plan.name+' · saved plan');o.value=plan.assemblyId;select.append(o);}select.value=plan?.assemblyId||'';
-  const button=el('button','Save production BOM');button.type='button';button.addEventListener('click',async()=>{try{if(!confirm('Save this production BOM selection? Its picked checks will be reset. The purchased kit will not change.'))return;const selected=select.value?captureBOM(assemblies.find(a=>a.id===select.value),createComponentStore(localStorage).list(),p.quantity):null;await store.update(context,r=>{if(selected)r.bomPlans[p.id]=selected;else delete r.bomPlans[p.id];for(const k of Object.keys(r.picked))if(k===p.id||k.startsWith(p.id+'/'))delete r.picked[k];});render();status.textContent='Production BOM saved. Purchased specification and stock unchanged.';}catch(e){status.textContent=e.message;}});details.append(select,button);tr.children[1].append(details);
+  const button=el('button','Save production BOM');button.type='button';button.addEventListener('click',async()=>{try{if(!confirm('Save this production BOM selection? Its picked checks will be reset. The purchased kit will not change.'))return;const selected=select.value?captureBOM(assemblies.find(a=>a.id===select.value),await componentRepository().list(),p.quantity):null;await store.update(context,r=>{if(selected)r.bomPlans[p.id]=selected;else delete r.bomPlans[p.id];for(const k of Object.keys(r.picked))if(k===p.id||k.startsWith(p.id+'/'))delete r.picked[k];});render();status.textContent='Production BOM saved. Purchased specification and stock unchanged.';}catch(e){status.textContent=e.message;}});details.append(select,button);tr.children[1].append(details);
  }
  if(plan){const caption=el('tr',undefined,'bom-caption'),cell=el('td','Production parts from saved BOM: '+plan.name+' · '+new Date(plan.capturedAt).toLocaleDateString('en-GB'));cell.colSpan=5;caption.append(cell);body.append(caption);for(const part of plan.parts)line(part,p.id+'/'+part.id,true);}
  }

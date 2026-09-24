@@ -1,4 +1,4 @@
-import {createComponentStore,storageKey} from '../data.mjs';
+import {componentRepository} from '../component-repository.mjs';
 import {defaultDraft,createDraftStore,roles,eligible,calculateMaster,draftKey} from './model.mjs';
 const $=s=>document.querySelector(s),form=$('#master-form'),field=k=>form.elements.namedItem(k),el=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;},money=v=>v===null||!Number.isFinite(v)?'Not calculated':new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(v/100);
 let draft,store,inventory=[],ready=false;
@@ -19,5 +19,5 @@ function render(){
 }
 function update(){if(!ready)return;collect();try{store.save(draft);$('#draft-status').textContent='Draft saved in this browser.';}catch(error){$('#draft-status').textContent=error.message;}render();}
 form.addEventListener('submit',e=>e.preventDefault());form.addEventListener('input',update);form.addEventListener('change',update);
-try{store=createDraftStore(window.localStorage);draft=store.load();inventory=createComponentStore(window.localStorage).list();for(const key of ['reference','channel','basePrice','packaging','labourRate','labourMinutes','feePercent','feeFixed'])field(key).value=draft[key]??defaultDraft()[key];populateRows();ready=true;render();$('#draft-status').textContent='Draft loaded. Changes save automatically in this browser.';}catch(error){$('#master-error').textContent=error.message;for(const input of form.querySelectorAll('input,select,button'))input.disabled=true;}
-window.addEventListener('storage',e=>{if(!ready)return;if(e.key===storageKey){try{inventory=createComponentStore(window.localStorage).list();populateRows();render();}catch(error){$('#master-error').textContent=error.message;$('#master-results').hidden=true;}}if(e.key===draftKey)$('#draft-status').textContent='The draft changed in another tab. Reload to use that version before editing.';});
+try{store=createDraftStore(window.localStorage);draft=store.load();inventory=await componentRepository().list();for(const key of ['reference','channel','basePrice','packaging','labourRate','labourMinutes','feePercent','feeFixed'])field(key).value=draft[key]??defaultDraft()[key];populateRows();ready=true;render();$('#draft-status').textContent='Draft loaded. Changes save automatically in this browser.';}catch(error){$('#master-error').textContent=error.message;for(const input of form.querySelectorAll('input,select,button'))input.disabled=true;}
+window.addEventListener('storage',e=>{if(ready&&e.key===draftKey)$('#draft-status').textContent='The draft changed in another tab. Reload to use that version before editing.';});

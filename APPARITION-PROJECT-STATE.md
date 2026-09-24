@@ -53,7 +53,7 @@ Admin and internal systems include:
 - Wiring Kit Master
 - Production Build Sheets covering picking, wiring, build, QC and print layouts
 
-Current application data persistence remains browser-local. Admin, inventory, order and production records are not shared between browsers, profiles or devices, and clearing browser storage can remove them.
+Components and Inventory are shared Supabase business data, with Admin writes protected by Supabase Auth, explicit Admin membership and RLS. Assemblies, Kit Definitions, Orders and production records remain browser-local; clearing browser storage can remove these local records.
 
 The Wiring Diagram Generator retains its known routing and readability issue affecting how some circuit connections are presented. This is banked work, not a transfer discrepancy.
 
@@ -65,24 +65,19 @@ Les Paul is the only active production Wiring Kit family. Customer family discov
 
 Known accepted limitation: adding a third potentiometer brand in Components does not automatically create a new customer-facing brand choice. Admin can discover and map the Component, but the existing Alpha/CTS customer choice dimensions remain as configured. Do not patch this by hard-coding another brand.
 
-During the future shared-backend migration, structured Component attributes and Kit Definition data must support generating new customer option dimensions without source-code registration. This is deferred; no shared backend is implemented.
+Future Kit Definition work must support generating new customer option dimensions without source-code registration. Component and Inventory persistence is complete; Kit Definitions remain local until P05C.
 
 ## Next architecture phase
 
-P05A establishes the version-controlled Supabase schema and public read/provider foundation for the existing `Apparition Instruments Webstore` project. The public GitHub Pages app and Admin still use browser-local business data. P05B will control the Components/Inventory import and authority switch; P05C will handle Assemblies/Kit Definitions. See `supabase/README.md` for data migration, Auth, Storage and Edge Function boundaries. No browser-local data is migrated or cleared in P05A.
+P05A established the version-controlled Supabase schema for the existing `Apparition Instruments Webstore` project. P05B migrated the approved actual browser export: 33 Components and 33 Inventory records. Components and Inventory now use Supabase as the only production authority; the customer catalogue and Builder use the RLS-protected public catalogue and stock boundary. The old browser export remains a private audit snapshot, never an automatic import or fallback. P05C will handle Assemblies and Kit Definitions. See `supabase/README.md` for later Storage and backend boundaries.
 
-P05D-A replaces the temporary browser-password gate with Supabase email/password Auth plus an explicit `admin_members` row enforced by RLS. Admin routes verify identity and membership before loading modules; session restoration and sign-out use Supabase Auth. The initial confirmed Admin account is provisioned as live Auth and membership data, not source credentials. Components, Inventory, Assemblies and Kit Definitions remain browser-local until their separate migration passes. The public website remains unauthenticated.
+The obsolete legacy `price` field was intentionally retired during migration. `salePrice` is the current individual retail selling price and `kitPrice` is the Wiring Kit add-on price; the canonical `pot-short-cts-a` retail price is 699p.
+
+P05D-A replaced the temporary browser-password gate with Supabase email/password Auth plus an explicit `admin_members` row enforced by RLS. Admin routes verify identity and membership before loading modules; session restoration and sign-out use Supabase Auth. The initial confirmed Admin account is provisioned as live Auth and membership data, not source credentials. Assemblies and Kit Definitions remain browser-local until P05C. The public website remains unauthenticated.
 
 The known quantity-aware kit pricing discrepancy remains deferred: CTS kit adjustment is currently charged once instead of once per four physical pots. Resolve generically from the eventual physical Component ID and quantity, not a Les Paul-specific multiplier. P04C family additions remain deferred until shared persistence.
 
-The next major architecture phase is:
-
-- Admin authentication
-- Shared persistent data
-- Components and Inventory persistence
-- Persistent uploaded component and product imagery
-
-The exact persistence architecture has not yet been approved and must not be implemented without an authorised development pass.
+The next persistence pass, P05C, concerns Assemblies, BOMs and Kit Definitions. Persistent uploaded component and product imagery remains separate future work; the approved P05B export contained no local or embedded images.
 
 ## Banked work
 

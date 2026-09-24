@@ -1,6 +1,7 @@
 import {browserOrderStore,channels,statuses,componentOrderItem,kitOrderItem} from './model.mjs';
 import {basketOrderItems} from './handoff.mjs';
-import {createComponentStore,parseGBP,priceInput} from '../data.mjs';
+import {parseGBP,priceInput} from '../data.mjs';
+import {componentRepository} from '../component-repository.mjs';
 import {readBasket} from '../../commerce.mjs';
 import {el,money,showItem} from './view.mjs';
 import {deploymentPath} from '../../deployment.mjs';
@@ -17,8 +18,8 @@ function setup(){
   if(raw&&JSON.parse(raw).items.length!==items.length)throw new Error('Some saved basket items are no longer available or could not be read. Review the basket before importing; nothing was imported.');
   return items;
  }
- function refresh(){
-  inventory=createComponentStore(localStorage).list();kits=[];
+ async function refresh(){
+  inventory=await componentRepository().list();kits=[];
   const cp=$('#component-picker'),kp=$('#kit-picker');cp.replaceChildren(el('option','Choose component'));cp.firstChild.value='';
   for(const item of inventory.filter(p=>p.active&&p.individually)){const o=el('option',(item.productTitle||item.name)+' · '+(Number.isSafeInteger(item.salePrice)?money(item.salePrice):'Enter agreed price'));o.value=item.id;cp.append(o);}
   kp.replaceChildren(el('option','Choose saved kit'));kp.firstChild.value='';
@@ -42,8 +43,8 @@ function setup(){
  });total();}
  $('#add-order-component').addEventListener('click',()=>{try{const c=inventory.find(p=>p.id===$('#component-picker').value);if(!c)throw new Error('Choose a component first.');rows.push({component:structuredClone(c),quantity:'1',price:priceInput(c.salePrice)});dirty=true;render();}catch(e){message(e);}});
  $('#add-order-kit').addEventListener('click',()=>{try{const k=kits.find(p=>p.id===$('#kit-picker').value);if(!k)throw new Error('Choose a saved kit first.');rows.push(rowFrom(kitOrderItem(k.record,1)));dirty=true;render();}catch(e){message(e);}});
- function importBasket(){try{const imported=basketOrderItems(currentBasket(),createComponentStore(localStorage).list());if(rows.length&&!window.confirm('Replace the current order items with this browser’s basket?'))return;rows=imported.map(rowFrom);dirty=true;render();$('#create-order-error').textContent='Basket copied. Review quantities, prices and customer details before creating the order.';}catch(e){message(e);}}
- $('#import-order-basket').addEventListener('click',importBasket);$('#refresh-order-choices').addEventListener('click',()=>{try{refresh();}catch(e){message(e);}});
+ async function importBasket(){try{const imported=basketOrderItems(currentBasket(),await componentRepository().list());if(rows.length&&!window.confirm('Replace the current order items with this browser’s basket?'))return;rows=imported.map(rowFrom);dirty=true;render();$('#create-order-error').textContent='Basket copied. Review quantities, prices and customer details before creating the order.';}catch(e){message(e);}}
+ $('#import-order-basket').addEventListener('click',importBasket);$('#refresh-order-choices').addEventListener('click',()=>refresh().catch(message));
  form.addEventListener('input',()=>{dirty=true;total();});form.addEventListener('change',()=>{dirty=true;});
  window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
  document.addEventListener('click',e=>{const link=e.target.closest('a');if(dirty&&link&&link.target!=='_blank'&&link.origin===location.origin){if(!window.confirm('Leave without saving this order?'))e.preventDefault();else dirty=false;}});
@@ -54,5 +55,5 @@ function setup(){
   const record=await browserOrderStore().create(input,requestId);dirty=false;location.assign(deploymentPath('/admin/orders/?id='+encodeURIComponent(record.id)));
  }catch(error){message(error);busy=false;$('#save-order').disabled=false;}
  });
- try{refresh();if(query.has('basket'))importBasket();else render();}catch(e){message(e);}
+ refresh().then(()=>query.has('basket')?importBasket():render()).catch(message);
 }

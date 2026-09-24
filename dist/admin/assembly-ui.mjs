@@ -1,13 +1,14 @@
 import {createAssemblyStore,assemblyStorageKey,calculateBuildable,kitReferenceStatus,lesPaulKitAssembly} from './assemblies.mjs';
-import {createComponentStore,storageKey,parseGBP,priceInput} from './data.mjs';
+import {parseGBP,priceInput} from './data.mjs';
 import {discoverKitCandidates,extendPotentiometerDefinition,kitCandidateCategories} from '../wiring-kits/kit-component-discovery.mjs';
 const $=s=>document.querySelector(s),el=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;};
-let editing=null,rows=[],kitDraft=null;
-const form=$('#assembly-form'),field=k=>form.elements.namedItem(k),store=()=>createAssemblyStore(window.localStorage),components=()=>createComponentStore(window.localStorage).list();
+let editing=null,rows=[],kitDraft=null,componentRecords=[];
+const form=$('#assembly-form'),field=k=>form.elements.namedItem(k),store=()=>createAssemblyStore(window.localStorage),components=()=>componentRecords;
 const kitRoles={potentiometers:{label:'Potentiometers',category:'potentiometers'},neckCapacitor:{label:'Neck tone capacitor',category:'capacitors'},bridgeCapacitor:{label:'Bridge tone capacitor',category:'capacitors'},trebleBleed:{label:'Treble bleed',category:'treble-bleeds'},jack:{label:'Output jack',category:'jacks'},selector:{label:'Selector switch',category:'switches'}};
 function error(e){$('#assembly-error').textContent=e.message;}
 function refresh(){document.dispatchEvent(new Event('assemblies-changed'));}
-export function renderAssemblies(query=''){
+export function renderAssemblies(query='',inventoryRecords=componentRecords){
+ componentRecords=inventoryRecords;
  const inventory=components(),list=store().list().filter(a=>[a.name,a.sku,a.category,a.kitDefinition?.family].join(' ').toLowerCase().includes(query));$('#count').textContent=list.length+' assemblies';$('#table-caption').textContent='Products / Assemblies';const header=el('tr');for(const title of ['Assembly','Type','Category','BOM rows','Max buildable','Active','Edit'])header.append(el('th',title));$('#table-head').replaceChildren(header);$('#table-body').replaceChildren();$('#empty').hidden=!!list.length;$('#empty').textContent='No assemblies yet, or none match your search. Add an assembly and configure its BOM manually.';
  for(const a of list){const tr=el('tr'),name=el('td',a.name);name.append(el('small',a.sku));tr.append(name,el('td',a.kind==='wiring-kit'?'Wiring Kit Definition':'Assembly'),el('td',a.category),el('td',String(a.bom.length)));const availability=el('td');showBuildable(availability,a.bom,inventory);tr.append(availability,el('td',a.active?'Active':'Inactive'));const actions=el('td');for(const [label,action] of [['Edit',()=>open(a.id)],['Delete',()=>{if(window.confirm('Delete assembly “'+a.name+'”? Component inventory will not be changed.')){store().remove(a.id);refresh();$('#status').textContent='Assembly deleted. Component stock unchanged.';}}]]){const button=el('button',label);button.type='button';if(label==='Delete')button.className='destructive';button.setAttribute('aria-label',label+' '+a.name);button.addEventListener('click',()=>{try{action();}catch(e){$('#status').textContent=e.message;}});actions.append(button);}tr.append(actions);$('#table-body').append(tr);}
 }
@@ -29,7 +30,7 @@ $('#add-assembly').addEventListener('click',()=>{try{open();}catch(e){$('#status
 $('#add-bom-row').addEventListener('click',()=>{rows.push({componentId:'',quantity:1});try{renderRows(true);}catch(e){error(e);}});
 field('kind').addEventListener('change',renderKitFields);
 form.addEventListener('submit',e=>{e.preventDefault();try{const kind=field('kind').value;if(kind==='wiring-kit')kitDraft={...kitDraft,family:field('kitFamily').value,basePrice:parseGBP(field('basePrice').value),showOnWiringKits:field('showOnWiringKits').checked,builderEnabled:field('builderEnabled').checked,defaults:{...kitDraft.defaults,wiring:field('defaultWiring').value,...Object.fromEntries(kitDraft.builderOptions.map(group=>[group.key,group.defaultValue]))}};store().save({name:field('name').value,sku:field('sku').value,category:field('category').value,kind,active:field('active').checked,bom:rows,kitDefinition:kind==='wiring-kit'?kitDraft:undefined},editing);$('#assembly-dialog').close();refresh();$('#status').textContent='Assembly saved in this browser. No stock consumed.';}catch(e){error(e);}});
-window.addEventListener('storage',e=>{if(e.key===assemblyStorageKey||e.key===storageKey||e.key===null){refresh();if($('#assembly-dialog').open)updatePreview();}});
+window.addEventListener('storage',e=>{if(e.key===assemblyStorageKey||e.key===null){refresh();if($('#assembly-dialog').open)updatePreview();}});
 
 function showBuildable(target,bom,inventory){
  const result=calculateBuildable(bom,inventory);target.replaceChildren(el('strong',result.quantity===null?'Not calculated':String(result.quantity)));
