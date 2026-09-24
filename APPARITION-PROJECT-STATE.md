@@ -53,7 +53,7 @@ Admin and internal systems include:
 - Wiring Kit Master
 - Production Build Sheets covering picking, wiring, build, QC and print layouts
 
-Components and Inventory are shared Supabase business data, with Admin writes protected by Supabase Auth, explicit Admin membership and RLS. Assemblies, Kit Definitions, Orders and production records remain browser-local; clearing browser storage can remove these local records.
+Components, Inventory, the Les Paul Assembly/BOM and Kit Definition are shared Supabase business data, with Admin writes protected by Supabase Auth, explicit Admin membership and RLS. Orders and production records remain browser-local; clearing browser storage can remove these local records.
 
 The Wiring Diagram Generator retains its known routing and readability issue affecting how some circuit connections are presented. This is banked work, not a transfer discrepancy.
 
@@ -65,19 +65,19 @@ Les Paul is the only active production Wiring Kit family. Customer family discov
 
 Known accepted limitation: adding a third potentiometer brand in Components does not automatically create a new customer-facing brand choice. Admin can discover and map the Component, but the existing Alpha/CTS customer choice dimensions remain as configured. Do not patch this by hard-coding another brand.
 
-Future Kit Definition work must support generating new customer option dimensions without source-code registration. Component and Inventory persistence is complete; Kit Definitions remain local until P05C.
+Future Kit Definition work must support generating new customer option dimensions without source-code registration. Component, Inventory and existing Kit Definition persistence are complete.
 
 ## Next architecture phase
 
-P05A established the version-controlled Supabase schema for the existing `Apparition Instruments Webstore` project. P05B migrated the approved actual browser export: 33 Components and 33 Inventory records. Components and Inventory now use Supabase as the only production authority; the customer catalogue and Builder use the RLS-protected public catalogue and stock boundary. The old browser export remains a private audit snapshot, never an automatic import or fallback. P05C will handle Assemblies and Kit Definitions. See `supabase/README.md` for later Storage and backend boundaries.
+P05A established the version-controlled Supabase schema for the existing `Apparition Instruments Webstore` project. P05B migrated the approved actual browser export: 33 Components and 33 Inventory records. P05C imported the actual browser's one Les Paul Assembly, three ordered BOM rows and Kit Definition with 23 permitted Components. The approved corrections removed the orphan `Poofart` permission and aligned the legacy potentiometer Component pointer to `pot-short-alpha-a` for the Alpha + short default. Components, Inventory, Assemblies and Kit Definitions now use Supabase as production authority; customer catalogue and Builder use RLS-protected public data. Browser-local exports remain private audit snapshots, never automatic imports or fallbacks. See `supabase/README.md` for later Storage and backend boundaries.
 
 The obsolete legacy `price` field was intentionally retired during migration. `salePrice` is the current individual retail selling price and `kitPrice` is the Wiring Kit add-on price; the canonical `pot-short-cts-a` retail price is 699p.
 
-P05D-A replaced the temporary browser-password gate with Supabase email/password Auth plus an explicit `admin_members` row enforced by RLS. Admin routes verify identity and membership before loading modules; session restoration and sign-out use Supabase Auth. The initial confirmed Admin account is provisioned as live Auth and membership data, not source credentials. Assemblies and Kit Definitions remain browser-local until P05C. The public website remains unauthenticated.
+P05D-A replaced the temporary browser-password gate with Supabase email/password Auth plus an explicit `admin_members` row enforced by RLS. Admin routes verify identity and membership before loading modules; session restoration and sign-out use Supabase Auth. The initial confirmed Admin account is provisioned as live Auth and membership data, not source credentials. The public website remains unauthenticated.
 
 The known quantity-aware kit pricing discrepancy remains deferred: CTS kit adjustment is currently charged once instead of once per four physical pots. Resolve generically from the eventual physical Component ID and quantity, not a Les Paul-specific multiplier. P04C family additions remain deferred until shared persistence.
 
-The next persistence pass, P05C, concerns Assemblies, BOMs and Kit Definitions. Persistent uploaded component and product imagery remains separate future work; the approved P05B export contained no local or embedded images.
+Persistent uploaded component and product imagery remains separate future work; the approved P05B export contained no local or embedded images.
 
 ## Banked work
 

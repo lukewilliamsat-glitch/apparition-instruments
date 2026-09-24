@@ -10,6 +10,8 @@ let assembly=assemblies.list().find(item=>item.id===lesPaulKitDefinitionId);asse
 globalThis.localStorage=storage;globalThis.window={localStorage:storage};
 const {createLocalComponentRepository,setComponentRepository}=await import('../dist/admin/component-repository.mjs');
 setComponentRepository(createLocalComponentRepository(storage));
+const {createLocalAssemblyRepository,setAssemblyRepository}=await import('../dist/admin/assembly-repository.mjs');
+setAssemblyRepository(createLocalAssemblyRepository(storage));
 const config=await import('../dist/les-paul-kits/config.mjs?zero-code-runtime');
 assert(config.options.pots.includes('Test Brand X'),'actual Builder option list must include a discovered brand');assert.equal(config.defaults.pots,'Test Brand X');assert.equal(config.defaults.shaft,'short');assert.equal(config.defaults.wiring,'modern');assert.equal(config.lesPaul.basePrice,7345);assert.equal(config.lesPaul.pots['Test Brand X'].enabled,true);assert.equal(config.resolvedPotentiometer({pots:'Test Brand X',shaft:'short'}).component.id,'test-brand-x-short');assert.equal(config.kitRecord({pots:'Test Brand X',shaft:'short'}).resolvedComponents.potentiometers.componentId,'test-brand-x-short');
 console.log('Actual customer config entry consumed zero-code Test Brand X, Admin defaults, base price and canonical Component ID.');

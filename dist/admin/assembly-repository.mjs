@@ -1,7 +1,7 @@
 import {createAssemblyStore} from './assemblies.mjs';
+import {createPublicAssemblyRepository} from '../backend/assembly-data.mjs';
 
-// Async Assembly / Kit Definition contract. The adapter keeps the existing
-// browser-local records and storage key; a shared provider can replace it later.
+// Local adapter is retained for migration diagnostics and isolated tests only.
 export function createLocalAssemblyRepository(storage){
  const store=createAssemblyStore(storage);
  return Object.freeze({
@@ -17,10 +17,11 @@ export function assemblyRepository(){
   const records=new Map(),storage={getItem:key=>records.get(key)??null,setItem:(key,value)=>records.set(key,value)};
   return createLocalAssemblyRepository(storage);
  }
- return browserRepository=createLocalAssemblyRepository(window.localStorage);
+ return browserRepository=createPublicAssemblyRepository();
 }
 
 export function setAssemblyRepository(repository){
+ if(repository===null){browserRepository=null;return;}
  for(const method of ['list','get'])if(typeof repository?.[method]!=='function')throw new Error('Invalid Assembly repository.');
  browserRepository=repository;
 }

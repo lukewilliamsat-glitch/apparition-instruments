@@ -1,12 +1,12 @@
 # P05A backend foundation
 
-The existing project `Apparition Instruments Webstore` (`acdxpxvksvdwfajntzfx`) receives migrations from `supabase/migrations/`. P05B imported the approved browser export separately from migration SQL and switched Components and Inventory to Supabase. Assemblies and Kit Definitions remain local until P05C.
+The existing project `Apparition Instruments Webstore` (`acdxpxvksvdwfajntzfx`) receives migrations from `supabase/migrations/`. P05B imported Components and Inventory; P05C separately imported the approved actual Assembly/BOM/Kit Definition export. Production repositories for all four domains now use Supabase.
 
 ## Ownership and credentials
 
 - `dist/backend/public-config.mjs` contains the project URL and a **publishable** key. Both are safe to expose in the browser. This key confers no Admin access; RLS and database privileges enforce that boundary.
 - Service-role/secret keys, database passwords, payment keys, and email-provider keys must remain server-side in the connected integration or future Edge Function secret storage. Never commit them or send them to GitHub Pages.
-- The production browser Component repository reads Supabase public catalogue and availability. The Admin repository uses the authenticated user's bearer token for Component, private cost and Inventory reads/writes. The explicit local provider remains available for isolated tests and legacy export diagnostics, never as production fallback.
+- The production browser Component and Assembly repositories read Supabase public catalogues. Admin repositories use the authenticated user's bearer token for Component, Inventory, Assembly, BOM and Kit Definition reads/writes. Explicit local providers remain available for isolated tests and legacy export diagnostics, never as production fallback.
 - Admin entry uses Supabase email/password Auth and explicitly checks `admin_members` before loading Admin modules. The initial confirmed Auth user was granted membership through the connected project's trusted SQL integration. Membership remains live data and is not hard-coded in source. New users cannot self-enrol; generic signed-in users have no Admin privileges. The old static browser password is retired.
 - The P05D-A Auth client stores standard Supabase refresh/access tokens in browser storage, refreshes expired sessions, verifies identity with `/auth/v1/user`, and signs out through `/auth/v1/logout?scope=local`. Admin repository transport obtains the user's refreshed bearer token, never a privileged key. P05B uses that transport for Component/Inventory writes.
 
@@ -17,12 +17,12 @@ The existing project `Apparition Instruments Webstore` (`acdxpxvksvdwfajntzfx`) 
 - The `apparition-business-images` bucket holds future public product images under `components/<component-id>/<filename>` or `assemblies/<assembly-id>/<filename>`. Public downloads are allowed; uploads/updates/deletes require an explicit Admin membership and Auth. No existing data URLs or GitHub assets move in P05A. Never place Admin-only imagery in this public bucket; use a separate private bucket and signed access when needed.
 - Future privileged commerce actions (authoritative pricing, Checkout creation, verified payment webhooks, order finalisation, stock transactions and email) belong in version-controlled Edge Functions with server-side secrets. No such function is deployed in P05A.
 
-## Controlled browser-local import: P05B complete; P05C deferred
+## Controlled browser-local import: P05B and P05C complete
 
 1. Export the *actual* current browser's `apparition.admin.components.v1` and `apparition.admin.assemblies.v1` JSON under the user's control, with a recorded source/browser/time and checksum. Do not assume checked-in seeds match Luke's latest edits. Do not reset local records.
 2. Validate envelopes/relationships with `planLocalImport` and existing domain validation, reviewing the report before any write. It preserves stable IDs, SKU, prices, stock, image record, kit defaults, BOM, permitted IDs and mappings. Resolve missing references explicitly; do not invent IDs or silently drop rows. Store exports securely, as they contain cost and possible embedded images.
 3. P05B imported the privately reviewed, actual browser export in one guarded transaction after confirming empty tables: 33 Components, 33 private-cost rows and 33 Inventory rows, 18 with positive stock. Every mapped field matched; no embedded/object images required migration. The explicitly obsolete `price` field was retired; `salePrice` and `kitPrice` remain authoritative. Never package or replay the private export in the Pages bundle or GitHub repository.
-4. P05C must separately validate the actual local Assemblies/BOM/Kit Definitions against the existing Component IDs before selecting shared repositories. The old local Component record is retained for private audit only and must never overwrite newer shared data.
+4. P05C validated Luke's private browser export against the 33 existing Components and imported one `kit-les-paul` Assembly, the three ordered BOM rows, one Kit Definition, its metadata and 23 permitted Component IDs in a guarded transaction. Only two approved corrections were applied: remove orphan permission `Poofart`, and align `defaults.componentIds.potentiometers` to `pot-short-alpha-a`; the Alpha + short customer default and BOM quantities remain unchanged. The `Poofart` Component record was not modified. The old local records remain private audit evidence only and must not overwrite newer shared data. Admin saves of the existing Kit Definition use authenticated RLS writes; public Assembly reads use the security-invoker view plus permitted IDs.
 
 ## Deferred domain work
 

@@ -17,6 +17,8 @@ assert.equal(kit.kitDefinition.basePrice,6499);assert.equal(kit.kitDefinition.bu
 globalThis.localStorage=storage;globalThis.window={localStorage:storage};
 const {createLocalComponentRepository,setComponentRepository}=await import('../dist/admin/component-repository.mjs');
 setComponentRepository(createLocalComponentRepository(storage));
+const {createLocalAssemblyRepository,setAssemblyRepository}=await import('../dist/admin/assembly-repository.mjs');
+setAssemblyRepository(createLocalAssemblyRepository(storage));
 const kitData=await import('../dist/wiring-kits/kit-data.mjs?p03b1'),config=await import('../dist/les-paul-kits/config.mjs?p03b1');
 assert.equal(config.defaults.pots,'Alpha');assert.equal(config.defaults.shaft,'short');assert.equal(config.priceKit({}).total,6499);assert.equal(config.priceKit({pots:'CTS',shaft:'short'}).total,7299);assert.equal(config.priceKit({pots:'Alpha',shaft:'long'}).total,6699);
 for(const [pots,shaft,id] of [['Alpha','short','pot-short-alpha-a'],['Alpha','long','pot-long-alpha-a'],['CTS','short','pot-short-cts-a'],['CTS','long','pot-long-cts-a']]){const resolved=config.resolvedPotentiometer({pots,shaft});assert.equal(resolved.component.id,id);assert.equal(config.kitRecord({pots,shaft}).resolvedComponents.potentiometers.componentId,id);}

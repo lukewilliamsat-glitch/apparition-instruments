@@ -21,6 +21,8 @@ const components=createComponentStore(localStorage),assemblies=createAssemblySto
 // The production repository is remote; this isolated DOM fixture explicitly supplies its local records.
 const {createLocalComponentRepository,setComponentRepository}=await import('../dist/admin/component-repository.mjs');
 setComponentRepository(createLocalComponentRepository(localStorage));
+const {createLocalAssemblyRepository,setAssemblyRepository}=await import('../dist/admin/assembly-repository.mjs');
+setAssemblyRepository(createLocalAssemblyRepository(localStorage));
 let records=components.list(),kit=assemblies.list().find(a=>a.id==='kit-les-paul');
 function edit(id,patch){const record=components.list().find(item=>item.id===id);components.save({...record,...patch},id);}
 for(const id of ['pot-short-cts-a','pot-short-alpha-a','pot-long-alpha-a','pot-long-cts-a','sbe-200','cde-022','cde-047','bleed-prs','switch-epiphone','jack-epiphone'])edit(id,{active:true,inKits:true,stock:10});

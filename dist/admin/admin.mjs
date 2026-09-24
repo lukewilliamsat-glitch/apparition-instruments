@@ -15,7 +15,7 @@ async function run(action){try{return await action();}catch(e){message(e.message
 async function loadComponents(){records=await repository.list();return records;}
 function render(){
  const assemblies=view==='assemblies';document.querySelector('h1').textContent=assemblies?'Products / Assemblies':'Inventory';document.title=(assemblies?'Products / Assemblies':'Inventory')+' | Apparition Admin';for(const link of document.querySelectorAll('[data-admin-destination]')){if(link.dataset.adminDestination===(assemblies?'assemblies':'inventory'))link.setAttribute('aria-current','page');else link.removeAttribute('aria-current');}$('#add-component').hidden=assemblies;$('#add-assembly').hidden=true;$('#category-filter').closest('label').hidden=assemblies;
- if(assemblies){renderAssemblies($('#search').value.toLowerCase().trim(),records);return;}$('#empty').textContent='No components match your search.';
+ if(assemblies){return renderAssemblies($('#search').value.toLowerCase().trim(),records);}$('#empty').textContent='No components match your search.';
 
  const items=records,q=$('#search').value.toLowerCase().trim(),category=$('#category-filter').value;
  const visible=items.filter(p=>(!category||p.category===category)&&(!q||[p.name,p.sku,p.manufacturer,...Object.values(p.specs)].join(' ').toLowerCase().includes(q)));
@@ -82,7 +82,7 @@ $('#download-assembly-export').addEventListener('click',()=>{
 });
 for(const b of document.querySelectorAll('[data-view]'))b.addEventListener('click',()=>{view=b.dataset.view;for(const x of document.querySelectorAll('[data-view]'))x.setAttribute('aria-pressed',String(x===b));run(render);});
 $('#search').addEventListener('input',()=>run(render));$('#category-filter').addEventListener('change',()=>run(render));
-message('Loading components…');run(async()=>{repository=componentRepository();await loadComponents();render();$('#add-component').disabled=false;message('');});
+message('Loading components…');run(async()=>{repository=componentRepository();await loadComponents();await render();$('#add-component').disabled=false;message('');});
 
 function priceVisibility(){
  $('#sale-price-field').hidden=!field('individually').checked;$('#kit-price-field').hidden=!field('inKits').checked;

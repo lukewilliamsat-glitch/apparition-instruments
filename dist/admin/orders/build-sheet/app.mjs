@@ -15,7 +15,7 @@ try{
  for(const {item,index} of assemblyLines(order)){const option=el('option',item.name+' · '+item.quantity+' ordered');option.value=index;$('#build-item').append(option);}$('#build-item').value=context.itemIndex;$('#build-unit').value=context.unit;$('#build-unit').max=context.quantity;
  $('#build-item').addEventListener('change',()=>{$('#build-unit').value=1;$('#build-unit').max=order.items[Number($('#build-item').value)].quantity;});
  $('#choose-build').addEventListener('submit',e=>{e.preventDefault();location.assign(buildSheetURL(order.id,Number($('#build-item').value),Number($('#build-unit').value)));});
- mountPicking($('#production-sections'),context);
+ await mountPicking($('#production-sections'),context);
  mountWiring($('#production-sections'),context);
  mountQC($('#production-sections'),context);
  mountPrint(context);

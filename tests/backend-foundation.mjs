@@ -30,7 +30,7 @@ const first=records[0];await providers.components.changeStock(first.id,13);asser
 const calls=[];
 const remote=createRepositoryProviders({source:'supabase',request:async(url,options)=>{calls.push({url,options});return {ok:true,json:async()=>[]};}});
 assert.deepEqual(await remote.components.list(),[]);assert.deepEqual(await remote.assemblies.list(),[]);
-assert.ok(calls.every(({url,options})=>url.startsWith(publicBackendConfig.url+'/rest/v1/catalogue_')&&options.headers.apikey===publicBackendConfig.publishableKey&&!JSON.stringify(options).includes('service_role')));
+assert.ok(calls.every(({url,options})=>(url.startsWith(publicBackendConfig.url+'/rest/v1/catalogue_')||url.startsWith(publicBackendConfig.url+'/rest/v1/kit_permitted_components'))&&options.headers.apikey===publicBackendConfig.publishableKey&&!JSON.stringify(options).includes('service_role')));
 await assert.rejects(remote.components.save(first),/authorised backend access/);
 await assert.rejects(remote.components.changeStock(first.id,9),/authorised backend access/);
 assert.throws(()=>createPublicCatalogueClient({url:'http://localhost',publishableKey:'secret'}),/Invalid public/);
