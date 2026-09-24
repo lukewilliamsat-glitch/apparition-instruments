@@ -6,11 +6,11 @@ export function audioTaper(knob){if(!Number.isFinite(knob)||knob<0||knob>10)thro
 export function bleedAdmittance(topology,frequency,capacitance,resistance){const w=2*Math.PI*frequency;if(topology==='none')return [0,0];const yc=[0,w*capacitance];if(topology==='capacitor')return yc;if(topology==='parallel')return add(yc,[1/resistance,0]);if(topology==='series')return inv([resistance,-1/(w*capacitance)]);throw new Error('Unsupported topology.');}
 // Nodes: A = pickup / volume input / modern tone branch; B = wiper / cable / amp.
 // Source is an ideal induced voltage followed by pickup R + jωL; Cp shunts A.
-// Tone is held at 10: full tone-pot resistance in series with its capacitor to ground.
+// Tone pot acts as a variable series resistance from input to the tone capacitor.
 function transfer(state,frequency){
  const x=audioTaper(state.volume);if(x===0)return [0,0];
  const w=2*Math.PI*frequency,rv=state.volumePot*1000,zPickup=[state.pickupR*1000,w*state.pickupL],yPickupC=[0,w*state.pickupC*1e-12],yLoad=[1/(state.loadR*1e6),w*state.cableC*1e-12];
- const yTone=state.toneCap===0?[0,0]:inv([state.tonePot*1000,-1/(w*state.toneCap*1e-9)]);
+ const yTone=state.toneCap===0?[0,0]:inv([state.tonePot*1000*audioTaper(state.tonePosition??10),-1/(w*state.toneCap*1e-9)]);
  if(state.volume===10){const y=add(add(yPickupC,yTone),add([1/rv,0],yLoad));return inv(add([1,0],mul(zPickup,y)));}
  const zLower=inv(add([1/(rv*x),0],yLoad));
  const yBleed=bleedAdmittance(topologyOf(state),frequency,state.bleedC*1e-9,state.bleedR*1000);

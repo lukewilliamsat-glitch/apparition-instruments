@@ -31,7 +31,7 @@ for(const type of ['none','capacitor','duncan','kinman','custom'])for(const topo
  }
 }
 const base=frequencyResponse({...defaults,type:'duncan'}).map(p=>p.current);
-for(const key of Object.keys(fields).filter(k=>k!=='volume')){const data=frequencyResponse({...defaults,type:'duncan',[key]:defaults[key]*1.2}).map(p=>p.current);assert(data.some((v,i)=>Math.abs(v-base[i])>1e-7),key+' must affect response');}
+for(const key of Object.keys(fields).filter(k=>k!=='volume')){const data=frequencyResponse({...defaults,type:'duncan',[key]:key==='tonePosition'?5:defaults[key]*1.2}).map(p=>p.current);assert(data.some((v,i)=>Math.abs(v-base[i])>1e-7),key+' must affect response');}
 for(const [key,field] of Object.entries(fields)){assert.throws(()=>validateState({...defaults,type:'duncan',[key]:NaN}));assert.throws(()=>validateState({...defaults,type:'duncan',[key]:field.max+1}));for(const value of [field.min,field.max])assert(frequencyResponse({...defaults,type:'duncan',[key]:value}).every(p=>Number.isFinite(p.current)));}
 assert.deepEqual(frequencyResponse({...defaults,type:'none',bleedC:2,bleedR:100}),frequencyResponse({...defaults,type:'none'}));
 assert.deepEqual(frequencyResponse({...defaults,type:'duncan'}),frequencyResponse({...defaults,type:'custom',topology:'parallel'}));
