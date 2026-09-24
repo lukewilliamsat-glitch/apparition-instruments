@@ -71,6 +71,8 @@ During the future shared-backend migration, structured Component attributes and 
 
 P05A establishes the version-controlled Supabase schema and public read/provider foundation for the existing `Apparition Instruments Webstore` project. The public GitHub Pages app and Admin still use browser-local business data. P05B will control the Components/Inventory import and authority switch; P05C will handle Assemblies/Kit Definitions. See `supabase/README.md` for data migration, Auth, Storage and Edge Function boundaries. No browser-local data is migrated or cleared in P05A.
 
+P05D-A replaces the temporary browser-password gate with Supabase email/password Auth plus an explicit `admin_members` row enforced by RLS. Admin routes verify identity and membership before loading modules; session restoration and sign-out use Supabase Auth. The initial confirmed Admin account is provisioned as live Auth and membership data, not source credentials. Components, Inventory, Assemblies and Kit Definitions remain browser-local until their separate migration passes. The public website remains unauthenticated.
+
 The known quantity-aware kit pricing discrepancy remains deferred: CTS kit adjustment is currently charged once instead of once per four physical pots. Resolve generically from the eventual physical Component ID and quantity, not a Les Paul-specific multiplier. P04C family additions remain deferred until shared persistence.
 
 The next major architecture phase is:

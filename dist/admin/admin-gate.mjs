@@ -1,32 +1,55 @@
-import {adminSessionKey,adminSessionValue,temporaryPasswordDigest} from './admin-gate-config.mjs';
+import {createAdminAuth} from './admin-auth.mjs';
 
-export async function sha256Hex(value,cryptoProvider=globalThis.crypto){
- if(!cryptoProvider?.subtle)throw new Error('Password verification is unavailable in this browser.');
- const bytes=new TextEncoder().encode(String(value));const digest=await cryptoProvider.subtle.digest('SHA-256',bytes);
- return [...new Uint8Array(digest)].map(byte=>byte.toString(16).padStart(2,'0')).join('');
-}
-export function adminIsAuthorized(storage=globalThis.sessionStorage){try{return storage.getItem(adminSessionKey)===adminSessionValue;}catch{return false;}}
-export async function authorizeAdmin(password,storage=globalThis.sessionStorage,digest=sha256Hex){
- if(await digest(password)!==temporaryPasswordDigest)return false;
- try{storage.setItem(adminSessionKey,adminSessionValue);return true;}catch{throw new Error('Session access could not be saved in this browser.');}
-}
-export function lockAdmin(storage=globalThis.sessionStorage){try{storage.removeItem(adminSessionKey);}catch{}return !adminIsAuthorized(storage);}
+const element=(document,tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
+const entryModules=document=>(document.querySelector('script[data-admin-entry]')?.dataset.adminEntry||'').split(',').map(value=>value.trim()).filter(Boolean);
 
-function element(document,tag,text){const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;}
-function entryModules(document){const script=document.querySelector('script[data-admin-entry]');return (script?.dataset.adminEntry||'').split(',').map(value=>value.trim()).filter(Boolean);}
-async function revealAdmin(document,storage,load){
- document.querySelector('.admin-access-gate')?.remove();document.body.classList.add('admin-authorized');
- const lock=element(document,'button','Lock Admin');lock.type='button';lock.className='admin-lock';lock.addEventListener('click',()=>{lockAdmin(storage);globalThis.location.reload();});document.body.prepend(lock);
- for(const entry of entryModules(document))await load(new URL(entry,document.baseURI).href);
+export async function bootAdminGate({document=globalThis.document,auth=createAdminAuth(),load=specifier=>import(specifier)}={}){
+ const body=document.body;body.classList.remove('admin-authorized');
+ const main=element(document,'main');main.className='admin-access-gate';main.setAttribute('aria-labelledby','admin-access-title');body.prepend(main);
+ const panel=element(document,'section');panel.className='admin-access-panel';main.append(panel);
+ const eyebrow=element(document,'p','APPARITION / ADMIN');eyebrow.className='eyebrow';
+ const title=element(document,'h1','Admin Access');title.id='admin-access-title';
+ const note=element(document,'p');note.className='admin-access-note';
+ const feedback=element(document,'p');feedback.className='error';feedback.setAttribute('role','alert');
+ const home=element(document,'a','Return to website'),path=document.location?.pathname||'',adminAt=path.indexOf('/admin/');home.href=adminAt<0?'../':path.slice(0,adminAt+1);
+ panel.append(eyebrow,title,note,feedback,home);
+
+ const signOut=async()=>{
+  body.classList.remove('admin-authorized');main.hidden=false;panel.replaceChildren(eyebrow,title,note,feedback);
+  note.textContent='Signing out…';feedback.textContent='';
+  try{await auth.signOut();document.querySelector('.admin-lock')?.remove();render('signed-out');}catch{render('sign-out-error');}
+ };
+ const signOutButton=()=>{const button=element(document,'button','Sign Out');button.type='button';button.className='button';button.addEventListener('click',signOut);return button;};
+ const render=state=>{
+  body.classList.remove('admin-authorized');main.hidden=false;feedback.textContent='';panel.replaceChildren(eyebrow,title,note);
+  if(state==='denied'||state==='sign-out-error'){
+   note.textContent=state==='denied'?'This account is not authorised for Admin access.':'Could not end the Admin session. Please retry.';
+   panel.append(signOutButton(),home);return;
+  }
+  if(state==='checking'){note.textContent='Checking Admin access…';panel.append(feedback);return;}
+  note.textContent='Sign in with your authorised Apparition Admin account.';
+  const form=element(document,'form');
+  const emailLabel=element(document,'label','Email'),email=element(document,'input');email.type='email';email.name='email';email.required=true;email.autocomplete='username';emailLabel.append(email);
+  const passwordLabel=element(document,'label','Password'),password=element(document,'input');password.type='password';password.name='password';password.required=true;password.autocomplete='current-password';passwordLabel.append(password);
+  const button=element(document,'button','Sign In');button.type='submit';button.className='button';form.append(emailLabel,passwordLabel,button);
+  form.addEventListener('submit',async event=>{event.preventDefault();button.disabled=true;feedback.textContent='';note.textContent='Authenticating…';
+   try{const result=await auth.signIn(email.value.trim(),password.value);if(result.status==='authorized')await reveal();else if(result.status==='denied')render('denied');else{note.textContent='Sign in with your authorised Apparition Admin account.';feedback.textContent='Sign-in failed. Check your email and password.';password.value='';password.focus();}}
+   catch{note.textContent='Sign in with your authorised Apparition Admin account.';feedback.textContent='Admin sign-in is unavailable. Please try again.';}
+   finally{button.disabled=false;}
+  });
+  panel.append(form,feedback,home);email.focus();
+ };
+ const reveal=async()=>{
+  const signOutControl=signOutButton();signOutControl.className='admin-lock';body.prepend(signOutControl);
+  try{for(const entry of entryModules(document))await load(new URL(entry,document.baseURI).href);main.hidden=true;body.classList.add('admin-authorized');}
+  catch{signOutControl.remove();render('checking');feedback.textContent='Admin could not load. Please reload and try again.';}
+ };
+ render('checking');
+ try{const result=await auth.restore();if(result.status==='authorized')await reveal();else render(result.status==='denied'?'denied':'signed-out');}
+ catch{render('signed-out');feedback.textContent='Could not check Admin access. Please try again.';}
 }
-function renderAccessGate(document,storage,load,digest){
- const main=element(document,'main');main.className='admin-access-gate';main.setAttribute('aria-labelledby','admin-access-title');
- const panel=element(document,'section');panel.className='admin-access-panel';const eyebrow=element(document,'p','APPARITION / ADMIN');eyebrow.className='eyebrow';const title=element(document,'h1','Admin Access');title.id='admin-access-title';const note=element(document,'p','This temporary client-side gate prevents casual access only. It is not secure authentication.');note.className='admin-access-note';
- const form=element(document,'form'),label=element(document,'label','Password'),input=element(document,'input');input.type='password';input.name='password';input.required=true;input.autocomplete='current-password';label.append(input);const button=element(document,'button','Enter Admin');button.type='submit';button.className='button';const feedback=element(document,'p');feedback.className='error';feedback.setAttribute('role','alert');form.append(label,button,feedback);
- form.addEventListener('submit',async event=>{event.preventDefault();button.disabled=true;feedback.textContent='';try{if(!await authorizeAdmin(input.value,storage,digest)){feedback.textContent='Incorrect password. Please try again.';input.select();return;}await revealAdmin(document,storage,load);}catch(error){feedback.textContent=error.message;}finally{button.disabled=false;}});
- const home=element(document,'a','Return to website'),path=document.location?.pathname||'',adminAt=path.indexOf('/admin/');home.href=adminAt<0?'../':path.slice(0,adminAt+1);panel.append(eyebrow,title,note,form,home);main.append(panel);document.body.prepend(main);input.focus();
-}
-export async function bootAdminGate({document=globalThis.document,storage=globalThis.sessionStorage,load=specifier=>import(specifier),digest=sha256Hex}={}){
- if(adminIsAuthorized(storage))await revealAdmin(document,storage,load);else renderAccessGate(document,storage,load,digest);
-}
-if(typeof document!=='undefined')bootAdminGate().catch(error=>{const gate=document.querySelector('.admin-access-gate .error');if(gate)gate.textContent=error.message;});
+
+if(typeof document!=='undefined')bootAdminGate().catch(()=>{
+ document.body.classList.remove('admin-authorized');
+ const gate=document.querySelector('.admin-access-gate');if(gate)gate.textContent='Admin access is unavailable. Please reload.';
+});
