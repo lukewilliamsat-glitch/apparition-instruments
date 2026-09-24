@@ -2,6 +2,7 @@ import {renderAssemblies} from './assembly-ui.mjs';
 import {moveSpecification} from './product-content.mjs';
 import {categories,specificationFields,fieldLabels,storageKey,parseGBP,priceInput} from './data.mjs';
 import {componentRepository} from './component-repository.mjs';
+import {prepareComponentExport} from './component-export.mjs';
 import {readImage,imageSource} from './images.mjs';
 import {kitBindings} from './kit-bindings.mjs';
 const $=s=>document.querySelector(s),el=(tag,value)=>{const n=document.createElement(tag);if(value!==undefined)n.textContent=value;return n;};
@@ -36,6 +37,27 @@ stockForm.elements.mode.addEventListener('change',()=>{stockMode();stockForm.ele
 stockForm.addEventListener('submit',async e=>{e.preventDefault();const submit=stockForm.querySelector('[type=submit]');submit.disabled=true;try{await repository.changeStock(stockId,stockForm.elements.quantity.value,stockForm.elements.mode.value);await loadComponents();render();$('#stock-dialog').close();message('Stock saved in this browser.');}catch(error){$('#stock-error').textContent=error.message;}finally{submit.disabled=false;}});
 for(const b of document.querySelectorAll('[data-close]'))b.addEventListener('click',()=>$('#'+b.dataset.close).close());
 $('#add-component').addEventListener('click',()=>run(()=>openEditor()));
+let pendingExport=null;
+$('#preview-component-export').addEventListener('click',()=>{
+ pendingExport=null;$('#download-component-export').hidden=true;
+ try{
+  const snapshot=prepareComponentExport(window.localStorage);
+  pendingExport=snapshot;
+  const {componentCount,inventoryCount,embeddedImages,objectImages}=snapshot.summary;
+  $('#component-export-summary').textContent=`Ready: ${componentCount} Components, ${inventoryCount} stock quantities; ${embeddedImages.length} embedded images and ${objectImages.length} object references. Review this browser's data before downloading.`;
+  $('#download-component-export').hidden=false;
+ }catch(error){$('#component-export-summary').textContent=error.message;}
+});
+$('#download-component-export').addEventListener('click',()=>{
+ try{
+  if(!pendingExport)throw new Error('Preview the export first.');
+  const latest=prepareComponentExport(window.localStorage);
+  if(latest.payload.raw!==pendingExport.payload.raw){pendingExport=null;$('#download-component-export').hidden=true;throw new Error('Component data changed since preview. Preview again to export the latest values.');}
+  const blob=new Blob([JSON.stringify(pendingExport.payload)],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');
+  link.href=url;link.download='apparition-components-inventory-'+pendingExport.payload.exportedAt.slice(0,10)+'.json';document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+  $('#component-export-summary').textContent='Private export downloaded. Keep the JSON file intact for migration review.';
+ }catch(error){$('#component-export-summary').textContent=error.message;}
+});
 for(const b of document.querySelectorAll('[data-view]'))b.addEventListener('click',()=>{view=b.dataset.view;for(const x of document.querySelectorAll('[data-view]'))x.setAttribute('aria-pressed',String(x===b));run(render);});
 $('#search').addEventListener('input',()=>run(render));$('#category-filter').addEventListener('change',()=>run(render));
 window.addEventListener('storage',e=>{if(e.key===storageKey)run(async()=>{await loadComponents();render();});});
