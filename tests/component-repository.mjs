@@ -19,7 +19,7 @@ assert.equal(JSON.parse(memory.get(storageKey)).version,1,'Existing storage enve
 await refreshCatalogue(reloaded);assert(!catalogue.some(item=>item.id===component.id),'Storefront must receive refreshed eligibility.');
 await repository.save({...component,active:true,individually:true,inKits:true},component.id);await refreshCatalogue(repository);
 assert.equal(catalogue.find(item=>item.id===component.id).price,1234,'Storefront must receive current pricing.');
-const kits=await loadConfiguredKitDefinitions(repository);assert.equal(kits['les-paul'].bleed.duncan.enabled,true);assert.equal(kits['les-paul'].bleed.duncan.price,567);
+const kits=await loadConfiguredKitDefinitions(repository);assert.equal(kits['les-paul'].bleed['bleed-duncan'].enabled,true);assert.equal(kits['les-paul'].bleed['bleed-duncan'].price,567);
 
 const corrupt=new Map([[storageKey,'{"version":1,"items":']]),badStorage={getItem:key=>corrupt.get(key)??null,setItem:(key,value)=>corrupt.set(key,value)};
 await assert.rejects(()=>createLocalComponentRepository(badStorage).list(),/preserved; no data was reset/);

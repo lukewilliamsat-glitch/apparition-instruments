@@ -1,5 +1,4 @@
-import {lesPaul,defaults,upgradeLabel} from './config.mjs';
-import {availableKitValues} from '../wiring-kits/kit-data.mjs';
+import {lesPaul,defaults,upgradeLabel,resolveLesPaulKit} from './config.mjs';
 const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 export function renderKitFields(form){
  const heading=form.querySelector('.form-heading');form.replaceChildren(heading);
@@ -9,7 +8,8 @@ export function renderKitFields(form){
   const choices=el('div','choices two');
   for(const [id,option] of Object.entries(entries)){
    const wrap=el('div','choice-with-info'),label=el('label','choice'),input=el('input');input.type='radio';input.name=name;input.value=id;input.defaultChecked=defaults[name]===id;input.checked=input.defaultChecked;if(option.enabled===false){wrap.hidden=true;input.disabled=true;input.setAttribute('aria-hidden','true');}
-   const text=el('span');text.append(el('strong','',option.label),el('small',option.price?'paid-upgrade':'',(id==='mixed'?'Choose each capacitor':upgradeLabel(option.price))+(name==='bleed'&&id!=='none'?' · both controls':'')));
+   const stock=option.component&&option.component.stock<(name==='caps'?2:option.quantity||1)?' · Out of stock':'';
+   const text=el('span');text.append(el('strong','',option.label),el('small',option.price?'paid-upgrade':'',(id==='mixed'?'Choose each capacitor':upgradeLabel(option.price))+(name==='bleed'&&id!=='none'?' · both controls':'')+stock));
    if(!info&&option.description)text.append(el('small','',option.description));label.append(input,text);wrap.append(label);
    if(info){const details=el('details','option-info'),summary=el('summary','','Technical details');summary.setAttribute('aria-label','Technical details for '+option.label);details.append(summary,el('p','',option.description));wrap.append(details);}
    choices.append(wrap);
@@ -22,7 +22,7 @@ export function renderKitFields(form){
  group('matching','Precision matching',lesPaul.matching);
  const caps=group('caps','Tone capacitors',Object.fromEntries([...Object.entries(lesPaul.capacitors).map(([id,o])=>[id,{...o,price:o.price*2,label:'2 × '+o.label}]),['mixed',{label:'Mixed pair',price:0,description:'Choose the neck and bridge tone capacitors separately.'}]]),{info:true,note:'One tone capacitor for each pickup circuit. Capacitance changes the tone-control response; series identifies component construction and specification.'});
  const mixed=el('div','mixed-values');mixed.id='mixed-values';mixed.hidden=true;
- for(const [name,labelText] of [['neckCap','Neck tone capacitor'],['bridgeCap','Bridge tone capacitor']]){const label=el('label','',labelText),select=el('select');select.name=name;for(const [id,cap] of Object.entries(lesPaul.capacitors)){const o=el('option','',cap.label+' · '+upgradeLabel(cap.price));o.value=id;o.hidden=cap.enabled===false;o.disabled=cap.enabled===false;o.defaultSelected=defaults[name]===id;o.selected=o.defaultSelected;select.append(o);}label.append(select);mixed.append(label);}caps.append(mixed);
+ for(const [name,labelText] of [['neckCap','Neck tone capacitor'],['bridgeCap','Bridge tone capacitor']]){const label=el('label','',labelText),select=el('select');select.name=name;for(const [id,cap] of Object.entries(lesPaul.capacitors)){const o=el('option','',cap.label+' · '+upgradeLabel(cap.price)+(cap.component?.stock<1?' · Out of stock':''));o.value=id;o.hidden=cap.enabled===false;o.disabled=cap.enabled===false;o.defaultSelected=defaults[name]===id;o.selected=o.defaultSelected;select.append(o);}label.append(select);mixed.append(label);}caps.append(mixed);
  const bleed=group('bleed','Treble bleed · both volume controls',lesPaul.bleed,{info:true,note:'Every upgrade price in this section covers the pair of volume controls.'});bleed.id='treble-bleed-options';bleed.setAttribute('aria-describedby','bleed-availability');
  const availability=el('p','option-note','Treble bleeds are unavailable with our 50s wiring. Select 60s or Modern wiring to add one.');availability.id='bleed-availability';const bleedNote=el('p','bleed-note');bleedNote.id='bleed-note';bleed.append(availability,bleedNote);
  group('jack','Output jack',{...lesPaul.jack,none:{...lesPaul.jack.none,label:'Use my existing output jack'}},{info:true,note:'The complete circuit always requires an output jack. Choose whether we supply a new one.'});group('selector','Toggle switch',{...lesPaul.selector,none:{...lesPaul.selector.none,label:'Use my existing toggle switch'}},{info:true,note:'The complete circuit requires a 3-way toggle. Retain compatible existing hardware or choose a new switch.'});
@@ -30,12 +30,15 @@ export function renderKitFields(form){
 }
 
 export function updateFieldSummaries(form,state){
- for(const group of lesPaul.builderModel.groups){const available=availableKitValues(lesPaul,group.key,state);for(const input of form.elements.namedItem(group.key) instanceof RadioNodeList?form.elements.namedItem(group.key):[form.elements.namedItem(group.key)]){if(!input)continue;const disabled=!available.has(input.value);input.disabled=disabled;input.setAttribute('aria-hidden',String(disabled));input.closest('.choice-with-info').hidden=disabled&&!input.checked;}}
+ const resolved=resolveLesPaulKit(state);
+ for(const group of lesPaul.builderModel.groups){for(const input of form.elements.namedItem(group.key) instanceof RadioNodeList?form.elements.namedItem(group.key):[form.elements.namedItem(group.key)]){if(!input)continue;const status=resolved.optionAvailability[group.key][input.value],disabled=status==='not-eligible',wrap=input.closest('.choice-with-info'),price=wrap.querySelector('small');input.disabled=disabled;input.setAttribute('aria-hidden',String(disabled));wrap.hidden=disabled&&!input.checked;price.textContent=upgradeLabel(lesPaul[group.key][input.value].price)+(status==='out-of-stock'?' · Out of stock':'');}}
  for(const section of form.querySelectorAll('[data-option]')){
   const name=section.dataset.option,output=section.querySelector('[data-selected-option]');
   let label;
   if(name==='caps')label=state.caps==='mixed'?'Mixed pair · neck / bridge': '2 × '+lesPaul.capacitors[state.caps].label;
   else {const option=lesPaul[name][state[name]],input=section.querySelector(`input[value="${CSS.escape(state[name])}"]`);label=option.label+' · '+(option.enabled===false||input?.disabled?'Unavailable':upgradeLabel(option.price));}
+  const role={pots:'potentiometers',shaft:'potentiometers',bleed:'trebleBleeds',jack:'outputJack',selector:'selector'}[name];
+  if(resolved.availability.unavailable.some(part=>role?part.role===role:name==='caps'&&['neckToneCapacitor','bridgeToneCapacitor'].includes(part.role)))label+=' · Out of stock';
   output.textContent=label;
   for(const input of section.querySelectorAll('input[type=radio]')){
    const unavailable=input.getAttribute('aria-hidden')==='true';

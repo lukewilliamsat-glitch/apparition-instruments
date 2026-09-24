@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import {buildContext,assemblyLines,buildSheetURL} from '../dist/admin/orders/build-sheet/model.mjs';
 import {createKitSnapshot} from '../dist/les-paul-kits/snapshot.mjs';
+import {lesPaul} from '../dist/les-paul-kits/config.mjs';
+for(const options of [lesPaul.capacitors,lesPaul.bleed,lesPaul.jack,lesPaul.selector])for(const option of Object.values(options))if(option.component)option.component.stock=100;
 const snap=createKitSnapshot({wiring:'modern',bleed:'duncan',matching:'precision'});
 const order={id:'order-1',reference:'AI-10001',createdAt:'2026-09-17T10:00:00Z',channel:'MANUAL',status:'PAID',customer:{name:'Test customer'},items:[{type:'component'},{type:'kit',name:'Purchased kit',quantity:2,snapshot:snap}]};
 const before=JSON.stringify(order),c=buildContext(order,null,2);

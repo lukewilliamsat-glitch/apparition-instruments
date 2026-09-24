@@ -1,0 +1,11 @@
+{
+  "name": "apparition-instruments-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:kit-runtime": "node tests/kit-builder-dom.mjs"
+  },
+  "devDependencies": {
+    "happy-dom": "^20.14.5"
+  }
+}

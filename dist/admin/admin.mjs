@@ -12,7 +12,7 @@ function message(text){$('#status').textContent=text;}
 async function run(action){try{return await action();}catch(e){message(e.message);return null;}}
 async function loadComponents(){records=await repository.list();return records;}
 function render(){
- const assemblies=view==='assemblies';document.querySelector('h1').textContent=assemblies?'Products / Assemblies':'Inventory';document.title=(assemblies?'Products / Assemblies':'Inventory')+' | Apparition Admin';for(const link of document.querySelectorAll('[data-admin-destination]')){if(link.dataset.adminDestination===(assemblies?'assemblies':'inventory'))link.setAttribute('aria-current','page');else link.removeAttribute('aria-current');}$('#add-component').hidden=assemblies;$('#add-assembly').hidden=!assemblies;$('#category-filter').closest('label').hidden=assemblies;
+ const assemblies=view==='assemblies';document.querySelector('h1').textContent=assemblies?'Products / Assemblies':'Inventory';document.title=(assemblies?'Products / Assemblies':'Inventory')+' | Apparition Admin';for(const link of document.querySelectorAll('[data-admin-destination]')){if(link.dataset.adminDestination===(assemblies?'assemblies':'inventory'))link.setAttribute('aria-current','page');else link.removeAttribute('aria-current');}$('#add-component').hidden=assemblies;$('#add-assembly').hidden=true;$('#category-filter').closest('label').hidden=assemblies;
  if(assemblies){renderAssemblies($('#search').value.toLowerCase().trim());return;}$('#empty').textContent='No components match your search.';
 
  const items=records,q=$('#search').value.toLowerCase().trim(),category=$('#category-filter').value;

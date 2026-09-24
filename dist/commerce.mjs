@@ -1,6 +1,5 @@
 import {createKitSnapshot,validateKitSnapshot} from './les-paul-kits/snapshot.mjs';
 import {productById} from './components/catalogue.mjs';
-import {normaliseKit} from './les-paul-kits/config.mjs';
 const STORAGE_KEY='apparition.basket.v1';
 export const MAX_QUANTITY=99;
 export function readBasket(){
@@ -22,7 +21,7 @@ function save(items){
 }
 export function resetBasket(){return save([]);}
 export function addKit(value,editId=null,drawing={}){
- const configuration=normaliseKit(value),record=createKitSnapshot(configuration,drawing),items=readBasket();
+ const record=createKitSnapshot(value,drawing),configuration=record.configuration,items=readBasket();
  if(editId){const item=items.find(x=>x.id===editId&&x.product==='les-paul');if(!item)throw new Error('This kit is no longer in your basket. Reload the configurator to add a new kit.');item.configuration=configuration;item.record=record;save(items);return item.id;}
  const equivalent=items.find(x=>x.product==='les-paul'&&JSON.stringify({...x.record,createdAt:null})===JSON.stringify({...record,createdAt:null}));
  if(equivalent){if(equivalent.quantity>=MAX_QUANTITY)throw new Error('The maximum quantity for one configuration is 99.');equivalent.quantity++;save(items);return equivalent.id;}

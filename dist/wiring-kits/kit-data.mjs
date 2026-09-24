@@ -1,24 +1,29 @@
 import {kitDefinitions as original} from './kit-seed.mjs';
 import {componentRepository} from '../admin/component-repository.mjs';
-import {kitBindings} from '../admin/kit-bindings.mjs';
 import {createAssemblyStore,lesPaulKitAssembly,lesPaulKitDefinitionId,normaliseKitDefinition} from '../admin/assemblies.mjs';
 import {resolveMappedComponent,availableBuilderValues} from './builder-options.mjs';
 import {extendPotentiometerDefinition} from './kit-component-discovery.mjs';
-const componentSnapshot=component=>({id:component.id,sku:component.sku,name:component.name,productTitle:component.productTitle||component.name,manufacturer:component.manufacturer,active:component.active,inKits:component.inKits,category:component.category,specification:structuredClone(component.specs||{}),kitPrice:component.kitPrice});
+const componentSnapshot=component=>({id:component.id,sku:component.sku,name:component.name,productTitle:component.productTitle||component.name,manufacturer:component.manufacturer,active:component.active,inKits:component.inKits,category:component.category,stock:component.stock,description:component.description||'',specification:structuredClone(component.specs||{}),kitPrice:component.kitPrice});
 const currentKitAssembly=()=>{if(typeof window==='undefined')return lesPaulKitAssembly;return createAssemblyStore(window.localStorage).list().find(assembly=>assembly.id===lesPaulKitDefinitionId||assembly.kind==='wiring-kit'&&assembly.kitDefinition?.family==='les-paul')||lesPaulKitAssembly;};
 export function configuredKitDefinitions(records,assembly=lesPaulKitAssembly){
  const definitions=structuredClone(original),kit=definitions['les-paul'];
- for(const [id,binding] of Object.entries(kitBindings)){
-  if(binding.group==='shaft')continue;
-  const item=records.find(p=>p.id===id),option=kit[binding.group][binding.option];
-  option.enabled=!!(item?.active&&item.inKits&&item.category===binding.category);
-  option.price=option.enabled&&Number.isSafeInteger(item.kitPrice)?item.kitPrice:NaN;
-  if(item){if(binding.group!=='shaft')option.label=item.productTitle||item.name;if(item.description)option.description=item.description;option.componentId=id;option.component={id:item.id,sku:item.sku,name:item.name,productTitle:item.productTitle||item.name,manufacturer:item.manufacturer,specification:structuredClone(item.specs||{})};}
- }
  const definition=extendPotentiometerDefinition(normaliseKitDefinition(assembly.kitDefinition),records),groups=definition.builderOptions,resolver=definition.componentResolvers.find(item=>item.key==='potentiometers'),resolverGroups=resolver.groupKeys.map(key=>groups.find(group=>group.key===key)),mappings=resolver.mappings,permittedComponentIds=definition.permittedComponentIds,components=records.filter(item=>mappings.some(mapping=>mapping.componentId===item.id)).map(componentSnapshot);kit.builderEnabled=!!(assembly.active&&definition.builderEnabled);const builderModel={groups:resolverGroups,mappings,permittedComponentIds,components,resolverKey:resolver.key,enabled:kit.builderEnabled};
- kit.basePrice=definition.basePrice;kit.showOnWiringKits=!!(assembly.active&&definition.showOnWiringKits);kit.builderModel=builderModel;kit.defaults={...kit.defaults,...definition.defaults};
+ kit.basePrice=definition.basePrice;kit.id=assembly.id;kit.name=assembly.name;kit.family=definition.family;kit.showOnWiringKits=!!(assembly.active&&definition.showOnWiringKits);kit.builderModel=builderModel;kit.records=records.map(componentSnapshot);kit.defaults={...kit.defaults,...definition.defaults};kit.defaultWarnings=[];
  for(const group of groups){kit[group.key]=Object.fromEntries(group.values.map(value=>{const enabled=kit.builderEnabled&&value.enabled&&mappings.some(mapping=>mapping.selection[group.key]===value.key&&resolveMappedComponent(builderModel,mapping.selection,records));return [value.key,{label:value.label,price:0,description:'',enabled}];}));kit.defaults[group.key]=group.defaultValue;}
- const defaultPot=resolveMappedComponent(builderModel,{pots:kit.defaults.pots,shaft:kit.defaults.shaft},components);if(defaultPot)kit.included='4 × '+(defaultPot.component.productTitle||defaultPot.component.name)+', two tone capacitors, internal wiring and consumables, hand assembly and electrical testing / QC.';
+ const eligible=(item,category)=>item?.category===category&&item.active&&item.inKits&&permittedComponentIds.includes(item.id);
+ const catalogue=(category)=>records.filter(item=>eligible(item,category)).sort((a,b)=>(a.productTitle||a.name).localeCompare(b.productTitle||b.name));
+ const physical=(item,quantity=1)=>({label:item.productTitle||item.name,description:item.description||'',componentId:item.id,component:componentSnapshot(item),price:Number.isSafeInteger(item.kitPrice)?item.kitPrice:NaN,quantity,enabled:kit.builderEnabled,value:item.specs?.Value||item.specs?.Capacitor||'',series:item.specs?.Series||'',topology:item.specs?.Topology||''});
+ kit.capacitors=Object.fromEntries(catalogue('capacitors').map(item=>[item.id,physical(item)]));
+ if(!Object.keys(kit.capacitors).length){kit.capacitors.unavailable={label:'No eligible tone capacitors',description:'Permit an active capacitor in the Kit Definition.',componentId:null,price:NaN,value:'0.022',enabled:false};kit.defaultWarnings.push('No eligible tone capacitors are configured.');}
+ kit.bleed={none:{...kit.bleed.none,componentId:null,quantity:0},...Object.fromEntries(catalogue('treble-bleeds').map(item=>[item.id,physical(item,2)]))};
+ kit.selector={none:{...kit.selector.none,componentId:null,quantity:0},...Object.fromEntries(catalogue('switches').map(item=>[item.id,physical(item)]))};
+ kit.jack={none:{...kit.jack.none,componentId:null,quantity:0},...Object.fromEntries(catalogue('jacks').map(item=>[item.id,physical(item)]))};
+ const preferred=(role,options,fallback='none')=>{const id=definition.defaults.componentIds?.[role];if(id&&options[id])return id;if(id)kit.defaultWarnings.push('Unavailable default '+role+': '+id);return Object.keys(options).find(key=>key!==fallback)||fallback;};
+ kit.defaults.neckCap=preferred('neckCapacitor',kit.capacitors,'');kit.defaults.bridgeCap=preferred('bridgeCapacitor',kit.capacitors,'');kit.defaults.caps=kit.defaults.neckCap===kit.defaults.bridgeCap?kit.defaults.neckCap:'mixed';
+ for(const [key,role] of [['bleed','trebleBleed'],['selector','selector'],['jack','jack']]){const id=definition.defaults.componentIds?.[role];kit.defaults[key]=id?preferred(role,kit[key]):'none';}
+ if(kit.defaults.wiring==='50s'&&kit.defaults.bleed!=='none')kit.defaultWarnings.push('Treble bleed default cannot be used with 50s wiring; None is selected.');
+ const potDefault=resolveMappedComponent(builderModel,{pots:kit.defaults.pots,shaft:kit.defaults.shaft},components);
+ if(!potDefault){kit.defaultWarnings.push('Unavailable default potentiometer and shaft combination.');const first=mappings.find(mapping=>resolveMappedComponent(builderModel,mapping.selection,components));if(first)Object.assign(kit.defaults,first.selection);}
  return definitions;
 }
 export function resolveKitComponent(kit,selection){return resolveMappedComponent(kit.builderModel,selection,kit.builderModel.components);}
