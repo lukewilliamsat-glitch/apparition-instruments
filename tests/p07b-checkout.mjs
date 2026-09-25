@@ -18,7 +18,7 @@ for(const basket of [componentOnly,mixed]){
  const response=await startCheckout(new Request('https://example.supabase.co/functions/v1/create-checkout',{method:'POST',headers:{Origin:'https://apparitioninstruments.co.uk'},body:JSON.stringify(basket)}),{get:key=>env.get(key)},async(url,init)=>{
   if(url.endsWith('/rpc/create_guest_kit_order')){sent=JSON.parse(init.body).p_request;assert.equal(init.headers.Authorization,'Bearer server-secret');return Response.json({id,reference:'AI-010001',totalPence:5798});}
   if(url.includes('/orders?')&&init.method!=='PATCH')return Response.json([order(5798)]);
-  if(url.includes('api.stripe.com')){const form=new URLSearchParams(init.body);assert.equal(form.get('name_collection[individual][enabled]'),'true');assert.equal(form.get('success_url'),'https://apparitioninstruments.co.uk/checkout/?checkout=success');return Response.json({id:'cs_test_123',url:'https://checkout.stripe.com/c/pay/cs_test_123'});}
+  if(url.includes('api.stripe.com')){const form=new URLSearchParams(init.body);assert.equal(form.get('name_collection[individual][enabled]'),'true');assert.equal(form.get('success_url'),'https://apparitioninstruments.co.uk/checkout/?checkout=success');assert.equal(form.get('cancel_url'),'https://apparitioninstruments.co.uk/basket/?checkout=cancel');return Response.json({id:'cs_test_123',url:'https://checkout.stripe.com/c/pay/cs_test_123'});}
   return Response.json([{id}]);
  });
  assert.equal(response.status,200);assert.deepEqual(sent.items,basket.items);
