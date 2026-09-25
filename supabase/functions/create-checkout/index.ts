@@ -38,4 +38,6 @@ export async function startCheckout(req:Request,env:Environment=Deno.env,request
  if(!linked.ok||(await linked.json())?.length!==1)return err('Checkout session could not be attached to the order. Retry shortly.',502);
  return json({url:session.url,reference:order.reference,totalPence:order.total_pence});
 }
-if(import.meta.main)Deno.serve(startCheckout);
+// Deno.serve passes a runtime context as its second argument; keep the
+// injectable environment argument reserved for tests.
+if(import.meta.main)Deno.serve(req=>startCheckout(req));

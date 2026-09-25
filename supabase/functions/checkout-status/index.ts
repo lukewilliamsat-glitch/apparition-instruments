@@ -17,4 +17,4 @@ export async function checkoutStatus(req:Request,env:Environment=Deno.env,reques
  if(!row)return result(404,{message:'Checkout reference unavailable'});
  return result(200,{reference:row.reference,paymentStatus:row.payment_status==='paid'&&row.paid_at&&row.fulfillment_applied_at?'paid':'processing'});
 }
-if(import.meta.main)Deno.serve(checkoutStatus);
+if(import.meta.main)Deno.serve(req=>checkoutStatus(req));

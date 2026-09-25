@@ -47,4 +47,4 @@ export async function receiveStripeWebhook(req:Request,env:Environment=Deno.env,
  if(!response.ok)return reply(503,'Order fulfilment could not be confirmed');
  return reply(200,'Payment received');
 }
-if(import.meta.main)Deno.serve(receiveStripeWebhook);
+if(import.meta.main)Deno.serve(req=>receiveStripeWebhook(req));
