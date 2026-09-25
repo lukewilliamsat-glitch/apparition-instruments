@@ -19,11 +19,11 @@ export function itemCard(item,{editable=false,onQuantity,onRemove}={}){
  }else article.append(el('p','checkout-quantity',`Quantity: ${item.quantity}`));
  return article;
 }
-export function totalCard(items,checkout=false){
+export function totalCard(items,checkout=false,shipping=null){
  const box=el('aside',`basket-total${checkout?' checkout-total':''}`);box.setAttribute('aria-label','Basket summary');box.append(el('p','eyebrow','THE COMPLETE PICTURE'),el('h2','','Your basket summary'));
- const count=basketCount(items),parts=items.filter(x=>x.product==='component'),kits=items.filter(x=>x.product==='les-paul'),partTotal=parts.reduce((sum,x)=>sum+productById(x.sku).price*x.quantity,0),kitTotal=kits.reduce((sum,x)=>sum+x.record.pricing.total*x.quantity,0),lines=[['Items',String(count)],...(parts.length?[['Components',money(partTotal)]]:[]),...(kits.length?[['Configured wiring kits',money(kitTotal)]]:[]),['Basket subtotal',money(partTotal+kitTotal)],['Delivery','To be confirmed']];
+ const count=basketCount(items),parts=items.filter(x=>x.product==='component'),kits=items.filter(x=>x.product==='les-paul'),partTotal=parts.reduce((sum,x)=>sum+productById(x.sku).price*x.quantity,0),kitTotal=kits.reduce((sum,x)=>sum+x.record.pricing.total*x.quantity,0),subtotal=partTotal+kitTotal,delivery=checkout&&shipping?(subtotal>=shipping.free_delivery_threshold_pence?0:shipping.standard_delivery_pence):null,lines=[['Items',String(count)],...(parts.length?[['Components',money(partTotal)]]:[]),...(kits.length?[['Configured wiring kits',money(kitTotal)]]:[]),['Basket subtotal',money(subtotal)],['Delivery',delivery===null?'Calculated at checkout':delivery===0?'FREE':money(delivery)],...(delivery!==null?[['Estimated payable total',money(subtotal+delivery)]]:[])];
  lines.forEach(([label,value])=>{const row=el('div','total-line');row.append(el('span','',label),el('span','',value));box.append(row);});
- box.append(el('p','',checkout?'Configured-kit order requests can now be recorded without payment. Delivery is shown as £0 until arrangements are confirmed separately.':'Your selections are saved locally for planning; no order has been placed. Configured-kit order requests can be submitted at checkout without payment. Editing a kit applies current options and prices.'));
+ box.append(el('p','',checkout?'The final amount is verified on the server before Stripe test checkout. Your order remains Pending and Unpaid until payment is independently confirmed.':'Your selections are saved locally for planning; no order has been placed. Delivery is calculated at checkout. Editing a kit applies current options and prices.'));
  if(checkout)box.append(link('Return to your basket','/basket/'));else box.append(link('Review checkout →','/checkout/','button'),link('Continue exploring','/wiring-kits/'));
  return box;
 }

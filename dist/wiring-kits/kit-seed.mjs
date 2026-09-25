@@ -9,7 +9,7 @@ export const kitDefinitions={
   wiring:{'50s':option('50s wiring',0,'Tone circuit connects to the volume output.'),'60s':option('60s wiring',0,'Tone circuit connects to the volume input, with the tone wiper grounded.'),modern:option('Modern wiring',0,'Tone circuit connects to the volume input.')},
   pots:{CTS:option('CTS 500kΩ Audio',0,'Four audio-taper potentiometers. Each is individually electrically checked.')},
   shaft:{short:option('Short shaft',0,'Short threaded bushing. Confirm mounting depth, hole diameter and knob fit.'),long:option('Long shaft',0,'Long threaded bushing. Confirm mounting depth, hole diameter and knob fit.')},
-  matching:{standard:option('Standard Tested',0,'Every potentiometer is individually electrically checked.'),precision:option('Precision Matched',999,'Your four potentiometers are selected from our individually measured stock to create the closest practical resistance match available. The achievable match depends on stock at assembly; no fixed matching tolerance is guaranteed.')},
+  matching:{standard:option('Standard Tested',0,'Every potentiometer is individually electrically checked.'),precision:option('Precision Matched',0,'Your four potentiometers are selected from our individually measured stock to create the closest practical resistance match available. The achievable match depends on stock at assembly; no fixed matching tolerance is guaranteed.')},
   // Per-capacitor adjustments. The calculator adds both selected tone capacitors to the base.
   capacitors:{
    '715p-022':option('Sprague / SBE 715P · 0.022µF',0,'715P polypropylene film capacitor. 0.022µF / 22nF.',{value:'0.022',manufacturer:'Sprague / SBE',series:'715P'}),

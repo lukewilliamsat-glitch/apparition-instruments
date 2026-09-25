@@ -17,7 +17,7 @@ select jsonb_build_object('requestId',gen_random_uuid(),'customer',jsonb_build_o
  jsonb_build_object('wiring','modern','pots','Alpha','shaft','short','matching','standard','caps','mixed','neckCap','cde-022','bridgeCap','cde-047','bleed','none','jack','none','selector','none'),
  'specification',jsonb_build_object('wiring','Modern wiring'),'basePrice',kit.base_price,'components',physical.rows,
  'stockRequirements',jsonb_build_array(jsonb_build_object('componentId','pot-short-alpha-a','quantity',4),jsonb_build_object('componentId','cde-022','quantity',1),jsonb_build_object('componentId','cde-047','quantity',1)),
- 'pricing',jsonb_build_object('currency','GBP','total',kit.base_price,'lines',lines.rows))))) payload from kit,physical,lines;
+ 'pricing',jsonb_build_object('currency','GBP','basePrice',kit.base_price,'total',kit.base_price,'lines',lines.rows))))) payload from kit,physical,lines;
 
 do $$ declare receipt jsonb; previous_stock bigint; after_stock bigint; begin
  select quantity into previous_stock from public.inventory where component_id='pot-short-alpha-a';
