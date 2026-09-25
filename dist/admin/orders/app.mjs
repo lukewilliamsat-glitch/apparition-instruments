@@ -1,6 +1,6 @@
 import {currentAdminOrderRepository} from '../../backend/order-data.mjs?v=p07b7';
 import {fulfilmentLabels,paymentLabels,isPaidOrder,isCheckoutAttempt,nextFulfilment} from './lifecycle.mjs';
-import {el,money,date,showOrder} from './view.mjs?v=p07b7';
+import {el,money,date,showOrder} from './view.mjs?v=p08a';
 import {deploymentPath} from '../../deployment.mjs';
 import {createAdminAuth} from '../admin-auth.mjs';
 import {publicBackendConfig} from '../../backend/public-config.mjs';
@@ -14,6 +14,16 @@ function render(){
  const id=new URLSearchParams(location.search).get('id'),order=records.find(item=>item.id===id);
  $('#order-detail').hidden=!id;$('#order-list').hidden=!!id;
  if(id){if(!order){$('#order-message').textContent='Order not found in shared Orders. Return to the list and refresh.';return;}$('#detail-title').textContent=order.reference;showOrder(order,$('#detail-content'));if(isPaidOrder(order)){const invoice=el('a','Print / Save Invoice','button');invoice.href=deploymentPath('/admin/orders/invoice/?id='+encodeURIComponent(order.id));$('#detail-content').prepend(invoice);}
+  if(order.reference==='AI-010010'&&order.paymentStatus==='paid'&&order.confirmationEmailStatus==='legacy'){
+   const button=el('button','Send one confirmation for AI-010010','button');button.type='button';
+   button.addEventListener('click',async()=>{
+    if(!window.confirm('Send one order confirmation to the customer email already saved on AI-010010? This cannot be undone.'))return;
+    button.disabled=true;$('#order-message').textContent='Requesting one confirmation…';
+    try{const token=await createAdminAuth().accessToken();const reply=await fetch(publicBackendConfig.url+'/functions/v1/send-legacy-confirmation',{method:'POST',headers:{apikey:publicBackendConfig.publishableKey,Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({reference:'AI-010010'})});
+     const result=await reply.json();if(!reply.ok)throw new Error(result.message||'Confirmation unavailable.');await refresh();$('#order-message').textContent=result.message;}
+    catch(error){$('#order-message').textContent=error.message;await refresh();}
+   });$('#detail-content').prepend(button);
+  }
   const next=nextFulfilment(order),form=$('#order-status-form');form.hidden=!next;
   const select=$('#detail-status');select.replaceChildren();if(next){const choice=el('option',fulfilmentLabels[next]);choice.value=next;select.append(choice);}
   if(order.paymentStatus==='paid'&&(!order.customer.name||!order.delivery.line1)){

@@ -1,0 +1,46 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {invoiceAddress,invoiceFromOrder} from '../dist/admin/orders/invoice/model.mjs';
+import {buildPaidOrderConfirmation} from '../supabase/functions/stripe-webhook/confirmation.ts';
+import {sendLegacyConfirmation} from '../supabase/functions/send-legacy-confirmation/index.ts';
+const order={reference:'AI-010010',paymentStatus:'paid',createdAt:'2026-09-25T12:00:00Z',customer:{name:'A Customer',email:'buyer@example.test'},delivery:{recipient:'A Customer',line1:'1 Test Road',city:'Nottingham',postcode:'NG1 1AA',country:'GB'},items:[{name:'Test Item',quantity:1,unitPrice:1,lineTotal:1}],pricing:{subtotal:1,delivery:399,total:400}};
+assert.equal(invoiceFromOrder(order).pricing.total,400);
+assert.throws(()=>invoiceFromOrder({...order,paymentStatus:'unpaid'}),/paid Order/);
+assert.deepEqual(invoiceAddress(order.customer,order.delivery).lines,['1 Test Road','Nottingham','NG1 1AA','United Kingdom']);
+assert.equal(invoiceAddress(order.customer,order.delivery).recipient,null);
+assert.equal(invoiceAddress(order.customer,{...order.delivery,recipient:'Different Recipient',line2:'Flat 2'}).recipient,'Different Recipient');
+assert(invoiceAddress(order.customer,{...order.delivery,line2:'Flat 2'}).lines.includes('Flat 2'));
+const css=fs.readFileSync('dist/admin/orders/invoice/invoice.css','utf8');
+assert.match(css,/table-layout:fixed/);assert.match(css,/col\.description\{width:48%\}/);assert.match(css,/overflow-wrap:anywhere/);
+assert.match(css,/@page\{size:A4/);assert.match(css,/print-controls,#invoice-message/);
+const paid={...order,payment_status:'paid',paid_at:order.createdAt,fulfillment_applied_at:order.createdAt,subtotal_pence:1,delivery_pence:399,total_pence:400};
+const msg=buildPaidOrderConfirmation(paid);
+assert.equal(msg.to,order.customer.email);assert.match(msg.html,/ORDER CONFIRMED/i);assert.match(msg.html,/£4.00/);
+assert.match(msg.html,/United Kingdom/);assert.match(msg.text,/TOTAL PAID: £4.00/);
+assert.match(buildPaidOrderConfirmation({...paid,status:'in_production'}).text,/Fulfilment: In Production/);
+assert.doesNotMatch(msg.html,/supabase|stripe|service_role/i);
+assert.throws(()=>buildPaidOrderConfirmation({...paid,payment_status:'unpaid'}),/paid Order/);
+const migration=fs.readFileSync('supabase/migrations/20260925222950_p08a_legacy_order_confirmation.sql','utf8');
+assert.match(migration,/reference='AI-010010'/);assert.match(migration,/confirmation_email_status<>'legacy'/);
+assert.match(migration,/revoke all on function public.claim_legacy_test_order_confirmation\(uuid\) from public, anon, authenticated/);
+assert.doesNotMatch(migration,/update\s+public\.inventory|update\s+public\.orders\s+set\s+payment_status/i);
+const env={get:k=>({SUPABASE_URL:'https://example.supabase.co',SUPABASE_ANON_KEY:'public-key',SUPABASE_SERVICE_ROLE_KEY:'service-key'})[k]};
+const origin='https://apparitioninstruments.co.uk';
+const req=(body,token='session')=>new Request('https://example.supabase.co/functions/v1/send-legacy-confirmation',{method:'POST',headers:{origin,Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify(body)});
+let sends=0,claims=0,finishes=0,state='legacy';
+const request=async(url,init)=>{
+ if(url.endsWith('/auth/v1/user'))return init.headers.Authorization==='Bearer session'?Response.json({id:'11111111-1111-1111-1111-111111111111'}):new Response('',{status:401});
+ if(url.includes('/admin_members?'))return Response.json(init.headers.Authorization==='Bearer session'?[{user_id:'11111111-1111-1111-1111-111111111111'}]:[]);
+ if(url.includes('/orders?'))return Response.json([{id:'22222222-2222-2222-2222-222222222222',payment_status:'paid',confirmation_email_status:state}]);
+ if(url.endsWith('/claim_legacy_test_order_confirmation')){claims++;if(state!=='legacy')return Response.json(null);state='sending';return Response.json({claim:'claim-id',order:paid});}
+ if(url.endsWith('/finish_paid_order_confirmation')){finishes++;state=JSON.parse(init.body).p_state;return Response.json(true);}
+ throw Error(url);
+};
+assert.equal((await sendLegacyConfirmation(req({reference:'AI-010010'},'bad'),env,request,async()=>{sends++})).status,403);
+assert.equal((await sendLegacyConfirmation(req({reference:'AI-010010',to:'attacker@example.test'}),env,request,async()=>{sends++})).status,400);
+assert.equal((await sendLegacyConfirmation(req({reference:'AI-010010'}),env,request,async(_env,mail)=>{assert.equal(mail.to,'buyer@example.test');sends++})).status,200);
+assert.equal((await sendLegacyConfirmation(req({reference:'AI-010010'}),env,request,async()=>{sends++})).status,409);
+assert.equal(sends,1);assert.equal(claims,1);assert.equal(finishes,1);assert.equal(state,'sent');
+const app=fs.readFileSync('dist/admin/orders/app.mjs','utf8');
+assert.match(app,/order\.reference==='AI-010010'&&order\.paymentStatus==='paid'&&order\.confirmationEmailStatus==='legacy'/);
+console.log('P08A: invoice, email and one-time authenticated Admin recovery PASS');

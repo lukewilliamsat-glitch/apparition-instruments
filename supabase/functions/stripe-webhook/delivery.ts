@@ -1,12 +1,12 @@
 import {buildPaidOrderConfirmation} from './confirmation.ts';
 import {sendOrderMail} from './smtp.ts';
 type Environment={get:(name:string)=>string|undefined};
-export async function sendConfirmedOrderOnce(orderId:string,env:Environment,request:typeof fetch=fetch,send=sendOrderMail){
+export async function sendConfirmedOrderOnce(orderId:string,env:Environment,request:typeof fetch=fetch,send=sendOrderMail,claimRpc='claim_paid_order_confirmation'){
  const url=env.get('SUPABASE_URL'),service=env.get('SUPABASE_SERVICE_ROLE_KEY');if(!url||!service)return false;
  const headers={apikey:service,Authorization:'Bearer '+service,'Content-Type':'application/json'};
- const claimResponse=await request(url+'/rest/v1/rpc/claim_paid_order_confirmation',{method:'POST',headers,body:JSON.stringify({p_order_id:orderId})});
+ const claimResponse=await request(url+'/rest/v1/rpc/'+claimRpc,{method:'POST',headers,body:JSON.stringify({p_order_id:orderId})});
  if(!claimResponse.ok)return false;
- const claim=await claimResponse.json();if(!claim)return true; // Sent, sending, legacy or unpaid: never send again.
+ const claim=await claimResponse.json();if(!claim)return claimRpc==='claim_paid_order_confirmation'; // Manual recovery reports already-claimed orders as unavailable.
  if(!claim.claim||!claim.order)return false;
  let state:'sent'|'failed'|'unknown'='sent',reason:string|null=null;
  try{const message=buildPaidOrderConfirmation(claim.order);await send(env,message);}

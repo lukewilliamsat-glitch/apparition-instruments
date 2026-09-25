@@ -6,7 +6,7 @@ import fs from 'node:fs';
 const order={id:'e13ed95e-11be-4dac-a7c8-26cd5a79ec21',reference:'AI-010011',payment_status:'paid',paid_at:'2026-09-25T19:00:00Z',fulfillment_applied_at:'2026-09-25T19:00:00Z',customer:{name:'A <Customer>',email:'buyer@example.test'},delivery:{recipient:'Recipient',line1:'1 Road',city:'Nottingham',postcode:'NG1 1AA',country:'GB'},items:[{name:'Test & Item',quantity:2,unitPrice:200,lineTotal:400}],subtotal_pence:400,delivery_pence:399,total_pence:799};
 const env={get:k=>({SUPABASE_URL:'https://example.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'test-service'})[k]};
 assert.throws(()=>buildPaidOrderConfirmation({...order,payment_status:'unpaid'}),/paid Order/);
-const message=buildPaidOrderConfirmation(order);assert.match(message.text,/£7.99/);assert.match(message.text,/United Kingdom/);assert.match(message.html,/A &lt;Customer&gt;/);assert.match(message.html,/Test &amp; Item/);assert(!message.html.includes(order.id));
+const message=buildPaidOrderConfirmation(order);assert.match(message.text,/£7.99/);assert.match(message.text,/United Kingdom/);assert.match(message.html,/Hi A,/);assert.match(message.html,/Test &amp; Item/);assert(!message.html.includes(order.id));
 let claims=0,sends=0,finished=[],status='pending';
 const request=async(url,init)=>{if(url.endsWith('/claim_paid_order_confirmation')){claims++;if(status!=='pending')return Response.json(null);status='sending';return Response.json({claim:'token',order});}if(url.endsWith('/finish_paid_order_confirmation')){const payload=JSON.parse(init.body);finished.push(payload);status=payload.p_state;return Response.json(true);}throw Error(url)};
 const send=async(_env,mail)=>{sends++;assert.equal(mail.to,'buyer@example.test');};

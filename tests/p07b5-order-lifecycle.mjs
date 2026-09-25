@@ -5,7 +5,7 @@ import {readFileSync} from 'node:fs';
 const root=new URL('../dist/',import.meta.url);
 const gate=readFileSync(new URL('admin/admin-gate.mjs',root),'utf8'),app=readFileSync(new URL('admin/orders/app.mjs',root),'utf8'),html=readFileSync(new URL('admin/orders/index.html',root),'utf8');
 assert(gate.includes("order-data.mjs?v=p07b7")&&app.includes("order-data.mjs?v=p07b7"),'Admin gate and Orders must share the same repository module instance');
-assert(html.includes('data-admin-entry="./app.mjs?v=p07b7"')&&html.includes('admin-gate.mjs?v=p07b7'));
+assert(html.includes('data-admin-entry="./app.mjs?v=p08a"')&&html.includes('admin-gate.mjs?v=p07b7'));
 const paid={id:'paid-id',reference:'AI-010010',created_at:'2026-09-25T15:04:48Z',paid_at:'2026-09-25T15:05:22Z',status:'pending',payment_status:'paid',customer:{name:'Customer'},delivery:{country:'GB'},items:[],subtotal_pence:1,delivery_pence:399,total_pence:400,status_history:[]};
 const attempt={...paid,id:'attempt-id',reference:'AI-010008',payment_status:'unpaid',paid_at:null,customer:{},status_history:[]};
 const calls=[];const transport={send:async(resource,options)=>{calls.push({resource,options});return Response.json(resource==='orders'?[paid,attempt]:'in_production');}};
