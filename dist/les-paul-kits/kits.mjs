@@ -1,6 +1,6 @@
 import {generatorURL,installationGuideURL,readGeneratorURL,builderDiagramURL} from '../wiring-generator/session.mjs';
 import {renderKitFields,updateFieldSummaries} from './fields.mjs';
-import {defaults,normaliseKit,describeKit,specification,lesPaul,resolveLesPaulKit,invalidKitChoices,formatKitPrice,upgradeLabel,configurationFromURL,builderURL,specificationURL} from './config.mjs';
+import {defaults,normaliseKit,describeKit,specification,lesPaul,resolveLesPaulKit,invalidKitChoices,formatKitPrice,upgradeLabel,configurationFromURL,builderURL,specificationURL,toneCaps} from './config.mjs';
 import {diagramMarkup,componentDescription} from './diagram.mjs';
 import {readBasket,addKit} from '../commerce.mjs';
 import {deploymentPath} from '../deployment.mjs';
@@ -13,6 +13,13 @@ let diagramView='full',diagramFocus='all',enlarged=false,editId=new URLSearchPar
 function readState(){return normaliseKit(Object.fromEntries(Object.keys(defaults).map(k=>[k,field(k)?.value??defaults[k]])));}
 function setControl(key,val){const control=field(key);if(!control)return;if(control instanceof RadioNodeList||Array.isArray(control)){for(const input of control)input.checked=input.value===val;return;}control.value=val;if(control.tagName==='SELECT'&&control.selectedIndex<0){const option=[...control.options].find(o=>o.value===val);if(option)option.selected=true;}}
 function setState(value){staleChoices=invalidKitChoices(value);const state=normaliseKit(value);for(const [key,val] of Object.entries(state))setControl(key,val);}
+function updateInstallationLinks(state){
+ const caps=toneCaps(state),supported=[caps.neck,caps.bridge].every(cap=>['0.022','0.033','0.047'].includes(cap.value));
+ for(const [selector,url] of [['#view-installation',generatorURL],['#kit-installation-guide',installationGuideURL]]){
+  const link=$(selector);if(supported){link.href=url(drawing,state);link.removeAttribute('aria-disabled');link.removeAttribute('title');link.textContent=selector==='#view-installation'?'View installation diagram →':'Read the installation guide →';}
+  else{link.removeAttribute('href');link.setAttribute('aria-disabled','true');link.title='The separate installation Generator does not yet support this tone capacitor value.';link.textContent='Installation Generator unavailable for this capacitor value';}
+ }
+}
 setState(defaults);
 function renderDiagram(state){
  const mount=$('#diagram-mount'),scroll=$('#diagram-scroll'),x=scroll.scrollLeft,y=scroll.scrollTop;
@@ -40,9 +47,9 @@ function render(){
  $('#diagram-shaft').textContent=`${s.shaft} · ${state.pots}`;$('#diagram-matching').textContent=s.matching;
  const hasBleed=state.bleed!=='none';$('#bleed-note').hidden=!hasBleed;
  $('#bleed-note').textContent=lesPaul.bleed[state.bleed].description;
- $('#specification').value=specification(state);$('#print-kit').href=specificationURL(state);$('#view-installation').href=generatorURL(drawing,state);$('#kit-installation-guide').href=installationGuideURL(drawing,state);$('#share-fallback').hidden=true;$('#copy-status').textContent=staleChoices.length?'Previously selected options are no longer eligible: '+staleChoices.join(', ')+'. Choose a current option to continue.':resolved.availability.unavailable.length?'Out of stock or unavailable: '+resolved.availability.unavailable.map(part=>part.name).join(', ')+'. Choose an available configuration before adding to basket. '+resolved.defaultWarnings.join(' '):!Number.isFinite(pricing.total)?'This configuration contains an unpriced option. Choose an available option before adding it to your basket.':resolved.defaultWarnings.join(' ');renderDiagram(state);
+ $('#specification').value=specification(state);$('#print-kit').href=specificationURL(state);updateInstallationLinks(state);$('#share-fallback').hidden=true;$('#copy-status').textContent=staleChoices.length?'Previously selected options are no longer eligible: '+staleChoices.join(', ')+'. Choose a current option to continue.':resolved.availability.unavailable.length?'Out of stock or unavailable: '+resolved.availability.unavailable.map(part=>part.name).join(', ')+'. Choose an available configuration before adding to basket. '+resolved.defaultWarnings.join(' '):!Number.isFinite(pricing.total)?'This configuration contains an unpriced option. Choose an available option before adding it to your basket.':resolved.defaultWarnings.join(' ');renderDiagram(state);
 }
-form.addEventListener('submit',e=>e.preventDefault());form.addEventListener('change',()=>{staleChoices=[];render();});field('model').addEventListener('input',()=>{const s=describeKit(readState());$('#summary-model').textContent=s.model;$('#specification').value=specification(readState());$('#print-kit').href=specificationURL(readState());$('#view-installation').href=generatorURL(drawing,readState());$('#kit-installation-guide').href=installationGuideURL(drawing,readState());$('#share-fallback').hidden=true;$('#copy-status').textContent='';});
+form.addEventListener('submit',e=>e.preventDefault());form.addEventListener('change',()=>{staleChoices=[];render();});field('model').addEventListener('input',()=>{const s=describeKit(readState());$('#summary-model').textContent=s.model;$('#specification').value=specification(readState());$('#print-kit').href=specificationURL(readState());updateInstallationLinks(readState());$('#share-fallback').hidden=true;$('#copy-status').textContent='';});
 form.addEventListener('reset',()=>setTimeout(()=>{lastComponent=null;$('#guided-notice').hidden=true;render();},0));
 document.querySelectorAll('[data-diagram-focus]').forEach(button=>button.addEventListener('click',()=>{lastComponent=null;diagramFocus=button.dataset.diagramFocus;document.querySelectorAll('[data-diagram-focus]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));renderDiagram(readState());}));
 $('#diagram-zoom').addEventListener('click',()=>{enlarged=!enlarged;$('#diagram-zoom').setAttribute('aria-pressed',String(enlarged));$('#diagram-zoom').textContent=enlarged?'Fit':'Enlarge';$('#live-diagram').style.width=enlarged?'220%':'100%';});

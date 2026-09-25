@@ -65,7 +65,12 @@ export function createAdminComponentRepository(transport){
  return Object.freeze({list,changeStock,async remove(id){
   if(typeof id!=='string'||!id.trim())throw new Error('Choose a Component to delete.');
   const response=await transport.send('rpc/delete_unused_component',{method:'POST',body:{p_component_id:id}});
-  if(!response.ok)throw new Error('Component deletion is unavailable ('+response.status+'). No data was removed.');
+  if(!response.ok){
+   let detail;try{detail=await response.json();}catch{}
+   if(response.status===401||response.status===403)throw new Error('Admin session or membership does not authorise deletion. Sign in again; no data was removed.');
+   if(detail?.code==='23503')throw new Error('Cannot delete this Component while another record references it. Review Assembly BOM and Kit Definition dependencies; no data was removed.');
+   throw new Error('Component deletion failed ('+response.status+'): '+(typeof detail?.message==='string'?detail.message:'The database did not accept the request.')+' No data was removed.');
+  }
   const result=await response.json();
   if(result?.deleted===true)return result;
   if(Array.isArray(result?.dependencies)&&result.dependencies.length){

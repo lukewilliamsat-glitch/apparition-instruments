@@ -20,6 +20,7 @@
 @media(prefers-reduced-motion:reduce){.kit-page *{scroll-behavior:auto!important;transition:none!important}}
 
 .choice-with-info[hidden]{display:none!important}
+.capacitor-groups{display:grid;gap:20px}.capacitor-value-group{min-width:0}.capacitor-value-heading{font-size:16px;color:#d7bf88;margin:0 0 12px}.capacitor-groups>.choice-with-info{max-width:calc(50% - 8px)}@media(max-width:700px){.capacitor-groups>.choice-with-info{max-width:none}}
 
 /* Customer-ready: keep purchasing first; contain the technical drawing separately. */
 .kit-summary + .circuit-card{margin:28px 0 0}.kit-page .diagram-scroll{max-width:100%;max-height:480px}.kit-page .circuit-card{min-width:0}.kit-page .kit-aside{overflow-wrap:anywhere}.kit-page .mixed-values select{min-width:0;max-width:100%}.kit-page .kit-action-row .button{white-space:normal;min-height:48px}.kit-page .choice:has(input:disabled){opacity:.55;cursor:not-allowed}

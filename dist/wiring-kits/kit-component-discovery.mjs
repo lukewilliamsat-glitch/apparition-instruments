@@ -12,8 +12,9 @@ export function toneCapacitance(component){
  const match=/^((?:\d+(?:\.\d+)?|\.\d+))\s*(µf|μf|uf|nf)$/i.exec(text(component?.specs?.Value));
  if(!match)return null;
  const microfarads=Number(match[1])/(match[2].toLowerCase()==='nf'?1000:1);
- // The existing Generator represents these three electrical values exactly.
- return ['0.022','0.033','0.047'].find(value=>Math.abs(microfarads-Number(value))<1e-9)||null;
+ // The Builder groups physical parts by their structured value. The separate
+ // Generator retains its own supported-value boundary.
+ return Number.isFinite(microfarads)&&microfarads>0&&microfarads<=1?String(Number(microfarads.toFixed(9))):null;
 }
 // Existing Les Paul circuit: 500k audio standard pots, passive tone caps,
 // supported treble-bleed networks, 3-way toggles and mono output jacks.
@@ -32,7 +33,7 @@ export function kitComponentIneligibility(component){
    if(!/^standard$/i.test(text(specs.Type)))return 'Type must be Standard.';
    return null;
   }
-  case 'capacitors':return toneCapacitance(component)?null:'Capacitance must be 0.022, 0.033 or 0.047 µF (or equivalent nF) for the existing Generator.';
+  case 'capacitors':return toneCapacitance(component)?null:'Enter a positive structured capacitance in µF or nF.';
   case 'treble-bleeds':return /^(?:capacitor only|capacitor \+ resistor in parallel)$/i.test(text(specs.Topology))?null:'Topology must be Capacitor only or Capacitor + resistor in parallel.';
   case 'switches':return /^3\s*[- ]?way toggle$/i.test(text(specs['Switch type']))&&text(specs.Positions)==='3'?null:'Switch type must be 3-Way Toggle with 3 positions.';
   case 'jacks':return /^mono$/i.test(text(specs['Jack type']))?null:'Jack type must be Mono.';

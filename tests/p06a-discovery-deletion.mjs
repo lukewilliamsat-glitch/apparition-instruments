@@ -21,7 +21,7 @@ assert.equal(toneCapacitance(cap),'0.047');
 assert(!discoverKitCandidates([ {...pot,active:false},{...cap,inKits:false} ]).potentiometers.length);
 assert(!discoverKitCandidates([ {...pot,active:false},{...cap,inKits:false} ]).capacitors.length);
 assert(!discoverKitCandidates([{...toggle,specs:{'Switch type':'5-Way Blade',Positions:'5'}}]).switches.length);
-assert(!discoverKitCandidates([{...cap,specs:{Value:'0.015µF'}}]).capacitors.length,'unsupported Generator values cannot be represented as 0.022µF');
+assert.equal(toneCapacitance({...cap,specs:{Value:'15nF'}}),'0.015');assert.equal(discoverKitCandidates([{...cap,specs:{Value:'0.015µF'}}]).capacitors.length,1,'Builder discovers valid structured capacitor values; Generator links remain guarded separately');
 const kit=structuredClone(lesPaulKitAssembly);
 const adminDraft=extendPotentiometerDefinition(kit.kitDefinition,records,{includeUnpermitted:true});
 assert(adminDraft.builderOptions.find(g=>g.key==='pots').values.some(v=>v.key===maker));
@@ -54,6 +54,9 @@ const transport={send:async(table,options)=>{assert.equal(table,'rpc/delete_unus
 const admin=createAdminComponentRepository(transport);
 await assert.rejects(admin.remove(pot.id),/Les Paul Style Wiring Kit — Permitted Component.*Potentiometer resolver/);
 deleted=true;assert.equal((await admin.remove(pot.id)).deleted,true);
+for(const [status,payload,expected] of [[403,{message:'permission denied'},/Admin session or membership/],[409,{code:'23503',message:'foreign key violation'},/another record references it/],[400,{message:'Bad request'},/Bad request/]]){
+ await assert.rejects(createAdminComponentRepository({send:async()=>({ok:false,status,json:async()=>payload})}).remove(pot.id),expected);
+}
 assert(messages.every(x=>x.method==='POST'&&x.body.p_component_id===pot.id));
 const config={url:'https://sample.supabase.co',publishableKey:'sb_publishable_test'};
 let tokenCalls=0;const secure=createAuthenticatedRepositoryTransport({accessToken:async()=>{tokenCalls++;return 'short-lived-user-token';}},{config,request:async(url,options)=>{assert(url.endsWith('/rest/v1/rpc/delete_unused_component'));assert.equal(options.headers.Authorization,'Bearer short-lived-user-token');return {ok:true,json:async()=>({deleted:true})};}});

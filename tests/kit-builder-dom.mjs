@@ -3,7 +3,7 @@ import {readFileSync} from 'node:fs';
 import {spawnSync} from 'node:child_process';
 import {Window} from 'happy-dom';
 
-const scenarios=['base','price-base','defaults','permissions','stock','zero-stock','stock-default','price-difference','zero-code','hidden-listing','disabled-builder','inactive'];
+const scenarios=['base','price-base','defaults','permissions','stock','zero-stock','stock-default','price-difference','zero-code','presentation','hidden-listing','disabled-builder','inactive'];
 if(!process.argv[2]){
  for(const scenario of scenarios){const result=spawnSync(process.execPath,[new URL(import.meta.url).pathname,scenario],{encoding:'utf8'});if(result.status!==0)throw new Error(scenario+' DOM runtime failed:\n'+result.stderr+'\n'+result.stdout);console.log(result.stdout.trim());}
  process.exit(0);
@@ -54,6 +54,12 @@ if(scenario==='zero-code'){
  const id='test-brand-x-short';const component=components.list().find(item=>item.id==='pot-short-alpha-a');components.save({...component,id,sku:id,name:'Test Brand X A500K Short',productTitle:'Test Brand X A500K Short',manufacturer:'Test Brand X',stock:12,kitPrice:300,specs:{...component.specs,Shaft:'Short'}},null);
  kit.kitDefinition.permittedComponentIds.push(id);
 }
+if(scenario==='presentation'){
+ kit.kitDefinition.builderOptions.find(group=>group.key==='pots').defaultValue='Alpha';kit.kitDefinition.defaults.pots='Alpha';
+ edit('pot-short-cts-a',{kitPrice:299});edit('bleed-prs',{kitPrice:400});
+ const pot=components.list().find(item=>item.id==='pot-short-alpha-a');components.save({...pot,id:'new-pot',sku:'new-pot',name:'New Maker Short',productTitle:'New Maker Short',manufacturer:'New Maker',stock:12,kitPrice:199,specs:{Resistance:'500kΩ',Taper:'Audio',Shaft:'Short',Type:'Standard'}},null);kit.kitDefinition.permittedComponentIds.push('new-pot');
+ const cap=components.list().find(item=>item.id==='cde-022');components.save({...cap,id:'new-cap',sku:'new-cap',name:'New Maker 0.015µF',productTitle:'New Maker capacitor',manufacturer:'New Maker',specs:{...cap.specs,Value:'15nF'},stock:12},null);kit.kitDefinition.permittedComponentIds.push('new-cap');
+}
 assemblies.save(kit,kit.id);
 const errors=[];window.addEventListener('error',event=>errors.push(event.error||event.message));
 await import('../dist/wiring-kits/builder-entry.mjs');
@@ -84,6 +90,16 @@ if(scenario==='defaults'){
  change('pots','Alpha');assert.equal($('#kit-price').textContent,'£39.00');$('#add-to-basket').click();const record=JSON.parse(localStorage.getItem('apparition.basket.v1')).items[0].record;assert.equal(record.pricing.total,3900);assert.equal(record.pricing.lines.find(line=>line.key==='pots').price,-3200);
 }else if(scenario==='zero-code'){
  assert($('[name="pots"][value="Test Brand X"]'));change('pots','Test Brand X');assert.match($('#summary-pots').textContent,/Test Brand X/);assert.equal($('#add-to-basket').disabled,false);
+}else if(scenario==='presentation'){
+ const card=(name,value)=>$(`[name="${name}"][value="${value}"]`).closest('.choice-with-info').querySelector('[data-option-price]').textContent;
+ assert.equal(card('pots','Alpha'),'Included');assert.equal(card('pots','CTS'),'+£11.96');assert.equal(card('pots','New Maker'),'+£7.96');
+ change('pots','CTS');assert.match($('[data-selected-option="pots"]').textContent,/CTS · \+£11\.96/);assert.equal(card('pots','CTS'),'+£11.96');
+ change('pots','New Maker');assert.match($('[data-selected-option="pots"]').textContent,/New Maker · \+£7\.96/);
+ assert.equal(card('bleed','bleed-prs'),'+£8.00');change('bleed','bleed-prs');assert.match($('[data-selected-option="bleed"]').textContent,/\+£8\.00/);
+ const headings=[...document.querySelectorAll('.capacitor-value-heading')].map(n=>n.textContent);assert.deepEqual(headings,['0.015 µF','0.022 µF','0.033 µF','0.047 µF']);
+ const novel=$('[name="caps"][value="new-cap"]');assert(novel);assert.equal(novel.closest('.capacitor-value-group').querySelector('h3').textContent,'0.015 µF');assert.match(novel.closest('.choice-with-info').textContent,/2 × New Maker capacitor.*0\.015 µF.*New Maker/s);
+ change('caps','new-cap');assert.equal($('#view-installation').hasAttribute('href'),false,'do not silently represent 0.015µF as 0.022µF in Generator');assert.equal($('#add-to-basket').disabled,false);
+ change('caps','mixed');assert.equal($('#view-installation').hasAttribute('href'),true);assert.equal($('#mixed-values').hidden,false);
 }else if(scenario==='base'){
  assert.equal($('#add-to-basket').disabled,false);
  assert.equal(selected('caps'),'mixed');assert.equal(selected('neckCap'),'sbe-200');assert.equal(selected('bridgeCap'),'cde-022');
