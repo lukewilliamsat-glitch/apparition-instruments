@@ -2,7 +2,9 @@
 // Gateway JWT verification is required. The body also requires an Admin member
 // session or the project's service role JWT. No caller-supplied recipient/content.
 type Env={get:(name:string)=>string|undefined};
-const json=(status:number,message:string)=>Response.json({message},{status});
+const productionOrigin='https://apparitioninstruments.co.uk';
+const cors={'Access-Control-Allow-Origin':productionOrigin,'Access-Control-Allow-Methods':'POST, OPTIONS','Access-Control-Allow-Headers':'authorization, apikey, content-type','Vary':'Origin'};
+const json=(status:number,message:string)=>Response.json({message},{status,headers:cors});
 async function authorised(request:Request,env:Env,fetcher:typeof fetch){
  const token=/^Bearer (\S+)$/.exec(request.headers.get('Authorization')||'')?.[1];
  if(!token)return false;
@@ -33,6 +35,8 @@ async function sendTestMail(env:Env){
  }finally{conn.close();}
 }
 export async function smtpDiagnostic(req:Request,env:Env=Deno.env,fetcher:typeof fetch=fetch){
+ if(req.headers.get('Origin')&&req.headers.get('Origin')!==productionOrigin)return json(403,'Origin unavailable');
+ if(req.method==='OPTIONS')return new Response(null,{status:204,headers:cors});
  if(req.method!=='POST')return json(405,'POST required');
  try{if(!await authorised(req,env,fetcher))return json(403,'Authorised Admin or service role required');
   await sendTestMail(env);return json(200,'SMTP accepted one test email to the configured sender mailbox');
