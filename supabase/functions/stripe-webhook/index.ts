@@ -1,5 +1,6 @@
 // P07B.2A receiver. Stripe owns payment status; only this signed, live-mode path
 // can ask the service-only database function to apply inventory fulfilment.
+import {storeVerifiedContact} from './contact.ts';
 type Environment={get:(name:string)=>string|undefined};
 const reply=(status:number,body:string)=>new Response(body,{status,headers:{'Content-Type':'text/plain; charset=utf-8'}});
 const sameBytes=(a:Uint8Array,b:Uint8Array)=>{
@@ -39,6 +40,9 @@ export async function receiveStripeWebhook(req:Request,env:Environment=Deno.env,
   ||session.currency!=='gbp'||!/^AI-\d+$/.test(session.client_reference_id||'')
   ||!/^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/i.test(session.metadata?.order_id||'')
   ||session.metadata?.order_reference!==session.client_reference_id)return reply(400,'Checkout reference is invalid');
+ // Persist only Stripe-collected details from this signed event before payment
+ // fulfilment. On missing details return a retryable error without stock writes.
+ if(!await storeVerifiedContact(session,env,request))return reply(503,'Order delivery information is unavailable');
  const response=await request(url+'/rest/v1/rpc/fulfil_paid_stripe_checkout',{
   method:'POST',headers:{apikey:service,Authorization:'Bearer '+service,'Content-Type':'application/json'},
   body:JSON.stringify({p_event_id:event.id,p_event_type:event.type,p_order_id:session.metadata.order_id,

@@ -6,6 +6,8 @@ const event={id:'evt_0123456789abcdef',type:'checkout.session.completed',livemod
  data:{object:{id:'cs_live_0123456789abcdef',object:'checkout.session',livemode:true,
   payment_status:'paid',status:'complete',mode:'payment',payment_intent:'pi_0123456789abcdef',
   amount_total:5798,currency:'gbp',client_reference_id:'AI-010001',
+  customer_details:{name:'Fixture Customer',email:'fixture@example.test'},
+  collected_information:{shipping_details:{name:'Fixture Recipient',address:{line1:'1 Example Road',city:'London',postal_code:'SW1A 1AA',country:'GB'}}},
   metadata:{order_id:orderId,order_reference:'AI-010001'}}}};
 const env={get:key=>({STRIPE_WEBHOOK_SECRET:secret,SUPABASE_URL:'https://example.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'server-only'})[key]};
 async function signed(value=event,timestamp=now,signatureSecret=secret){
@@ -17,11 +19,12 @@ async function signed(value=event,timestamp=now,signatureSecret=secret){
 const calls=[];
 const database=async(url,init)=>{calls.push({url,init});return Response.json('paid');};
 assert.equal((await receiveStripeWebhook(await signed(),env,database,now)).status,200);
-assert.equal(calls.length,1);assert(calls[0].url.endsWith('/rpc/fulfil_paid_stripe_checkout'));
+assert.equal(calls.length,2);assert(calls[0].url.endsWith('/rpc/save_stripe_order_contact'));
+assert(calls[1].url.endsWith('/rpc/fulfil_paid_stripe_checkout'));
 assert.equal(calls[0].init.headers.Authorization,'Bearer server-only');
-assert.equal(JSON.parse(calls[0].init.body).p_amount,5798);
+assert.equal(JSON.parse(calls[1].init.body).p_amount,5798);
 assert.equal((await receiveStripeWebhook(await signed({...event,data:{object:{...event.data.object,payment_status:'unpaid'}}}),env,database,now)).status,200);
-assert.equal(calls.length,1,'Unpaid session must not call fulfilment');
+assert.equal(calls.length,2,'Unpaid session must not call fulfilment');
 assert.equal((await receiveStripeWebhook(await signed({...event,livemode:false}),env,database,now)).status,400);
 assert.equal((await receiveStripeWebhook(await signed({...event,data:{object:{...event.data.object,livemode:false}}}),env,database,now)).status,400);
 assert.equal((await receiveStripeWebhook(await signed({...event,data:{object:{...event.data.object,amount_total:5798,currency:'usd'}}}),env,database,now)).status,400);
@@ -30,6 +33,6 @@ assert.equal((await receiveStripeWebhook(await signed(event,now,'whsec_wrong_key
 const altered=await signed();const spoof=new Request(altered.url,{method:'POST',headers:altered.headers,body:JSON.stringify({...event,id:'evt_ffffffffffffffff'})});
 assert.equal((await receiveStripeWebhook(spoof,env,database,now)).status,401);
 assert.equal(await verifyStripeSignature(new TextEncoder().encode(JSON.stringify(event)),(await signed()).headers.get('Stripe-Signature'),secret,now),true);
-assert.equal(calls.length,1,'Invalid signature/metadata must not call fulfilment');
+assert.equal(calls.length,2,'Invalid signature/metadata must not call fulfilment');
 assert.equal((await receiveStripeWebhook(await signed(),{get:()=>undefined},database,now)).status,503);
 console.log('P07B.2A: raw signature, paid-only, live-only, timestamp, spoof rejection, service-only RPC, missing-secret fail-closed PASS');
