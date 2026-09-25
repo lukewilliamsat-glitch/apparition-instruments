@@ -1,6 +1,7 @@
 // P07B.2A receiver. Stripe owns payment status; only this signed, live-mode path
 // can ask the service-only database function to apply inventory fulfilment.
 import {storeVerifiedContact} from './contact.ts';
+import {sendConfirmedOrderOnce} from './delivery.ts';
 type Environment={get:(name:string)=>string|undefined};
 const reply=(status:number,body:string)=>new Response(body,{status,headers:{'Content-Type':'text/plain; charset=utf-8'}});
 const sameBytes=(a:Uint8Array,b:Uint8Array)=>{
@@ -49,6 +50,9 @@ export async function receiveStripeWebhook(req:Request,env:Environment=Deno.env,
    p_reference:session.client_reference_id,p_session_id:session.id,
    p_payment_intent_id:session.payment_intent,p_amount:session.amount_total,p_currency:session.currency})});
  if(!response.ok)return reply(503,'Order fulfilment could not be confirmed');
+ // Only after the service-only paid/stock transaction succeeds. Email outcomes
+ // never roll back payment or physical fulfilment; a retry cannot reclaim it.
+ if(!await sendConfirmedOrderOnce(session.metadata.order_id,env,request))return reply(503,'Email delivery state unavailable');
  return reply(200,'Payment received');
 }
 if(import.meta.main)Deno.serve(req=>receiveStripeWebhook(req));
