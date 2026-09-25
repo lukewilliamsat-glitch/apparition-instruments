@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {checkoutStatus} from '../supabase/functions/checkout-status/index.ts';
+const session='cs_live_0123456789abcdef',url='https://example.supabase.co/functions/v1/checkout-status?session_id='+session;
+const env={get:key=>({SUPABASE_URL:'https://example.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'server-only'})[key]};
+const request=()=>new Request(url,{headers:{Origin:'https://apparitioninstruments.co.uk'}});
+let calls=0;
+const server=rows=>async(_url,init)=>{calls++;assert.equal(init.headers.Authorization,'Bearer server-only');return Response.json(rows);};
+let response=await checkoutStatus(request(),env,server([{reference:'AI-010001',payment_status:'unpaid',paid_at:null,fulfillment_applied_at:null}]));
+assert.equal((await response.json()).paymentStatus,'processing');
+response=await checkoutStatus(request(),env,server([{reference:'AI-010001',payment_status:'paid',paid_at:'2026-09-25',fulfillment_applied_at:'2026-09-25'}]));
+assert.deepEqual(await response.json(),{reference:'AI-010001',paymentStatus:'paid'});
+response=await checkoutStatus(request(),env,server([{reference:'AI-010001',payment_status:'paid',paid_at:'2026-09-25',fulfillment_applied_at:null}]));
+assert.equal((await response.json()).paymentStatus,'processing','URL or unfulfilled payment cannot claim confirmation');
+assert.equal((await checkoutStatus(new Request(url.replace(session,'cs_test_abc')),env,()=>{throw Error('No DB call for test session');})).status,400);
+assert.equal(calls,3);
+console.log('P07B.2 success status: read-only session lookup, paid only after verified fulfilment PASS');
