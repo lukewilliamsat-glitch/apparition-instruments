@@ -53,7 +53,7 @@ Admin and internal systems include:
 - Wiring Kit Master
 - Production Build Sheets covering picking, wiring, build, QC and print layouts
 
-Components, Inventory, the Les Paul Assembly/BOM and Kit Definition are shared Supabase business data, with Admin writes protected by Supabase Auth, explicit Admin membership and RLS. Orders and production records remain browser-local; clearing browser storage can remove these local records.
+Components, Inventory, the Les Paul Assembly/BOM, Kit Definition and new guest-submitted configured-kit Orders are shared Supabase business data. Order creation uses a constrained database RPC to validate the P06B kit snapshot and prices; Orders are readable only by explicit Supabase Admin membership. New Orders are Pending and Unpaid. Order submission does not process payments, reserve or deduct stock. Legacy manually entered browser-local Orders and production Build Sheets have not been migrated; they remain browser-local and are not the new Admin Orders authority.
 
 The Wiring Diagram Generator retains its known routing and readability issue affecting how some circuit connections are presented. This is banked work, not a transfer discrepancy.
 
@@ -67,6 +67,7 @@ P06A.1 lists Active + Available in wiring kits Components in the Kit Definition 
 
 Admin may permanently delete an unused Component after confirmation. A transactional Supabase function checks Assembly BOM, Kit Definition permissions, defaults and resolver references; referenced Components cannot be deleted. The database policy also blocks a direct Admin DELETE of referenced Components. Inventory is removed atomically with an unused Component. Deactivation with `Active = false` remains the non-destructive alternative. Existing browser-local order snapshots are not a shared database dependency ledger.
 The Admin deletion response reports dependency and database errors; an unused Component was verified removable inside a rolled-back Admin database transaction, while a Component retained in a Kit Definition resolver was correctly blocked. No live business record was removed in that check.
+Admin refreshes authoritative Components on return to the tab; successful create, edit, stock updates and deletion reload the authoritative repository list. No local Component seed is used as a fallback.
 
 ## Next architecture phase
 

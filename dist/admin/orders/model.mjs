@@ -1,7 +1,7 @@
 import {validateKitSnapshot} from '../../les-paul-kits/snapshot.mjs';
 export const orderStorageKey='apparition.admin.orders.v1';
 export const channels={WEBSITE:'Website',EBAY:'eBay',MANUAL:'Manual'};
-export const statuses={DRAFT:'Draft',AWAITING_PAYMENT:'Awaiting payment',PAID:'Paid',IN_PRODUCTION:'In production',READY_TO_DISPATCH:'Ready to dispatch',DISPATCHED:'Dispatched',CANCELLED:'Cancelled'};
+export const statuses={PENDING:'Pending',DRAFT:'Draft',AWAITING_PAYMENT:'Awaiting payment',PAID:'Paid',IN_PRODUCTION:'In production',READY_TO_DISPATCH:'Ready to dispatch',DISPATCHED:'Dispatched',CANCELLED:'Cancelled'};
 const copy=x=>structuredClone(x);
 const text=(v,n=300)=>String(v??'').trim().slice(0,n);
 function money(v){if(!Number.isSafeInteger(v)||v<0)throw new Error('Prices must be non-negative GBP amounts in whole pence.');return v;}

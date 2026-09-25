@@ -20,5 +20,7 @@ for(let n=0;n<10&&!document.querySelector('[aria-label="Delete permanently Test 
 const button=()=>document.querySelector('[aria-label="Delete permanently Test unused capacitor"]');assert(button());
 button().click();await new Promise(resolve=>setTimeout(resolve,0));assert.equal(calls,0,'confirmation is mandatory');
 confirm=true;button().click();await new Promise(resolve=>setTimeout(resolve,0));assert.equal(calls,1);assert.match(document.querySelector('#status').textContent,/Potentiometer resolver/);assert(button(),'referenced record remains');
+records=[];browser.dispatchEvent(new Event('pageshow'));await new Promise(resolve=>setTimeout(resolve,0));assert.equal(button(),null,'external authoritative deletion reconciles when the Admin page returns');
+records=[{id:'test-unused',sku:'TEST',name:'Test unused capacitor',category:'capacitors',manufacturer:'Test',specs:{Value:'0.015µF'},stock:2,active:true,inKits:true,salePrice:199,kitPrice:100}];browser.dispatchEvent(new Event('pageshow'));await new Promise(resolve=>setTimeout(resolve,0));assert(button());
 mode='deleted';button().click();await new Promise(resolve=>setTimeout(resolve,0));assert.equal(calls,2);assert.equal(records.length,0);assert.match(document.querySelector('#status').textContent,/Component and Inventory deleted permanently/);
 await browser.happyDOM.abort();console.log('Admin delete confirmation, dependency feedback, success and refreshed list passed.');
