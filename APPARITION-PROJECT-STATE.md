@@ -16,6 +16,8 @@ The live GitHub Pages development and test deployment is:
 
 https://lukewilliamsat-glitch.github.io/apparition-instruments/
 
+The intended customer-facing production origin is `https://apparitioninstruments.co.uk`; `www.apparitioninstruments.co.uk` should redirect to the apex. GitHub Pages remains the host. Production cutover is pending the repository's GitHub Pages custom-domain setting, Squarespace DNS changes and GitHub HTTPS certificate provisioning. Future checkout return URLs and allowed production origins should use the apex once the cutover is verified. The existing Pages Actions workflow publishes `dist/`; a `CNAME` file is not used by this publishing method.
+
 Use small, scoped development passes with checkpoint commits rather than large multi-feature passes.
 
 ### Future implementation workflow
