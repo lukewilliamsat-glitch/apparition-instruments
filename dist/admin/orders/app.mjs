@@ -1,6 +1,6 @@
-import {currentAdminOrderRepository} from '../../backend/order-data.mjs';
-import {statuses,channels} from './model.mjs';
-import {el,money,date,showOrder} from './view.mjs';
+import {currentAdminOrderRepository} from '../../backend/order-data.mjs?v=p07b5';
+import {fulfilmentLabels,paymentLabels,isPaidOrder,isCheckoutAttempt,nextFulfilment} from './lifecycle.mjs';
+import {el,money,date,showOrder} from './view.mjs?v=p07b5';
 import {deploymentPath} from '../../deployment.mjs';
 import {createAdminAuth} from '../admin-auth.mjs';
 import {publicBackendConfig} from '../../backend/public-config.mjs';
@@ -8,12 +8,14 @@ const $=selector=>document.querySelector(selector);
 let records=[];
 $('#order-create-actions').hidden=true;
 $('#order-editor').hidden=true;
-$('#order-status-form').hidden=true;
-for(const [key,label] of Object.entries(statuses))if(key==='PENDING'){const option=el('option',label);option.value=key;$('#order-filter').append(option);}
+const attempts=new URLSearchParams(location.search).get('view')==='attempts';
+for(const [key,label] of Object.entries(fulfilmentLabels)){const option=el('option',label);option.value=key;$('#order-filter').append(option);}
 function render(){
  const id=new URLSearchParams(location.search).get('id'),order=records.find(item=>item.id===id);
  $('#order-detail').hidden=!id;$('#order-list').hidden=!!id;
  if(id){if(!order){$('#order-message').textContent='Order not found in shared Orders. Return to the list and refresh.';return;}$('#detail-title').textContent=order.reference;showOrder(order,$('#detail-content'));
+  const next=nextFulfilment(order),form=$('#order-status-form');form.hidden=!next;
+  const select=$('#detail-status');select.replaceChildren();if(next){const choice=el('option',fulfilmentLabels[next]);choice.value=next;select.append(choice);}
   if(order.paymentStatus==='paid'&&(!order.customer.name||!order.delivery.line1)){
    const button=el('button','Retrieve verified Stripe delivery details','button');button.type='button';
    button.addEventListener('click',async()=>{button.disabled=true;$('#order-message').textContent='Retrieving verified delivery details…';
@@ -23,12 +25,19 @@ function render(){
    $('#detail-content').prepend(button);
   }return;}
  const q=$('#order-search').value.toLowerCase().trim(),filter=$('#order-filter').value;
- const rows=records.filter(item=>(!filter||item.status===filter)&&[item.reference,item.customer.name,item.customer.email].join(' ').toLowerCase().includes(q));
+ const rows=records.filter(item=>(attempts?isCheckoutAttempt(item):isPaidOrder(item))&&(!filter||item.fulfilmentStatus===filter)&&[item.reference,item.customer.name,item.customer.email].join(' ').toLowerCase().includes(q));
  $('#order-rows').replaceChildren();$('#orders-empty').hidden=!!rows.length;
- for(const order of rows){const row=el('tr'),cell=el('td'),link=el('a',order.reference);link.href=deploymentPath('/admin/orders/?id='+encodeURIComponent(order.id));cell.append(link);row.append(cell,...[date(order.createdAt),order.customer.name,channels[order.channel],money(order.pricing.total),statuses[order.status]].map(value=>el('td',value)));$('#order-rows').append(row);}
+ for(const order of rows){const row=el('tr'),cell=el('td'),link=el('a',order.reference);link.href=deploymentPath('/admin/orders/?id='+encodeURIComponent(order.id));cell.append(link);row.append(cell,...[date(order.createdAt),order.customer.name||'Not supplied',money(order.pricing.total),paymentLabels[order.paymentStatus]||order.paymentStatus,isPaidOrder(order)?fulfilmentLabels[order.fulfilmentStatus]||order.fulfilmentStatus:'Checkout attempt'].map((value,index)=>el('td',value,index===3?'order-state '+(isPaidOrder(order)?'paid':'unpaid'):index===4?'order-state':'')));$('#order-rows').append(row);}
 }
 async function refresh(){try{records=await currentAdminOrderRepository().list();$('#order-message').textContent='';render();}catch(error){$('#order-message').textContent=error.message;}}
 $('#order-search').addEventListener('input',render);$('#order-filter').addEventListener('change',render);
+$('#order-status-form').addEventListener('submit',async event=>{event.preventDefault();const id=new URLSearchParams(location.search).get('id'),order=records.find(item=>item.id===id),next=nextFulfilment(order);
+ if(!order||!next||$('#detail-status').value!==next)return;
+ const button=$('#order-status-form button');button.disabled=true;
+ try{await currentAdminOrderRepository().advanceFulfilment(order.id,next);await refresh();}
+ catch(error){$('#order-message').textContent=error.message;}
+ finally{button.disabled=false;}
+});
 window.addEventListener('pageshow',refresh);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refresh();});
 refresh();

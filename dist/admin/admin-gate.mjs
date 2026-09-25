@@ -3,8 +3,8 @@ import {setComponentRepository} from './component-repository.mjs';
 import {createAdminComponentRepository} from '../backend/component-data.mjs';
 import {setAssemblyRepository} from './assembly-repository.mjs';
 import {createAdminAssemblyRepository} from '../backend/assembly-data.mjs';
-import {createAuthenticatedRepositoryTransport} from '../backend/providers.mjs';
-import {createAdminOrderRepository,setAdminOrderRepository} from '../backend/order-data.mjs';
+import {createAuthenticatedRepositoryTransport} from '../backend/providers.mjs?v=p07b5';
+import {createAdminOrderRepository,setAdminOrderRepository} from '../backend/order-data.mjs?v=p07b5';
 
 const element=(document,tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
 const entryModules=document=>(document.querySelector('script[data-admin-entry]')?.dataset.adminEntry||'').split(',').map(value=>value.trim()).filter(Boolean);
