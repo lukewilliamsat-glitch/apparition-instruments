@@ -1,6 +1,6 @@
 import {currentAdminOrderRepository} from '../../backend/order-data.mjs?v=p07b5';
 import {fulfilmentLabels,paymentLabels,isPaidOrder,isCheckoutAttempt,nextFulfilment} from './lifecycle.mjs';
-import {el,money,date,showOrder} from './view.mjs?v=p07b5';
+import {el,money,date,showOrder} from './view.mjs?v=p07b6';
 import {deploymentPath} from '../../deployment.mjs';
 import {createAdminAuth} from '../admin-auth.mjs';
 import {publicBackendConfig} from '../../backend/public-config.mjs';
@@ -13,7 +13,7 @@ for(const [key,label] of Object.entries(fulfilmentLabels)){const option=el('opti
 function render(){
  const id=new URLSearchParams(location.search).get('id'),order=records.find(item=>item.id===id);
  $('#order-detail').hidden=!id;$('#order-list').hidden=!!id;
- if(id){if(!order){$('#order-message').textContent='Order not found in shared Orders. Return to the list and refresh.';return;}$('#detail-title').textContent=order.reference;showOrder(order,$('#detail-content'));
+ if(id){if(!order){$('#order-message').textContent='Order not found in shared Orders. Return to the list and refresh.';return;}$('#detail-title').textContent=order.reference;showOrder(order,$('#detail-content'));if(isPaidOrder(order)){const invoice=el('a','Print / Save Invoice','button');invoice.href=deploymentPath('/admin/orders/invoice/?id='+encodeURIComponent(order.id));$('#detail-content').prepend(invoice);}
   const next=nextFulfilment(order),form=$('#order-status-form');form.hidden=!next;
   const select=$('#detail-status');select.replaceChildren();if(next){const choice=el('option',fulfilmentLabels[next]);choice.value=next;select.append(choice);}
   if(order.paymentStatus==='paid'&&(!order.customer.name||!order.delivery.line1)){
