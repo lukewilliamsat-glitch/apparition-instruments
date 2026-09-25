@@ -65,7 +65,7 @@ if(['disabled-builder','inactive'].includes(scenario)){
 assert.equal($('#builder-status').hidden,true);assert.equal($('.kit-main').hidden,false);
 assert.notEqual($('#kit-price').textContent,'Calculating…');
 assert.equal($('#kit-price').textContent,$('#builder-total').textContent);
-assert.equal($('#kit-price').textContent,scenario==='defaults'?'£88.00':scenario==='price-base'?'£73.50':'£71.00');
+assert.equal($('#kit-price').textContent,scenario==='defaults'?'£92.00':scenario==='price-base'?'£73.50':'£71.00');
 const selected=name=>$('#kit-options').elements.namedItem(name).value;
 const change=(name,value)=>{const control=$(`#kit-options [name="${name}"][value="${value}"]`);assert(control,'missing customer choice '+name+'='+value);control.checked=true;control.dispatchEvent(new Event('change',{bubbles:true}));};
 if(scenario==='defaults'){
@@ -81,7 +81,7 @@ if(scenario==='defaults'){
 }else if(scenario==='stock-default'){
  assert.equal(selected('bridgeCap'),'cde-047');assert.equal($('#add-to-basket').disabled,true);assert.match($('#copy-status').textContent,/Out of stock/);$('#kit-options [name="bridgeCap"]').value='cde-022';$('#kit-options [name="bridgeCap"]').dispatchEvent(new Event('change',{bubbles:true}));assert.equal($('#add-to-basket').disabled,false);
 }else if(scenario==='price-difference'){
- change('pots','Alpha');assert.equal($('#kit-price').textContent,'£63.00');$('#add-to-basket').click();const record=JSON.parse(localStorage.getItem('apparition.basket.v1')).items[0].record;assert.equal(record.pricing.total,6300);assert.equal(record.pricing.lines.find(line=>line.key==='pots').price,-800);
+ change('pots','Alpha');assert.equal($('#kit-price').textContent,'£39.00');$('#add-to-basket').click();const record=JSON.parse(localStorage.getItem('apparition.basket.v1')).items[0].record;assert.equal(record.pricing.total,3900);assert.equal(record.pricing.lines.find(line=>line.key==='pots').price,-3200);
 }else if(scenario==='zero-code'){
  assert($('[name="pots"][value="Test Brand X"]'));change('pots','Test Brand X');assert.match($('#summary-pots').textContent,/Test Brand X/);assert.equal($('#add-to-basket').disabled,false);
 }else if(scenario==='base'){

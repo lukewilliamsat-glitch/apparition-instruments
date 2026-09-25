@@ -2,6 +2,7 @@
 import {kitBindings} from './kit-bindings.mjs';
 import {lesPaul} from '../wiring-kits/kit-seed.mjs';
 import {normaliseBuilderGroups,normaliseComponentResolvers} from '../wiring-kits/builder-options.mjs';
+import {lesPaulRequirements,normaliseKitRequirements} from '../wiring-kits/kit-requirements.mjs';
 export const assemblyStorageKey='apparition.admin.assemblies.v1';
 export const lesPaulKitDefinitionId='kit-les-paul';
 const componentDefaults={potentiometers:'pot-short-cts-a',neckCapacitor:'sbe-200',bridgeCapacitor:'cde-047',trebleBleed:null,jack:null,selector:null};
@@ -17,7 +18,7 @@ const componentResolverSeed=()=>[{key:'potentiometers',label:'Potentiometer vari
 export const lesPaulKitAssembly={
  id:lesPaulKitDefinitionId,name:lesPaul.name,sku:'KIT-LP-STYLE',category:'Wiring Kit',kind:'wiring-kit',active:true,
  bom:[{componentId:'pot-short-cts-a',quantity:4},{componentId:'sbe-200',quantity:1},{componentId:'cde-047',quantity:1}],
- kitDefinition:{family:'les-paul',basePrice:lesPaul.basePrice,showOnWiringKits:true,builderEnabled:true,permittedComponentIds:Object.keys(kitBindings),defaults:{...structuredClone(lesPaul.defaults),componentIds:componentDefaults},builderOptions:builderOptionSeed(),componentResolvers:componentResolverSeed(),metadata:{wiringOptions:Object.keys(lesPaul.wiring),matchingOptions:Object.keys(lesPaul.matching)}}
+ kitDefinition:{family:'les-paul',basePrice:lesPaul.basePrice,showOnWiringKits:true,builderEnabled:true,permittedComponentIds:Object.keys(kitBindings),defaults:{...structuredClone(lesPaul.defaults),componentIds:componentDefaults,requirements:structuredClone(lesPaulRequirements)},builderOptions:builderOptionSeed(),componentResolvers:componentResolverSeed(),metadata:{wiringOptions:Object.keys(lesPaul.wiring),matchingOptions:Object.keys(lesPaul.matching)}}
 };
 const clean=(value,max=300)=>String(value??'').trim().slice(0,max);
 const uniqueIds=value=>{if(!Array.isArray(value))throw new Error('Permitted components must be a list of Component IDs.');const ids=[...new Set(value.map(id=>clean(id,120)).filter(Boolean))];if(ids.length!==value.length)throw new Error('Permitted Component IDs must be unique and non-empty.');return ids;};
@@ -28,7 +29,7 @@ export function normaliseKitDefinition(value){
  const permittedComponentIds=uniqueIds(value.permittedComponentIds);const supplied=value.defaults;
  if(!supplied||typeof supplied!=='object'||Array.isArray(supplied))throw new Error('Invalid default specification.');
  const componentIds={};for(const role of Object.keys(componentDefaults)){const id=supplied.componentIds?.[role];componentIds[role]=id==null||id===''?null:clean(id,120);if(role!=='potentiometers'&&componentIds[role]&&!permittedComponentIds.includes(componentIds[role]))throw new Error('Each default Component must also be permitted for this kit.');}
- const defaults={...structuredClone(supplied),wiring:clean(supplied.wiring,80),componentIds};if(!defaults.wiring)throw new Error('Choose a default wiring style.');
+ const defaults={...structuredClone(supplied),wiring:clean(supplied.wiring,80),componentIds,requirements:normaliseKitRequirements(supplied.requirements??lesPaulRequirements)};if(!defaults.wiring)throw new Error('Choose a default wiring style.');
  const builderOptions=normaliseBuilderGroups(value.builderOptions??builderOptionSeed(defaults)),componentResolvers=normaliseComponentResolvers(value.componentResolvers??componentResolverSeed(),builderOptions);
  for(const group of builderOptions)defaults[group.key]=group.defaultValue;
  const metadata=value.metadata&&typeof value.metadata==='object'&&!Array.isArray(value.metadata)?structuredClone(value.metadata):{};

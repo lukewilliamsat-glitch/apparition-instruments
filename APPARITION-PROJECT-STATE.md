@@ -75,7 +75,7 @@ The obsolete legacy `price` field was intentionally retired during migration. `s
 
 P05D-A replaced the temporary browser-password gate with Supabase email/password Auth plus an explicit `admin_members` row enforced by RLS. Admin routes verify identity and membership before loading modules; session restoration and sign-out use Supabase Auth. The initial confirmed Admin account is provisioned as live Auth and membership data, not source credentials. The public website remains unauthenticated.
 
-The known quantity-aware kit pricing discrepancy remains deferred: CTS kit adjustment is currently charged once instead of once per four physical pots. Resolve generically from the eventual physical Component ID and quantity, not a Les Paul-specific multiplier. P04C family additions remain deferred until shared persistence.
+P06B stores physical role requirements in the Kit Definition defaults: potentiometers ×4, separate neck and bridge tone capacitors ×1 each, treble bleeds ×2, selector ×1 and output jack ×1 when selected. Customer configuration resolves current canonical Component IDs, multiplies unit kit add-ons by physical quantity (pot adjustments relative to the default), aggregates stock, and snapshots role identities/quantities in the basket. None has zero quantity. The historical fixed Assembly BOM still supports Admin max-buildable and migration compatibility; it does not define the customer-selected physical parts. Live basePrice remains Supabase-authoritative. P04C family additions remain deferred.
 
 Persistent uploaded component and product imagery remains separate future work; the approved P05B export contained no local or embedded images.
 

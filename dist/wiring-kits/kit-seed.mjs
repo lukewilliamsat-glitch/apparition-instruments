@@ -3,7 +3,7 @@
 const option=(label,price=0,description='',extra={})=>({label,price,description,...extra});
 export const kitDefinitions={
  'les-paul':{
-  name:'Les Paul Style Wiring Kit',basePrice:5999,pricingVersion:1,builder:'/les-paul-kits/',
+  name:'Les Paul Style Wiring Kit',basePrice:5999,pricingVersion:2,builder:'/les-paul-kits/',
   included:'4 × CTS 500kΩ audio pots, two tone capacitors, internal wiring and consumables, hand assembly and electrical testing / QC.',
   defaults:{wiring:'50s',pots:'CTS',shaft:'short',matching:'standard',caps:'715p-022',neckCap:'715p-022',bridgeCap:'225p-047',bleed:'none',jack:'none',selector:'none',model:''},
   wiring:{'50s':option('50s wiring',0,'Tone circuit connects to the volume output.'),'60s':option('60s wiring',0,'Tone circuit connects to the volume input, with the tone wiper grounded.'),modern:option('Modern wiring',0,'Tone circuit connects to the volume input.')},
