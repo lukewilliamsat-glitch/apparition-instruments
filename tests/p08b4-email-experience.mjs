@@ -8,6 +8,20 @@ for(const kind of v2Kinds){const mail=previewFixture(kind);assert(mail.html.incl
 const confirmed=previewFixture('order_confirmed');assert.match(confirmed.html,/ORDER CONFIRMED/);assert.match(confirmed.text,/2 × Premium Duncan-Style Treble Bleed/);assert.match(confirmed.text,/Delivery £0\.00/);assert.match(confirmed.text,/Total paid £54\.98/);assert.match(confirmed.text,/46 Example Road/);
 assert.match(previewFixture('in_production').text,/another update|let you know/i);assert.match(previewFixture('ready_to_dispatch').text,/actually been dispatched/);
 assert(confirmed.html.indexOf('apparition-logo-email.png')<confirmed.html.indexOf('the-violinist-email.png'));assert(confirmed.html.indexOf('the-violinist-email.png')>confirmed.html.indexOf('ORDER CONFIRMED'));assert(!previewFixture('in_production').html.includes('the-violinist-email.png'));
+const artwork={order_confirmed:emailAssets.violinist,in_production:emailAssets.inProduction,ready_to_dispatch:emailAssets.readyToDispatch,dispatched:emailAssets.dispatched,full_refund:null};
+const artworkUrls=Object.values(emailAssets).filter(url=>url!==emailAssets.logo);
+for(const [kind,expected] of Object.entries(artwork)){
+ const html=previewFixture(kind).html;
+ assert.deepEqual(artworkUrls.filter(url=>html.includes(`src="${url}"`)),expected?[expected]:[],`${kind} must contain only its own artwork`);
+ if(expected)assert(html.indexOf(`src="${expected}"`)>html.indexOf('Contact us'),`${kind} artwork belongs in the footer`);
+}
+for(const name of ['in-production','ready-to-dispatch','dispatched']){
+ const png=readFileSync(`dist/assets/${name}-email.png`);
+ assert.equal(png.subarray(0,8).toString('hex'),'89504e470d0a1a0a');
+ assert.equal(png.readUInt32BE(16),400);assert.equal(png.readUInt32BE(20),267);
+ assert(png.includes(Buffer.from('tRNS')),`${name} must retain transparent pixels`);
+ assert(png.length<100000,`${name} must remain email-safe`);
+}
 const bare=previewFixture('dispatched'),tracked=previewFixture('dispatched',true);assert(!bare.text.includes('Tracking reference'));assert(tracked.text.includes('Tracking reference: PREVIEW-123'));assert(tracked.html.includes('https://example.invalid/preview-tracking'));
 assert(!bare.html.includes('DELIVERY DETAILS'));assert(tracked.html.includes('TRACK YOUR ORDER'));
 const fixture={reference:'AI-010099',customer:{name:'Long name <script>alert(1)</script>',email:'safe@example.co.uk'},payment_status:'paid',delivery:{country:'GB'},items:[{name:'Long product name <img src=x onerror=alert(1)> '.repeat(3),quantity:2,unitPrice:250,lineTotal:500},{name:'Capacitor',quantity:1,unitPrice:200,lineTotal:200}],subtotal_pence:700,delivery_pence:399,total_pence:1099,dispatch_details:{carrier:'Royal Mail',tracking_reference:'A'.repeat(140),tracking_url:'javascript:alert(1)'}};
