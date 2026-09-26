@@ -13,7 +13,16 @@ const artworkUrls=Object.values(emailAssets).filter(url=>url!==emailAssets.logo)
 for(const [kind,expected] of Object.entries(artwork)){
  const html=previewFixture(kind).html;
  assert.deepEqual(artworkUrls.filter(url=>html.includes(`src="${url}"`)),expected?[expected]:[],`${kind} must contain only its own artwork`);
- if(expected)assert(html.indexOf(`src="${expected}"`)>html.indexOf('Contact us'),`${kind} artwork belongs in the footer`);
+ const footer=html.match(/<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="[^"]*background:#1d1d1b[^"]*">([\s\S]*?)<\/table>/)?.[1];
+ assert(footer,`${kind} must have a footer table`);
+ assert.equal((footer.match(/<tr>/g)||[]).length,1,`${kind} footer must remain a single row`);
+ assert(footer.includes('Contact us')&&footer.includes('apparitioninstruments.co.uk')&&footer.includes('Company No. 17454761'));
+ if(expected){
+  assert(footer.includes(`src="${expected}"`),`${kind} artwork belongs beside the footer text`);
+  assert(footer.includes('align="right" valign="middle" width="35%"'));
+  assert(footer.includes('max-width:100%')||footer.includes('max-width:200px'));
+  assert(footer.includes('word-break:break-word'),`${kind} footer text must wrap on narrow screens`);
+ }else assert.equal((footer.match(/<td\b/g)||[]).length,1,'Refund footer must be text only');
 }
 for(const name of ['in-production','ready-to-dispatch','dispatched']){
  const png=readFileSync(`dist/assets/${name}-email.png`);
