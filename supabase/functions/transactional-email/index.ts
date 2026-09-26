@@ -1,9 +1,11 @@
 import {renderTransactionalMail,deliveryKinds} from './render.ts';
 import {sendOrderMail} from './smtp.ts';
-import {previewFixture,v2Kinds} from './v2.ts';
+import {previewFixture,renderEmailV2,v2Kinds} from './v2.ts';
 
 type Env={get:(key:string)=>string|undefined};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const canaryOrderId='a3217839-e590-431f-8c40-c59ec9a75b64';
+const canaryKinds=['ready_to_dispatch','dispatched'];
 const reply=(status:number,message:string)=>new Response(JSON.stringify({status:message}),{status,headers:{'Content-Type':'application/json','Cache-Control':'no-store'}});
 function sameSecret(a:string,b:string){const x=new TextEncoder().encode(a),y=new TextEncoder().encode(b);let diff=x.length^y.length;for(let i=0;i<Math.max(x.length,y.length);i++)diff|=(x[i]||0)^(y[i]||0);return diff===0&&x.length>0;}
 
@@ -33,7 +35,7 @@ export async function handleTransactionalEmail(request:Request,env:Env=Deno.env,
   if(!order||!uuid.test(claim)||!order.customer?.email||
     (row.kind==='full_refund'&&order.payment_status!=='refunded')||
     (row.kind!=='full_refund'&&!['paid','partially_refunded'].includes(order.payment_status)))return reply(409,'Claim requires review');
-  let message;try{message=renderTransactionalMail(row.kind,order);}catch{return reply(409,'Claim requires review');}
+  let message;try{message=row.order_id===canaryOrderId&&canaryKinds.includes(row.kind)?renderEmailV2(row.kind,order):renderTransactionalMail(row.kind,order);}catch{return reply(409,'Claim requires review');}
   const marked=await rpc('mark_order_email_attempt',{p_order_id:row.order_id,p_kind:row.kind,p_claim:claim});
   if(marked!==true)return reply(409,'Claim requires review');
   let outcome:'sent'|'failed'|'unknown'='sent',reason:null|string=null;
@@ -80,9 +82,33 @@ export async function dispatchPending(request:Request,env:Env=Deno.env,transport
   return reply(200,`Processed ${attempted} eligible records`);
  }catch{return reply(503,'Dispatcher unavailable');}
 }
+// A separate, fixed-order endpoint is invoked by the database scheduler. Its bearer
+// token is kept in Vault; only the service role can read it through the narrow RPC.
+export async function dispatchCanary(request:Request,env:Env=Deno.env,transport:typeof fetch=fetch,send=sendOrderMail){
+ if(request.method!=='POST')return reply(405,'Method not allowed');
+ const service=env.get('SUPABASE_SERVICE_ROLE_KEY'),url=env.get('SUPABASE_URL');
+ if(!service||!url)return reply(503,'Canary unavailable');
+ const headers={apikey:service,Authorization:'Bearer '+service,'Content-Type':'application/json'};
+ try{
+  const tokenResponse=await transport(url+'/rest/v1/rpc/get_ai010010_canary_token',{method:'POST',headers,body:'{}'});
+  if(!tokenResponse.ok)return reply(503,'Canary unavailable');
+  const token=await tokenResponse.json();
+  if(typeof token!=='string'||!sameSecret(request.headers.get('Authorization')||'','Bearer '+token))return reply(401,'Unauthorized');
+  const pending=await transport(url+'/rest/v1/order_email_deliveries?select=id,kind&order_id=eq.'+canaryOrderId+'&kind=in.(ready_to_dispatch,dispatched)&state=eq.pending&order=created_at.asc&limit=2',{headers});
+  if(!pending.ok)return reply(503,'Canary unavailable');
+  const rows=await pending.json();if(!Array.isArray(rows))return reply(503,'Canary unavailable');
+  for(const row of rows){
+   if(!uuid.test(row.id||'')||!canaryKinds.includes(row.kind))return reply(503,'Canary requires review');
+   const result=await handleTransactionalEmail(new Request(request.url,{method:'POST',headers,body:JSON.stringify({deliveryId:row.id})}),env,transport,send);
+   if(result.status!==200)return reply(503,'Canary requires review');
+  }
+  return reply(200,`Processed ${rows.length} canary records`);
+ }catch{return reply(503,'Canary unavailable');}
+}
 export function routeEmailRequest(request:Request,env:Env=Deno.env,transport:typeof fetch=fetch,send=sendOrderMail){
  const path=new URL(request.url).pathname;
  if(path.endsWith('/preview'))return handleEmailPreview(request,env,transport);
+ if(path.endsWith('/canary'))return dispatchCanary(request,env,transport,send);
  if(path.endsWith('/dispatch'))return dispatchPending(request,env,transport,send);
  return handleTransactionalEmail(request,env,transport,send);
 }
