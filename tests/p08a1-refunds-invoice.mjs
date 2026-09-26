@@ -2,16 +2,16 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {Window} from 'happy-dom';
 import {bootAdminGate} from '../dist/admin/admin-gate.mjs';
-import {currentAdminOrderRepository} from '../dist/backend/order-data.mjs?v=p08a1';
+import {currentAdminOrderRepository} from '../dist/backend/order-data.mjs?v=p08b2';
 import {invoiceFromOrder} from '../dist/admin/orders/invoice/model.mjs';
 import {isPaidOrder,isCheckoutAttempt,paymentLabels,nextFulfilment} from '../dist/admin/orders/lifecycle.mjs';
 import {receiveStripeWebhook} from '../supabase/functions/stripe-webhook/index.ts';
 import {buildPaidOrderConfirmation} from '../supabase/functions/stripe-webhook/confirmation.ts';
 
 const html=readFileSync('dist/admin/orders/invoice/index.html','utf8'),app=readFileSync('dist/admin/orders/invoice/app.mjs','utf8'),gate=readFileSync('dist/admin/admin-gate.mjs','utf8');
-assert.match(html,/admin-gate\.mjs\?v=p08a1/);assert.match(html,/data-admin-entry="\.\/app\.mjs\?v=p08a1"/);
-assert.match(gate,/order-data\.mjs\?v=p08a1/);assert.match(app,/order-data\.mjs\?v=p08a1/);
-const page=()=>{const w=new Window({url:'https://apparitioninstruments.co.uk/admin/orders/invoice/?id=11111111-1111-1111-1111-111111111111'});w.document.body.innerHTML='<script data-admin-entry="./app.mjs?v=p08a1"></script>';return w;};
+assert.match(html,/admin-gate\.mjs\?v=p08b2/);assert.match(html,/data-admin-entry="\.\/app\.mjs\?v=p08b2"/);
+assert.match(gate,/order-data\.mjs\?v=p08b2/);assert.match(app,/order-data\.mjs\?v=p08b2/);
+const page=()=>{const w=new Window({url:'https://apparitioninstruments.co.uk/admin/orders/invoice/?id=11111111-1111-1111-1111-111111111111'});w.document.body.innerHTML='<script data-admin-entry="./app.mjs?v=p08b2"></script>';return w;};
 let restore;const delayed=new Promise(resolve=>restore=resolve),admin=page();let loads=0;
 const loading=bootAdminGate({document:admin.document,auth:{restore:()=>delayed,accessToken:async()=> 'admin-jwt'},load:async()=>{loads++;assert.equal(typeof currentAdminOrderRepository().list,'function');}});
 assert.equal(loads,0,'Invoice entry must wait for restored Admin membership');
@@ -27,7 +27,7 @@ assert.equal(invoiceFromOrder({...paid,paymentStatus:'partially_refunded',refund
 assert.throws(()=>invoiceFromOrder({...paid,paymentStatus:'unpaid'}),/historically paid/);
 assert.equal(paymentLabels.partially_refunded,'Partially Refunded');
 assert(isPaidOrder({...paid,paymentStatus:'refunded'}));assert(!isCheckoutAttempt({...paid,paymentStatus:'refunded'}));
-assert.equal(nextFulfilment({...paid,paymentStatus:'partially_refunded',fulfilmentStatus:'pending'}),'in_production');
+assert.equal(nextFulfilment({...paid,paymentStatus:'partially_refunded',fulfilmentStatus:'pending'}),null);assert.equal(nextFulfilment({...paid,paymentStatus:'partially_refunded',partialRefundAcknowledged:true,fulfilmentStatus:'pending'}),'in_production');
 assert.equal(nextFulfilment({...paid,paymentStatus:'refunded',fulfilmentStatus:'pending'}),null);
 
 const secret='whsec_fixture_refunds',now=1790346000000;

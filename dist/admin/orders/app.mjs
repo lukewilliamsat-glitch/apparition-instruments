@@ -1,4 +1,4 @@
-import {currentAdminOrderRepository} from '../../backend/order-data.mjs?v=p08a1';
+import {currentAdminOrderRepository} from '../../backend/order-data.mjs?v=p08b2';
 import {fulfilmentLabels,paymentLabels,isPaidOrder,isCheckoutAttempt,nextFulfilment} from './lifecycle.mjs';
 import {el,money,date,showOrder} from './view.mjs?v=p08a1';
 import {deploymentPath} from '../../deployment.mjs';
@@ -33,7 +33,16 @@ function render(){
      if(!reply.ok)throw new Error((await reply.json()).message||'Could not retrieve delivery details.');await refresh();}
     catch(error){$('#order-message').textContent=error.message;button.disabled=false;}});
    $('#detail-content').prepend(button);
-  }return;}
+  }
+  if(order.paymentStatus==='partially_refunded'&&!order.partialRefundAcknowledged){
+   const notice=el('p','Fulfilment is paused until an Admin reviews the current partial refund.','storage-note');
+   const button=el('button','Acknowledge partial refund and allow fulfilment','button');button.type='button';
+   button.addEventListener('click',async()=>{if(!window.confirm('Confirm you have reviewed the current partial refund on '+order.reference+'? This does not advance fulfilment.'))return;
+    button.disabled=true;try{await currentAdminOrderRepository().acknowledgePartialRefund(order.id);await refresh();}
+    catch(error){$('#order-message').textContent=error.message;button.disabled=false;}});
+   $('#detail-content').append(notice,button);
+  }else if(order.paymentStatus==='refunded')$('#detail-content').append(el('p','Fully refunded Orders cannot progress through fulfilment.','storage-note'));
+  return;}
  const q=$('#order-search').value.toLowerCase().trim(),filter=$('#order-filter').value;
  const rows=records.filter(item=>(attempts?isCheckoutAttempt(item):isPaidOrder(item))&&(!filter||item.fulfilmentStatus===filter)&&[item.reference,item.customer.name,item.customer.email].join(' ').toLowerCase().includes(q));
  $('#order-rows').replaceChildren();$('#orders-empty').hidden=!!rows.length;

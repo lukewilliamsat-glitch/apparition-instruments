@@ -21,7 +21,7 @@ status='legacy';assert.equal(await sendConfirmedOrderOnce(order.id,env,request,s
 // SMTP always takes its server and sender from secrets, never caller data.
 assert.match(fs.readFileSync('supabase/functions/stripe-webhook/smtp.ts','utf8'),/env\.get\('SMTP_FROM_EMAIL'\)/);
 assert.match(fs.readFileSync('supabase/migrations/20260925203000_p07b7_confirmation_delivery.sql','utf8'),/where payment_status='paid'/);
-const gate=fs.readFileSync('dist/admin/admin-gate.mjs','utf8'),app=fs.readFileSync('dist/admin/orders/app.mjs','utf8');assert.match(gate,/order-data\.mjs\?v=p08a1/);assert.match(app,/order-data\.mjs\?v=p08a1/);
+const gate=fs.readFileSync('dist/admin/admin-gate.mjs','utf8'),app=fs.readFileSync('dist/admin/orders/app.mjs','utf8');assert.match(gate,/order-data\.mjs\?v=p08b2/);assert.match(app,/order-data\.mjs\?v=p08b2/);
 console.log('P07B.7: paid-only template, trusted data, claim/replay, failure isolation, legacy exclusion PASS');
 const smtpEnv={get:k=>({SMTP_HOST:'smtp.example.test',SMTP_PORT:'465',SMTP_USER:'server-user',SMTP_PASSWORD:'private-test-only',SMTP_FROM_EMAIL:'sender@example.test',SMTP_FROM_NAME:'Apparition Instruments'})[k]};
 const replies=['220 ready','250 hello','334 user','334 password','235 authenticated','250 sender','250 recipient','354 data','250 queued','221 bye'];

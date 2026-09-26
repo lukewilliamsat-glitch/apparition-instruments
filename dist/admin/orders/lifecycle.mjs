@@ -3,7 +3,7 @@ export const paymentLabels=Object.freeze({unpaid:'Unpaid',paid:'Paid',partially_
 const next=Object.freeze({pending:'in_production',in_production:'ready_to_dispatch',ready_to_dispatch:'dispatched',dispatched:'completed'});
 export const isPaidOrder=order=>['paid','partially_refunded','refunded'].includes(order?.paymentStatus);
 export const isCheckoutAttempt=order=>order?.paymentStatus==='unpaid';
-export const nextFulfilment=order=>['paid','partially_refunded'].includes(order?.paymentStatus)?next[order.fulfilmentStatus]??null:null;
+export const nextFulfilment=order=>order?.paymentStatus==='paid'||(order?.paymentStatus==='partially_refunded'&&order.partialRefundAcknowledged)?next[order.fulfilmentStatus]??null:null;
 export function orderHistory(row){
  const events=[];
  if(['paid','partially_refunded','refunded'].includes(row.payment_status)&&row.paid_at)events.push({status:'pending',at:row.paid_at,source:'system'});

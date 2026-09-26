@@ -1,5 +1,5 @@
 // Match the Admin gate's module URL so both use the same authenticated repository.
-import {currentAdminOrderRepository} from '../../../backend/order-data.mjs?v=p08a1';
+import {currentAdminOrderRepository} from '../../../backend/order-data.mjs?v=p08b2';
 import {invoiceFromOrder,invoiceAddress} from './model.mjs';
 import {money} from '../view.mjs?v=p08a1';
 const root=document.querySelector('#invoice'),message=document.querySelector('#invoice-message');

@@ -1,0 +1,43 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {createAdminOrderRepository} from '../dist/backend/order-data.mjs';
+import {nextFulfilment} from '../dist/admin/orders/lifecycle.mjs';
+
+const id='11111111-1111-4111-8111-111111111111',refundAt='2026-09-26T13:28:54+00:00';
+const row={id,reference:'AI-TEST',payment_status:'partially_refunded',refunded_pence:150,latest_refund_at:refundAt,
+ status:'pending',customer:{name:'Customer'},delivery:{line1:'Address'},items:[],subtotal_pence:5000,delivery_pence:0,total_pence:5000,status_history:[]};
+let reviews=[],calls=[];
+const transport={send:async(resource,options)=>{calls.push({resource,options});if(resource==='orders')return Response.json([row]);
+ if(resource==='partial_refund_reviews')return Response.json(reviews);
+ if(resource==='rpc/acknowledge_partial_refund')return Response.json(true);
+ if(resource==='rpc/advance_order_fulfilment')return Response.json(options.body.p_next_status);
+ throw Error('Unexpected Admin resource: '+resource);}};
+const repository=createAdminOrderRepository(transport);
+assert.equal(nextFulfilment((await repository.list())[0]),null,'unreviewed refund must pause Admin progression');
+reviews=[{order_id:id,refunded_pence:150,refund_at:refundAt,admin_user_id:'admin',reviewed_at:'2026-09-26T14:00:00Z'}];
+assert.equal(nextFulfilment((await repository.list())[0]),'in_production','current refund review allows the next step');
+assert.equal(await repository.acknowledgePartialRefund(id),true);
+assert.deepEqual(calls.at(-1),{resource:'rpc/acknowledge_partial_refund',options:{method:'POST',body:{p_order_id:id}}});
+assert.equal(row.status,'pending','review does not advance fulfilment');
+row.refunded_pence=250;row.latest_refund_at='2026-09-26T14:10:00Z';
+assert.equal(nextFulfilment((await repository.list())[0]),null,'new partial refund invalidates earlier review');
+row.payment_status='refunded';assert.equal(nextFulfilment((await repository.list())[0]),null,'full refund overrides review');
+assert(!calls.some(call=>/inventory|payment|smtp|email/.test(call.resource)));
+
+const sql=readFileSync('supabase/migrations/20260926134458_p08b2_delivery_foundation.sql','utf8');
+for(const kind of ['order_confirmed','in_production','ready_to_dispatch','dispatched','full_refund'])assert(sql.includes("'"+kind+"'"));
+for(const state of ['pending','claimed','sent','failed','unknown'])assert(sql.includes("'"+state+"'"));
+assert.match(sql,/unique\(order_id,kind\)/);
+assert.match(sql,/source_event_id/);assert.match(sql,/event_id.*transition_id/);
+assert.match(sql,/refund_at=order_row\.latest_refund_at/);
+assert.match(sql,/o\.payment_status<>''refunded''/);
+assert.match(sql,/state='pending'/);assert.match(sql,/state='claimed'/);assert.match(sql,/attempted_at is null/);
+assert.match(sql,/on conflict\(order_id,kind\) do nothing/);
+assert.match(sql,/revoke all on function public\.claim_order_email_delivery.*from public,anon,authenticated/);
+assert.match(sql,/revoke all on function public\.acknowledge_partial_refund.*from public,anon/);
+assert.doesNotMatch(sql,/update public\.inventory|insert into public\.inventory|sendOrderMail|send_email|smtp_/i);
+assert.doesNotMatch(sql,/update public\.orders set confirmation_email_|update public\.orders set payment_status=/i);
+assert.doesNotMatch(sql,/insert into public\.order_email_deliveries\s*\([^;]*\)\s*select/i);
+assert.match(readFileSync('dist/admin/orders/app.mjs','utf8'),/Acknowledge partial refund and allow fulfilment/);
+assert.match(readFileSync('dist/backend/providers.mjs','utf8'),/rpc\/acknowledge_partial_refund/);
+console.log('P08B.2: partial-review gate, changed refund invalidation, ledger constraints and no historical email PASS');
