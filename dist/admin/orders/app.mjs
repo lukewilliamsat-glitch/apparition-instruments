@@ -24,15 +24,19 @@ function appendEmailStatus(order){
 }
 function appendDispatchEditor(order){
  if(!['ready_to_dispatch','dispatched'].includes(order.fulfilmentStatus)||order.paymentStatus==='refunded')return;
- const form=el('form',undefined,'dispatch-details');form.append(el('h3','Optional dispatch information'),el('p','Save carrier and tracking details when available. You can dispatch without tracking. Saving does not change fulfilment.'));
+ const form=el('form',undefined,'dispatch-details');form.append(el('h3',order.fulfilmentStatus==='ready_to_dispatch'?'Dispatch details · Step 1':'Dispatch details'),el('p','Carrier and tracking are optional. Save any details before advancing to Dispatched; an untracked Order can be dispatched without entering anything.'));
  const inputs={};for(const [key,label,max] of [['carrier','Carrier / service',100],['trackingReference','Tracking reference',150],['trackingUrl','HTTPS tracking link',500]]){
   const field=el('label',label),input=el('input');input.name=key;input.maxLength=max;input.value=order.dispatchDetails?.[key==='trackingReference'?'tracking_reference':key==='trackingUrl'?'tracking_url':key]||'';field.append(input);form.append(field);inputs[key]=input;
  }
+ inputs.trackingUrl.type='url';inputs.trackingUrl.inputMode='url';inputs.trackingUrl.placeholder='https://…';
+ const values=()=>JSON.stringify(Object.values(inputs).map(input=>input.value.trim()));const savedValues=values();
+ form.addEventListener('input',()=>{form.dataset.dirty=String(values()!==savedValues);});
  const button=el('button','Save dispatch details','button');button.type='submit';button.className='button';form.append(button);
- form.addEventListener('submit',async event=>{event.preventDefault();button.disabled=true;try{await currentAdminOrderRepository().recordDispatchDetails(order.id,{carrier:inputs.carrier.value,trackingReference:inputs.trackingReference.value,trackingUrl:inputs.trackingUrl.value});await refresh();$('#order-message').textContent='Dispatch information saved. No email was sent.';}catch(error){$('#order-message').textContent=error.message;button.disabled=false;}});
- $('#detail-content').append(form);
+ form.addEventListener('submit',async event=>{event.preventDefault();button.disabled=true;try{await currentAdminOrderRepository().recordDispatchDetails(order.id,{carrier:inputs.carrier.value.trim(),trackingReference:inputs.trackingReference.value.trim(),trackingUrl:inputs.trackingUrl.value.trim()});await refresh();$('#order-message').textContent='Dispatch information saved. No email was sent.';}catch(error){$('#order-message').textContent=error.message;button.disabled=false;}});
+ $('#order-status-form').before(form);
 }
 function render(){
+ document.querySelector('.dispatch-details')?.remove();
  const id=new URLSearchParams(location.search).get('id'),order=records.find(item=>item.id===id);
  $('#order-detail').hidden=!id;$('#order-list').hidden=!!id;
  if(id){if(!order){$('#order-message').textContent='Order not found in shared Orders. Return to the list and refresh.';return;}$('#detail-title').textContent=order.reference;showOrder(order,$('#detail-content'));if(isPaidOrder(order)){const invoice=el('a','Print / Save Invoice','button');invoice.href=deploymentPath('/admin/orders/invoice/?id='+encodeURIComponent(order.id));$('#detail-content').prepend(invoice);}
@@ -49,7 +53,7 @@ function render(){
   appendEmailStatus(order);appendDispatchEditor(order);
   const next=nextFulfilment(order),form=$('#order-status-form');form.hidden=!next;
   const select=$('#detail-status');select.replaceChildren();if(next){const choice=el('option',fulfilmentLabels[next]);choice.value=next;select.append(choice);}
-  if(next){const button=form.querySelector('button');button.textContent='Advance to '+fulfilmentLabels[next];const note=form.querySelector('p');note.textContent=next==='completed'?'Completed has no customer email. Payment state is unchanged.':'After customer emails are activated, this transition will create a customer '+fulfilmentLabels[next]+' update. Email delivery is currently inactive.';}
+  if(next){const button=form.querySelector('button');button.textContent='Advance to '+fulfilmentLabels[next];const note=form.querySelector('p');note.textContent=next==='completed'?'Completed has no customer email. Payment state is unchanged.':'After customer emails are activated, this transition will create a customer '+fulfilmentLabels[next]+' update. Email delivery is currently inactive.';form.querySelector('label').firstChild.textContent=next==='dispatched'?'Step 2 · Advance fulfilment':'Advance fulfilment';}
   if(order.paymentStatus==='paid'&&(!order.customer.name||!order.delivery.line1)){
    const button=el('button','Retrieve verified Stripe delivery details','button');button.type='button';
    button.addEventListener('click',async()=>{button.disabled=true;$('#order-message').textContent='Retrieving verified delivery details…';
@@ -76,6 +80,7 @@ async function refresh(){try{records=await currentAdminOrderRepository().list();
 $('#order-search').addEventListener('input',render);$('#order-filter').addEventListener('change',render);
 $('#order-status-form').addEventListener('submit',async event=>{event.preventDefault();const id=new URLSearchParams(location.search).get('id'),order=records.find(item=>item.id===id),next=nextFulfilment(order);
  if(!order||!next||$('#detail-status').value!==next)return;
+ if(next==='dispatched'&&document.querySelector('.dispatch-details')?.dataset.dirty==='true'){$('#order-message').textContent='Save your dispatch details before marking this Order Dispatched.';document.querySelector('.dispatch-details button')?.focus();return;}
  const button=$('#order-status-form button');button.disabled=true;
  try{await currentAdminOrderRepository().advanceFulfilment(order.id,next);await refresh();}
  catch(error){$('#order-message').textContent=error.message;}
