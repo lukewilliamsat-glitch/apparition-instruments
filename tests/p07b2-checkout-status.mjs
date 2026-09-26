@@ -11,6 +11,8 @@ response=await checkoutStatus(request(),env,server([{reference:'AI-010001',payme
 assert.deepEqual(await response.json(),{reference:'AI-010001',paymentStatus:'paid'});
 response=await checkoutStatus(request(),env,server([{reference:'AI-010001',payment_status:'paid',paid_at:'2026-09-25',fulfillment_applied_at:null}]));
 assert.equal((await response.json()).paymentStatus,'processing','URL or unfulfilled payment cannot claim confirmation');
+response=await checkoutStatus(request(),env,server([{reference:'AI-010001',payment_status:'refunded',paid_at:'2026-09-25',fulfillment_applied_at:'2026-09-25'}]));
+assert.equal((await response.json()).paymentStatus,'refunded');
 assert.equal((await checkoutStatus(new Request(url.replace(session,'cs_test_abc')),env,()=>{throw Error('No DB call for test session');})).status,400);
-assert.equal(calls,3);
+assert.equal(calls,4);
 console.log('P07B.2 success status: read-only session lookup, paid only after verified fulfilment PASS');

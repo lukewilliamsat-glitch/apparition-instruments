@@ -2,6 +2,7 @@
 // can ask the service-only database function to apply inventory fulfilment.
 import {storeVerifiedContact} from './contact.ts';
 import {sendConfirmedOrderOnce} from './delivery.ts';
+import {recordStripeRefund} from './refund.ts';
 type Environment={get:(name:string)=>string|undefined};
 const reply=(status:number,body:string)=>new Response(body,{status,headers:{'Content-Type':'text/plain; charset=utf-8'}});
 const sameBytes=(a:Uint8Array,b:Uint8Array)=>{
@@ -29,6 +30,10 @@ export async function receiveStripeWebhook(req:Request,env:Environment=Deno.env,
  if(raw.length>200000)return reply(413,'Webhook payload too large');
  if(!await verifyStripeSignature(raw,req.headers.get('Stripe-Signature'),secret,now))return reply(401,'Invalid Stripe signature');
  let event:any;try{event=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(raw));}catch{return reply(400,'Invalid Stripe event');}
+ if(['refund.created','refund.updated','refund.failed'].includes(event?.type)){
+  if(event.livemode!==true)return reply(400,'Invalid live refund event');
+  return await recordStripeRefund(event,env,request)?reply(200,'Refund recorded'):reply(503,'Refund could not be verified');
+ }
  if(!['checkout.session.completed','checkout.session.async_payment_succeeded'].includes(event?.type))return reply(200,'Event ignored');
  const session=event?.data?.object;
  if(event.livemode!==true||session?.livemode!==true||session?.object!=='checkout.session'

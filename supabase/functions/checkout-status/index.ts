@@ -15,6 +15,7 @@ export async function checkoutStatus(req:Request,env:Environment=Deno.env,reques
  if(!response.ok)return result(503,{message:'Order status unavailable'});
  const row=(await response.json())?.[0];
  if(!row)return result(404,{message:'Checkout reference unavailable'});
- return result(200,{reference:row.reference,paymentStatus:row.payment_status==='paid'&&row.paid_at&&row.fulfillment_applied_at?'paid':'processing'});
+ const verified=row.paid_at&&row.fulfillment_applied_at;
+ return result(200,{reference:row.reference,paymentStatus:verified&&['paid','partially_refunded','refunded'].includes(row.payment_status)?row.payment_status:'processing'});
 }
 if(import.meta.main)Deno.serve(req=>checkoutStatus(req));

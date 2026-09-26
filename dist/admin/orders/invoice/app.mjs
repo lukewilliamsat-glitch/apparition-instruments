@@ -1,6 +1,7 @@
-import {currentAdminOrderRepository} from '../../../backend/order-data.mjs?v=p07b5';
+// Match the Admin gate's module URL so both use the same authenticated repository.
+import {currentAdminOrderRepository} from '../../../backend/order-data.mjs?v=p08a1';
 import {invoiceFromOrder,invoiceAddress} from './model.mjs';
-import {money} from '../view.mjs?v=p07b7';
+import {money} from '../view.mjs?v=p08a1';
 const root=document.querySelector('#invoice'),message=document.querySelector('#invoice-message');
 const make=(tag,value)=>{const node=document.createElement(tag);if(value!==undefined)node.textContent=value;return node;};
 async function loadInvoice(){
@@ -11,6 +12,9 @@ async function loadInvoice(){
   document.title=`Invoice ${order.reference} | Apparition Instruments`;
   root.querySelector('#reference').textContent=order.reference;
   root.querySelector('#order-date').textContent=new Date(order.date).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  root.querySelector('#payment-state').textContent=order.paymentLabel;
+  const refund=root.querySelector('#refund-details');refund.hidden=!order.refundedPence;
+  if(order.refundedPence)refund.textContent=`Refunded: ${money(order.refundedPence)} of ${money(order.pricing.total)}${order.latestRefundAt?' · Latest refund '+new Date(order.latestRefundAt).toLocaleDateString('en-GB'):''}`;
   const contact=invoiceAddress(order.customer,order.delivery);
   root.querySelector('#customer-name').textContent=contact.customer;
   const recipient=root.querySelector('#recipient'),recipientLabel=root.querySelector('#recipient-label');
