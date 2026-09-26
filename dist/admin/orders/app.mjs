@@ -1,6 +1,6 @@
-import {currentAdminOrderRepository} from '../../backend/order-data.mjs?v=p08b2a';
+import {currentAdminOrderRepository} from '../../backend/order-data.mjs?v=p08b4';
 import {fulfilmentLabels,paymentLabels,isPaidOrder,isCheckoutAttempt,nextFulfilment} from './lifecycle.mjs';
-import {el,money,date,showOrder} from './view.mjs?v=p08a1';
+import {el,money,date,showOrder} from './view.mjs?v=p08b4';
 import {deploymentPath} from '../../deployment.mjs';
 import {createAdminAuth} from '../admin-auth.mjs';
 import {publicBackendConfig} from '../../backend/public-config.mjs';
@@ -10,6 +10,28 @@ $('#order-create-actions').hidden=true;
 $('#order-editor').hidden=true;
 const attempts=new URLSearchParams(location.search).get('view')==='attempts';
 for(const [key,label] of Object.entries(fulfilmentLabels)){const option=el('option',label);option.value=key;$('#order-filter').append(option);}
+const deliveryLabels={in_production:'In Production',ready_to_dispatch:'Ready to Dispatch',dispatched:'Dispatched',full_refund:'Refund Processed'};
+function appendEmailStatus(order){
+ const section=el('section',undefined,'order-email-status');section.append(el('h3','Customer communications'));
+ section.append(el('p','Lifecycle and refund email delivery is not yet active. Existing order confirmations remain on the approved production path.','storage-note'));
+ for(const [kind,label] of Object.entries(deliveryLabels)){
+  const row=(order.emailDeliveries||[]).find(item=>item.kind===kind);
+  const state=row?({pending:'Eligible / Pending',claimed:'Claimed / Requires Review',sent:'Sent',failed:'Failed / Requires Review',unknown:'Unknown / Requires Review'})[row.state]||'Requires Review':'Not yet eligible';
+  section.append(el('p',label+': '+state+(row?.sent_at?' · '+date(row.sent_at):row?.attempted_at?' · Last attempt '+date(row.attempted_at):'')));
+ }
+ section.append(el('p','Failed and uncertain outcomes require controlled review. Automatic retry and resend are disabled.','storage-note'));
+ $('#detail-content').append(section);
+}
+function appendDispatchEditor(order){
+ if(!['ready_to_dispatch','dispatched'].includes(order.fulfilmentStatus)||order.paymentStatus==='refunded')return;
+ const form=el('form',undefined,'dispatch-details');form.append(el('h3','Optional dispatch information'),el('p','Save carrier and tracking details when available. You can dispatch without tracking. Saving does not change fulfilment.'));
+ const inputs={};for(const [key,label,max] of [['carrier','Carrier / service',100],['trackingReference','Tracking reference',150],['trackingUrl','HTTPS tracking link',500]]){
+  const field=el('label',label),input=el('input');input.name=key;input.maxLength=max;input.value=order.dispatchDetails?.[key==='trackingReference'?'tracking_reference':key==='trackingUrl'?'tracking_url':key]||'';field.append(input);form.append(field);inputs[key]=input;
+ }
+ const button=el('button','Save dispatch details','button');button.type='submit';button.className='button';form.append(button);
+ form.addEventListener('submit',async event=>{event.preventDefault();button.disabled=true;try{await currentAdminOrderRepository().recordDispatchDetails(order.id,{carrier:inputs.carrier.value,trackingReference:inputs.trackingReference.value,trackingUrl:inputs.trackingUrl.value});await refresh();$('#order-message').textContent='Dispatch information saved. No email was sent.';}catch(error){$('#order-message').textContent=error.message;button.disabled=false;}});
+ $('#detail-content').append(form);
+}
 function render(){
  const id=new URLSearchParams(location.search).get('id'),order=records.find(item=>item.id===id);
  $('#order-detail').hidden=!id;$('#order-list').hidden=!!id;
@@ -24,8 +46,10 @@ function render(){
     catch(error){$('#order-message').textContent=error.message;await refresh();}
    });$('#detail-content').prepend(button);
   }
+  appendEmailStatus(order);appendDispatchEditor(order);
   const next=nextFulfilment(order),form=$('#order-status-form');form.hidden=!next;
   const select=$('#detail-status');select.replaceChildren();if(next){const choice=el('option',fulfilmentLabels[next]);choice.value=next;select.append(choice);}
+  if(next){const button=form.querySelector('button');button.textContent='Advance to '+fulfilmentLabels[next];const note=form.querySelector('p');note.textContent=next==='completed'?'Completed has no customer email. Payment state is unchanged.':'After customer emails are activated, this transition will create a customer '+fulfilmentLabels[next]+' update. Email delivery is currently inactive.';}
   if(order.paymentStatus==='paid'&&(!order.customer.name||!order.delivery.line1)){
    const button=el('button','Retrieve verified Stripe delivery details','button');button.type='button';
    button.addEventListener('click',async()=>{button.disabled=true;$('#order-message').textContent='Retrieving verified delivery details…';
@@ -35,13 +59,13 @@ function render(){
    $('#detail-content').prepend(button);
   }
   if(order.paymentStatus==='partially_refunded'&&!order.partialRefundAcknowledged){
-   const notice=el('p','Fulfilment is paused until an Admin reviews the current partial refund.','storage-note');
+   const notice=el('p','Partially refunded: '+money(order.refundedPence)+' of '+money(order.pricing.total)+'. Fulfilment is paused until an Admin reviews this exact refund state. A further refund requires a new review.','storage-note');
    const button=el('button','Acknowledge partial refund and allow fulfilment','button');button.type='button';
    button.addEventListener('click',async()=>{if(!window.confirm('Confirm you have reviewed the current partial refund on '+order.reference+'? This does not advance fulfilment.'))return;
     button.disabled=true;try{await currentAdminOrderRepository().acknowledgePartialRefund(order.id,order.refundedPence,order.latestRefundAt);await refresh();}
     catch(error){$('#order-message').textContent=error.message;button.disabled=false;}});
    $('#detail-content').append(notice,button);
-  }else if(order.paymentStatus==='refunded')$('#detail-content').append(el('p','Fully refunded Orders cannot progress through fulfilment.','storage-note'));
+  }else if(order.paymentStatus==='refunded')$('#detail-content').append(el('p','This Order has been fully refunded. Fulfilment progression is unavailable; the existing fulfilment history is unchanged.','storage-note'));
   return;}
  const q=$('#order-search').value.toLowerCase().trim(),filter=$('#order-filter').value;
  const rows=records.filter(item=>(attempts?isCheckoutAttempt(item):isPaidOrder(item))&&(!filter||item.fulfilmentStatus===filter)&&[item.reference,item.customer.name,item.customer.email].join(' ').toLowerCase().includes(q));

@@ -9,6 +9,7 @@ const row={id,reference:'AI-TEST',payment_status:'partially_refunded',refunded_p
 let reviews=[],calls=[];
 const transport={send:async(resource,options)=>{calls.push({resource,options});if(resource==='orders')return Response.json([row]);
  if(resource==='partial_refund_reviews')return Response.json(reviews);
+ if(resource==='order_email_deliveries')return Response.json([]);
  if(resource==='rpc/acknowledge_partial_refund')return Response.json(true);
  if(resource==='rpc/advance_order_fulfilment')return Response.json(options.body.p_next_status);
  throw Error('Unexpected Admin resource: '+resource);}};
@@ -22,7 +23,8 @@ assert.equal(row.status,'pending','review does not advance fulfilment');
 row.refunded_pence=250;row.latest_refund_at='2026-09-26T14:10:00Z';
 assert.equal(nextFulfilment((await repository.list())[0]),null,'new partial refund invalidates earlier review');
 row.payment_status='refunded';assert.equal(nextFulfilment((await repository.list())[0]),null,'full refund overrides review');
-assert(!calls.some(call=>/inventory|payment|smtp|email/.test(call.resource)));
+assert(!calls.some(call=>/inventory|payment|smtp/.test(call.resource)));
+assert(calls.filter(call=>call.resource==='order_email_deliveries').every(call=>!call.options.method||call.options.method==='GET'),'Admin reads delivery state without sending or claiming');
 
 const sql=readFileSync('supabase/migrations/20260926134458_p08b2_delivery_foundation.sql','utf8');
 for(const kind of ['order_confirmed','in_production','ready_to_dispatch','dispatched','full_refund'])assert(sql.includes("'"+kind+"'"));
