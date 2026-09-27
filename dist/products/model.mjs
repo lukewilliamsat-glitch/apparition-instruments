@@ -1,5 +1,6 @@
 import {categories,fieldLabels} from '../admin/data.mjs';
 import {deploymentPath} from '../deployment.mjs';
+import {potValues} from '../admin/pot-specs.mjs';
 
 const supported=new Set(['potentiometers','capacitors','treble-bleeds']);
 export function eligibleProduct(product){
@@ -17,7 +18,14 @@ export const categoryPath=category=>deploymentPath('/components/'+category+'/');
 export const categoryName=category=>categories[category]||'Components';
 export function productDetails(product){
  const raw=product.productSpecifications?.length?product.productSpecifications:product.displaySpecifications?.length?product.displaySpecifications:Object.entries(product.specs||{}).map(([label,value])=>({label,value}));
- const rows=[...product.manufacturer?[{label:'Manufacturer',value:product.manufacturer}]:[],...raw];
+ const rows=[...product.manufacturer?[{label:'Manufacturer',value:product.manufacturer}]:[],...raw.map(row=>({...row}))];
+ if(product.category==='potentiometers'){
+  const values=potValues(product);
+  for(const key of ['Resistance','Type','Shaft','Taper']){
+   const value=key==='Resistance'&&values.Resistance!=null?String(values.Resistance)+'kΩ':values[key];
+   if(value){const existing=rows.find(row=>String(row.label).toLowerCase()===key.toLowerCase());if(existing)existing.value=value;else rows.push({label:key,value});}
+  }
+ }
  if(product.sku)rows.push({label:'SKU',value:product.sku});
  const seen=new Set();return rows.filter(({label,value})=>{const key=String(label||'').trim(),val=String(value??'').trim();if(!key||!val||seen.has(key.toLowerCase()))return false;seen.add(key.toLowerCase());return true;}).map(({label,value})=>({label:fieldLabels[label]||label,value:String(value).trim()}));
 }

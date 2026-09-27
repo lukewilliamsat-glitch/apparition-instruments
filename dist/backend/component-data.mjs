@@ -10,12 +10,13 @@ const decode=async(response,label)=>{
  if(!Array.isArray(rows))throw new Error('Invalid '+label+' response.');
  return rows;
 };
-const content=record=>({productTitle:record.productTitle??'',shortDescription:record.shortDescription??'',fullDescription:record.fullDescription??'',productSpecifications:record.productSpecifications??[]});
+const content=record=>({productTitle:record.productTitle??'',shortDescription:record.shortDescription??'',fullDescription:record.fullDescription??'',productSpecifications:record.productSpecifications??[],fitmentGuidance:record.fitmentGuidance??'',installationGuidance:record.installationGuidance??'',included:record.included??'',technicalNotes:record.technicalNotes??'',...(record.technicalSpecs?.potentiometer?{technicalSpecs:record.technicalSpecs}:{})});
 export function componentFromRow(row,inventory={},internal={}){
  const product=row.product_content||{};
  return {id:row.id,sku:row.sku,name:row.name,category:row.category,manufacturer:row.manufacturer,
   description:row.description,specs:row.specs,productTitle:product.productTitle??'',shortDescription:product.shortDescription??'',
   fullDescription:product.fullDescription??'',productSpecifications:product.productSpecifications??[],
+  fitmentGuidance:product.fitmentGuidance??'',installationGuidance:product.installationGuidance??'',included:product.included??'',technicalNotes:product.technicalNotes??'',technicalSpecs:product.technicalSpecs??{},
   active:row.active??true,individually:row.individually,inKits:row.in_kits,salePrice:row.sale_price,
   kitPrice:row.kit_price,kitPriceQuantity:row.kit_price_quantity,image:row.image,
   stock:inventory.quantity,stockUnit:inventory.stock_unit??'item',internalUnitCost:internal.internal_unit_cost??null};
