@@ -1,0 +1,28 @@
+import {categories,fieldLabels} from '../admin/data.mjs';
+import {deploymentPath} from '../deployment.mjs';
+
+const supported=new Set(['potentiometers','capacitors','treble-bleeds']);
+export function eligibleProduct(product){
+ return !!product&&product.active===true&&product.individually===true&&supported.has(product.category)&&
+  typeof product.id==='string'&&/^[a-zA-Z0-9-]{1,80}$/.test(product.id)&&
+  Number.isSafeInteger(product.price)&&product.price>=0&&Number.isSafeInteger(product.stock)&&product.stock>=0;
+}
+export function productURL(id){return deploymentPath('/products/?id='+encodeURIComponent(id));}
+export function resolveProduct(records,id){
+ if(typeof id!=='string'||!/^[a-zA-Z0-9-]{1,80}$/.test(id))return null;
+ const product=records.find(item=>item.id===id);
+ return eligibleProduct(product)?product:null;
+}
+export const categoryPath=category=>deploymentPath('/components/'+category+'/');
+export const categoryName=category=>categories[category]||'Components';
+export function productDetails(product){
+ const raw=product.productSpecifications?.length?product.productSpecifications:product.displaySpecifications?.length?product.displaySpecifications:Object.entries(product.specs||{}).map(([label,value])=>({label,value}));
+ const rows=[...product.manufacturer?[{label:'Manufacturer',value:product.manufacturer}]:[],...raw];
+ if(product.sku)rows.push({label:'SKU',value:product.sku});
+ const seen=new Set();return rows.filter(({label,value})=>{const key=String(label||'').trim(),val=String(value??'').trim();if(!key||!val||seen.has(key.toLowerCase()))return false;seen.add(key.toLowerCase());return true;}).map(({label,value})=>({label:fieldLabels[label]||label,value:String(value).trim()}));
+}
+export const productContext={
+ potentiometers:{fitment:'Check mounting depth, hole diameter, knob fit and cavity clearance against your guitar before choosing a potentiometer. Model and year alone do not confirm fit.',links:[['Understand potentiometers','/luthier-hub/potentiometers-explained/']]},
+ capacitors:{fitment:'Check the specified capacitance and the space available in your control cavity. Component brand or construction alone does not guarantee a particular audible result.',links:[['Understand tone capacitors','/luthier-hub/capacitors-treble-bleeds/']]},
+ 'treble-bleeds':{fitment:'A treble bleed connects across a volume control’s input and output. Its effect depends on your pickups, controls and cable; no one network suits every guitar.',links:[['Understand treble bleeds','/luthier-hub/capacitors-treble-bleeds/'],['Explore the Treble Bleed Designer','/treble-bleed-designer/']]}
+};

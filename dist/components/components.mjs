@@ -1,4 +1,4 @@
-import {renderComponentCards} from './cards.mjs';
+import {renderComponentCards} from './cards.mjs?v=p10d';
 import {categories} from '../admin/data.mjs';
 import {catalogue,productById,refreshCatalogue} from './catalogue.mjs';
 import {addComponent} from '../commerce.mjs';
