@@ -1,5 +1,5 @@
 import {publicBackendConfig} from './public-config.mjs';
-import {normaliseComponentInput} from '../admin/data.mjs';
+import {normaliseComponentInput} from '../admin/data.mjs?v=p10e2';
 
 // P05B: Supabase is the sole production Component and Inventory authority.
 const endpoint=(config,table,query='')=>config.url+'/rest/v1/'+table+query;
@@ -10,7 +10,7 @@ const decode=async(response,label)=>{
  if(!Array.isArray(rows))throw new Error('Invalid '+label+' response.');
  return rows;
 };
-const content=record=>({productTitle:record.productTitle??'',shortDescription:record.shortDescription??'',fullDescription:record.fullDescription??'',productSpecifications:record.productSpecifications??[],fitmentGuidance:record.fitmentGuidance??'',installationGuidance:record.installationGuidance??'',included:record.included??'',technicalNotes:record.technicalNotes??'',...(record.technicalSpecs?.potentiometer?{technicalSpecs:record.technicalSpecs}:{})});
+const content=record=>({productTitle:record.productTitle??'',shortDescription:record.shortDescription??'',fullDescription:record.fullDescription??'',productSpecifications:record.productSpecifications??[],fitmentGuidance:record.fitmentGuidance??'',installationGuidance:record.installationGuidance??'',included:record.included??'',technicalNotes:record.technicalNotes??'',...(record.technicalSpecs&&Object.keys(record.technicalSpecs).length?{technicalSpecs:record.technicalSpecs}:{})});
 export function componentFromRow(row,inventory={},internal={}){
  const product=row.product_content||{};
  return {id:row.id,sku:row.sku,name:row.name,category:row.category,manufacturer:row.manufacturer,

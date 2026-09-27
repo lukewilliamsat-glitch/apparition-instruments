@@ -38,6 +38,6 @@ renderProductDetail(root,storefrontProduct(original),{document:w.document,add:()
 assert(!root.textContent.includes('What is included'));assert(!root.textContent.includes('Installation guidance'));assert(root.textContent.includes('Check mounting depth'));
 assert.equal(productDetails(storefrontProduct(original)).find(row=>row.label==='Resistance').value,'500kΩ');
 assert.equal(readFileSync('dist/admin/index.html','utf8').includes('name="manufacturerChoice"'),true);
-assert.equal(readFileSync('dist/admin/admin.mjs','utf8').includes("input.type='number'"),true);
+assert.equal(readFileSync('dist/admin/admin.mjs','utf8').includes("control.type='number'"),true);
 w.close();
 console.log('P10E: numeric resistance, controlled choices, legacy normalization, manual specs, manufacturer, content, identity, price, stock and sparse Product Detail PASS');

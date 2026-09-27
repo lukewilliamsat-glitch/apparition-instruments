@@ -18,7 +18,7 @@ const doc=()=>{const w=new Window({url:'https://apparitioninstruments.co.uk/prod
 for(const [item,fields,reading] of [[pot,['Resistance','Taper','Shaft','Reference'],'potentiometers-explained'],[cap,['Value','Voltage','Series','Tolerance'],'capacitors-treble-bleeds'],[bleed,['Capacitor','Topology'],'treble-bleed-designer']]){
  const w=doc(),root=w.document.getElementById('product-detail');renderProductDetail(root,item,{document:w.document,add:()=>{}});
  const rows=[...root.querySelectorAll('.product-specifications dt')].map(node=>node.textContent);
- for(const field of fields)assert(rows.some(label=>label.toLowerCase()===(['Value','Capacitor'].includes(field)?'Capacitance':field==='Shaft'?'Shaft type / length':field==='Reference'?'Part reference':field==='Topology'?'Treble bleed topology':field).toLowerCase()),item.id+': '+field);
+ for(const field of fields)assert(rows.some(label=>label.toLowerCase()===(field==='Value'?'Capacitance':field==='Voltage'?'Voltage rating':field==='Capacitor'?'Capacitor':field==='Shaft'?'Shaft type / length':field==='Reference'?'Part reference':field==='Topology'?'Configuration':field).toLowerCase()),item.id+': '+field);
  assert(![...root.querySelectorAll('.product-specifications dd')].some(node=>!node.textContent.trim()));
  assert(root.querySelector('a.product-back').href.includes('/components/'+item.category+'/'));
  assert(root.textContent.includes((item.price/100).toFixed(2)));

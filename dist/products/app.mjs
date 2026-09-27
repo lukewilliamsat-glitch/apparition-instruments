@@ -1,7 +1,8 @@
 import {catalogue,refreshCatalogue,money} from '../components/catalogue.mjs';
 import {imageSource} from '../admin/images.mjs';
 import {addComponent} from '../commerce.mjs';
-import {categoryName,categoryPath,productContext,productDetails,productURL,resolveProduct} from './model.mjs';
+import {createPublicComponentRepository} from '../backend/component-data.mjs?v=p10e2';
+import {categoryName,categoryPath,productContext,productDetails,productURL,resolveProduct} from './model.mjs?v=p10e2';
 
 const element=(doc,tag,cls,text)=>{const node=doc.createElement(tag);if(cls)node.className=cls;if(text!==undefined)node.textContent=text;return node;};
 export function renderProductDetail(root,product,{document:doc=root.ownerDocument,add=addComponent}={}){
@@ -23,7 +24,7 @@ export function renderProductDetail(root,product,{document:doc=root.ownerDocumen
  layout.append(visual,info);root.replaceChildren(back,layout);root.hidden=false;
  return {button,feedback};
 }
-export async function startProductDetail({document:doc=document,location:loc=location,load=refreshCatalogue}={}){
+export async function startProductDetail({document:doc=document,location:loc=location,load=()=>refreshCatalogue(createPublicComponentRepository())}={}){
  const status=doc.getElementById('product-status'),root=doc.getElementById('product-detail');
  try{await load();const id=new URLSearchParams(loc.search).get('id'),product=resolveProduct(catalogue,id);
   if(!product){status.textContent='This component is not currently available. Browse the component collection for current products.';root.hidden=true;return null;}

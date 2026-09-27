@@ -1,6 +1,7 @@
 import {categories,fieldLabels} from '../admin/data.mjs';
 import {deploymentPath} from '../deployment.mjs';
 import {potValues} from '../admin/pot-specs.mjs';
+import {bleedTopologies,bleedValues,capacitorValues,formatCapacitance} from '../admin/electrical-specs.mjs';
 
 const supported=new Set(['potentiometers','capacitors','treble-bleeds']);
 export function eligibleProduct(product){
@@ -26,8 +27,21 @@ export function productDetails(product){
    if(value){const existing=rows.find(row=>String(row.label).toLowerCase()===key.toLowerCase());if(existing)existing.value=value;else rows.push({label:key,value});}
   }
  }
+ const set=(key,value)=>{if(!value)return;const existing=rows.find(row=>String(row.label).toLowerCase()===key.toLowerCase());if(existing)existing.value=value;else rows.push({label:key,value});};
+ if(product.category==='capacitors'){
+  const {capacitance,voltageV}=capacitorValues(product);
+  set('Value',formatCapacitance(capacitance));set('Voltage',voltageV!=null?String(voltageV)+'V':null);
+ }
+ if(product.category==='treble-bleeds'){
+  const {topology,capacitor,resistorKohms}=bleedValues(product);
+  if(topology)set('Topology',bleedTopologies[topology]);
+  set('Capacitor',formatCapacitance(capacitor));
+  if(topology==='capacitor'){
+   for(let i=rows.length-1;i>=0;i--)if(String(rows[i].label).toLowerCase()==='resistor')rows.splice(i,1);
+  }else set('Resistor',resistorKohms!=null?String(resistorKohms)+'kΩ':null);
+ }
  if(product.sku)rows.push({label:'SKU',value:product.sku});
- const seen=new Set();return rows.filter(({label,value})=>{const key=String(label||'').trim(),val=String(value??'').trim();if(!key||!val||seen.has(key.toLowerCase()))return false;seen.add(key.toLowerCase());return true;}).map(({label,value})=>({label:fieldLabels[label]||label,value:String(value).trim()}));
+ const seen=new Set();return rows.filter(({label,value})=>{const key=String(label||'').trim(),val=String(value??'').trim();if(!key||!val||seen.has(key.toLowerCase()))return false;seen.add(key.toLowerCase());return true;}).map(({label,value})=>({label:product.category==='treble-bleeds'?({Topology:'Configuration',Capacitor:'Capacitor',Resistor:'Resistor'}[label]||fieldLabels[label]||label):product.category==='capacitors'&&label==='Voltage'?'Voltage rating':fieldLabels[label]||label,value:String(value).trim()}));
 }
 export const productContext={
  potentiometers:{fitment:'Check mounting depth, hole diameter, knob fit and cavity clearance against your guitar before choosing a potentiometer. Model and year alone do not confirm fit.',links:[['Understand potentiometers','/luthier-hub/potentiometers-explained/']]},

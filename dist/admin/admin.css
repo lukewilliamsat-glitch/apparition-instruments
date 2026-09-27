@@ -48,3 +48,5 @@
  .admin-page dialog{max-height:90dvh}
  .dialog-actions>button{flex:1;white-space:normal}
 }
+
+.electrical-value{display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:8px;align-items:center}.electrical-value input,.electrical-value select{min-width:0;width:100%}

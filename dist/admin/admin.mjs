@@ -7,8 +7,9 @@ import {prepareAssemblyExport} from './assembly-export.mjs';
 import {readImage,imageSource} from './images.mjs';
 import {kitBindings} from './kit-bindings.mjs';
 import {applyPotValues,potChoices,potValues,normaliseManufacturer} from './pot-specs.mjs';
+import {applyCapacitorValues,applyBleedValues,capacitanceUnits,bleedTopologies,capacitorValues,bleedValues} from './electrical-specs.mjs';
 const $=s=>document.querySelector(s),el=(tag,value)=>{const n=document.createElement(tag);if(value!==undefined)n.textContent=value;return n;};
-let repository,records=[],view=new URLSearchParams(location.search).get('view')==='assemblies'?'assemblies':'components',editing=null,stockId=null,draftSpecs={},draftTech={},draftProductSpecs=[],draftImage=null,imageVersion=0;
+let repository,records=[],view=new URLSearchParams(location.search).get('view')==='assemblies'?'assemblies':'components',editing=null,stockId=null,draftSpecs={},draftTech={},renderedSpecCategory=null,draftProductSpecs=[],draftImage=null,imageVersion=0;
 const form=$('#component-form'),field=n=>form.elements.namedItem(n),stockForm=$('#stock-form');
 for(const [id,label] of Object.entries(categories))for(const target of [$('#category-filter'),field('category')]){const o=el('option',label);o.value=id;target.append(o);}
 function message(text){$('#status').textContent=text;}
@@ -30,13 +31,41 @@ function render(){
  }
 }
 function collectSpecs(){
- const pot=field('category').value==='potentiometers',values={};for(const input of $('#spec-fields').querySelectorAll('[data-spec]')){if(pot&&['Resistance','Type','Shaft','Taper'].includes(input.dataset.spec))values[input.dataset.spec]=input.value;else draftSpecs[input.dataset.spec]=input.value;}
- if(pot){const resolved=applyPotValues(draftSpecs,values);draftSpecs=resolved.specs;draftTech=resolved.technicalSpecs;}
+ const category=renderedSpecCategory,values={};
+ for(const input of $('#spec-fields').querySelectorAll('[data-spec]')){
+  const key=input.dataset.spec;
+  if(category==='potentiometers'&&['Resistance','Type','Shaft','Taper'].includes(key))values[key]=input.value;
+  else if(category==='capacitors'&&['Value','ValueUnit','Voltage'].includes(key))values[key]=input.value;
+  else if(category==='treble-bleeds'&&['Topology','Capacitor','CapacitorUnit','Resistor'].includes(key))values[key]=input.value;
+  else draftSpecs[key]=input.value;
+ }
+ let resolved;
+ if(category==='potentiometers')resolved=applyPotValues(draftSpecs,values);
+ if(category==='capacitors')resolved=applyCapacitorValues(draftSpecs,{value:values.Value,unit:values.ValueUnit,voltage:values.Voltage});
+ if(category==='treble-bleeds')resolved=applyBleedValues(draftSpecs,{topology:values.Topology,value:values.Capacitor,unit:values.CapacitorUnit,resistor:values.Resistor});
+ if(resolved){draftSpecs=resolved.specs;draftTech={...draftTech,...resolved.technicalSpecs};}
 }
-function renderSpecs(){const root=$('#spec-fields'),pot=field('category').value==='potentiometers',values=pot?potValues({specs:draftSpecs,technicalSpecs:draftTech}):{};root.replaceChildren();for(const key of specificationFields[field('category').value]||[]){const label=el('label',fieldLabels[key]||key),controlled=pot&&['Resistance','Type','Shaft','Taper'].includes(key),input=el(controlled&&key!=='Resistance'?'select':'input');input.dataset.spec=key;
-  if(controlled&&key==='Resistance'){input.type='number';input.min='0.001';input.max='10000';input.step='0.001';input.value=values.Resistance??'';label.append(input,el('small','kΩ · numeric value only'));if(draftSpecs.Resistance&&values.Resistance===null)label.append(el('small','Legacy value '+draftSpecs.Resistance+' is retained until you enter a valid number.'));}
-  else if(controlled){const choices=['',...potChoices[key],...(values[key]&&!potChoices[key].includes(values[key])?[values[key]]:[])];for(const choice of choices){const option=el('option',choice||'Not specified');option.value=choice;input.append(option);}input.value=values[key];label.append(input);}
-  else{input.value=draftSpecs[key]||'';input.maxLength=300;label.append(input);}root.append(label);}}
+function renderSpecs(){
+ const root=$('#spec-fields'),category=field('category').value,item={specs:draftSpecs,technicalSpecs:draftTech},pot=category==='potentiometers',cap=category==='capacitors',bleed=category==='treble-bleeds';
+ const values=pot?potValues(item):cap?capacitorValues(item):bleed?bleedValues(item):{};
+ renderedSpecCategory=category;root.replaceChildren();
+ const input=(label,key,value,kind='text')=>{const control=el(kind);control.dataset.spec=key;if(kind==='input'){control.type='number';control.min='0.000001';control.step='any';control.max='1000000';}control.value=value??'';label.append(control);return control;};
+ const select=(label,key,chosen,choices)=>{const control=el('select');control.dataset.spec=key;for(const [value,title] of choices){const option=el('option',title);option.value=value;control.append(option);}control.value=chosen??'';label.append(control);return control;};
+ const units=(label,key,chosen)=>select(label,key,chosen,capacitanceUnits.map(unit=>[unit,unit]));
+ for(const key of specificationFields[category]||[]){const label=el('label',fieldLabels[key]||key);
+  if(pot&&key==='Resistance'){input(label,key,values.Resistance,'input');label.append(el('small','kΩ · numeric value only'));}
+  else if(pot&&potChoices[key]){select(label,key,values[key],[['','Not specified'],...potChoices[key].map(choice=>[choice,choice]),...(values[key]&&!potChoices[key].includes(values[key])?[[values[key],values[key]]]:[])]);}
+  else if(cap&&key==='Value'){const pair=el('span');pair.className='electrical-value';input(pair,key,values.capacitance?.value,'input');units(pair,'ValueUnit',values.capacitance?.unit||'µF');label.append(pair);if(draftSpecs.Value&&!values.capacitance)label.append(el('small','Unrecognised legacy value retained until a numeric value and unit are entered.'));}
+  else if(cap&&key==='Voltage'){input(label,key,values.voltageV,'input');label.append(el('small','V · numeric value only'));if(draftSpecs.Voltage&&!values.voltageV)label.append(el('small','Unrecognised legacy voltage retained.'));}
+  else if(bleed&&key==='Topology'){select(label,key,values.topology,[['','Not specified'],...Object.entries(bleedTopologies)]);if(draftSpecs.Topology&&!values.topology)label.append(el('small','Unrecognised legacy configuration retained.'));}
+  else if(bleed&&key==='Capacitor'){const pair=el('span');pair.className='electrical-value';input(pair,key,values.capacitor?.value,'input');units(pair,'CapacitorUnit',values.capacitor?.unit||'nF');label.append(pair);if(draftSpecs.Capacitor&&!values.capacitor)label.append(el('small','Unrecognised legacy capacitor value retained.'));}
+  else if(bleed&&key==='Resistor'){input(label,key,values.resistorKohms,'input');label.append(el('small','kΩ · leave blank for capacitor-only networks'));}
+  else{const control=el('input');control.dataset.spec=key;control.value=draftSpecs[key]||'';control.maxLength=300;label.append(control);}
+  root.append(label);
+ }
+ if(bleed){const topology=root.querySelector('[data-spec="Topology"]'),resistor=root.querySelector('[data-spec="Resistor"]');
+  const visibility=()=>{const only=topology.value==='capacitor';resistor.closest('label').hidden=only;if(only)resistor.value='';};topology.addEventListener('change',visibility);visibility();}
+}
 function manufacturerOptions(value=''){const select=field('manufacturerChoice');select.replaceChildren();const names=[...new Set(records.map(item=>item.manufacturer).filter(Boolean))].sort((a,b)=>a.localeCompare(b));for(const name of ['',...names,'__other__']){const option=el('option',name==='__other__'?'Add manufacturer…':name||'Not specified');option.value=name;select.append(option);}select.value=value&&names.includes(value)?value:value?'__other__':'';field('manufacturer').value=value;$('#manufacturer-other').hidden=select.value!=='__other__';}
 field('manufacturerChoice').addEventListener('change',()=>{$('#manufacturer-other').hidden=field('manufacturerChoice').value!=='__other__';if(field('manufacturerChoice').value!=='__other__')field('manufacturer').value='';});
 function openEditor(id=null){editing=id;const item=id?records.find(x=>x.id===id):{sku:'',name:'',manufacturer:'',category:'potentiometers',description:'',stock:0,active:true,individually:false,inKits:false,specs:{}};if(!item)throw new Error('Component not found.');form.reset();form.querySelector('[type=submit]').disabled=false;for(const key of ['sku','name','category','description','stock','productTitle','shortDescription','fullDescription','fitmentGuidance','installationGuidance','included','technicalNotes'])field(key).value=item[key]??'';manufacturerOptions(item.manufacturer);for(const key of ['active','individually','inKits'])field(key).checked=!!item[key];draftSpecs={...item.specs};draftTech=structuredClone(item.technicalSpecs??{});draftProductSpecs=structuredClone(item.productSpecifications??[]);renderProductSpecs();$('#product-spec-status').textContent='';draftImage=item.image??null;imageVersion++;$('#image-file').value='';$('#image-error').textContent='';field('internalUnitCost').value=priceInput(item.internalUnitCost);field('stockUnit').value=item.stockUnit||'item';field('kitPriceQuantity').value=item.kitPriceQuantity||1;$('#master-price-quantity').hidden=!!kitBindings[id];field('stockUnit').disabled=item.category!=='other';field('salePrice').value=priceInput(item.salePrice);field('kitPrice').value=priceInput(item.kitPrice);priceVisibility();imagePreview();renderSpecs();$('#editor-title').textContent=id?'Edit component':'Add component';$('#editor-error').textContent='';$('#component-dialog').showModal();}

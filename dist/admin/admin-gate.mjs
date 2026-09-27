@@ -1,6 +1,6 @@
 import {createAdminAuth} from './admin-auth.mjs';
 import {setComponentRepository} from './component-repository.mjs';
-import {createAdminComponentRepository} from '../backend/component-data.mjs';
+import {createAdminComponentRepository} from '../backend/component-data.mjs?v=p10e2';
 import {setAssemblyRepository} from './assembly-repository.mjs';
 import {createAdminAssemblyRepository} from '../backend/assembly-data.mjs';
 import {createAuthenticatedRepositoryTransport} from '../backend/providers.mjs?v=p08b4';
