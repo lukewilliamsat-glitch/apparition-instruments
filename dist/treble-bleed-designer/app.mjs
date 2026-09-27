@@ -1,6 +1,6 @@
 import {defaults,fields,types,topologies,topologyOf,validateState,bleedSummary} from './circuits.mjs';
 import {audioTaper,frequencyResponse,responseAt,magnitudeDB} from './engine.mjs';
-import {renderGraph,graphLimits} from './graph.mjs';
+import {renderGraph,graphLimits} from './graph.mjs?v=p10a2';
 import {freezeReference} from './frozen.mjs';
 const $=s=>document.querySelector(s),form=$('#designer-inputs'),field=k=>form.elements.namedItem(k),el=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;};
 let state={...defaults},points=[],frozen=null;

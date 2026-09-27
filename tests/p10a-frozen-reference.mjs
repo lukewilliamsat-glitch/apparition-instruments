@@ -14,13 +14,25 @@ const graph=()=>el('response-graph').querySelector('svg');
 assert.equal(graph().querySelectorAll('path.frozen-curve').length,0);
 assert.equal(el('frozen-key').hidden,true);
 function change(key,value){form.elements.namedItem(key).value=String(value);form.dispatchEvent(new win.Event('change',{bubbles:true}));assert.equal(el('designer-error').textContent,'');}
+change('volume',3.2);
 const before=graph().querySelector('path.current-curve').getAttribute('d');
+const volumeTenBefore=graph().querySelector('path.reference-curve').getAttribute('d');
 el('freeze-reference').click();assert.equal(graph().querySelectorAll('path.frozen-curve').length,1);
 const frozenPath=graph().querySelector('path.frozen-curve').getAttribute('d');
 assert.equal(frozenPath,before);
+assert.deepEqual([...graph().querySelectorAll('path')].slice(-3).map(node=>node.getAttribute('class')),['reference-curve','frozen-curve','current-curve']);
 const summary=el('frozen-summary').textContent;
-assert.match(summary,/Volume 7.0/);
-for(const [key,value] of [['volume',5],['tonePosition',4],['type','duncan'],['bleedC',2],['bleedR',220],['volumePot',250],['tonePot',300],['toneCap',.047],['pickupR',12],['loadR',.5],['cableC',700]]){
+assert.match(summary,/Volume 3.2/);
+change('volume',10);
+assert.notEqual(graph().querySelector('path.current-curve').getAttribute('d'),before);
+assert.equal(graph().querySelector('path.current-curve').getAttribute('d'),volumeTenBefore);
+assert.equal(graph().querySelector('path.reference-curve').getAttribute('d'),volumeTenBefore);
+assert.equal(graph().querySelector('path.frozen-curve').getAttribute('d'),frozenPath);
+assert.equal(el('frozen-summary').textContent,summary);
+change('pickupR',12);
+assert.notEqual(graph().querySelector('path.reference-curve').getAttribute('d'),volumeTenBefore);
+assert.equal(graph().querySelector('path.frozen-curve').getAttribute('d'),frozenPath);
+for(const [key,value] of [['volume',5],['tonePosition',4],['type','duncan'],['bleedC',2],['bleedR',220],['volumePot',250],['tonePot',300],['toneCap',.047],['loadR',.5],['cableC',700]]){
  change(key,value);
  assert.equal(graph().querySelector('path.frozen-curve').getAttribute('d'),frozenPath,key);
  assert.equal(el('frozen-summary').textContent,summary,key);
@@ -39,5 +51,9 @@ assert.deepEqual(snapshot.response.map(p=>p.db),frequencyResponse(snapshot.confi
 assert.equal(Object.isFrozen(snapshot.configuration),true);
 assert.equal(Object.isFrozen(snapshot.response),true);
 assert.equal(Object.keys(fields).every(key=>key in snapshot.configuration),true);
+const stylesheet=readFileSync('dist/treble-bleed-designer/designer.css','utf8');
+assert.match(stylesheet,/\.frozen-curve\{stroke:#78d4d0;stroke-width:3;stroke-dasharray:10 6/);
+assert.match(stylesheet,/\.current-curve\{stroke:#b89b5e/);
+assert.notEqual('#78d4d0','#b89b5e');
 assert.doesNotMatch(readFileSync('dist/treble-bleed-designer/app.mjs','utf8'),/fetch\(|localStorage|supabase|\.insert\(/);
 console.log('P10A: live-only, freeze/update/clear, immutable state and response across control changes, model preservation and no backend writes PASS');

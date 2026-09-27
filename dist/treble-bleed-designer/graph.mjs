@@ -11,6 +11,8 @@ export function renderGraph(root,points,volume,frozen=null){
  for(const f of ticks){add('line',{x1:g.x(f),x2:g.x(f),y1:g.top,y2:g.top+g.h,class:'grid-line'});add('text',{x:g.x(f),y:g.top+g.h+23,'text-anchor':f===20?'start':f===20000?'end':'middle',class:'tick'},f>=1000?f/1000+'k':String(f));}
  add('text',{x:g.left,y:14,class:'axis-label'},'RELATIVE OUTPUT (dB)');add('text',{x:g.left+g.w/2,y:g.height-6,'text-anchor':'middle',class:'axis-label'},'FREQUENCY (Hz)');
  add('path',{d:g.path('reference'),class:'reference-curve',fill:'none'});
- if(frozen){const frozenPoints=frozen.response.map(p=>({frequency:p.frequency,frozen:p.db}));add('path',{d:graphGeometry(frozenPoints,width).path('frozen'),class:'frozen-curve',fill:'none'});}
+ // Only the captured response supplies this path. Draw it above Volume 10 and
+ // below the live curve, so neither comparison can silently replace its data.
+ if(frozen){const frozenPoints=frozen.response.map(({frequency,db})=>({frequency,frozen:db}));add('path',{d:graphGeometry(frozenPoints,width).path('frozen'),class:'frozen-curve',fill:'none'});}
  add('path',{d:g.path('current'),class:'current-curve',fill:'none'});root.replaceChildren(svg);
 }
