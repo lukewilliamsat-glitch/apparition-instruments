@@ -16,9 +16,13 @@ export async function listMyOrders(req:Request,env:Env=Deno.env,request:typeof f
  try{
   // The email comes from the freshly verified Supabase Auth user, never request data.
   // Only unowned guest Orders can be claimed; the database RPC never replaces an owner.
-  const claim=await request(url+'/rest/v1/rpc/claim_verified_email_guest_orders',{method:'POST',headers:{apikey:service,Authorization:'Bearer '+service,'Content-Type':'application/json'},body:JSON.stringify({p_owner:owner.id,p_email:owner.email}),cache:'no-store'});
-  if(!claim.ok)return respond(503,{message:'Orders are temporarily unavailable.'});
-  const query=new URLSearchParams({owner_user_id:'eq.'+owner.id,select:reference===null?'reference,created_at,total_pence,status,payment_status':'reference,created_at,paid_at,status,payment_status,status_history,items,customer,delivery,dispatch_details,subtotal_pence,delivery_pence,total_pence,refunded_pence,latest_refund_at',order:'created_at.desc',limit:reference===null?'100':'1'});
+  if(reference===null){
+   const claim=await request(url+'/rest/v1/rpc/claim_verified_email_guest_orders',{method:'POST',headers:{apikey:service,Authorization:'Bearer '+service,'Content-Type':'application/json'},body:JSON.stringify({p_owner:owner.id,p_email:owner.email}),cache:'no-store'});
+   if(!claim.ok)return respond(503,{message:'Orders are temporarily unavailable.'});
+  }
+  // Ownership is persisted at checkout creation; only a signed Stripe outcome
+  // makes that internal attempt a customer-visible Order. Refunds remain paid history.
+  const query=new URLSearchParams({owner_user_id:'eq.'+owner.id,payment_status:'in.(paid,partially_refunded,refunded)',select:reference===null?'reference,created_at,total_pence,status,payment_status':'reference,created_at,paid_at,status,payment_status,status_history,items,customer,delivery,dispatch_details,subtotal_pence,delivery_pence,total_pence,refunded_pence,latest_refund_at',order:'created_at.desc',limit:reference===null?'100':'1'});
   if(reference!==null)query.set('reference','eq.'+reference);
   const result=await request(url+'/rest/v1/orders?'+query,{headers:{apikey:service,Authorization:'Bearer '+service},cache:'no-store'});
   if(!result.ok)return respond(503,{message:'Orders are temporarily unavailable.'});

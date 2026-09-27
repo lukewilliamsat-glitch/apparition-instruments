@@ -29,7 +29,7 @@ const transport=async(url,init)=>{
  }
  if(url.includes('/rest/v1/orders?')){
   assert.equal(init.headers.Authorization,'Bearer server-secret');const query=new URL(url).searchParams;queries.push(query);
-  assert.equal(query.get('select'),'reference,created_at,total_pence,status,payment_status');assert(!query.has('email'));assert(!query.has('reference'));assert(!query.has('id'));
+  assert.equal(query.get('select'),'reference,created_at,total_pence,status,payment_status');assert.equal(query.get('payment_status'),'in.(paid,partially_refunded,refunded)');assert(!query.has('email'));assert(!query.has('reference'));assert(!query.has('id'));
   return Response.json(rows.filter(row=>row.owner===query.get('owner_user_id').slice(3)).map(({reference,created_at,total_pence,status})=>({reference,created_at,total_pence,status})));
  }
  throw Error('Unexpected endpoint '+url);
@@ -75,5 +75,5 @@ await app.start();assert.match(window.document.getElementById('my-orders-list').
 window.happyDOM.abort();
 const empty=new Window();empty.document.write(readFileSync('dist/account/index.html','utf8'));
 await createAccountApp({document:empty.document,location:empty.location,history:empty.history,auth:{onAuthStateChange(){},async getSession(){return {data:{session:{}}}},async getUser(){return {data:{user:{email:'new@example.co.uk',email_confirmed_at:'now'}}}}},loadOrders:async()=>[]}).start();
-assert.match(empty.document.getElementById('my-orders-status').textContent,/No Orders are linked/);empty.happyDOM.abort();
+assert.match(empty.document.getElementById('my-orders-status').textContent,/No paid Orders are available/);empty.happyDOM.abort();
 console.log('P09C: verified claim, immutable ownership, cross-user denial, forged parameters, checkout isolation and My Orders PASS');

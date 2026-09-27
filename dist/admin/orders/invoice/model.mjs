@@ -5,6 +5,9 @@ export function invoiceFromOrder(order){
  if(!Array.isArray(items)||!items.length||!p||![p.subtotal,p.delivery,p.total].every(Number.isSafeInteger)||p.subtotal<0||p.delivery<0||p.total!==p.subtotal+p.delivery)throw new Error('Saved Order totals cannot be verified.');
  if(items.some(item=>!Number.isSafeInteger(item.quantity)||item.quantity<1||!Number.isSafeInteger(item.unitPrice)||item.unitPrice<0||item.quantity*item.unitPrice!==item.lineTotal)||items.reduce((sum,item)=>sum+item.lineTotal,0)!==p.subtotal)throw new Error('Saved Order items do not match the subtotal.');
  if(!Number.isSafeInteger(order.refundedPence??0)||(order.refundedPence??0)<0||(order.refundedPence??0)>p.total)throw new Error('Saved refund totals cannot be verified.');
+ const refunded=order.refundedPence??0;
+ if((order.paymentStatus==='paid'&&refunded!==0)||(order.paymentStatus==='refunded'&&refunded!==p.total)||
+  (order.paymentStatus==='partially_refunded'&&(refunded<=0||refunded>=p.total)))throw new Error('Saved refund status cannot be verified.');
  return {reference:order.reference,date:order.createdAt,customer:order.customer||{},delivery:order.delivery||{},items,pricing:p,
   paymentLabel:({paid:'Paid',partially_refunded:'Partially Refunded',refunded:'Refunded'})[order.paymentStatus],
   refundedPence:order.refundedPence??0,latestRefundAt:order.latestRefundAt};

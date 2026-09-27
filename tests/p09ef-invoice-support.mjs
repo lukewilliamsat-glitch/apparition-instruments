@@ -17,9 +17,9 @@ assert.match(root.textContent,/£8\.99/);assert.match(root.textContent,/Vintage 
 assert(!root.textContent.includes('private-sku'));
 assert.equal(root.querySelector('#refund-total'),null);assert.equal(root.querySelector('#refund-details'),null);assert.equal(root.querySelector('#net-paid'),null);
 renderInvoice(root,{...detail,paymentStatus:'refunded',refundedPence:899,latestRefundAt:'2026-09-26T12:00:00Z'},page.document);
-assert.match(root.textContent,/Refunded/);assert.equal(root.querySelector('#refund-total').textContent,'Refund−£8.99');assert.equal(root.querySelector('#net-paid').textContent,'Net paid£0.00');
+assert.match(root.textContent,/Refunded/);assert.equal(root.querySelector('#refund-total').textContent,'Refunded−£8.99');assert.equal(root.querySelector('#net-paid').textContent,'Net paid£0.00');
 renderInvoice(root,{...detail,paymentStatus:'partially_refunded',refundedPence:250,latestRefundAt:'2026-09-26T12:00:00Z'},page.document);
-assert.equal(root.querySelector('#refund-total').textContent,'Refund−£2.50');assert.equal(root.querySelector('#net-paid').textContent,'Net paid£6.49');
+assert.equal(root.querySelector('#refund-total').textContent,'Refunded−£2.50');assert.equal(root.querySelector('#net-paid').textContent,'Net paid£6.49');
 for(const refundedPence of [0,null,undefined]){renderInvoice(root,{...detail,refundedPence},page.document);assert.equal(root.querySelector('#refund-total'),null);assert.equal(root.querySelector('#refund-details'),null);assert.equal(root.querySelector('#net-paid'),null);}
 assert.throws(()=>invoiceModel({...detail,paymentStatus:'refunded',refundedPence:0}),/refund status/);
 assert.throws(()=>invoiceModel({...detail,paymentStatus:'paid',refundedPence:1}),/refund status/);

@@ -21,6 +21,7 @@ const request=async(url,init)=>{
  if(url.endsWith('/rpc/claim_verified_email_guest_orders')){claims++;return Response.json(0);}
  if(url.includes('/rest/v1/orders?')){reads++;const q=new URL(url).searchParams;
   assert([a,b].includes(q.get('owner_user_id').slice(3)));assert.equal(init.headers.Authorization,'Bearer secret');
+  assert.equal(q.get('payment_status'),'in.(paid,partially_refunded,refunded)');
   assert(!q.has('email')&&!q.has('id'));
   return Response.json(q.get('reference')==='eq.AI-010010'&&q.get('owner_user_id')==='eq.'+a?[row]:[]);
  }
@@ -35,7 +36,7 @@ for(const secret of ['private-sku','internalNote','stripe_payment_intent_id','sn
 assert.equal((await detail(tokenB)).status,404);assert.equal((await detail(tokenA,'AI-010011')).status,404);
 assert.equal((await detail(tokenA,'AI-010010','&id='+b+'&user_id='+b+'&email=private@example.co.uk')).status,200);
 assert.equal((await detail(tokenA,'AI-010010%26owner_user_id=eq.'+b)).status,404);
-assert.equal(reads,4);assert.equal(claims,4);
+assert.equal(reads,4);assert.equal(claims,0);
 assert.deepEqual(progress(order).map(x=>x.state),['done','done','done','done']);
 assert.equal(progress(order)[1].at,'2026-09-25T12:00:00Z');assert.equal(progress(order)[2].at,null);
 assert.equal(customerStatus(order),'Fulfilment complete');

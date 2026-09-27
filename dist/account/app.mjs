@@ -17,7 +17,7 @@ export function createAccountApp({auth,document,location,history,loadOrders=asyn
   const list=el('my-orders-list'),notice=el('my-orders-status');list.replaceChildren();notice.textContent='Loading your Orders…';
   try{
    const orders=await loadOrders();if(run!==sequence)return;
-   if(!orders.length){notice.textContent='No Orders are linked to this account yet. You can still checkout as a guest.';return;}
+   if(!orders.length){notice.textContent='No paid Orders are available in this account yet. If you have just paid, please allow a moment for confirmation.';return;}
    notice.textContent='';
    const labels={pending:'Order Confirmed',in_production:'In Production',ready_to_dispatch:'Ready to Dispatch',dispatched:'Dispatched',completed:'Fulfilment complete'};
    for(const order of orders){
