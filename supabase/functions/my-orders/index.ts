@@ -45,6 +45,7 @@ export function customerOrderDetail(row:any){
  })):[];
  const delivery=row.delivery||{},dispatch=row.dispatch_details||{},url=safeText(dispatch.tracking_url,500);
  return {reference:row.reference,createdAt:row.created_at,confirmedAt:row.paid_at,status:row.status,paymentStatus:row.payment_status,
+  customerName:safeText(row.customer?.name),customerEmail:safeText(row.customer?.email,254),
   history,items,pricing:{subtotal:row.subtotal_pence,delivery:row.delivery_pence,total:row.total_pence},
   refundedPence:row.refunded_pence??0,latestRefundAt:row.latest_refund_at,
   recipient:safeText(delivery.recipient)||safeText(row.customer?.name),address:['line1','line2','city','region','postcode','country'].map(key=>safeText(delivery[key])).filter(Boolean),

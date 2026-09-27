@@ -33,4 +33,8 @@ export function renderOrder(root,order,document){
   if(dispatch.trackingReference)shipping.append(make('p','Tracking reference: '+dispatch.trackingReference));
   if(dispatch.trackingUrl){const link=make('a','Track your Order');link.href=dispatch.trackingUrl;link.rel='noopener noreferrer';link.target='_blank';shipping.append(link);}
  }
+ const actions=make('nav',null,'order-actions');actions.setAttribute('aria-label','Order actions');
+ const invoice=make('a','View Invoice');invoice.href='/account/order/invoice/?reference='+encodeURIComponent(order.reference);
+ const support=make('a','Contact us about this Order');support.href='/contact/?reference='+encodeURIComponent(order.reference);
+ actions.append(invoice,support);root.append(actions);
 }

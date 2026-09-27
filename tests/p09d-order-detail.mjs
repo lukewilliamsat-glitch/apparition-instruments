@@ -30,7 +30,8 @@ const detail=(token,reference='AI-010010',extra='')=>listMyOrders(new Request('h
 assert.equal((await detail(null)).status,401);
 let result=await detail(tokenA);assert.equal(result.status,200);const order=(await result.json()).order;
 assert.equal(order.pricing.total,400);assert.equal(order.items[0].options[0].value,'0.022');assert.equal(order.dispatch.trackingUrl,'https://example.com/track');
-for(const secret of ['private-sku','private@example.co.uk','internalNote','stripe_payment_intent_id','snapshot','actor','secret','classified'])assert(!JSON.stringify(order).includes(secret));
+assert.equal(order.customerEmail,'private@example.co.uk');
+for(const secret of ['private-sku','internalNote','stripe_payment_intent_id','snapshot','actor','secret','classified'])assert(!JSON.stringify(order).includes(secret));
 assert.equal((await detail(tokenB)).status,404);assert.equal((await detail(tokenA,'AI-010011')).status,404);
 assert.equal((await detail(tokenA,'AI-010010','&id='+b+'&user_id='+b+'&email=private@example.co.uk')).status,200);
 assert.equal((await detail(tokenA,'AI-010010%26owner_user_id=eq.'+b)).status,404);

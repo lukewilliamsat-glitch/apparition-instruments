@@ -1,8 +1,9 @@
 import {validateEnquiry,renderEnquiry} from './mail.ts';
 import {sendContactMail} from './smtp.ts';
+import {verifiedCustomer} from '../_shared/customer-auth.ts';
 type Env={get:(key:string)=>string|undefined};
 const origin='https://apparitioninstruments.co.uk';
-const cors={'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Headers':'apikey,content-type','Access-Control-Allow-Methods':'POST,OPTIONS','Vary':'Origin','Cache-Control':'no-store'};
+const cors={'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Headers':'apikey,content-type,authorization','Access-Control-Allow-Methods':'POST,OPTIONS','Vary':'Origin','Cache-Control':'no-store'};
 const response=(status:number,state:string,id?:string)=>new Response(JSON.stringify({state,...(id?{submissionId:id}:{})}),{status,headers:{...cors,'Content-Type':'application/json'}});
 async function boundedJson(req:Request){
  if(!req.body)throw Error('Empty request');
@@ -28,11 +29,22 @@ export async function receiveContactEnquiry(req:Request,env:Env=Deno.env,transpo
  const headers={apikey:service,Authorization:'Bearer '+service,'Content-Type':'application/json'};
  const rpc=async(name:string,payload:object)=>{const r=await transport(url+'/rest/v1/rpc/'+name,{method:'POST',headers,body:JSON.stringify(payload)});if(!r.ok)throw Error('Contact persistence unavailable');return r.json();};
  try{
+  let owner:{id:string,email:string}|null=null;
+  if(data.orderContext){
+   owner=await verifiedCustomer(req,env,transport);
+   if(!owner)return response(404,'unavailable');
+   const query=new URLSearchParams({select:'id',owner_user_id:'eq.'+owner.id,reference:'eq.'+data.orderReference,limit:'1'});
+   const check=await transport(url+'/rest/v1/orders?'+query,{headers,cache:'no-store'});
+   if(!check.ok)return response(503,'uncertain',data.submissionId);
+   const rows=await check.json();if(!Array.isArray(rows)||rows.length!==1)return response(404,'unavailable');
+   data={...data,email:owner.email,verifiedOrderReference:data.orderReference};
+  }
   const state=await rpc('reserve_contact_enquiry',{p_submission_id:data.submissionId,p_email:data.email,p_ip:clientIp(req)});
   if(state==='rate_limited')return response(429,'rate_limited',data.submissionId);
   if(state==='sent')return response(200,'sent',data.submissionId);
   if(state==='failed')return response(502,'failed',data.submissionId);
   if(state!=='accepted')return response(202,'uncertain',data.submissionId);
+  if(owner&&await rpc('attach_verified_contact_order',{p_submission_id:data.submissionId,p_owner:owner.id,p_reference:data.orderReference})!==true)return response(202,'uncertain',data.submissionId);
   const message=renderEnquiry(data,new Date().toISOString());
   if(await rpc('mark_contact_enquiry_attempt',{p_submission_id:data.submissionId})!==true)return response(202,'uncertain',data.submissionId);
   let outcome='sent';try{await send(env,message);}catch(e){outcome=(e as {outcome?:string})?.outcome==='unknown'?'unknown':'failed';}

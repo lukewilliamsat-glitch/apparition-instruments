@@ -1,0 +1,5 @@
+.print-controls button:focus-visible,.print-controls a:focus-visible{outline:2px solid #bd9656;outline-offset:3px}
+.print-controls button{font:inherit;font-weight:700;min-height:44px}
+table td:first-child small{font-size:10px;line-height:1.4;color:#545b60;margin-top:5px;white-space:normal}
+@media(max-width:650px){.sheet{overflow-wrap:anywhere}.details{grid-template-columns:1fr}table{table-layout:auto}td:nth-child(n+2),th:nth-child(n+2){white-space:normal}}
+@media print{.print-controls{display:none!important}}

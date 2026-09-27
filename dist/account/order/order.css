@@ -10,3 +10,4 @@
 .order-section address{font-style:normal;display:grid;gap:4px}.order-section a{color:var(--gold);text-underline-offset:4px}.order-section a:focus-visible,.order-back:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
 .order-alert{color:var(--gold)}
 @media(max-width:600px){.order-progress{grid-template-columns:repeat(2,minmax(0,1fr))}.order-section{padding:22px 18px}}
+.order-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}.order-actions a{display:inline-block;padding:13px 18px;border:1px solid var(--gold);color:var(--gold);text-decoration:none;font-weight:700}.order-actions a:hover{background:#34291b}.order-actions a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}

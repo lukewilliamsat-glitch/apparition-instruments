@@ -40,7 +40,9 @@ await sendContactMail(smtpEnv,mail,connect);const wire=writes.join('');assert(wi
 await assert.rejects(()=>sendContactMail(smtpEnv,{...mail,to:'attacker@example.co.uk'},async()=>{throw Error('must not connect')}));
 await assert.rejects(()=>sendContactMail(smtpEnv,{...mail,replyTo:'alice@example.co.uk\r\nBcc: attacker@example.com'},async()=>{throw Error('must not connect')}));
 const db=readFileSync('supabase/migrations/20260927121000_p09a_contact_audit.sql','utf8');assert(db.includes('pg_advisory_xact_lock'));assert(db.includes('extensions.hmac'));assert(db.includes("'14 days'"));assert(!/\b(?:message|customer_name|reply_to)\s+text\b/i.test(db));
-assert(!/orders|inventory|refund|stripe|fulfilment|order_email_deliveries/.test(readFileSync('supabase/functions/contact-enquiry/index.ts','utf8')));
+const contactSource=readFileSync('supabase/functions/contact-enquiry/index.ts','utf8');
+assert(contactSource.includes("owner_user_id:'eq.'+owner.id"));
+assert(!/inventory|refund|stripe|fulfilment|order_email_deliveries/.test(contactSource));
 const html=readFileSync('dist/contact/index.html','utf8');assert(html.includes('name="orderReference"')&&html.includes('name="website"')&&html.includes('name="name"')&&html.includes('name="email"'));
 const window=new Window(),document=window.document;globalThis.FormData=window.FormData;document.body.innerHTML='<form id="enquiry-form"><input name="name" value="Alice"><input name="email" value="alice@example.co.uk"><select name="category"><option value="order" selected>Order Help</option></select><input name="orderReference" value="AI-010010"><textarea name="message">A long enough question here.</textarea><input name="website" value=""><button type="submit">Send enquiry</button></form><p id="enquiry-status"></p><div id="enquiry-success" hidden tabindex="-1"></div>';
 const form=document.querySelector('form'),notice=document.querySelector('#enquiry-status'),success=document.querySelector('#enquiry-success');let calls=0,resolve;

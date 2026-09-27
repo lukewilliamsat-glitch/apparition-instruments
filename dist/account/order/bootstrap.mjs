@@ -19,4 +19,4 @@ export async function startOrder({document,location,load=loadOrder}={}){
  try{const order=await load(reference);renderOrder(root,order,document);status.textContent='';root.hidden=false;document.getElementById('order-title').textContent='Order '+order.reference+'.';}
  catch(error){status.textContent=error.message;}
 }
-if(typeof document!=='undefined')startOrder({document,location});
+if(typeof document!=='undefined'&&document.getElementById('order-detail'))startOrder({document,location});
