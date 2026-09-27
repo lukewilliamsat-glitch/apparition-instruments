@@ -56,9 +56,9 @@ const deliveryId='22222222-2222-4222-8222-222222222222',orderId='33333333-3333-4
 let claimed=false,attempts=0,sent=0;const calls=[];
 const workerTransport=async(url,options)=>{const path=url.split('/rest/v1/')[1];calls.push({path,body:options.body&&JSON.parse(options.body)});
  if(path.startsWith('order_email_deliveries?select=id&'))return Response.json([{id:deliveryId}]);
- if(path.startsWith('order_email_deliveries?select=id,order_id'))return Response.json([{id:deliveryId,order_id:orderId,kind:'in_production',state:'pending',source_event_id:'new-event'}]);
+ if(path.startsWith('order_email_deliveries?select=id,order_id'))return Response.json([{id:deliveryId,order_id:orderId,kind:'in_production',state:'pending',source_event_id:'new-event',automatic_delivery_eligible:true}]);
  if(path==='rpc/claim_order_email_delivery'){if(claimed)return Response.json(null);claimed=true;return Response.json(claim);}
- if(path.startsWith('orders?'))return Response.json([{reference:'AI-010099',customer:{name:'Customer',email:'persisted@example.co.uk'},payment_status:'paid',total_pence:400,items:[]}]);
+ if(path.startsWith('orders?'))return Response.json([{reference:'AI-010099',customer:{name:'Customer',email:'persisted@example.co.uk'},payment_status:'paid',subtotal_pence:1,delivery_pence:399,total_pence:400,items:[{name:'Test Item',quantity:1,unitPrice:1,lineTotal:1}]}]);
  if(path==='rpc/mark_order_email_attempt'){attempts++;return Response.json(true);}
  if(path==='rpc/finish_order_email_delivery')return Response.json(true);
  throw Error('Unexpected transport path: '+path);
@@ -70,8 +70,8 @@ const app=readFileSync('dist/admin/orders/app.mjs','utf8'),preview=readFileSync(
 assert.match(app,/Acknowledge partial refund and allow fulfilment/);assert.match(app,/recordDispatchDetails/);assert.match(app,/Unknown \/ Requires Review/);
 assert.match(app,/Step 1/);assert.match(app,/Step 2/);assert.match(app,/Save your dispatch details before marking this Order Dispatched/);assert.match(app,/\.before\(form\)/);
 assert.match(preview,/createAdminAuth\(\)\.accessToken\(\)/);assert(!/\.send\(|smtp|rpc\/|stripe/i.test(preview));
-assert.match(engine,/No schedule, webhook call or Admin browser caller/);assert(!/setInterval|Deno\.cron|pg_net|sendConfirmedOrderOnce/.test(engine));
+assert.match(engine,/persisted activation flag/);assert(!/setInterval|Deno\.cron|pg_net|sendConfirmedOrderOnce/.test(engine));
 assert.equal(nextFulfilment({paymentStatus:'refunded',fulfilmentStatus:'ready_to_dispatch'}),null);
 assert.equal(nextFulfilment({paymentStatus:'partially_refunded',partialRefundAcknowledged:false,fulfilmentStatus:'pending'}),null);
 assert.equal(nextFulfilment({paymentStatus:'partially_refunded',partialRefundAcknowledged:true,fulfilmentStatus:'pending'}),'in_production');
-console.log('P08B.4: V2 templates, assets, Admin-only previews, dispatch data, dormant dispatcher and lifecycle safeguards PASS');
+console.log('P08B.4: V2 templates, assets, Admin-only previews, dispatch data and lifecycle safeguards PASS');

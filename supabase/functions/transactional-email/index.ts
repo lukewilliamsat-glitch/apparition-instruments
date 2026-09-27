@@ -1,15 +1,14 @@
-import {renderTransactionalMail,deliveryKinds} from './render.ts';
 import {sendOrderMail} from './smtp.ts';
 import {previewFixture,renderEmailV2,v2Kinds} from './v2.ts';
 
 type Env={get:(key:string)=>string|undefined};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const canaryOrderId='a3217839-e590-431f-8c40-c59ec9a75b64';
-const canaryKinds=['ready_to_dispatch','dispatched'];
+const deliveryKinds=['in_production','ready_to_dispatch','dispatched','full_refund'];
 const reply=(status:number,message:string)=>new Response(JSON.stringify({status:message}),{status,headers:{'Content-Type':'application/json','Cache-Control':'no-store'}});
 function sameSecret(a:string,b:string){const x=new TextEncoder().encode(a),y=new TextEncoder().encode(b);let diff=x.length^y.length;for(let i=0;i<Math.max(x.length,y.length);i++)diff|=(x[i]||0)^(y[i]||0);return diff===0&&x.length>0;}
 
-// Service-key-only manual endpoint. There is no cron, webhook, browser or Admin caller in P08B.3.
+// Service-only delivery by ID. Both this path and the atomic claim enforce
+// the persisted activation flag; historical rows can never enter SMTP.
 export async function handleTransactionalEmail(request:Request,env:Env=Deno.env,transport:typeof fetch=fetch,send=sendOrderMail):Promise<Response>{
  const service=env.get('SUPABASE_SERVICE_ROLE_KEY'),url=env.get('SUPABASE_URL');
  if(!service||!url||!sameSecret(request.headers.get('Authorization')||'','Bearer '+service))return reply(401,'Unauthorized');
@@ -22,9 +21,9 @@ export async function handleTransactionalEmail(request:Request,env:Env=Deno.env,
   if(!response.ok)throw Error('Persistence unavailable');return response.json();
  };
  try{
-  const rows=await query('order_email_deliveries?select=id,order_id,kind,state,source_event_id&id=eq.'+body.deliveryId+'&limit=1');
+  const rows=await query('order_email_deliveries?select=id,order_id,kind,state,source_event_id,automatic_delivery_eligible&id=eq.'+body.deliveryId+'&limit=1');
   const row=rows[0];if(!row||!deliveryKinds.includes(row.kind))return reply(404,'Eligible delivery unavailable');
-  if(row.state!=='pending')return reply(200,'No delivery attempted');
+  if(row.state!=='pending'||row.automatic_delivery_eligible!==true)return reply(200,'No delivery attempted');
   const rpc=(name:string,payload:unknown)=>query('rpc/'+name,{method:'POST',body:JSON.stringify(payload)});
   const claim=await rpc('claim_order_email_delivery',{p_order_id:row.order_id,p_kind:row.kind});
   if(!claim)return reply(200,'No delivery attempted');
@@ -35,7 +34,7 @@ export async function handleTransactionalEmail(request:Request,env:Env=Deno.env,
   if(!order||!uuid.test(claim)||!order.customer?.email||
     (row.kind==='full_refund'&&order.payment_status!=='refunded')||
     (row.kind!=='full_refund'&&!['paid','partially_refunded'].includes(order.payment_status)))return reply(409,'Claim requires review');
-  let message;try{message=row.order_id===canaryOrderId&&canaryKinds.includes(row.kind)?renderEmailV2(row.kind,order):renderTransactionalMail(row.kind,order);}catch{return reply(409,'Claim requires review');}
+  let message;try{message=renderEmailV2(row.kind,order);}catch{return reply(409,'Claim requires review');}
   const marked=await rpc('mark_order_email_attempt',{p_order_id:row.order_id,p_kind:row.kind,p_claim:claim});
   if(marked!==true)return reply(409,'Claim requires review');
   let outcome:'sent'|'failed'|'unknown'='sent',reason:null|string=null;
@@ -67,13 +66,22 @@ export async function handleEmailPreview(request:Request,env:Env=Deno.env,transp
  }catch{return reply(503,'Preview unavailable');}
 }
 
-// Dormant, service-only batch dispatcher. No schedule, webhook call or Admin browser caller exists.
+// Server-side scheduler uses a Vault bearer token. Service-role callers may
+// invoke the same bounded queue; neither caller can select historical rows.
 export async function dispatchPending(request:Request,env:Env=Deno.env,transport:typeof fetch=fetch,send=sendOrderMail){
  const service=env.get('SUPABASE_SERVICE_ROLE_KEY'),url=env.get('SUPABASE_URL');
- if(!service||!url||!sameSecret(request.headers.get('Authorization')||'','Bearer '+service))return reply(401,'Unauthorized');
  if(request.method!=='POST')return reply(405,'Method not allowed');
- const headers={apikey:service,Authorization:'Bearer '+service};
- try{const pending=await transport(url+'/rest/v1/order_email_deliveries?select=id&state=eq.pending&kind=in.(in_production,ready_to_dispatch,dispatched,full_refund)&order=created_at.asc&limit=10',{headers});
+ if(!service||!url)return reply(503,'Dispatcher unavailable');
+ if(!/^Bearer [^\s]+$/.test(request.headers.get('Authorization')||''))return reply(401,'Unauthorized');
+ const headers={apikey:service,Authorization:'Bearer '+service,'Content-Type':'application/json'};
+ try{
+  if(!sameSecret(request.headers.get('Authorization')||'','Bearer '+service)){
+   const tokenResponse=await transport(url+'/rest/v1/rpc/get_transactional_dispatch_token',{method:'POST',headers,body:'{}'});
+   if(!tokenResponse.ok)return reply(503,'Dispatcher unavailable');
+   const token=await tokenResponse.json();
+   if(typeof token!=='string'||!sameSecret(request.headers.get('Authorization')||'','Bearer '+token))return reply(401,'Unauthorized');
+  }
+  const pending=await transport(url+'/rest/v1/order_email_deliveries?select=id&state=eq.pending&automatic_delivery_eligible=eq.true&kind=in.(in_production,ready_to_dispatch,dispatched,full_refund)&order=created_at.asc&limit=10',{headers});
   if(!pending.ok)throw Error('Ledger unavailable');const rows=await pending.json();if(!Array.isArray(rows))throw Error('Ledger unavailable');
   let attempted=0;for(const row of rows){if(!uuid.test(row.id||''))continue;
    const result=await handleTransactionalEmail(new Request(request.url,{method:'POST',headers:{Authorization:'Bearer '+service,'Content-Type':'application/json'},body:JSON.stringify({deliveryId:row.id})}),env,transport,send);
@@ -82,33 +90,10 @@ export async function dispatchPending(request:Request,env:Env=Deno.env,transport
   return reply(200,`Processed ${attempted} eligible records`);
  }catch{return reply(503,'Dispatcher unavailable');}
 }
-// A separate, fixed-order endpoint is invoked by the database scheduler. Its bearer
-// token is kept in Vault; only the service role can read it through the narrow RPC.
-export async function dispatchCanary(request:Request,env:Env=Deno.env,transport:typeof fetch=fetch,send=sendOrderMail){
- if(request.method!=='POST')return reply(405,'Method not allowed');
- const service=env.get('SUPABASE_SERVICE_ROLE_KEY'),url=env.get('SUPABASE_URL');
- if(!service||!url)return reply(503,'Canary unavailable');
- const headers={apikey:service,Authorization:'Bearer '+service,'Content-Type':'application/json'};
- try{
-  const tokenResponse=await transport(url+'/rest/v1/rpc/get_ai010010_canary_token',{method:'POST',headers,body:'{}'});
-  if(!tokenResponse.ok)return reply(503,'Canary unavailable');
-  const token=await tokenResponse.json();
-  if(typeof token!=='string'||!sameSecret(request.headers.get('Authorization')||'','Bearer '+token))return reply(401,'Unauthorized');
-  const pending=await transport(url+'/rest/v1/order_email_deliveries?select=id,kind&order_id=eq.'+canaryOrderId+'&kind=in.(ready_to_dispatch,dispatched)&state=eq.pending&order=created_at.asc&limit=2',{headers});
-  if(!pending.ok)return reply(503,'Canary unavailable');
-  const rows=await pending.json();if(!Array.isArray(rows))return reply(503,'Canary unavailable');
-  for(const row of rows){
-   if(!uuid.test(row.id||'')||!canaryKinds.includes(row.kind))return reply(503,'Canary requires review');
-   const result=await handleTransactionalEmail(new Request(request.url,{method:'POST',headers,body:JSON.stringify({deliveryId:row.id})}),env,transport,send);
-   if(result.status!==200)return reply(503,'Canary requires review');
-  }
-  return reply(200,`Processed ${rows.length} canary records`);
- }catch{return reply(503,'Canary unavailable');}
-}
 export function routeEmailRequest(request:Request,env:Env=Deno.env,transport:typeof fetch=fetch,send=sendOrderMail){
  const path=new URL(request.url).pathname;
  if(path.endsWith('/preview'))return handleEmailPreview(request,env,transport);
- if(path.endsWith('/canary'))return dispatchCanary(request,env,transport,send);
+ if(path.endsWith('/canary'))return reply(404,'Canary retired');
  if(path.endsWith('/dispatch'))return dispatchPending(request,env,transport,send);
  return handleTransactionalEmail(request,env,transport,send);
 }

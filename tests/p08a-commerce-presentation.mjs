@@ -16,8 +16,9 @@ assert.match(css,/@page\{size:A4/);assert.match(css,/print-controls,#invoice-mes
 const paid={...order,payment_status:'paid',paid_at:order.createdAt,fulfillment_applied_at:order.createdAt,subtotal_pence:1,delivery_pence:399,total_pence:400};
 const msg=buildPaidOrderConfirmation(paid);
 assert.equal(msg.to,order.customer.email);assert.match(msg.html,/ORDER CONFIRMED/i);assert.match(msg.html,/£4.00/);
-assert.match(msg.html,/United Kingdom/);assert.match(msg.text,/TOTAL PAID: £4.00/);
-assert.match(buildPaidOrderConfirmation({...paid,status:'in_production'}).text,/Fulfilment: In Production/);
+assert.match(msg.html,/United Kingdom/);assert.match(msg.text,/Total paid £4.00/);
+assert.match(msg.html,/the-violinist-email.png/);assert.match(msg.html,/apparition-logo-email.png/);
+assert.match(msg.text,/1 Test Road/);
 assert.doesNotMatch(msg.html,/supabase|stripe|service_role/i);
 assert.throws(()=>buildPaidOrderConfirmation({...paid,payment_status:'unpaid'}),/paid Order/);
 const migration=fs.readFileSync('supabase/migrations/20260925222950_p08a_legacy_order_confirmation.sql','utf8');
