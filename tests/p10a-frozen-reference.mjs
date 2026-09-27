@@ -1,0 +1,43 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {Window} from 'happy-dom';
+import {defaults,fields} from '../dist/treble-bleed-designer/circuits.mjs';
+import {frequencyResponse} from '../dist/treble-bleed-designer/engine.mjs';
+import {freezeReference} from '../dist/treble-bleed-designer/frozen.mjs';
+
+const win=new Window({url:'https://apparitioninstruments.co.uk/treble-bleed-designer/'});
+win.document.write(readFileSync('dist/treble-bleed-designer/index.html','utf8'));
+globalThis.document=win.document;
+await import('../dist/treble-bleed-designer/app.mjs');
+const el=id=>win.document.getElementById(id),form=el('designer-inputs');
+const graph=()=>el('response-graph').querySelector('svg');
+assert.equal(graph().querySelectorAll('path.frozen-curve').length,0);
+assert.equal(el('frozen-key').hidden,true);
+function change(key,value){form.elements.namedItem(key).value=String(value);form.dispatchEvent(new win.Event('change',{bubbles:true}));assert.equal(el('designer-error').textContent,'');}
+const before=graph().querySelector('path.current-curve').getAttribute('d');
+el('freeze-reference').click();assert.equal(graph().querySelectorAll('path.frozen-curve').length,1);
+const frozenPath=graph().querySelector('path.frozen-curve').getAttribute('d');
+assert.equal(frozenPath,before);
+const summary=el('frozen-summary').textContent;
+assert.match(summary,/Volume 7.0/);
+for(const [key,value] of [['volume',5],['tonePosition',4],['type','duncan'],['bleedC',2],['bleedR',220],['volumePot',250],['tonePot',300],['toneCap',.047],['pickupR',12],['loadR',.5],['cableC',700]]){
+ change(key,value);
+ assert.equal(graph().querySelector('path.frozen-curve').getAttribute('d'),frozenPath,key);
+ assert.equal(el('frozen-summary').textContent,summary,key);
+ assert.notEqual(graph().querySelector('path.current-curve').getAttribute('d'),before,key);
+}
+const replacement=graph().querySelector('path.current-curve').getAttribute('d');
+el('update-reference').click();assert.equal(graph().querySelectorAll('path.frozen-curve').length,1);
+assert.equal(graph().querySelector('path.frozen-curve').getAttribute('d'),replacement);
+assert.match(el('frozen-summary').textContent,/Duncan Style/);
+assert.notEqual(el('frozen-summary').textContent,summary);
+el('clear-reference').click();assert.equal(graph().querySelectorAll('path.frozen-curve').length,0);
+assert.equal(el('frozen-key').hidden,true);
+assert.equal(el('freeze-reference').hidden,false);
+const snapshot=freezeReference({...defaults,type:'duncan',volume:5,tonePosition:6});
+assert.deepEqual(snapshot.response.map(p=>p.db),frequencyResponse(snapshot.configuration).map(p=>p.current));
+assert.equal(Object.isFrozen(snapshot.configuration),true);
+assert.equal(Object.isFrozen(snapshot.response),true);
+assert.equal(Object.keys(fields).every(key=>key in snapshot.configuration),true);
+assert.doesNotMatch(readFileSync('dist/treble-bleed-designer/app.mjs','utf8'),/fetch\(|localStorage|supabase|\.insert\(/);
+console.log('P10A: live-only, freeze/update/clear, immutable state and response across control changes, model preservation and no backend writes PASS');
