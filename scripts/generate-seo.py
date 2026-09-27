@@ -40,7 +40,7 @@ PAGES = {
     '/privacy/': ('Privacy Policy | Apparition Instruments', 'Read how Apparition Instruments Limited handles personal information and customer enquiries.'),
 }
 
-NOINDEX = {'/basket/', '/checkout/', '/checkout/success/', '/wiring-kits/build/', '/wiring-kits/specification/', '/wiring-diagrams/'}
+NOINDEX = {'/account/', '/basket/', '/checkout/', '/checkout/success/', '/wiring-kits/build/', '/wiring-kits/specification/', '/wiring-diagrams/'}
 
 
 def page_path(file):

@@ -3,11 +3,14 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build:account-vendor": "esbuild scripts/account-vendor-entry.mjs --bundle --format=esm --target=es2022 --minify --outfile=dist/account/supabase-client.mjs",
     "test:kit-runtime": "node tests/kit-builder-dom.mjs",
     "test:kit-families": "node tests/kit-families.mjs",
     "test:backend-foundation": "node tests/backend-foundation.mjs"
   },
   "devDependencies": {
+    "@supabase/supabase-js": "2.117.2",
+    "esbuild": "0.28.2",
     "happy-dom": "^20.14.5"
   }
 }
