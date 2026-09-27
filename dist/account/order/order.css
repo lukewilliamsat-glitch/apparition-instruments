@@ -1,0 +1,12 @@
+.order-main{max-width:1050px}.order-back{color:var(--gold);display:inline-block;margin-top:12px}
+.order-main #order-detail{max-width:760px}.order-main #order-status{color:var(--gold)}
+.order-section{background:var(--panel);border:1px solid var(--line);padding:clamp(22px,4vw,36px);margin:18px 0;min-width:0;overflow-wrap:anywhere}
+.order-section h2{font-size:clamp(23px,3vw,30px);margin:0 0 20px}.order-lead{color:var(--gold)}
+.order-progress{padding:0;list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.order-progress li{min-width:0;border-top:4px solid #4c4a45;padding:12px 4px;display:grid;gap:6px;color:var(--muted)}
+.order-progress li.done{border-color:var(--gold);color:var(--ink)}.order-progress li.current{border-color:var(--gold);color:var(--gold)}
+.order-progress span{font-size:13px}.order-items{list-style:none;padding:0}.order-items li{padding:14px 0;border-bottom:1px solid var(--line);display:grid;gap:5px}
+.order-items span,.order-items small{color:var(--muted)}.order-totals{display:grid;grid-template-columns:1fr auto;gap:10px;margin:22px 0 0}.order-totals dt,.order-totals dd{margin:0}.order-totals dd{text-align:right}.order-totals dt:nth-last-of-type(1),.order-totals dd:nth-last-of-type(1){color:var(--gold)}
+.order-section address{font-style:normal;display:grid;gap:4px}.order-section a{color:var(--gold);text-underline-offset:4px}.order-section a:focus-visible,.order-back:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+.order-alert{color:var(--gold)}
+@media(max-width:600px){.order-progress{grid-template-columns:repeat(2,minmax(0,1fr))}.order-section{padding:22px 18px}}

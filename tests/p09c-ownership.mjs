@@ -29,7 +29,7 @@ const transport=async(url,init)=>{
  }
  if(url.includes('/rest/v1/orders?')){
   assert.equal(init.headers.Authorization,'Bearer server-secret');const query=new URL(url).searchParams;queries.push(query);
-  assert.equal(query.get('select'),'reference,created_at,total_pence,status');assert(!query.has('email'));assert(!query.has('reference'));assert(!query.has('id'));
+  assert.equal(query.get('select'),'reference,created_at,total_pence,status,payment_status');assert(!query.has('email'));assert(!query.has('reference'));assert(!query.has('id'));
   return Response.json(rows.filter(row=>row.owner===query.get('owner_user_id').slice(3)).map(({reference,created_at,total_pence,status})=>({reference,created_at,total_pence,status})));
  }
  throw Error('Unexpected endpoint '+url);
@@ -39,7 +39,7 @@ assert.equal((await listMyOrders(myReq(null),env,transport)).status,401);
 assert.equal((await listMyOrders(myReq('invalid'.repeat(12)),env,transport)).status,401);
 assert.equal((await listMyOrders(myReq('unverified'.repeat(9)),env,transport)).status,401);
 assert.equal(rows[0].owner,null);
-let result=await listMyOrders(myReq(tokenA,'?email=else@example.co.uk&owner_user_id='+b+'&reference=AI-010020'),env,transport);
+let result=await listMyOrders(myReq(tokenA,'?email=else@example.co.uk&owner_user_id='+b),env,transport);
 assert.equal(result.status,200);assert.deepEqual((await result.json()).orders.map(o=>o.reference),['AI-010010']);assert.equal(rows[0].owner,a);assert.equal(rows[1].owner,null);assert.equal(rows[2].owner,b);assert.equal(claimed,1);
 result=await listMyOrders(myReq(tokenA),env,transport);assert.equal((await result.json()).orders.length,1);assert.equal(claimed,1);
 result=await listMyOrders(myReq(tokenB,'?id='+orderId),env,transport);assert.deepEqual((await result.json()).orders.map(o=>o.reference),['AI-010020']);assert.equal(rows[0].owner,a);

@@ -19,15 +19,16 @@ export function createAccountApp({auth,document,location,history,loadOrders=asyn
    const orders=await loadOrders();if(run!==sequence)return;
    if(!orders.length){notice.textContent='No Orders are linked to this account yet. You can still checkout as a guest.';return;}
    notice.textContent='';
-   const labels={pending:'Awaiting Fulfilment',in_production:'In Production',ready_to_dispatch:'Ready to Dispatch',dispatched:'Dispatched',completed:'Completed'};
+   const labels={pending:'Order Confirmed',in_production:'In Production',ready_to_dispatch:'Ready to Dispatch',dispatched:'Dispatched',completed:'Fulfilment complete'};
    for(const order of orders){
-    const item=document.createElement('li'),reference=document.createElement('strong'),details=document.createElement('span'),state=document.createElement('span');
+    const item=document.createElement('li'),link=document.createElement('a'),reference=document.createElement('strong'),details=document.createElement('span'),state=document.createElement('span');
+    link.href='/account/order/?reference='+encodeURIComponent(order.reference);
     reference.textContent=order.reference;
     const date=new Date(order.createdAt);
     details.textContent=(Number.isNaN(date.getTime())?'Order date unavailable':new Intl.DateTimeFormat('en-GB',{dateStyle:'medium'}).format(date))+' · '+
      (Number.isSafeInteger(order.totalPence)?new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(order.totalPence/100):'Total unavailable');
-    state.textContent=labels[order.status]||'Status unavailable';
-    item.append(reference,details,state);list.append(item);
+    state.textContent=order.paymentStatus==='refunded'?'Refunded':labels[order.status]||'Status unavailable';
+    link.append(reference,details,state);item.append(link);list.append(item);
    }
   }catch{if(run===sequence)notice.textContent='Your Orders could not be loaded. Please refresh this page to try again.';}
  }

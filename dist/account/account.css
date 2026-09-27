@@ -31,4 +31,8 @@
 .my-orders-list li{border:1px solid var(--line);padding:16px;display:grid;gap:5px}
 .my-orders-list strong{color:var(--gold)}
 .my-orders-list span{color:var(--muted);font-size:14px}
+.my-orders-list li{padding:0}
+.my-orders-list a{display:grid;gap:5px;padding:18px;color:inherit;text-decoration:none;min-height:76px}
+.my-orders-list a:hover{background:#34291b}
+.my-orders-list a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 @media(max-width:600px){.account-main{padding:34px 5% 70px}.account-panel{padding:25px 19px}.account-tabs{gap:15px}.account-tabs button{font-size:14px}}
