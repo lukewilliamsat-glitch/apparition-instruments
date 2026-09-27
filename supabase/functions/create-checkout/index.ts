@@ -1,4 +1,5 @@
 // P07B guest entry point. Stripe secrets and privileged database credentials stay server-side.
+import {verifiedCustomer} from '../_shared/customer-auth.ts';
 const origin='https://apparitioninstruments.co.uk';
 const checkoutPage=origin+'/checkout/success/';
 const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:{'Content-Type':'application/json','Access-Control-Allow-Origin':origin,'Vary':'Origin'}});
@@ -6,7 +7,7 @@ const err=(message:string,status=400)=>json({message},status);
 type Environment={get:(key:string)=>string|undefined};
 export async function startCheckout(req:Request,env:Environment=Deno.env,request:typeof fetch=fetch):Promise<Response>{
  if(req.headers.get('origin')&&req.headers.get('origin')!==origin)return err('Checkout origin is unavailable.',403);
- if(req.method==='OPTIONS')return new Response(null,{status:204,headers:{'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Headers':'apikey, content-type','Access-Control-Allow-Methods':'POST, OPTIONS','Vary':'Origin'}});
+ if(req.method==='OPTIONS')return new Response(null,{status:204,headers:{'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Headers':'apikey, authorization, content-type','Access-Control-Allow-Methods':'POST, OPTIONS','Vary':'Origin'}});
  if(req.method!=='POST')return err('Only checkout requests are supported.',405);
  const stripeKey=env.get('STRIPE_SECRET_KEY');
  if(!stripeKey||!/^(?:sk|rk)_live_[A-Za-z0-9]+$/.test(stripeKey))return err('Live secure checkout is not configured.',503);
@@ -14,14 +15,18 @@ export async function startCheckout(req:Request,env:Environment=Deno.env,request
  if(!supabaseUrl||!publicKey||!serviceKey)return err('Checkout database connection is unavailable.',503);
  let input:any;try{const raw=await req.text();if(raw.length>250000)return err('Basket is too large.');input=JSON.parse(raw);}catch{return err('Basket could not be read.');}
  if(!input||typeof input!=='object'||!Array.isArray(input.items)||input.items.length<1||input.items.length>10||typeof input.requestId!=='string'||!/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(input.requestId))return err('Invalid basket request.');
+ const hasAuthorization=req.headers.has('Authorization');
+ const owner=hasAuthorization?await verifiedCustomer(req,env,request):null;
+ if(hasAuthorization&&!owner)return err('Your account session has expired. Sign in again or continue as a guest.',401);
  // This privileged RPC remains independently validating. Browser callers have no EXECUTE permission.
- const rpc=await request(supabaseUrl+'/rest/v1/rpc/create_guest_kit_order',{method:'POST',headers:{apikey:serviceKey,Authorization:'Bearer '+serviceKey,'Content-Type':'application/json'},body:JSON.stringify({p_request:{requestId:input.requestId,items:input.items,checkoutMode:'stripe'}})});
+ const rpc=await request(supabaseUrl+'/rest/v1/rpc/create_guest_kit_order',{method:'POST',headers:{apikey:serviceKey,Authorization:'Bearer '+serviceKey,'Content-Type':'application/json'},body:JSON.stringify({p_request:{requestId:input.requestId,items:input.items,checkoutMode:'stripe',...(owner?{ownerUserId:owner.id}:{})}})});
  if(!rpc.ok){const details=await rpc.json().catch(()=>({}));const stale=/price|total|unavailable/i.test(details?.message||'');return err(stale?'The basket price or configuration has changed. Review your basket before checkout.':'Your basket could not be verified. Review your selections before checkout.',400);}
  const receipt=await rpc.json();if(!/^[0-9a-f-]{36}$/i.test(receipt?.id||'')||!/^AI-\d+$/.test(receipt?.reference||''))return err('Order validation response was incomplete.',502);
- const orderResponse=await request(supabaseUrl+'/rest/v1/orders?id=eq.'+encodeURIComponent(receipt.id)+'&select=id,reference,subtotal_pence,delivery_pence,total_pence,payment_status,status,stripe_checkout_session_id,items',{headers:{apikey:serviceKey,Authorization:'Bearer '+serviceKey}});
+ const orderResponse=await request(supabaseUrl+'/rest/v1/orders?id=eq.'+encodeURIComponent(receipt.id)+'&select=id,reference,subtotal_pence,delivery_pence,total_pence,payment_status,status,stripe_checkout_session_id,owner_user_id,items',{headers:{apikey:serviceKey,Authorization:'Bearer '+serviceKey}});
  if(!orderResponse.ok)return err('Order could not be verified for checkout.',502);
  const order=(await orderResponse.json())?.[0];
  if(!order||order.reference!==receipt.reference||order.total_pence!==receipt.totalPence||order.status!=='pending'||order.payment_status!=='unpaid'||!Array.isArray(order.items)||!Number.isSafeInteger(order.subtotal_pence)||!Number.isSafeInteger(order.delivery_pence)||order.total_pence!==order.subtotal_pence+order.delivery_pence)return err('Order amount could not be verified.',502);
+ if((order.owner_user_id??null)!==(owner?.id??null))return err('This checkout request belongs to a different account. Start again with a fresh basket.',409);
  if(order.stripe_checkout_session_id)return err('This order already has a secure checkout. Refresh your basket before retrying.',409);
  const amount=order.items.reduce((sum:number,item:any)=>sum+item.unitPrice*item.quantity,0);
  if(amount!==order.subtotal_pence||!order.items.every((item:any)=>Number.isSafeInteger(item.unitPrice)&&item.unitPrice>0&&Number.isSafeInteger(item.quantity)&&item.quantity>0))return err('Order item prices could not be verified.',502);

@@ -11,8 +11,8 @@ export function createGuestOrderRepository({config=publicBackendConfig,request=g
  }});
 }
 export function createSecureCheckoutRepository({config=publicBackendConfig,request=globalThis.fetch}={}){
- return Object.freeze({async create(input){
-  const response=await request(config.url+'/functions/v1/create-checkout',{method:'POST',headers:{apikey:config.publishableKey,'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(input)});
+ return Object.freeze({async create(input,{accessToken=null}={}){
+  const response=await request(config.url+'/functions/v1/create-checkout',{method:'POST',headers:{apikey:config.publishableKey,'Content-Type':'application/json',Accept:'application/json',...(accessToken?{Authorization:'Bearer '+accessToken}:{})},body:JSON.stringify(input)});
   if(!response.ok)throw new Error(await errorMessage(response));
   const result=await response.json();
   if(!/^https:\/\/checkout\.stripe\.com\//.test(result?.url||'')||!/^AI-\d+$/.test(result.reference)||!Number.isSafeInteger(result.totalPence))throw new Error('The secure checkout link was unreadable. Please retry.');

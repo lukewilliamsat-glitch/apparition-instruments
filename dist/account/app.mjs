@@ -2,7 +2,7 @@ export const accountRedirect='https://apparitioninstruments.co.uk/account/';
 const emailPattern=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const callbackFields=['code','error','error_code','error_description','type','token_hash','access_token','refresh_token'];
 
-export function createAccountApp({auth,document,location,history,setTimeoutFn=setTimeout}={}){
+export function createAccountApp({auth,document,location,history,loadOrders=async()=>[],setTimeoutFn=setTimeout}={}){
  if(!auth||!document||!location||!history)throw Error('Account setup is incomplete');
  const el=id=>document.getElementById(id);
  const status=el('account-status'),error=el('account-error');
@@ -12,6 +12,25 @@ export function createAccountApp({auth,document,location,history,setTimeoutFn=se
  const showError=message=>{error.textContent=message;error.hidden=!message;};
  const setStatus=message=>{status.textContent=message;};
  const display=section=>{Object.entries(sections).forEach(([name,node])=>{node.hidden=name!==section;});};
+ const clearOrders=()=>{el('my-orders-list').replaceChildren();el('my-orders-status').textContent='';};
+ async function showOrders(run){
+  const list=el('my-orders-list'),notice=el('my-orders-status');list.replaceChildren();notice.textContent='Loading your Orders…';
+  try{
+   const orders=await loadOrders();if(run!==sequence)return;
+   if(!orders.length){notice.textContent='No Orders are linked to this account yet. You can still checkout as a guest.';return;}
+   notice.textContent='';
+   const labels={pending:'Awaiting Fulfilment',in_production:'In Production',ready_to_dispatch:'Ready to Dispatch',dispatched:'Dispatched',completed:'Completed'};
+   for(const order of orders){
+    const item=document.createElement('li'),reference=document.createElement('strong'),details=document.createElement('span'),state=document.createElement('span');
+    reference.textContent=order.reference;
+    const date=new Date(order.createdAt);
+    details.textContent=(Number.isNaN(date.getTime())?'Order date unavailable':new Intl.DateTimeFormat('en-GB',{dateStyle:'medium'}).format(date))+' · '+
+     (Number.isSafeInteger(order.totalPence)?new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(order.totalPence/100):'Total unavailable');
+    state.textContent=labels[order.status]||'Status unavailable';
+    item.append(reference,details,state);list.append(item);
+   }
+  }catch{if(run===sequence)notice.textContent='Your Orders could not be loaded. Please refresh this page to try again.';}
+ }
  const setView=view=>{
   if(!views[view])return;
   currentView=view;
@@ -48,6 +67,7 @@ export function createAccountApp({auth,document,location,history,setTimeoutFn=se
    el('account-email').textContent=verifiedEmail(data.user);
    display(recoveryMode?'recovery':'in');
    setStatus('');showError('');
+   if(!recoveryMode)await showOrders(run);
   }catch{
    if(run!==sequence)return;
    display('out');setStatus('');showError('Account service is temporarily unavailable. Please try again shortly.');
@@ -73,7 +93,7 @@ export function createAccountApp({auth,document,location,history,setTimeoutFn=se
   auth.onAuthStateChange((event)=>{
    if(event==='PASSWORD_RECOVERY')recoveryMode=true;
    if(event==='SIGNED_OUT'){
-    sequence++;recoveryMode=false;el('account-email').textContent='';display('out');setStatus('');return;
+    sequence++;recoveryMode=false;el('account-email').textContent='';clearOrders();display('out');setStatus('');return;
    }
    if(event==='SIGNED_IN'||event==='PASSWORD_RECOVERY'||event==='TOKEN_REFRESHED')setTimeoutFn(()=>{refreshIdentity();},0);
   });
@@ -141,7 +161,7 @@ export function createAccountApp({auth,document,location,history,setTimeoutFn=se
   catch(failure){showError(messageFor(failure,'google'));setStatus('');button.disabled=false;}
  });
  el('account-signout').addEventListener('click',async()=>{
-  sequence++;el('account-email').textContent='';display('out');setView('signin');setStatus('Signing out…');
+  sequence++;el('account-email').textContent='';clearOrders();display('out');setView('signin');setStatus('Signing out…');
   try{const {error:failure}=await auth.signOut({scope:'local'});if(failure)throw failure;setStatus('You have signed out.');}
   catch{setStatus('');showError('Sign out could not be completed. Please reload and try again.');}
  });

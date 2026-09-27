@@ -3,6 +3,7 @@ import {el,itemCard,totalCard,emptyBasket,errorBasket} from '../basket-ui.mjs';
 import {createSecureCheckoutRepository} from '../backend/order-data.mjs';
 import {publicBackendConfig} from '../backend/public-config.mjs';
 import {productById} from '../components/catalogue.mjs';
+import {customerAuth} from '../account/client.mjs';
 const content=document.querySelector('#checkout-content'),repository=createSecureCheckoutRepository();
 let requestId=crypto.randomUUID(),shipping=null;
 async function loadShipping(){
@@ -19,7 +20,9 @@ function orderForm(items){
  form.addEventListener('submit',async event=>{event.preventDefault();if(button.disabled)return;button.disabled=true;status.textContent='Preparing secure checkout…';
   try{
    const current=readBasket();if(JSON.stringify(current)!==JSON.stringify(items))throw new Error('Your basket changed. Review it and reload before submitting.');
-   const result=await repository.create({requestId,items:current.map(item=>item.product==='component'?{product:'component',sku:item.sku,quantity:item.quantity}:{product:item.product,quantity:item.quantity,record:item.record})});
+   const {data:session,error:sessionError}=await customerAuth.getSession();
+   if(sessionError)throw new Error('Your account session could not be checked. Please reload and try again.');
+   const result=await repository.create({requestId,items:current.map(item=>item.product==='component'?{product:'component',sku:item.sku,quantity:item.quantity}:{product:item.product,quantity:item.quantity,record:item.record})},{accessToken:session?.session?.access_token||null});
    if(result.totalPence!==subtotal+delivery)throw new Error('The current checkout price differs from your basket. Refresh and review your kit.');
    window.location.assign(result.url);
   }catch(error){status.textContent=error.message;button.disabled=false;}
