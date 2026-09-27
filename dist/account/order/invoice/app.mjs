@@ -3,10 +3,15 @@ import {invoiceFromOrder,invoiceAddress} from '../../../admin/orders/invoice/mod
 import {money,date} from '../model.mjs';
 
 export function invoiceModel(detail){
- return invoiceFromOrder({reference:detail.reference,createdAt:detail.createdAt,paymentStatus:detail.paymentStatus,
+ const invoice=invoiceFromOrder({reference:detail.reference,createdAt:detail.createdAt,paymentStatus:detail.paymentStatus,
   customer:{name:detail.customerName,email:detail.customerEmail},
   delivery:{recipient:detail.recipient,line1:detail.address?.[0],line2:detail.address?.[1]},
   items:detail.items,pricing:detail.pricing,refundedPence:detail.refundedPence,latestRefundAt:detail.latestRefundAt});
+ if((detail.paymentStatus==='paid'&&invoice.refundedPence!==0)||
+  (detail.paymentStatus==='refunded'&&invoice.refundedPence!==invoice.pricing.total)||
+  (detail.paymentStatus==='partially_refunded'&&(invoice.refundedPence<=0||invoice.refundedPence>=invoice.pricing.total)))
+  throw Error('Saved refund status cannot be verified.');
+ return invoice;
 }
 export function renderInvoice(root,detail,document){
  const invoice=invoiceModel(detail),id=selector=>root.querySelector('#'+selector);
@@ -22,8 +27,14 @@ export function renderInvoice(root,detail,document){
   if(item.options?.length){const options=document.createElement('small');options.textContent=item.options.map(option=>option.name+': '+option.value).join(' · ');options.style.display='block';description.append(options);}
   row.append(description);for(const value of [item.quantity,money(item.unitPrice),money(item.lineTotal)]){const cell=document.createElement('td');cell.textContent=value;row.append(cell);}body.append(row);}
  for(const [key,value] of Object.entries(invoice.pricing))put(key,money(value));
- const refund=id('refund-details'),refundTotal=id('refund-total');refund.hidden=refundTotal.hidden=!invoice.refundedPence;
- if(invoice.refundedPence){refund.textContent='Refunded '+money(invoice.refundedPence)+' of '+money(invoice.pricing.total)+(date(invoice.latestRefundAt)?' · '+date(invoice.latestRefundAt):'');put('refunded',money(invoice.refundedPence));}
+ id('refund-details')?.remove();id('refund-total')?.remove();id('net-paid')?.remove();
+ if(invoice.refundedPence>0){
+  const refund=document.createElement('p');refund.id='refund-details';refund.textContent='Refunded '+money(invoice.refundedPence)+' of '+money(invoice.pricing.total)+(date(invoice.latestRefundAt)?' · '+date(invoice.latestRefundAt):'');id('payment-state').parentElement.after(refund);
+  const totals=root.querySelector('.totals');
+  const addRow=(id,label,value,cls='')=>{const row=document.createElement('div');row.id=id;if(cls)row.className=cls;const left=document.createElement('strong'),right=document.createElement('strong');left.textContent=label;right.textContent=value;row.append(left,right);totals.append(row);};
+  addRow('refund-total','Refund','−'+money(invoice.refundedPence));
+  addRow('net-paid','Net paid',money(invoice.pricing.total-invoice.refundedPence),'total');
+ }
  root.hidden=false;
 }
 export async function startInvoice({document,location,load=loadOrder}={}){

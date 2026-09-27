@@ -15,8 +15,14 @@ const page=new Window();page.document.write(readFileSync('dist/account/order/inv
 const root=page.document.querySelector('#invoice');renderInvoice(root,detail,page.document);
 assert.match(root.textContent,/£8\.99/);assert.match(root.textContent,/Vintage Pot/);assert.match(root.textContent,/Shaft: Short/);
 assert(!root.textContent.includes('private-sku'));
+assert.equal(root.querySelector('#refund-total'),null);assert.equal(root.querySelector('#refund-details'),null);assert.equal(root.querySelector('#net-paid'),null);
 renderInvoice(root,{...detail,paymentStatus:'refunded',refundedPence:899,latestRefundAt:'2026-09-26T12:00:00Z'},page.document);
-assert.match(root.textContent,/Refunded/);assert.equal(root.querySelector('#refunded').textContent,'£8.99');assert(!root.querySelector('#refund-total').hidden);
+assert.match(root.textContent,/Refunded/);assert.equal(root.querySelector('#refund-total').textContent,'Refund−£8.99');assert.equal(root.querySelector('#net-paid').textContent,'Net paid£0.00');
+renderInvoice(root,{...detail,paymentStatus:'partially_refunded',refundedPence:250,latestRefundAt:'2026-09-26T12:00:00Z'},page.document);
+assert.equal(root.querySelector('#refund-total').textContent,'Refund−£2.50');assert.equal(root.querySelector('#net-paid').textContent,'Net paid£6.49');
+for(const refundedPence of [0,null,undefined]){renderInvoice(root,{...detail,refundedPence},page.document);assert.equal(root.querySelector('#refund-total'),null);assert.equal(root.querySelector('#refund-details'),null);assert.equal(root.querySelector('#net-paid'),null);}
+assert.throws(()=>invoiceModel({...detail,paymentStatus:'refunded',refundedPence:0}),/refund status/);
+assert.throws(()=>invoiceModel({...detail,paymentStatus:'paid',refundedPence:1}),/refund status/);
 await startInvoice({document:page.document,location:{href:'https://apparitioninstruments.co.uk/account/order/invoice/?reference=AI-010010'},load:async()=>detail});
 assert.equal(page.document.querySelector('#back-order').getAttribute('href'),'/account/order/?reference=AI-010010');page.happyDOM.abort();
 const input={submissionId:'11111111-1111-4111-8111-111111111111',name:'Customer',email:'forged@example.co.uk',category:'order',orderReference:'AI-010010',orderContext:true,message:'Help with my Order please.',website:''};
