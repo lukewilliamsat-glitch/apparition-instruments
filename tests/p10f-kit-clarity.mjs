@@ -1,0 +1,23 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {Window} from 'happy-dom';
+import {recommend} from '../dist/wiring-kits/help-me-choose/recommend.mjs';
+import {resolveLesPaulKit,defaults,kitRecord} from '../dist/les-paul-kits/config.mjs';
+
+const page=path=>{const browser=new Window({url:'https://apparitioninstruments.co.uk/'+path});browser.document.write(readFileSync('dist/'+path+'index.html','utf8'));return browser;};
+const landing=page('wiring-kits/'),routes=landing.document.querySelectorAll('.wiring-route');
+assert(routes[0].textContent.includes('Build your kit'));assert.match(routes[0].textContent,/choose the components directly/i);
+assert(routes[1].getAttribute('href')==='/wiring-kits/help-me-choose/');assert.match(routes[1].textContent,/passive, four-pot Les Paul style harness/i);
+assert.match(readFileSync('dist/wiring-kits/landing.mjs','utf8'),/passive four-pot Les Paul-style harness/);
+landing.close();
+const guide=page('wiring-kits/help-me-choose/');assert.match(guide.document.querySelector('#guide-scope').textContent,/passive, four-pot Les Paul style harness/i);guide.close();
+assert.equal(recommend({guitar:'sg'}).supported,false);
+const kit=page('les-paul-kits/'),root=kit.document;
+for(const id of ['kit-type','base-includes','summary-pots','summary-shaft','summary-neck','summary-bridge','summary-bleed','summary-jack','summary-selector','kit-price','price-breakdown','add-to-basket'])assert(root.getElementById(id),id);
+assert.match(root.querySelector('.enquiry-help').textContent,/basket.*secure checkout/i);
+assert.doesNotMatch(root.querySelector('.enquiry-help').textContent,/ordering is not yet available/i);
+assert(root.querySelector('a[href="/basket/"]'));kit.close();
+const resolved=resolveLesPaulKit(defaults),record=kitRecord(defaults);
+assert.equal(record.pricing.total,resolved.pricing.total);assert(record.components.some(part=>part.role==='potentiometers'&&part.quantity===4));
+assert.equal(record.kitDefinitionId,resolved.assemblyId);
+console.log('P10F: direct/guided route clarity, honest scope, live checkout copy, complete existing summary and authoritative kit record PASS');

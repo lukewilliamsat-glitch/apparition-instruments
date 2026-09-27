@@ -5,8 +5,8 @@ document.body.classList.add('wiring-kits-landing');
 const stylesheet=document.createElement('link');
 stylesheet.rel='stylesheet';stylesheet.href=new URL('./landing.css',import.meta.url).href;document.head.append(stylesheet);
 const routes=document.querySelectorAll('.wiring-route p');
-routes[0].textContent='Already know your guitar layout and component choices? Configure the kit directly.';
-routes[1].textContent='Unsure about fitment or component choices? Answer a few questions for a sensible starting specification.';
+routes[0].textContent='Know your layout and options? Choose the components directly in the kit builder.';
+routes[1].textContent='Want guidance? Get a starting specification for a passive four-pot Les Paul-style harness. Other layouts receive fitment guidance.';
 try{
  const visible=await createKitFamilyRepository().visible(),direct=document.querySelector('[data-kit-direct]'),browser=document.querySelector('.family-browser');
  const first=visible.find(family=>family.builderEnabled);
