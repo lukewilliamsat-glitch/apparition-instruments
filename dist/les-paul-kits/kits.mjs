@@ -1,11 +1,14 @@
 import {generatorURL,installationGuideURL,readGeneratorURL,builderDiagramURL} from '../wiring-generator/session.mjs';
 import {renderKitFields,updateFieldSummaries} from './fields.mjs';
+import {choiceDetails} from './choice-details.mjs';
 import {defaults,normaliseKit,describeKit,specification,lesPaul,resolveLesPaulKit,invalidKitChoices,formatKitPrice,upgradeLabel,configurationFromURL,builderURL,specificationURL,toneCaps} from './config.mjs';
 import {diagramMarkup,componentDescription} from './diagram.mjs';
 import {readBasket,addKit} from '../commerce.mjs';
 import {deploymentPath} from '../deployment.mjs';
 import {refreshCatalogue} from '../components/catalogue.mjs';
+import {createPublicOptionRepository} from '../backend/catalogue-options.mjs';
 await refreshCatalogue();
+let catalogueOptions=[];try{catalogueOptions=await createPublicOptionRepository().list();}catch{}
 const form=document.querySelector('#kit-options'),field=name=>form.elements.namedItem(name),$=selector=>document.querySelector(selector);
 let drawing={};try{drawing=readGeneratorURL(location.search).state;}catch{}
 renderKitFields(form);
@@ -34,9 +37,10 @@ function inspect(part){lastComponent=part.dataset.component||part.dataset.wire||
 $('#diagram-mount').addEventListener('click',e=>{const part=e.target.closest('[data-component],[data-terminal],[data-wire]');if(part)inspect(part);});
 $('#diagram-mount').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const part=e.target.closest('[data-component],[data-terminal],[data-wire]');if(part){e.preventDefault();inspect(part);}}});
 function render(){
- const state=readState(),resolved=resolveLesPaulKit(state),s=resolved.specification,mixed=state.caps==='mixed';updateFieldSummaries(form,state);$('#kit-type').textContent=resolved.title;$('#base-includes').textContent=resolved.included;
+ const state=readState(),resolved=resolveLesPaulKit(state),s=resolved.specification,mixed=state.caps==='mixed';updateFieldSummaries(form,state,catalogueOptions);$('#kit-type').textContent=resolved.title;$('#base-includes').textContent=resolved.included;
  $('#mixed-values').hidden=!mixed;field('neckCap').disabled=!mixed;field('bridgeCap').disabled=!mixed;
  for(const [key,val] of Object.entries(s))$(`#summary-${key}`).textContent=val;
+ const pot=choiceDetails(state,'shaft',state.shaft,catalogueOptions),bushing=pot?.facts.find(fact=>fact.label==='Threaded bushing length');$('#summary-fitment').textContent='Fitment check: measure mounting thickness, usable threaded bushing and knob fit before assembly.'+(bushing?' Selected potentiometer bushing length: '+bushing.value+'.':'');
  $('#wiring-chip').textContent=s.wiring;
  const pricing=resolved.pricing;$('#add-to-basket').disabled=!Number.isSafeInteger(pricing.total)||pricing.total<0||resolved.availability.status!=='available'||staleChoices.length>0;$('#kit-price').textContent=formatKitPrice(pricing.total);$('#builder-total').textContent=formatKitPrice(pricing.total);
  const priceLines=$('#price-breakdown');priceLines.replaceChildren();for(const line of pricing.lines){const row=document.createElement('div'),label=document.createElement('dt'),amount=document.createElement('dd');label.textContent=line.label;amount.textContent=line.key==='base'?formatKitPrice(line.price):upgradeLabel(line.price);row.append(label,amount);priceLines.append(row);}

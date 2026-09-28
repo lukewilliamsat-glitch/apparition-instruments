@@ -24,6 +24,7 @@ await import('../dist/admin/admin.mjs');
 for(let n=0;n<10&&!document.querySelector('[aria-label="Edit cap-a"]');n++)await new Promise(resolve=>setTimeout(resolve,0));
 const edit=name=>document.querySelector('[aria-label="Edit '+name+'"]');
 edit('cap-a').click();
+assert.equal(document.querySelector('#physical-fieldset').hidden,true);assert.equal(document.querySelectorAll('[data-dimension]').length,0);
 let spec=key=>document.querySelector('[data-spec="'+key+'"]');
 assert.equal(spec('Value').type,'number');assert.equal(spec('Value').value,'0.022');assert.equal(spec('ValueUnit').value,'µF');assert.equal(spec('Voltage').value,'200');assert(!spec('Resistor'));assert(!spec('Resistance'));
 assert.equal(spec('Tolerance').value,'5%');assert.equal(spec('Series').value,'225P');assert.equal(spec('Reference').value,'A1');
@@ -35,7 +36,9 @@ spec('Topology').value='parallel';spec('Topology').dispatchEvent(new Event('chan
 document.querySelector('#component-form').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));await new Promise(resolve=>setTimeout(resolve,0));
 assert.equal(saved.data.technicalSpecs.trebleBleed.topology,'parallel');assert.equal(saved.data.specs.Resistor,'150kΩ');assert.equal(saved.data.specs.Topology,'Capacitor + resistor in parallel');
 edit('pot-a').click();assert.equal(spec('Resistance').value,'500');assert.equal(spec('Type').value,'standard');assert.equal(spec('Shaft').value,'short');assert.equal(spec('Taper').value,'audio');
+assert.equal(document.querySelector('#physical-fieldset').hidden,false);const bushing=document.querySelector('[data-dimension="bushingLengthMm"]');assert.equal(bushing.type,'number');assert.equal(bushing.nextElementSibling.textContent,'mm');bushing.value='9.6';
 document.querySelector('#component-form').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));await new Promise(resolve=>setTimeout(resolve,0));
 assert.equal(saved.data.manufacturerKey,'cts');assert.equal(saved.data.technicalSpecs.potentiometer.typeKey,'standard');assert.equal(saved.data.technicalSpecs.potentiometer.shaftKey,'short');assert.equal(saved.data.technicalSpecs.potentiometer.taperKey,'audio');assert.equal(saved.data.specs.Type,'Standard');
+assert.deepEqual(saved.data.physicalSpecs,{potentiometer:{bushingLengthMm:9.6}});assert.equal(saved.data.salePrice,429);assert.equal(saved.data.stock,'8');
 browser.close();
 console.log('P10E Admin: category-specific inputs, units, topology visibility, manual values, save and price/stock isolation PASS');

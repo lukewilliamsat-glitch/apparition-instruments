@@ -1,4 +1,4 @@
-import {productContent} from './product-content.mjs?v=p10g';
+import {productContent} from './product-content.mjs?v=p10hi';
 import {kitBindings} from './kit-bindings.mjs';
 import {validateImage} from './images.mjs';
 // Development persistence adapter. Existing catalogue IDs/specs are reused, not recreated.

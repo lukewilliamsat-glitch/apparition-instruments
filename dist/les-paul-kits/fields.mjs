@@ -1,4 +1,5 @@
 import {lesPaul,defaults,upgradeLabel,resolveLesPaulKit} from './config.mjs';
+import {choiceDetails,renderChoiceDetails} from './choice-details.mjs';
 const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 const lineKey={caps:'capacitors',neckCap:'capacitors',bridgeCap:'capacitors'};
 function optionPrice(state,group,value){
@@ -35,13 +36,15 @@ export function renderKitFields(form){
    const price=el('small',Number.isSafeInteger(amount)&&amount!==0?'paid-upgrade':'',(id==='mixed'?'Choose each capacitor · ':'')+upgradeLabel(amount)+(optionOutOfStock(defaults,name,id)?' · Out of stock':''));price.dataset.optionPrice='';text.append(price);
    if(!info&&option.description)text.append(el('small','',option.description));label.append(input,text);wrap.append(label);
    if(info){const details=el('details','option-info'),summary=el('summary','','Technical details');summary.setAttribute('aria-label','Technical details for '+option.label);details.append(summary,el('p','',option.description));wrap.append(details);}
+   if(['pots','shaft','caps','bleed','jack','selector'].includes(name)){const rich=el('div','choice-rich');rich.dataset.choiceDetails='';wrap.append(rich);}
    (capContainers?.get(Number(option.value))||choices).append(wrap);
   }
   fs.append(choices);if(!Object.values(entries).some(o=>o.enabled!==false))fs.append(el('p','option-note','No eligible options are currently available.'));if(note)fs.append(el('p','option-note',note));form.append(section);return fs;
  }
  const wiring=group('wiring','Wiring style',lesPaul.wiring);const wiringNote=el('p','option-note');wiringNote.id='wiring-note';wiring.append(wiringNote);
  group('pots',lesPaul.builderModel.groups.find(group=>group.key==='pots')?.label||'Potentiometers',lesPaul.pots);
- group('shaft',lesPaul.builderModel.groups.find(group=>group.key==='shaft')?.label||'Shaft length',lesPaul.shaft);
+ const shaft=group('shaft',lesPaul.builderModel.groups.find(group=>group.key==='shaft')?.label||'Shaft length',lesPaul.shaft);
+ const help=el('details','shaft-fitment-help'),helpSummary=el('summary','','Not sure which shaft you need? How to measure →');help.append(helpSummary,el('p','','Measure the mounting thickness where the potentiometer is fitted, including any mounting plate or washers. The threaded bushing must pass through this thickness with enough usable thread left to fasten the nut securely.'),el('p','','Compare the existing potentiometer’s threaded bushing and shaft with the replacement, and check the control hole, knob fit and cavity clearance. Guitar brand or model alone cannot guarantee fit.'));shaft.append(help);
  group('matching','Precision matching',lesPaul.matching);
  const caps=group('caps','Tone capacitors',{...lesPaul.capacitors,mixed:{label:'Mixed pair',price:0,description:'Choose the neck and bridge tone capacitors separately.'}},{info:true,capacitanceGroups:true,note:'One tone capacitor for each pickup circuit. Capacitance changes the tone-control response; series identifies component construction and specification.'});
  const mixed=el('div','mixed-values');mixed.id='mixed-values';mixed.hidden=true;
@@ -52,7 +55,7 @@ export function renderKitFields(form){
  const guitarSection=el('details','kit-section'),guitarSummary=el('summary','','Guitar model and year · optional');guitarSection.append(guitarSummary);const guitar=el('fieldset'),legend=el('legend');legend.append(el('span','',String(++number).padStart(2,'0')),document.createTextNode(' Your guitar (optional)'));const label=el('label','','Guitar model and year');label.htmlFor='guitar-model';const input=el('input','kit-model');input.id='guitar-model';input.name='model';input.type='text';input.maxLength=120;input.placeholder='For example: Epiphone Les Paul Standard, 2008';guitar.append(legend,label,input,el('p','option-note','Confirm mounting depth, bushing diameter and knob fit before assembly.'));guitarSection.append(guitar);form.append(guitarSection);
 }
 
-export function updateFieldSummaries(form,state){
+export function updateFieldSummaries(form,state,options=[]){
  const resolved=resolveLesPaulKit(state);
  for(const group of lesPaul.builderModel.groups){for(const input of form.querySelectorAll(`input[name="${group.key}"]`)){const status=resolved.optionAvailability[group.key][input.value],disabled=status==='not-eligible',wrap=input.closest('.choice-with-info');input.disabled=disabled;input.setAttribute('aria-hidden',String(disabled));wrap.hidden=disabled&&!input.checked;}}
  for(const section of form.querySelectorAll('[data-option]')){
@@ -67,6 +70,7 @@ export function updateFieldSummaries(form,state){
    const price=input.closest('.choice-with-info').querySelector('[data-option-price]');if(price){const amount=optionPrice(state,name,input.value);price.textContent=(name==='caps'&&input.value==='mixed'?'Choose each capacitor · ':'')+upgradeLabel(amount)+(optionOutOfStock(state,name,input.value)?' · Out of stock':'');price.classList.toggle('paid-upgrade',Number.isSafeInteger(amount)&&amount!==0);}
    const unavailable=input.getAttribute('aria-hidden')==='true';
    if(unavailable)input.closest('.choice-with-info').hidden=!input.checked;
+   const rich=input.closest('.choice-with-info').querySelector('[data-choice-details]');if(rich)renderChoiceDetails(rich,choiceDetails(state,name,input.value,options),form.ownerDocument);
   }
  }
 }

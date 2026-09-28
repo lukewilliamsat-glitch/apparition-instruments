@@ -3,6 +3,8 @@ import {deploymentPath} from '../deployment.mjs';
 import {potValues} from '../admin/pot-specs.mjs';
 import {bleedTopologies,bleedValues,capacitorValues,formatCapacitance} from '../admin/electrical-specs.mjs';
 import {displayOption} from '../admin/catalogue-options.mjs';
+import {physicalRows} from '../admin/physical-specs.mjs';
+export {physicalRows};
 
 const supported=new Set(['potentiometers','capacitors','treble-bleeds']);
 export function eligibleProduct(product){
@@ -45,6 +47,8 @@ export function productDetails(product,options=[]){
   }else set('Resistor',resistorKohms!=null?String(resistorKohms)+'kΩ':null);
  }
  if(product.sku)rows.push({label:'SKU',value:product.sku});
+ const structuredPhysical=new Set(physicalRows(product).map(row=>row.label.toLowerCase()));
+ for(let index=rows.length-1;index>=0;index--)if(structuredPhysical.has(String(rows[index].label).trim().toLowerCase()))rows.splice(index,1);
  const seen=new Set();return rows.filter(({label,value})=>{const key=String(label||'').trim(),val=String(value??'').trim();if(!key||!val||seen.has(key.toLowerCase()))return false;seen.add(key.toLowerCase());return true;}).map(({label,value})=>({label:product.category==='treble-bleeds'?({Topology:'Configuration',Capacitor:'Capacitor',Resistor:'Resistor'}[label]||fieldLabels[label]||label):product.category==='capacitors'&&label==='Voltage'?'Voltage rating':fieldLabels[label]||label,value:String(value).trim()}));
 }
 export const productContext={

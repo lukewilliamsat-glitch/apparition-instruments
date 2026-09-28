@@ -1,0 +1,47 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {Window} from 'happy-dom';
+import {dimension,physicalRows,validatePhysicalStructure} from '../dist/admin/physical-specs.mjs';
+import {productContent} from '../dist/admin/product-content.mjs';
+import {componentFromRow} from '../dist/backend/component-data.mjs';
+import {productDetails,eligibleProduct} from '../dist/products/model.mjs';
+import {renderProductDetail} from '../dist/products/app.mjs';
+import {defaults,lesPaul,resolveLesPaulKit} from '../dist/les-paul-kits/config.mjs';
+import {choiceDetails,renderChoiceDetails} from '../dist/les-paul-kits/choice-details.mjs';
+import {renderKitFields,updateFieldSummaries} from '../dist/les-paul-kits/fields.mjs';
+
+assert.equal(dimension(9.6),9.6);
+for(const bad of [-1,0,1001,NaN,Infinity,'9.6',9.1234])assert.throws(()=>dimension(bad));
+const dimensions={potentiometer:{bushingLengthMm:9.6,bodyDepthMm:11}};
+assert.deepEqual(physicalRows({category:'potentiometers',physicalSpecs:dimensions}),[{label:'Threaded bushing length',value:'9.6 mm'},{label:'Body depth',value:'11 mm'}]);
+assert.deepEqual(physicalRows({category:'capacitors',physicalSpecs:dimensions}),[]);
+assert.throws(()=>validatePhysicalStructure(dimensions,'capacitors'));
+assert.throws(()=>validatePhysicalStructure({potentiometer:{inventedMm:10}},'potentiometers'));
+assert.deepEqual(productContent({category:'potentiometers',physicalSpecs:dimensions}).physicalSpecs,dimensions);
+assert(!('physicalSpecs' in productContent({category:'potentiometers'})));
+const row={id:'pot-short-cts-a',sku:'pot-short-cts-a',name:'Test pot',category:'potentiometers',manufacturer:'CTS',specs:{Resistance:'500kΩ',Shaft:'Short'},product_content:{physicalSpecs:dimensions,technicalSpecs:{potentiometer:{resistanceKohms:500,shaftKey:'short'}}},active:true,individually:true,sale_price:700,image:null};
+const item=componentFromRow(row,{quantity:8});assert.deepEqual(item.physicalSpecs,dimensions);
+assert(productDetails(item).some(r=>r.label==='Resistance'));
+const win=new Window({url:'https://apparitioninstruments.co.uk/products/?id=pot-short-cts-a'});win.document.write(readFileSync('dist/products/index.html','utf8'));
+renderProductDetail(win.document.getElementById('product-detail'),{...item,price:700},{document:win.document,add:()=>{}});
+assert.match([...win.document.querySelectorAll('.product-specifications')].at(-1)?.textContent||'',/9\.6 mm/);
+win.close();
+
+const browser=new Window({url:'https://apparitioninstruments.co.uk/les-paul-kits/'});browser.document.write(readFileSync('dist/les-paul-kits/index.html','utf8'));globalThis.document=browser.document;const form=browser.document.getElementById('kit-options');
+renderKitFields(form);updateFieldSummaries(form,defaults);
+const help=form.querySelector('.shaft-fitment-help');assert(help);assert.equal(help.querySelector('summary').tagName,'SUMMARY');assert.match(help.textContent,/mounting thickness.*threaded bushing/i);assert.doesNotMatch(help.textContent,/Gibson\s*=\s*Long|Epiphone\s*=\s*Short/);
+assert(form.querySelector('input[name="shaft"][value="short"]'));assert(form.querySelector('input[name="shaft"][value="long"]'));
+const resolved=resolveLesPaulKit(defaults),potPart=resolved.components.find(p=>p.role==='potentiometers'),record=lesPaul.productRecords.find(p=>p.id===potPart.componentId);
+assert(record);record.physicalSpecs=dimensions;record.image={kind:'object',key:'test',url:'https://example.org/test.png'};
+const details=choiceDetails(defaults,'shaft',defaults.shaft);assert.equal(details.id,record.id);assert(details.facts.some(f=>f.value==='9.6 mm'));assert.equal(details.image,'https://example.org/test.png');
+record.manufacturerKey='cts';const renamed=choiceDetails(defaults,'shaft',defaults.shaft,[{option_set:'manufacturer',option_key:'cts',label:'CTS Precision',active:true},{option_set:'pot_shaft',option_key:defaults.shaft,label:'Renamed shaft',active:true}]);assert.equal(renamed.id,details.id);assert(renamed.facts.some(f=>f.value==='CTS Precision'));assert.equal(resolveLesPaulKit(defaults).components.find(p=>p.role==='potentiometers').componentId,details.id);
+const target=browser.document.createElement('div');renderChoiceDetails(target,details,browser.document);assert(target.querySelector('img'));assert(target.querySelector('a')?.target==='_blank'||!details.url);
+target.querySelector('img').dispatchEvent(new browser.Event('error'));assert(!target.querySelector('img'));assert.match(target.textContent,/No image/);
+const originalImage=record.image;record.image=null;assert.equal(choiceDetails(defaults,'shaft',defaults.shaft).image,null);record.image=originalImage;
+const before=JSON.stringify(defaults);target.querySelector('a')?.dispatchEvent(new browser.Event('click',{bubbles:true}));assert.equal(JSON.stringify(defaults),before);
+const jack=choiceDetails(defaults,'jack',defaults.jack);if(jack){const jackRecord=lesPaul.productRecords.find(p=>p.id===jack.id);assert.equal(!!jack.url,eligibleProduct({...jackRecord,price:jackRecord.salePrice}));}
+assert.equal(choiceDetails(defaults,'jack','none'),null);
+assert.equal(resolveLesPaulKit(defaults).pricing.total,resolved.pricing.total);assert.equal(potPart.quantity,4);
+assert(form.querySelector('[data-choice-details]'));assert.equal(form.querySelectorAll('.shaft-fitment-help').length,1);
+browser.close();
+console.log('P10H/I: numeric physical data, Admin serialization, Product Detail, fitment help, authoritative rich choices, image fallback, eligible links, quantities and pricing PASS');

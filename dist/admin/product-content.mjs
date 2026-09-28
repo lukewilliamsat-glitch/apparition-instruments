@@ -1,5 +1,6 @@
 // Customer-facing content belongs to the existing component record.
 import {validateElectricalStructure} from './electrical-specs.mjs';
+import {validatePhysicalStructure} from './physical-specs.mjs';
 const text=(value,max,label)=>{const result=String(value??'').replace(/\r\n?/g,'\n');if(result.length>max)throw new Error(label+' is too long.');return result;};
 export function productContent(item){
  const rows=item.productSpecifications??[];
@@ -9,10 +10,12 @@ export function productContent(item){
  const technicalSpecs=item.technicalSpecs||{};
  if(typeof technicalSpecs!=='object'||Array.isArray(technicalSpecs))throw Error('Invalid structured technical specifications.');
  validateElectricalStructure(technicalSpecs);
+ const physicalSpecs=validatePhysicalStructure(item.physicalSpecs||{},item.category);
  const pot=technicalSpecs.potentiometer;
  if(pot){if(typeof pot!=='object'||Array.isArray(pot)||pot.resistanceKohms!==undefined&&(!Number.isFinite(pot.resistanceKohms)||pot.resistanceKohms<=0||pot.resistanceKohms>10000))throw Error('Invalid structured potentiometer resistance.');}
  return {productTitle:text(item.productTitle,300,'Product title').trim(),shortDescription:text(item.shortDescription,1000,'Short description'),fullDescription:text(item.fullDescription,20000,'Full description'),productSpecifications,manufacturerKey:text(item.manufacturerKey,80,'Manufacturer key').trim(),
   fitmentGuidance:text(item.fitmentGuidance,5000,'Fitment guidance').trim(),installationGuidance:text(item.installationGuidance,5000,'Installation guidance').trim(),included:text(item.included,3000,'Included items').trim(),technicalNotes:text(item.technicalNotes,5000,'Technical notes').trim(),
-  ...(Object.keys(technicalSpecs).length?{technicalSpecs:structuredClone(technicalSpecs)}:{})};
+  ...(Object.keys(technicalSpecs).length?{technicalSpecs:structuredClone(technicalSpecs)}:{}),
+  ...(Object.keys(physicalSpecs).length?{physicalSpecs:structuredClone(physicalSpecs)}:{})};
 }
 export function moveSpecification(rows,index,direction){const target=index+direction;if(index<0||index>=rows.length||target<0||target>=rows.length)return rows;const result=[...rows];[result[index],result[target]]=[result[target],result[index]];return result;}

@@ -50,3 +50,4 @@
 }
 
 .electrical-value{display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:8px;align-items:center}.electrical-value input,.electrical-value select{min-width:0;width:100%}
+.physical-value{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px}.physical-value input{min-width:0}.mm-unit{color:#aeb8c4}
