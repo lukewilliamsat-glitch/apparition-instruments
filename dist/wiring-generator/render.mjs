@@ -6,6 +6,7 @@ export {visuals};
 import {routeDiagram} from './routing.mjs';
 const categoryColours={signal:'#303b43',ground:'#7a8187',tone:'#ad2929',switching:'#926f31'};
 function isActive(c,kind,id,selection,filter){
+ if(selection?.kind==='path'){const refs=new Set(selection.refs);if(kind==='wire'){const wire=c.connections.find(w=>w.id===id);return refs.has(wire.from)&&refs.has(wire.to);}return [...refs].some(ref=>ref.startsWith(id+'.'));}
  if(selection?.kind==='component'){if(kind==='component')return id===selection.id;if(kind==='wire'){const w=c.connections.find(w=>w.id===id);return w.from.startsWith(selection.id+'.')||w.to.startsWith(selection.id+'.');}}
  if(selection?.kind==='wire'){const selected=c.connections.find(w=>w.id===selection.id);if(selected){const refs=net(c,selected.from);return kind==='wire'?refs.has(c.connections.find(w=>w.id===id).from):[...refs].some(r=>r.startsWith(id+'.'));}}
  if(selection?.kind==='stage'){return kind==='component'?selection.ids.includes(id):c.connections.some(w=>w.id===id&&(selection.ids.some(p=>w.from.startsWith(p+'.')||w.to.startsWith(p+'.'))));}

@@ -1,6 +1,6 @@
 # P12 — Signal Forge V1 implementation contract
 
-Customer-facing name: **Circuit Forge**. Status: P12A foundation; later V1 slices remain open. This contract refines the accepted planning decisions in `README.md`, `ARCHITECTURE.md`, `ROADMAP.md` and `DECISIONS.md` without promoting V2 features.
+Customer-facing name: **Circuit Forge**. Status: P12A foundation and P12B interactive Les Paul slice; broader V1 slices remain open. This contract refines the accepted planning decisions in `README.md`, `ARCHITECTURE.md`, `ROADMAP.md` and `DECISIONS.md` without promoting V2 features.
 
 ## Journey and source of truth
 
@@ -32,6 +32,10 @@ Values are illustrative supported choices from the current Generator, not arbitr
 - Structured catalogue electrical data and stable Component IDs remain authoritative for exact product matches. Existing `treble-bleed-designer/product-match.mjs` matches topology, capacitance and resistor value only where complete data is present. P12A does not assert that a complete kit exactly matches arbitrary circuit edits.
 - `wiring-generator/model.mjs` `kitLink` / `les-paul-kits/config.mjs` `builderURL` transfer supported Les Paul configuration semantics. Kit Builder resolves Component eligibility, quantities, stock and price; final checkout authority is unchanged. A link is an invitation to review fitment and availability, not a purchase guarantee.
 - Circuit Forge remains free and client-side in P12A. No Auth, persistence, migration, Edge Function, Order or inventory mutation is required.
+
+## P12B interactive Les Paul slice
+
+The shared Generator circuit still supplies the component instances, terminal references, external wires, closed selector contacts and orthogonal routes. Circuit Forge now derives a component inventory, connection-change explanation, conductive-path highlight, shared-terminal count and separated crossing markers from that circuit. The closed toggle contacts are drawn from the active contact pairs. Changing selector position changes conductive continuity without inventing a wire through an open contact. Diagram crossings remain non-junctions regardless of whether their wires happen to belong to the same remote electrical net. Keyboard inspection and a clear-highlight control remain available. The first family and electrical-model limits above remain unchanged.
 
 ## Subsequent V1 gates
 

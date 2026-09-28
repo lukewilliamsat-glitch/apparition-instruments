@@ -37,3 +37,7 @@ The single final live Order acceptance journey remains deferred **P09** scope an
 ## P12 start
 
 Luke approved **P12 — Signal Forge V1**, with **Circuit Forge** as the customer-facing experience. P12A establishes a limited public Les Paul circuit workbench and the canonical `docs/signal-forge/V1_CONTRACT.md`. P11 remains complete; the deferred single live Order acceptance remains P09 scope. Broader V1 family support and response integration remain subject to the V1 contract gates.
+
+## P12B interactive Les Paul
+
+Circuit Forge advances the existing Les Paul terminal graph with model-derived component inventory, connection-change explanation, active selector contacts, conductive-path highlighting and explicit separated-crossing markers. P12B does not add guitar families, full-circuit response claims, persistence or commerce authority. The P12 V1 contract records the slice.

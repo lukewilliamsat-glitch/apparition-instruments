@@ -1,0 +1,27 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {forgeCircuit} from '../dist/circuit-forge/model.mjs';
+import {pathDetails,circuitChanges,visualCrossings,forgeDiagram} from '../dist/circuit-forge/presentation.mjs';
+import {drawCircuit} from '../dist/wiring-generator/render.mjs';
+
+const current=forgeCircuit().circuit;
+const components=new Set(current.components.map(part=>part.id));assert.equal(components.size,current.components.length);
+for(const wire of current.connections)for(const ref of [wire.from,wire.to])assert(components.has(ref.split('.')[0]));
+const all=pathDetails(current,'jack.tip');assert(all.references.includes('jack.tip'));assert(!all.references.includes('jack.sleeve'));assert(all.wires.some(w=>w.id==='jackSignal'));
+const neck=forgeCircuit({position:'neck'}).circuit,bridge=forgeCircuit({position:'bridge'}).circuit;
+assert(pathDetails(neck,'jack.tip').references.includes('selector.neck'));
+assert(!pathDetails(neck,'jack.tip').references.includes('selector.bridge'));
+assert(pathDetails(bridge,'jack.tip').references.includes('selector.bridge'));
+assert(!pathDetails(bridge,'jack.tip').references.includes('selector.neck'));
+assert.notDeepEqual(neck.contacts,bridge.contacts);
+const modern=forgeCircuit({wiring:'modern'}).circuit,fifties=forgeCircuit({wiring:'50s'}).circuit;
+assert(circuitChanges(modern,fifties).some(change=>change.id==='neckToneFeed'));
+assert.equal(circuitChanges(current,forgeCircuit({neckCap:'0.033'}).circuit).length,0);
+assert(!pathDetails(current,'neckCap.a').references.includes('neckCap.b'));
+const crossings=visualCrossings(current);assert(crossings.length>0);assert(crossings.every(x=>x.wires.length===2&&Number.isFinite(x.x)&&Number.isFinite(x.y)));
+const svg=forgeDiagram(current);assert(svg.includes('forge-crossing'));assert(svg.includes('forge-closed-contact'));assert.equal((svg.match(/class="forge-crossing"/g)||[]).length,crossings.length);
+const selected=drawCircuit(neck,{selection:{kind:'path',refs:pathDetails(neck,'jack.tip').references}});
+assert.match(selected,/class="wire supplied [^"]*" data-wire="jackSignal"/);
+assert.match(selected,/class="wire supplied muted" data-wire="bridgeHot"/);
+const page=readFileSync('dist/circuit-forge/index.html','utf8');for(const id of ['forge-parts','forge-facts','forge-contacts','forge-change','forge-viewport','forge-trace-output','forge-clear'])assert(page.includes('id="'+id+'"'));
+console.log('P12B: terminal graph, selector continuity, wiring changes, isolated crossings, SVG overlay and path highlight PASS');
