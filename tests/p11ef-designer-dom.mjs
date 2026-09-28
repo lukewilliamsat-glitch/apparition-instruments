@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {Window} from 'happy-dom';
+import {readFileSync} from 'node:fs';
+import {lesPaulKitAssembly} from '../dist/admin/assemblies.mjs';
+const w=new Window({url:'https://apparitioninstruments.co.uk/treble-bleed-designer/'});w.document.write(readFileSync('dist/treble-bleed-designer/index.html','utf8'));
+Object.assign(globalThis,{document:w.document,window:w,location:w.location,localStorage:w.localStorage,CustomEvent:w.CustomEvent});
+const row={id:'bleed-premium',name:'Test assembled treble bleed',category:'treble-bleeds',active:true,individually:true,sale_price:499,stock:7,sku:'bleed-premium',specs:{},product_content:{technicalSpecs:{trebleBleed:{topology:'parallel',capacitor:{value:1,unit:'nF'},resistorKohms:150}}}};
+const kit=lesPaulKitAssembly,definition=kit.kitDefinition;
+const kitRow={id:kit.id,name:kit.name,sku:kit.sku,category:kit.category,slug:definition.family,base_price:definition.basePrice,show_on_wiring_kits:true,builder_enabled:true,defaults:definition.defaults,builder_options:definition.builderOptions,component_resolvers:definition.componentResolvers};
+globalThis.fetch=async url=>({ok:true,json:async()=>String(url).includes('/catalogue_components')?[row]:String(url).includes('/catalogue_wiring_kits')?[kitRow]:String(url).includes('/kit_permitted_components')?definition.permittedComponentIds.map(component_id=>({assembly_id:kit.id,component_id})):[]});
+await import('../dist/treble-bleed-designer/app.mjs?dom-test');await new Promise(resolve=>setTimeout(resolve,70));
+const type=w.document.querySelector('[name="type"]');type.value='duncan';type.dispatchEvent(new w.Event('change',{bubbles:true}));
+const section=w.document.getElementById('matching-products');assert(!section.hidden);assert(section.textContent.includes(row.name));
+assert(section.querySelector('a').href.endsWith('/products/bleed-premium/'));
+const before=w.document.getElementById('frozen-summary').textContent;section.querySelector('button').click();assert(section.textContent.includes('Added to your basket'));assert.equal(w.document.getElementById('frozen-summary').textContent,before);
+type.value='kinman';type.dispatchEvent(new w.Event('change',{bubbles:true}));assert(section.textContent.includes('No exact catalogue match'));
+w.close();console.log('Designer DOM: live match, product route, shared basket, no match and Frozen Reference isolation PASS');

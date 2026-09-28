@@ -21,7 +21,7 @@ for(const wiring of ['modern','50s','60s'])for(const bleed of wiring==='50s'?['n
   }
  }
  const svg=drawCircuit(c,{exporting:true});assert(!svg.includes('undefined'));assert(!svg.includes('tabindex='));assert(svg.includes('MONO OUTPUT JACK'));
- const target=configurationFromURL(new URL(kitLink(c),'https://example.org').search);assert.equal(target.wiring,wiring);assert.equal(target.bleed,bleed);assert.equal(target.caps,'mixed');assert.equal(target.jack,'epiphone');assert.equal(target.selector,'epiphone');
+ const target=configurationFromURL(new URL(kitLink(c),'https://example.org').search);assert.equal(target.wiring,wiring);assert.equal(target.bleed,bleed==='none'?'none':'bleed-'+bleed);assert.equal(target.caps,'mixed');assert.equal(target.jack,'jack-epiphone');assert.equal(target.selector,'switch-epiphone');
 }
 assert.throws(()=>configuration({wiring:'50s',bleed:'duncan'}),/not offered/);assert.throws(()=>configuration({pickup:'HSS'}),/Unsupported/);assert.throws(()=>configuration({coilSplit:true}),/Unsupported/);assert.equal(kitLink(makeCircuit({guitar:'sg'})),null);
 const generic=makeCircuit({colours:'generic'}),duncan=makeCircuit({colours:'duncan'});assert.deepEqual(generic.connections,duncan.connections);assert.deepEqual(generic.contacts,duncan.contacts);

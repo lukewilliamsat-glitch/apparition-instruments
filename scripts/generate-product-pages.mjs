@@ -5,7 +5,7 @@ import {resolve,join} from 'node:path';
 import {Window} from 'happy-dom';
 import {publicBackendConfig} from '../dist/backend/public-config.mjs';
 import {componentFromRow} from '../dist/backend/component-data.mjs';
-import {productDetails,physicalRows,eligibleProduct,productSlug,productURL,categoryName,productContext} from '../dist/products/model.mjs';
+import {productDetails,physicalRows,eligibleProduct,productSlug,productURL,categoryName,productContext,relatedProducts} from '../dist/products/model.mjs';
 
 const dist=resolve(fileURLToPath(new URL('../dist/',import.meta.url)));
 const origin='https://apparitioninstruments.co.uk';
@@ -38,7 +38,7 @@ export function productSchema(p,options=[]){
  if(p.manufacturer)schema.manufacturer={'@type':'Organization',name:p.manufacturer};
  return schema;
 }
-export function productPage(p,shell,options=[]){
+export function productPage(p,shell,options=[],related=[]){
  const w=new Window({url:origin+productURL(p.id)});w.document.write(shell);const d=w.document;
  const title=p.name+' | Apparition Instruments',description=productDescription(p),url=origin+productURL(p.id),category=categoryName(p.category);
  d.title=title;d.querySelector('meta[name="description"]').content=description;
@@ -57,7 +57,9 @@ export function productPage(p,shell,options=[]){
  const specs=[...productDetails(p,options),...physicalRows(p)];
  const dl=specs.length?`<section class="product-specifications"><h2>Product specification</h2><dl>${specs.map(row=>`<div><dt>${esc(row.label)}</dt><dd>${esc(row.value)}</dd></div>`).join('')}</dl></section>`:'';
  const context=productContext[p.category],links=context.links.map(([name,path])=>`<a href="${esc(path)}">${esc(name)} →</a>`).join('');
- const staticInfo=`<a class="product-back" href="/components/${esc(p.category)}/">← ${esc(category)}</a><div class="product-layout"><div class="product-visual">${image}</div><div class="product-info"><p class="eyebrow">${esc(category)}</p><h1>${esc(p.name)}</h1><p class="product-description">${esc(safeText(p.fullDescription)||description)}</p><p class="product-stock">${p.stock?'In stock':'Out of stock'}</p><p class="product-price">${money(p.price)}</p><button class="button" type="button" disabled>Loading current availability…</button>${dl}<section class="product-fitment"><h2>Before you choose</h2><p>${esc(safeText(p.fitmentGuidance)||context.fitment)}</p></section><section class="product-learning"><h2>Explore the circuit</h2>${links}</section></div></div>`;
+ const optional=[['included','What is included'],['installationGuidance','Installation guidance'],['technicalNotes','Technical notes'],['qcStatement','Testing and QC']].map(([key,title])=>safeText(p[key])?`<section class="product-fitment"><h2>${title}</h2><p>${esc(p[key])}</p></section>`:'').join('');
+ const alternatives=relatedProducts(p,related),relatedHTML=alternatives.length?`<section class="product-related"><h2>Related ${esc(category)}</h2><ul>${alternatives.map(item=>`<li><a href="${esc(productURL(item.id))}">${esc(item.name)}</a><span>${item.stock===0?' · Out of stock':' · '+money(item.price)}</span></li>`).join('')}</ul></section>`:'';
+ const staticInfo=`<a class="product-back" href="/components/${esc(p.category)}/">← ${esc(category)}</a><div class="product-layout"><div class="product-visual">${image}</div><div class="product-info"><p class="eyebrow">${esc(category)}</p><h1>${esc(p.name)}</h1><p class="product-description">${esc(safeText(p.fullDescription)||description)}</p><p class="product-stock">${p.stock?'In stock':'Out of stock'}</p><p class="product-price">${money(p.price)}</p><button class="button" type="button" disabled>Loading current availability…</button>${dl}<section class="product-fitment"><h2>Before you choose</h2><p>${esc(safeText(p.fitmentGuidance)||context.fitment)}</p></section>${optional}<section class="product-learning"><h2>Explore the circuit</h2>${links}</section></div></div>${relatedHTML}`;
  main.insertAdjacentHTML('afterbegin',nav);d.querySelector('#product-status').textContent='';const root=d.querySelector('#product-detail');root.innerHTML=staticInfo;root.hidden=false;
  const result='<!doctype html>\n'+d.documentElement.outerHTML;w.close();return result;
 }
@@ -90,7 +92,7 @@ export async function generate({rows,options=[],root=dist}){
     publish={...p,image:{kind:'object',url:origin+productURL(p.id)+'image.'+ext}};
    }}
   }
-  await writeFile(join(dir,'index.html'),productPage(publish,shell,options));
+  await writeFile(join(dir,'index.html'),productPage(publish,shell,options,products));
  }
  for(const category of ['potentiometers','capacitors','treble-bleeds']){
   const path=join(root,'components',category,'index.html');await writeFile(path,injectCategoryLinks(await readFile(path,'utf8'),products,category));

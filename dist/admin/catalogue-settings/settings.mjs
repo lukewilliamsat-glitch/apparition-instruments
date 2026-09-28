@@ -28,7 +28,15 @@ function render(){root.replaceChildren();for(const [set,title] of Object.entries
   const actions=node('td'),rename=node('button','Save label'),toggle=node('button',option.active?'Disable':'Re-enable');rename.type=toggle.type='button';
   rename.addEventListener('click',()=>act(()=>repo.rename(set,option.option_key,input.value),'Label saved.'));
   toggle.addEventListener('click',()=>act(()=>repo.setActive(set,option.option_key,!option.active),option.active?'Option disabled; existing products keep it.':'Option re-enabled.'));
-  actions.append(rename,toggle);row.append(actions);body.append(row);
+  actions.append(rename,toggle);
+  if(set==='manufacturer'){
+   const remove=node('button','Delete permanently');remove.type='button';remove.className='destructive';
+   remove.addEventListener('click',()=>{
+    if(!window.confirm('Permanently delete "'+option.label+'"? This removes the catalogue option and its aliases. This cannot be undone.'))return;
+    act(()=>repo.remove(set,option.option_key),'Unused manufacturer option deleted permanently.');
+   });actions.append(remove);
+  }
+  row.append(actions);body.append(row);
  }table.append(body);section.append(table);
  if(!['pot_taper','bleed_topology'].includes(set)){
   const form=node('form'),label=node('label','New '+title.toLowerCase()+' label'),input=node('input'),submit=node('button','Add option');input.required=true;input.maxLength=120;submit.type='submit';label.append(input);form.append(label,submit);

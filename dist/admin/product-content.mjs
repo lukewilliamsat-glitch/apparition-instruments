@@ -14,7 +14,7 @@ export function productContent(item){
  const pot=technicalSpecs.potentiometer;
  if(pot){if(typeof pot!=='object'||Array.isArray(pot)||pot.resistanceKohms!==undefined&&(!Number.isFinite(pot.resistanceKohms)||pot.resistanceKohms<=0||pot.resistanceKohms>10000))throw Error('Invalid structured potentiometer resistance.');}
  return {productTitle:text(item.productTitle,300,'Product title').trim(),shortDescription:text(item.shortDescription,1000,'Short description'),fullDescription:text(item.fullDescription,20000,'Full description'),productSpecifications,manufacturerKey:text(item.manufacturerKey,80,'Manufacturer key').trim(),
-  fitmentGuidance:text(item.fitmentGuidance,5000,'Fitment guidance').trim(),installationGuidance:text(item.installationGuidance,5000,'Installation guidance').trim(),included:text(item.included,3000,'Included items').trim(),technicalNotes:text(item.technicalNotes,5000,'Technical notes').trim(),
+  fitmentGuidance:text(item.fitmentGuidance,5000,'Fitment guidance').trim(),installationGuidance:text(item.installationGuidance,5000,'Installation guidance').trim(),included:text(item.included,3000,'Included items').trim(),technicalNotes:text(item.technicalNotes,5000,'Technical notes').trim(),qcStatement:text(item.qcStatement,2000,'Product-specific QC statement').trim(),
   ...(Object.keys(technicalSpecs).length?{technicalSpecs:structuredClone(technicalSpecs)}:{}),
   ...(Object.keys(physicalSpecs).length?{physicalSpecs:structuredClone(physicalSpecs)}:{})};
 }

@@ -2,7 +2,7 @@ import {money} from './catalogue.mjs';
 import {categories} from '../admin/data.mjs';
 import {imageSource} from '../admin/images.mjs';
 import {deploymentPath} from '../deployment.mjs';
-import {eligibleProduct,productURL} from '../products/model.mjs?v=p11';
+import {eligibleProduct,productURL} from '../products/model.mjs?v=p11ef';
 const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 export function renderComponentCards(catalogue){
  const all=location.pathname.replace(/\/$/,'')===deploymentPath('/components'),fallbacks=new Map();

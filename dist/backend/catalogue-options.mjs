@@ -16,7 +16,18 @@ export function createAdminOptionRepository(transport){
  const query=(set,key)=>'?option_set=eq.'+encodeURIComponent(set)+'&option_key=eq.'+encodeURIComponent(key);
  return Object.freeze({list,async add(set,key,label){return save('POST','',validateOptionInput(await list(),set,key,label));},
   async rename(set,key,label){const rows=await list(),existing=rows.find(row=>row.option_set===set&&row.option_key===key);if(!existing)throw Error('Option no longer exists.');if(!label.trim()||label.trim().length>120)throw Error('Enter a label of 1–120 characters.');if(rows.some(row=>row.option_set===set&&row.option_key!==key&&[row.label,...row.aliases||[]].some(value=>normaliseLabel(value)===normaliseLabel(label))))throw Error('An option with that label already exists.');return save('PATCH',query(set,key),{label:label.trim()});},
-  async setActive(set,key,active){return save('PATCH',query(set,key),{active:!!active});}});
+  async setActive(set,key,active){return save('PATCH',query(set,key),{active:!!active});},
+  async remove(set,key){
+   const response=await transport.send('rpc/delete_unused_catalogue_option',{method:'POST',body:{p_set:set,p_key:key}});
+   if(!response.ok){let detail;try{detail=await response.json();}catch{}throw Error(detail?.message||'Catalogue option could not be deleted.');}
+   const result=await response.json();
+   if(result?.deleted===true)return result;
+   if(Array.isArray(result?.dependencies)&&result.dependencies.length){
+    const dependencies=result.dependencies.map(item=>item.kind+' '+item.id+(item.name?' ('+item.name+')':''));
+    throw Error('Cannot delete this manufacturer. It is used by '+dependencies.join('; ')+'. Reassign or remove these dependencies first.');
+   }
+   throw Error('Catalogue option deletion was refused. Refresh before retrying.');
+  }});
 }
 let adminRepository=null;
 export const setAdminOptionRepository=value=>{adminRepository=value;};

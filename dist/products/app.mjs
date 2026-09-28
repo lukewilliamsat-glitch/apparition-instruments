@@ -1,12 +1,12 @@
 import {catalogue,refreshCatalogue,money} from '../components/catalogue.mjs';
 import {imageSource} from '../admin/images.mjs';
 import {addComponent} from '../commerce.mjs';
-import {createPublicComponentRepository} from '../backend/component-data.mjs?v=p10hi';
+import {createPublicComponentRepository} from '../backend/component-data.mjs?v=p11ef';
 import {createPublicOptionRepository} from '../backend/catalogue-options.mjs';
-import {categoryName,categoryPath,productContext,productDetails,productURL,productSlug,resolveProduct,physicalRows} from './model.mjs?v=p11';
+import {categoryName,categoryPath,productContext,productDetails,productURL,productSlug,resolveProduct,physicalRows,relatedProducts} from './model.mjs?v=p11ef';
 
 const element=(doc,tag,cls,text)=>{const node=doc.createElement(tag);if(cls)node.className=cls;if(text!==undefined)node.textContent=text;return node;};
-export function renderProductDetail(root,product,{document:doc=root.ownerDocument,add=addComponent,options=[]}={}){
+export function renderProductDetail(root,product,{document:doc=root.ownerDocument,add=addComponent,options=[],related=catalogue}={}){
  const category=categoryName(product.category),context=productContext[product.category],e=(tag,cls,text)=>element(doc,tag,cls,text);
  const back=e('a','product-back','← '+category);back.href=categoryPath(product.category);
  const layout=e('div','product-layout'),visual=e('div','product-visual'),source=imageSource(product.image),fallback=e('div','product-image-fallback',category);
@@ -22,8 +22,11 @@ export function renderProductDetail(root,product,{document:doc=root.ownerDocumen
  const physical=physicalRows(product);if(physical.length){const section=e('section','product-specifications'),dl=e('dl');section.append(e('h2','','Physical / fitment specifications'));for(const {label,value} of physical){const row=e('div');row.append(e('dt','',label),e('dd','',value));dl.append(row);}section.append(dl);info.append(section);}
  const fitment=e('section','product-fitment');fitment.append(e('h2','','Before you choose'),e('p','',product.fitmentGuidance?.trim()||context.fitment));info.append(fitment);
  for(const [key,title] of [['installationGuidance','Installation guidance'],['included','What is included'],['technicalNotes','Technical notes']]){const value=product[key]?.trim();if(value){const section=e('section','product-fitment');section.append(e('h2','',title),e('p','',value));info.append(section);}}
+ if(product.qcStatement?.trim()){const section=e('section','product-fitment');section.append(e('h2','','Testing and QC'),e('p','',product.qcStatement.trim()));info.append(section);}
  const links=e('section','product-learning');links.append(e('h2','','Explore the circuit'));for(const [label,url] of context.links){const a=e('a','',label+' →');a.href=url;links.append(a);}info.append(links);
- layout.append(visual,info);root.replaceChildren(back,layout);root.hidden=false;
+ layout.append(visual,info);root.replaceChildren(back,layout);
+ const alternatives=relatedProducts(product,related);if(alternatives.length){const section=e('section','product-related');section.append(e('h2','','Related '+category));const list=e('ul');for(const item of alternatives){const li=e('li'),link=e('a','',item.name);link.href=productURL(item.id);li.append(link,e('span','',item.stock===0?' · Out of stock':' · '+money(item.price)));list.append(li);}section.append(list);root.append(section);}
+ root.hidden=false;
  return {button,feedback};
 }
 export async function startProductDetail({document:doc=document,location:loc=location,load=()=>refreshCatalogue(createPublicComponentRepository()),loadOptions=()=>createPublicOptionRepository().list()}={}){

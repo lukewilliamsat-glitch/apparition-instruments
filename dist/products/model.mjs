@@ -21,6 +21,10 @@ export function resolveProduct(records,id){
 }
 export const categoryPath=category=>deploymentPath('/components/'+category+'/');
 export const categoryName=category=>categories[category]||'Components';
+export function relatedProducts(product,records,limit=3){
+ return records.filter(item=>item.id!==product.id&&item.category===product.category&&eligibleProduct(item))
+  .sort((a,b)=>a.name.localeCompare(b.name,'en-GB')||a.id.localeCompare(b.id,'en-GB')).slice(0,limit);
+}
 export function productDetails(product,options=[]){
  const raw=product.productSpecifications?.length?product.productSpecifications:product.displaySpecifications?.length?product.displaySpecifications:Object.entries(product.specs||{}).map(([label,value])=>({label,value}));
  const rows=[...product.manufacturer?[{label:'Manufacturer',value:displayOption(options,'manufacturer',product.manufacturerKey,product.manufacturer)}]:[],...raw.map(row=>({...row}))];
