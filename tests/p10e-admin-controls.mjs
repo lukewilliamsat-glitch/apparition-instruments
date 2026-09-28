@@ -9,6 +9,14 @@ browser.happyDOM.settings.disableCSSFileLoading=true;
 browser.happyDOM.settings.disableJavaScriptFileLoading=true;
 for(const key of ['window','document','localStorage','location','history','navigator','CSS','RadioNodeList','Event'])Object.defineProperty(globalThis,key,{value:key==='window'?browser:browser[key],configurable:true,writable:true});
 document.write(readFileSync('dist/admin/index.html','utf8'));
+globalThis.fetch=async()=>new Response(JSON.stringify([
+ {option_set:'manufacturer',option_key:'cts',label:'CTS',aliases:[],active:true,sort_order:1},
+ {option_set:'pot_type',option_key:'standard',label:'Standard',aliases:[],active:true,sort_order:1},
+ {option_set:'pot_shaft',option_key:'short',label:'Short',aliases:[],active:true,sort_order:1},
+ {option_set:'pot_taper',option_key:'audio',label:'A / Audio',aliases:[],active:true,sort_order:1},
+ {option_set:'bleed_topology',option_key:'capacitor',label:'Capacitor only',aliases:[],active:true,sort_order:1},
+ {option_set:'bleed_topology',option_key:'parallel',label:'Parallel RC',aliases:[],active:true,sort_order:2}
+]),{status:200,headers:{'Content-Type':'application/json'}});
 const make=(id,category,specs)=>({id,sku:id,name:id,manufacturer:'CTS',category,description:'',stock:8,active:true,individually:true,inKits:true,salePrice:429,kitPrice:199,internalUnitCost:90,stockUnit:'item',kitPriceQuantity:1,specs});
 let records=[make('pot-a','potentiometers',{Resistance:'500kΩ',Type:'Standard',Shaft:'Short',Taper:'A / Audio'}),make('cap-a','capacitors',{Value:'0.022µF',Voltage:'200V',Tolerance:'5%',Series:'225P',Reference:'A1'}),make('bleed-a','treble-bleeds',{Topology:'Capacitor only',Capacitor:'180pF'})];
 let saved=null;setComponentRepository({async list(){return records.map(item=>structuredClone(item));},async save(data,id){saved={data,id};records=records.map(item=>item.id===id?{...item,...data}:item);},async changeStock(){}});
@@ -26,6 +34,8 @@ edit('bleed-a').click();assert.equal(spec('Topology').value,'capacitor');assert.
 spec('Topology').value='parallel';spec('Topology').dispatchEvent(new Event('change'));assert(!spec('Resistor').closest('label').hidden);spec('Resistor').value='150';
 document.querySelector('#component-form').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));await new Promise(resolve=>setTimeout(resolve,0));
 assert.equal(saved.data.technicalSpecs.trebleBleed.topology,'parallel');assert.equal(saved.data.specs.Resistor,'150kΩ');assert.equal(saved.data.specs.Topology,'Capacitor + resistor in parallel');
-edit('pot-a').click();assert.equal(spec('Resistance').value,'500');assert.equal(spec('Type').value,'Standard');assert.equal(spec('Shaft').value,'Short');assert.equal(spec('Taper').value,'A / Audio');
+edit('pot-a').click();assert.equal(spec('Resistance').value,'500');assert.equal(spec('Type').value,'standard');assert.equal(spec('Shaft').value,'short');assert.equal(spec('Taper').value,'audio');
+document.querySelector('#component-form').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));await new Promise(resolve=>setTimeout(resolve,0));
+assert.equal(saved.data.manufacturerKey,'cts');assert.equal(saved.data.technicalSpecs.potentiometer.typeKey,'standard');assert.equal(saved.data.technicalSpecs.potentiometer.shaftKey,'short');assert.equal(saved.data.technicalSpecs.potentiometer.taperKey,'audio');assert.equal(saved.data.specs.Type,'Standard');
 browser.close();
 console.log('P10E Admin: category-specific inputs, units, topology visibility, manual values, save and price/stock isolation PASS');

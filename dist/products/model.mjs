@@ -2,6 +2,7 @@ import {categories,fieldLabels} from '../admin/data.mjs';
 import {deploymentPath} from '../deployment.mjs';
 import {potValues} from '../admin/pot-specs.mjs';
 import {bleedTopologies,bleedValues,capacitorValues,formatCapacitance} from '../admin/electrical-specs.mjs';
+import {displayOption} from '../admin/catalogue-options.mjs';
 
 const supported=new Set(['potentiometers','capacitors','treble-bleeds']);
 export function eligibleProduct(product){
@@ -17,13 +18,16 @@ export function resolveProduct(records,id){
 }
 export const categoryPath=category=>deploymentPath('/components/'+category+'/');
 export const categoryName=category=>categories[category]||'Components';
-export function productDetails(product){
+export function productDetails(product,options=[]){
  const raw=product.productSpecifications?.length?product.productSpecifications:product.displaySpecifications?.length?product.displaySpecifications:Object.entries(product.specs||{}).map(([label,value])=>({label,value}));
- const rows=[...product.manufacturer?[{label:'Manufacturer',value:product.manufacturer}]:[],...raw.map(row=>({...row}))];
+ const rows=[...product.manufacturer?[{label:'Manufacturer',value:displayOption(options,'manufacturer',product.manufacturerKey,product.manufacturer)}]:[],...raw.map(row=>({...row}))];
  if(product.category==='potentiometers'){
   const values=potValues(product);
   for(const key of ['Resistance','Type','Shaft','Taper']){
-   const value=key==='Resistance'&&values.Resistance!=null?String(values.Resistance)+'kΩ':values[key];
+   const stored=product.technicalSpecs?.potentiometer||{};
+   const setName={Type:'pot_type',Shaft:'pot_shaft',Taper:'pot_taper'}[key];
+   const identity={Type:stored.typeKey,Shaft:stored.shaftKey,Taper:stored.taperKey}[key];
+   const value=key==='Resistance'&&values.Resistance!=null?String(values.Resistance)+'kΩ':setName?displayOption(options,setName,identity,values[key]):values[key];
    if(value){const existing=rows.find(row=>String(row.label).toLowerCase()===key.toLowerCase());if(existing)existing.value=value;else rows.push({label:key,value});}
   }
  }
@@ -34,7 +38,7 @@ export function productDetails(product){
  }
  if(product.category==='treble-bleeds'){
   const {topology,capacitor,resistorKohms}=bleedValues(product);
-  if(topology)set('Topology',bleedTopologies[topology]);
+  if(topology)set('Topology',displayOption(options,'bleed_topology',topology,bleedTopologies[topology]));
   set('Capacitor',formatCapacitance(capacitor));
   if(topology==='capacitor'){
    for(let i=rows.length-1;i>=0;i--)if(String(rows[i].label).toLowerCase()==='resistor')rows.splice(i,1);

@@ -1,9 +1,10 @@
 import {createAdminAuth} from './admin-auth.mjs';
 import {setComponentRepository} from './component-repository.mjs';
-import {createAdminComponentRepository} from '../backend/component-data.mjs?v=p10e2';
+import {createAdminComponentRepository} from '../backend/component-data.mjs?v=p10g';
+import {createAdminOptionRepository,setAdminOptionRepository} from '../backend/catalogue-options.mjs';
 import {setAssemblyRepository} from './assembly-repository.mjs';
 import {createAdminAssemblyRepository} from '../backend/assembly-data.mjs';
-import {createAuthenticatedRepositoryTransport} from '../backend/providers.mjs?v=p08b4';
+import {createAuthenticatedRepositoryTransport} from '../backend/providers.mjs?v=p10g';
 import {createAdminOrderRepository,setAdminOrderRepository} from '../backend/order-data.mjs?v=p08b4';
 
 const element=(document,tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
@@ -22,6 +23,7 @@ export async function bootAdminGate({document=globalThis.document,auth=createAdm
 
  const signOut=async()=>{
   setComponentRepository(null);
+  setAdminOptionRepository(null);
   setAssemblyRepository(null);
   setAdminOrderRepository(null);
   body.classList.remove('admin-authorized');main.hidden=false;panel.replaceChildren(eyebrow,title,note,feedback);
@@ -54,12 +56,13 @@ export async function bootAdminGate({document=globalThis.document,auth=createAdm
    if(typeof auth.accessToken==='function'){
     const transport=createAuthenticatedRepositoryTransport(auth);
     setComponentRepository(createAdminComponentRepository(transport));
+    setAdminOptionRepository(createAdminOptionRepository(transport));
     setAssemblyRepository(createAdminAssemblyRepository(transport));
     setAdminOrderRepository(createAdminOrderRepository(transport));
    }
    for(const entry of entryModules(document))await load(new URL(entry,document.baseURI).href);
    main.hidden=true;body.classList.add('admin-authorized');
-  }catch{setComponentRepository(null);setAssemblyRepository(null);setAdminOrderRepository(null);signOutControl.remove();render('checking');feedback.textContent='Admin could not load. Please reload and try again.';}
+  }catch{setComponentRepository(null);setAdminOptionRepository(null);setAssemblyRepository(null);setAdminOrderRepository(null);signOutControl.remove();render('checking');feedback.textContent='Admin could not load. Please reload and try again.';}
  };
  render('checking');
  try{const result=await auth.restore();if(result.status==='authorized')await reveal();else render(result.status==='denied'?'denied':'signed-out');}

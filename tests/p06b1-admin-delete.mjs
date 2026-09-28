@@ -9,6 +9,7 @@ browser.happyDOM.settings.disableCSSFileLoading=true;
 browser.happyDOM.settings.disableJavaScriptFileLoading=true;
 for(const key of ['window','document','localStorage','location','history','navigator','CSS','RadioNodeList','Event'])Object.defineProperty(globalThis,key,{value:key==='window'?browser:browser[key],configurable:true,writable:true});
 document.write(readFileSync(new URL('../dist/admin/index.html',import.meta.url),'utf8'));
+globalThis.fetch=async()=>new Response('[]',{status:200,headers:{'Content-Type':'application/json'}});
 let records=[{id:'test-unused',sku:'TEST',name:'Test unused capacitor',category:'capacitors',manufacturer:'Test',specs:{Value:'0.015µF'},stock:2,active:true,inKits:true,salePrice:199,kitPrice:100}],confirm=false,mode='blocked',calls=0;
 browser.confirm=()=>confirm;
 setComponentRepository({
