@@ -26,16 +26,10 @@ The correction was deliberately small and directly related to P11E/F guarded cat
 
 This addresses a real UI ambiguity: the visible count represented Component usage only, while the guarded database deletion also checks Kit Definitions.
 
-## Important uncertainty
+## P11 final closure
 
-The long chat reached its maximum length while Astra was working. The repository proves the focused correction commit exists, but this handover did **not** receive/record Astra's final completion report for the whole economical cleanup pass.
+**P11: COMPLETE.** P11A–D, P11E/F and the economical cleanup are complete. The cleanup correction at `ac469fbbc507d626ad5c00d3959cb579c6e38522` passed its focused test and was verified in the deployed Admin asset.
 
-Therefore the fresh session must **not blindly rerun the entire cleanup pass**. Instead:
+P11G was investigated and has no canonical requirements or acceptance criteria. The placeholder is retired. Define future work from actual requirements rather than continuing P11 lettering.
 
-1. verify current `main`;
-2. inspect the commits after `9fb4f2...`, especially `ac469...`;
-3. determine whether Astra's cleanup pass completed beyond that commit and whether deployment/tests are already confirmed;
-4. only perform any remaining closure work that is demonstrably outstanding;
-5. avoid duplicate changes or duplicate broad auditing.
-
-The master handover's P09/P10/P11 and Signal Forge history remains valid. Its section describing the intended economical P11 cleanup should now be interpreted as **the intended scope whose completion status must first be reconciled**, not as permission to automatically rerun it.
+The single final live Order acceptance journey remains deferred **P09** scope and is not part of P11.

@@ -295,7 +295,7 @@ Final P10 checkpoint: `5d3cbb549adbfab9ce4ab443680e99506d0627b5`.
 
 ---
 
-## 6. P11 — discovery, SEO, product trust and tool-to-commerce — CURRENT
+## 6. P11 — discovery, SEO, product trust and tool-to-commerce — COMPLETE
 
 ### P11A-D — crawlable product architecture / SEO / internal linking
 
@@ -378,38 +378,13 @@ P11E/F did not run an interactive browser visual pass. Luke had asked to keep As
 
 ---
 
-## 7. Immediate next pass when development resumes
+## 7. P11 final closure
 
-Luke had just asked whether it was worth running a **small, fully usage-optimised cleanup pass** after P11E/F. The intended answer is yes.
+**P11: COMPLETE.** P11A–D and P11E/F are complete. The subsequent economical cleanup clarified the Admin manufacturer usage count at `ac469fbbc507d626ad5c00d3959cb579c6e38522` and passed focused verification.
 
-The next pass should be a **P11 post-E/F economical cleanup / closure pass**, not a new broad feature stage.
+P11G was investigated; no canonical requirement or acceptance criteria exist. The placeholder is retired. Future work should be defined from actual requirements rather than continuing P11 lettering.
 
-### Intended narrow scope
-
-Inspect only the immediate P11E/F changed surfaces for obvious loose ends such as:
-
-- stale copy or obsolete labels;
-- broken/internal links introduced by P11E/F;
-- obvious Product Detail rendering/data inconsistencies visible from source/logic;
-- Designer exact-match UI edge cases;
-- duplicate or contradictory product specification presentation;
-- safe small regressions directly caused by P11E/F.
-
-### Explicit exclusions
-
-- Do **not** begin P11G.
-- Do **not** perform another broad architecture audit.
-- Do **not** perform a rendered/browser visual review unless Luke asks.
-- Do **not** place an Order.
-- Do **not** send customer email.
-- Do **not** submit Contact.
-- Do **not** create Auth users.
-- Do **not** process payments/refunds.
-- Do **not** mutate inventory.
-- Do not clean up the joke manufacturers by bypassing the guarded dependency rules.
-- Prefer a very small source review, targeted correction(s) only if clearly justified, targeted regressions, publish checkpoint, then stop.
-
-After that closure checkpoint, decide whether P11G is still needed or whether P11 can be declared complete and the roadmap can move on.
+The outstanding single final live Order acceptance journey remains deferred P09 scope, outside P11.
 
 ---
 
@@ -601,7 +576,6 @@ Repository planning:
 
 Do not treat these as automatically approved next tasks:
 
-- P11G and later P11 work, only after the economical closure pass determines what remains.
 - Broader Luthier Hub expansion.
 - Wider tool-to-commerce matching beyond exact supported cases.
 - More product-content population by Luke through Admin.
@@ -647,14 +621,14 @@ Current implementation context at handover:
 - P09 customer account/Order platform: complete.
 - P10 storefront/product experience: complete.
 - P11A-D discovery/SEO/product architecture: complete.
-- P11E/F product trust + tools-to-commerce + guarded catalogue deletion: published at application checkpoint `9fb4f2c68e94562c5a06b6f0ab24117f48e5a626`.
+- P11 discovery, SEO, product trust and tool-to-commerce: complete. P11G was an orphaned placeholder and is retired.
 - Subsequent commits before this handover were documentation-only Signal Forge planning commits.
 - A final one-Order P09 golden-path live acceptance is still deliberately outstanding; do not create repeated test Orders.
 
-Immediate intended development task:
-Run a SMALL, USAGE-OPTIMISED P11 post-E/F cleanup/closure pass only. Do NOT begin P11G yet. Inspect only the immediate P11E/F changed surfaces for obvious stale copy, broken/internal links, Product Detail inconsistencies, Designer exact-match UI edge cases, duplicate/contradictory specification presentation, or similarly small direct regressions. Make only clearly justified small corrections, run targeted tests, publish/verify, reconcile read-only production state, then stop with a concise completion report. Do not perform another broad architecture audit or rendered/browser visual review.
+Current next-step status:
+P11 is complete. P11G was an orphaned placeholder and is retired. The single final live Order acceptance journey remains deferred P09 scope; do not perform it without explicit authorisation. Define any future phase from its actual requirements.
 
-Before acting, report the verified current HEAD and confirm you have read the handover and understand the immediate scope.
+Before acting on a new request, verify current `main` and use the closed P11 status above.
 ```
 
 ---
