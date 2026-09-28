@@ -67,7 +67,8 @@ def schema(route, title, description):
 
 def main():
     files = [f for f in ROOT.rglob('*.html') if f.name == 'index.html']
-    assert set(PAGES) | NOINDEX | {page_path(f) for f in files if '/admin/' in str(f)} == {page_path(f) for f in files}
+    products = {page_path(f) for f in files if f.parent.parent == ROOT / 'products'}
+    assert set(PAGES) | NOINDEX | products | {page_path(f) for f in files if '/admin/' in str(f)} == {page_path(f) for f in files}
     for file in files:
         route = page_path(file)
         html = file.read_text()
@@ -98,11 +99,14 @@ def main():
                 html = html.replace('</head>', '<meta name="robots" content="noindex,follow">\n</head>', 1)
             if route == '/wiring-diagrams/':
                 html = html.replace('href="../wiring-generator/"', 'href="' + BASE + '/wiring-generator/"', 1)
-        file.write_text(html)
+        if route not in products:
+            file.write_text(html)
     (ROOT / 'robots.txt').write_text('User-agent: *\nAllow: /\nSitemap: ' + BASE + '/sitemap.xml\n')
     from xml.etree.ElementTree import Element, SubElement, ElementTree
     urlset = Element('urlset', xmlns='http://www.sitemaps.org/schemas/sitemap/0.9')
     for route in PAGES:
+        SubElement(SubElement(urlset, 'url'), 'loc').text = BASE + route
+    for route in sorted(products):
         SubElement(SubElement(urlset, 'url'), 'loc').text = BASE + route
     ElementTree(urlset).write(ROOT / 'sitemap.xml', encoding='utf-8', xml_declaration=True)
 

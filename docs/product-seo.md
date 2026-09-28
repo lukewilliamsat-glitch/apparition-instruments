@@ -1,0 +1,11 @@
+# Public product page generation
+
+GitHub Pages deploys a static `dist` directory. `scripts/generate-product-pages.mjs` reads the public `catalogue_components` and `catalogue_options` views from Supabase and builds product pages, category cards, images and the sitemap from those records. It does not hold private keys, write to Supabase or create separate product facts.
+
+The Pages workflow regenerates on every push to `main`, on manual `workflow_dispatch`, and on a five-minute schedule. Admin changes to publication status, name, content, price, image or stock therefore reach static pages on the next successful generation. The browser refreshes live price and availability from Supabase when a product page loads; checkout remains the final pricing and stock authority. If Supabase cannot be read, the workflow fails before deploying and the last successful site stays live. Check the Pages workflow for failures if content does not update. A manual workflow dispatch can publish immediately after an urgent catalogue change.
+
+The permanent URL uses the stable Component ID as its slug, lowercased: `/products/<id>/`. The generator fails on a slug collision. Changing the display name does not change the URL or basket/Order identity. The older `/products/?id=<id>` route remains for bookmarks, is `noindex,follow`, and points its canonical to the preferred URL after the public Component is loaded.
+
+Only active, individually sold Components in the supported categories with a positive integer sale price and valid stock are generated. Out-of-stock public products stay indexable, with `OutOfStock` in generated Offer data. Inactive, kit-only and unpriced records are absent from generated pages, category cards and the sitemap. Existing inline catalogue images are copied into the generated deployment as public product images; the originals stay in authoritative Component data. Generated image files are deploy artefacts, not additional source records.
+
+Static price and availability are snapshots. They can lag a production change until the next successful workflow run, and GitHub scheduled runs may be delayed. Admins should manually dispatch the workflow when immediate public SEO freshness matters. Do not edit generated HTML or the sitemap as a substitute for updating Supabase.

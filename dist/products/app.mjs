@@ -3,7 +3,7 @@ import {imageSource} from '../admin/images.mjs';
 import {addComponent} from '../commerce.mjs';
 import {createPublicComponentRepository} from '../backend/component-data.mjs?v=p10hi';
 import {createPublicOptionRepository} from '../backend/catalogue-options.mjs';
-import {categoryName,categoryPath,productContext,productDetails,productURL,resolveProduct,physicalRows} from './model.mjs?v=p10j';
+import {categoryName,categoryPath,productContext,productDetails,productURL,productSlug,resolveProduct,physicalRows} from './model.mjs?v=p11';
 
 const element=(doc,tag,cls,text)=>{const node=doc.createElement(tag);if(cls)node.className=cls;if(text!==undefined)node.textContent=text;return node;};
 export function renderProductDetail(root,product,{document:doc=root.ownerDocument,add=addComponent,options=[]}={}){
@@ -28,11 +28,11 @@ export function renderProductDetail(root,product,{document:doc=root.ownerDocumen
 }
 export async function startProductDetail({document:doc=document,location:loc=location,load=()=>refreshCatalogue(createPublicComponentRepository()),loadOptions=()=>createPublicOptionRepository().list()}={}){
  const status=doc.getElementById('product-status'),root=doc.getElementById('product-detail');
- try{await load();const id=new URLSearchParams(loc.search).get('id'),product=resolveProduct(catalogue,id);
+ try{await load();const match=loc.pathname.match(/^\/products\/([^/]+)\/$/),id=match?catalogue.find(p=>productSlug(p.id)===decodeURIComponent(match[1]))?.id:new URLSearchParams(loc.search).get('id'),product=resolveProduct(catalogue,id);
   if(!product){status.textContent='This component is not currently available. Browse the component collection for current products.';root.hidden=true;return null;}
   const title=(product.productTitle?.trim()||product.name)+' | Apparition Instruments',description=(product.shortDescription||product.cardDescription||product.description||'Explore the specification and current availability of '+product.name+'.').trim();
   doc.title=title;doc.querySelector('meta[name="description"]').content=description.slice(0,160);
-  doc.querySelector('link[rel="canonical"]').href='https://apparitioninstruments.co.uk/products/?id='+encodeURIComponent(product.id);
+  doc.querySelector('link[rel="canonical"]').href='https://apparitioninstruments.co.uk'+productURL(product.id);
   let options=[];try{options=await loadOptions();}catch{}renderProductDetail(root,product,{document:doc,options});status.textContent='';return product;
  }catch(error){root.hidden=true;status.textContent='Component details are temporarily unavailable. Please try again later.';return null;}
 }

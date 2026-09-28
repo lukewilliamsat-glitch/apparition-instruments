@@ -8,6 +8,9 @@ on:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+  # Rebuild SEO snapshots from public Supabase records after Admin changes and sales.
+  schedule:
+    - cron: '*/5 * * * *'
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -31,6 +34,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install build dependencies
+        run: npm ci
+      - name: Generate public product pages from Supabase
+        run: node scripts/generate-product-pages.mjs
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact

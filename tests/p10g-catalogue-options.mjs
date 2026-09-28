@@ -49,7 +49,7 @@ const request=async()=>new Response(JSON.stringify(rows),{status:200});assert.eq
 const record={id:'pot-short-cts-a',sku:'pot-short-cts-a',name:'CTS pot',category:'potentiometers',manufacturer:'CTS',specs:{Type:'Push/pull',Taper:'A / Audio',Shaft:'Short',Resistance:'500kΩ'},product_content:{manufacturerKey:'cts',technicalSpecs:{potentiometer:{typeKey:'push_pull',shaftKey:'short',taperKey:'audio',resistanceKohms:500}}},active:true,individually:true,in_kits:true,sale_price:500,kit_price:250,image:null};
 const product=storefrontProduct(componentFromRow(record,{quantity:3}));
 const details=productDetails(product,rows);assert.equal(details.find(x=>x.label==='Type')?.value,'Push / Pull');assert.equal(details.find(x=>x.label==='Manufacturer')?.value,'CTS');
-assert(!JSON.stringify(details).includes('push_pull'));assert.equal(productURL(product.id),'/products/?id=pot-short-cts-a');assert.equal(product.price,500);assert.equal(product.stock,3);
+assert(!JSON.stringify(details).includes('push_pull'));assert.equal(productURL(product.id),'/products/pot-short-cts-a/');assert.equal(product.price,500);assert.equal(product.stock,3);
 await repo.rename('pot_taper','audio','A / Audio taper');assert.equal(productDetails(product,rows).find(x=>x.label==='Taper')?.value,'A / Audio taper');
 await repo.rename('bleed_topology','parallel','Parallel capacitor/resistor');
 const bleed=storefrontProduct(componentFromRow({...record,id:'bleed-duncan',sku:'bleed-duncan',category:'treble-bleeds',specs:{Topology:'Capacitor + resistor in parallel',Capacitor:'1nF',Resistor:'150kΩ'},product_content:{technicalSpecs:{trebleBleed:{topology:'parallel',capacitor:{value:1,unit:'nF'},resistorKohms:150}}}},{quantity:5}));

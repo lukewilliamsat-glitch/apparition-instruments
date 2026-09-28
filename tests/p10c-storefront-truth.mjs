@@ -6,7 +6,7 @@ import {readBasket} from '../dist/commerce.mjs';
 
 const page=name=>{const w=new Window({url:'https://apparitioninstruments.co.uk/'+name});w.document.write(readFileSync('dist/'+name+'index.html','utf8'));return w;};
 const componentRoutes=['components/','components/treble-bleeds/','components/capacitors/','components/potentiometers/'];
-for(const route of componentRoutes){const w=page(route),d=w.document;assert.match(d.querySelector('.catalogue-notice').textContent,/add available items to your basket.*secure checkout/i);assert.doesNotMatch(d.body.textContent,/online ordering is coming soon|when ordering opens/i);assert(d.querySelector('.component-grid'));assert(d.querySelector('button[data-add]'));assert(d.querySelector('a[href="/basket/"]'));w.close();}
+for(const route of componentRoutes){const w=page(route),d=w.document;assert.match(d.querySelector('.catalogue-notice').textContent,/add available items to your basket.*secure checkout/i);assert.doesNotMatch(d.body.textContent,/online ordering is coming soon|when ordering opens/i);assert(d.querySelector('.component-grid a[href^="/products/"]'));assert(d.querySelector('script[src*="components.mjs"]'));assert(d.querySelector('a[href="/basket/"]'));w.close();}
 const home=page(''),links=[...home.document.querySelectorAll('main a')];
 for(const target of ['/components/','/wiring-kits/','/wiring-generator/','/luthier-hub/'])assert(links.some(link=>link.getAttribute('href')===target),target);
 assert(links.some(link=>link.getAttribute('href')==='/components/'&&link.textContent.trim().startsWith('Browse available components')));home.close();

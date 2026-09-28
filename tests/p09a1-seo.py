@@ -59,7 +59,8 @@ assert (ROOT / 'dist/robots.txt').read_text() == 'User-agent: *\nAllow: /\nSitem
 xml = ET.parse(ROOT / 'dist/sitemap.xml')
 namespace = {'s': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
 urls = [node.text for node in xml.findall('s:url/s:loc', namespace)]
-assert urls == [seo.BASE + route for route in seo.PAGES]
+assert urls[:len(seo.PAGES)] == [seo.BASE + route for route in seo.PAGES]
+assert set(urls[len(seo.PAGES):]) == {seo.BASE + '/products/' + f.parent.name + '/' for f in (ROOT / 'dist/products').glob('*/index.html')}
 assert len(urls) == len(set(urls))
 titles = set()
 for route, (title, description) in seo.PAGES.items():

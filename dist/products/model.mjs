@@ -12,7 +12,8 @@ export function eligibleProduct(product){
   typeof product.id==='string'&&/^[a-zA-Z0-9-]{1,80}$/.test(product.id)&&
   Number.isSafeInteger(product.price)&&product.price>0&&Number.isSafeInteger(product.stock)&&product.stock>=0;
 }
-export function productURL(id){return deploymentPath('/products/?id='+encodeURIComponent(id));}
+export function productSlug(id){return String(id).toLowerCase();}
+export function productURL(id){return deploymentPath('/products/'+encodeURIComponent(productSlug(id))+'/');}
 export function resolveProduct(records,id){
  if(typeof id!=='string'||!/^[a-zA-Z0-9-]{1,80}$/.test(id))return null;
  const product=records.find(item=>item.id===id);
