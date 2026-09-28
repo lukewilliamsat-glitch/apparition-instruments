@@ -1,0 +1,24 @@
+import assert from 'node:assert/strict';
+import {productDetails,physicalRows} from '../dist/products/model.mjs';
+import {eligibleProduct} from '../dist/products/model.mjs';
+import {catalogue} from '../dist/components/catalogue.mjs';
+import {addComponent} from '../dist/commerce.mjs';
+import {readFileSync} from 'node:fs';
+import {Window} from 'happy-dom';
+import {renderComponentCards} from '../dist/components/cards.mjs';
+
+const rows=product=>productDetails(product);
+const unique=list=>assert.equal(new Set(list.map(row=>row.label.toLowerCase())).size,list.length);
+const cap=rows({category:'capacitors',sku:'CAP-1',productSpecifications:[{label:'Capacitance',value:'1nF'},{label:'Voltage rating',value:'50V'},{label:'SKU',value:'WRONG'},{label:'Tolerance',value:'5%'}],technicalSpecs:{capacitor:{capacitance:{value:0.022,unit:'µF'},voltageV:200}}});
+unique(cap);assert.deepEqual(cap.filter(row=>['Capacitance','Voltage rating','SKU','Tolerance'].includes(row.label)),[{label:'Capacitance',value:'0.022µF'},{label:'Voltage rating',value:'200V'},{label:'SKU',value:'CAP-1'},{label:'Tolerance',value:'5%'}]);
+const pot=rows({category:'potentiometers',sku:'POT-1',productSpecifications:[{label:'Shaft type / length',value:'Long'},{label:'Resistance',value:'250kΩ'},{label:'Threaded bushing length',value:'999 mm'}],technicalSpecs:{potentiometer:{resistanceKohms:500,shaft:'Short',shaftKey:'short'}},physicalSpecs:{potentiometer:{bushingLengthMm:9.6}}});
+unique(pot);assert.equal(pot.find(row=>row.label==='Resistance').value,'500kΩ');assert.equal(pot.find(row=>row.label==='Shaft type / length').value,'Short');assert(!pot.some(row=>row.label==='Threaded bushing length'));assert.deepEqual(physicalRows({category:'potentiometers',physicalSpecs:{potentiometer:{bushingLengthMm:9.6}}}),[{label:'Threaded bushing length',value:'9.6 mm'}]);
+const bleed=rows({category:'treble-bleeds',productSpecifications:[{label:'Configuration',value:'Parallel RC'},{label:'Capacitance',value:'1nF'},{label:'Resistor value',value:'150kΩ'}],technicalSpecs:{trebleBleed:{topology:'capacitor',capacitor:{value:180,unit:'pF'}}}});
+unique(bleed);assert.equal(bleed.find(row=>row.label==='Configuration').value,'Capacitor only');assert.equal(bleed.find(row=>row.label==='Capacitor').value,'180pF');assert(!bleed.some(row=>/resistor/i.test(row.label)));
+const partial=rows({category:'capacitors',productSpecifications:[{label:'Series',value:'225P'}],technicalSpecs:{}});assert.deepEqual(partial,[{label:'Series',value:'225P'}]);
+const free={id:'zero-test',category:'capacitors',active:true,individually:true,price:0,stock:2};assert.equal(eligibleProduct(free),false);
+const saved=[...catalogue];catalogue.splice(0,catalogue.length,free);globalThis.localStorage={getItem:()=>null};assert.throws(()=>addComponent(free.id),/checkout price/);catalogue.splice(0,catalogue.length,...saved);
+const win=new Window({url:'https://apparitioninstruments.co.uk/components/capacitors/'});win.document.write('<section class="component-section" id="capacitors"><div class="component-grid"></div></section>');globalThis.document=win.document;globalThis.location=win.location;
+renderComponentCards([{...free,name:'Unpriced test',specs:{Value:'1nF'},displaySpecifications:[],image:null}]);assert.equal(win.document.querySelector('[data-add]').disabled,true);assert.equal(win.document.querySelector('[data-add]').textContent,'Not available');assert.equal(win.document.querySelector('.component-detail-link'),null);win.close();
+assert.match(readFileSync('supabase/migrations/20260925103000_p07b_checkout_pricing.sql','utf8'),/sale_price>0/);
+console.log('P10J: structured precedence, canonical SKU, no duplicate rows and positive-price checkout eligibility PASS');

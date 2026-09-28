@@ -33,7 +33,7 @@ export function changeQuantity(id,quantity){if(!Number.isInteger(quantity)||quan
 export function removeKit(id){return save(readBasket().filter(x=>x.id!==id));}
 export function basketCount(items=readBasket()){return items.reduce((n,item)=>n+item.quantity,0);}
 
-function checkStock(product,quantity){if(!product)throw new Error('This component is no longer listed.');if(!Number.isFinite(product.price))throw new Error('This component does not have a sale price yet.');if(product.stock!==null&&quantity>product.stock)throw new Error(product.stock===0?'This component is out of stock.':`Only ${product.stock} are listed in stock. Your basket quantity cannot exceed this.`);}
+function checkStock(product,quantity){if(!product)throw new Error('This component is no longer listed.');if(!Number.isSafeInteger(product.price)||product.price<=0)throw new Error('This component does not have a checkout price yet.');if(product.stock!==null&&quantity>product.stock)throw new Error(product.stock===0?'This component is out of stock.':`Only ${product.stock} are listed in stock. Your basket quantity cannot exceed this.`);}
 export function addComponent(sku){
  const product=productById(sku),items=readBasket(),existing=items.find(x=>x.product==='component'&&x.sku===sku),quantity=(existing?.quantity||0)+1;
  checkStock(product,quantity);if(quantity>MAX_QUANTITY)throw new Error('The maximum quantity per component is 99.');

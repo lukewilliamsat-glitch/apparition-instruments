@@ -3,7 +3,7 @@ import {imageSource} from '../admin/images.mjs';
 import {addComponent} from '../commerce.mjs';
 import {createPublicComponentRepository} from '../backend/component-data.mjs?v=p10hi';
 import {createPublicOptionRepository} from '../backend/catalogue-options.mjs';
-import {categoryName,categoryPath,productContext,productDetails,productURL,resolveProduct,physicalRows} from './model.mjs?v=p10hi';
+import {categoryName,categoryPath,productContext,productDetails,productURL,resolveProduct,physicalRows} from './model.mjs?v=p10j';
 
 const element=(doc,tag,cls,text)=>{const node=doc.createElement(tag);if(cls)node.className=cls;if(text!==undefined)node.textContent=text;return node;};
 export function renderProductDetail(root,product,{document:doc=root.ownerDocument,add=addComponent,options=[]}={}){

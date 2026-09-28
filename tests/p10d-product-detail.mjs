@@ -12,7 +12,7 @@ const fixtures=initialComponents().filter(p=>['pot-short-cts-a','sbe-200','bleed
 const [pot,cap,bleed]=['pot-short-cts-a','sbe-200','bleed-prs'].map(id=>fixtures.find(p=>p.id===id));
 catalogue.splice(0,catalogue.length,...fixtures);
 for(const item of fixtures){assert(eligibleProduct(item));assert.equal(resolveProduct(fixtures,item.id),item);assert.match(productURL(item.id),new RegExp('id='+item.id+'$'));}
-for(const changed of [{...pot,active:false},{...pot,individually:false},{...pot,price:NaN},{...pot,category:'jacks'}])assert.equal(resolveProduct([changed],changed.id),null);
+for(const changed of [{...pot,active:false},{...pot,individually:false},{...pot,price:NaN},{...pot,price:0},{...pot,category:'jacks'}])assert.equal(resolveProduct([changed],changed.id),null);
 assert.equal(resolveProduct(fixtures,'no-such-product'),null);assert.equal(resolveProduct(fixtures,'../admin'),null);
 const doc=()=>{const w=new Window({url:'https://apparitioninstruments.co.uk/products/?id=pot-short-cts-a'});w.document.write(readFileSync('dist/products/index.html','utf8'));return w;};
 for(const [item,fields,reading] of [[pot,['Resistance','Taper','Shaft','Reference'],'potentiometers-explained'],[cap,['Value','Voltage','Series','Tolerance'],'capacitors-treble-bleeds'],[bleed,['Capacitor','Topology'],'treble-bleed-designer']]){

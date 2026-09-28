@@ -1,6 +1,6 @@
 import {lesPaul,resolveLesPaulKit} from './config.mjs';
 import {storefrontProduct} from '../components/catalogue.mjs';
-import {eligibleProduct,productURL,productDetails,physicalRows} from '../products/model.mjs';
+import {eligibleProduct,productURL,productDetails,physicalRows} from '../products/model.mjs?v=p10j';
 import {imageSource} from '../admin/images.mjs';
 
 const roles={pots:'potentiometers',shaft:'potentiometers',caps:'neckToneCapacitor',bleed:'trebleBleeds',jack:'outputJack',selector:'selector'};
