@@ -1,6 +1,6 @@
 # Apparition Signal Forge
 
-Status: planning / pre-implementation
+Status: P12A foundation in implementation; broader V1 planning remains active
 
 Signal Forge is the planned Apparition Instruments circuit-design, simulation, commerce and guided-build platform. This folder is the canonical product-planning record for Signal Forge so architectural decisions and milestones do not live only in chat history.
 
@@ -28,6 +28,7 @@ The platform should make guitar electronics approachable to a first-time modifie
 - `ARCHITECTURE.md` — circuit model, visual semantics, build mode and physical component instances.
 - `ROADMAP.md` — V1, V2 and later platform milestones.
 - `DECISIONS.md` — durable product and architecture decisions with IDs for future reference.
+- `V1_CONTRACT.md` — P12 Circuit Forge implementation boundary and P12A support matrix.
 
 ## Initial launch families
 

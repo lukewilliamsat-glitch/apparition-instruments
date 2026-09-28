@@ -33,3 +33,7 @@ This addresses a real UI ambiguity: the visible count represented Component usag
 P11G was investigated and has no canonical requirements or acceptance criteria. The placeholder is retired. Define future work from actual requirements rather than continuing P11 lettering.
 
 The single final live Order acceptance journey remains deferred **P09** scope and is not part of P11.
+
+## P12 start
+
+Luke approved **P12 — Signal Forge V1**, with **Circuit Forge** as the customer-facing experience. P12A establishes a limited public Les Paul circuit workbench and the canonical `docs/signal-forge/V1_CONTRACT.md`. P11 remains complete; the deferred single live Order acceptance remains P09 scope. Broader V1 family support and response integration remain subject to the V1 contract gates.

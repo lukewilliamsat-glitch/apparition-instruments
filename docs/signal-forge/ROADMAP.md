@@ -22,6 +22,8 @@ These systems should be reused rather than rebuilt under Signal Forge names.
 
 ## V1 — Circuit Forge
 
+Apparition phase: **P12 — Signal Forge V1**. The customer-facing experience is **Circuit Forge**. `V1_CONTRACT.md` records the bounded P12A support matrix and implementation gates.
+
 Goal: establish the unified free circuit-design experience and prove the composable circuit model.
 
 Priority launch families:
