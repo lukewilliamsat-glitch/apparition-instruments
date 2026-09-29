@@ -23,8 +23,17 @@ export function componentBounds(p){
  return {id:p.id,l:p.x+b[0],t:p.y+b[1],r:p.x+b[2],b:p.y+b[3]};
 }
 function port(p,key,b){const t=p.terminals[key],a=[p.x+t.x,p.y+t.y];let q;
- if(['pot','pushpull'].includes(p.type))q=key==='case'?[b.r+15,a[1]]:key.startsWith('switch')?[key.includes('A')?b.l-15:b.r+15,a[1]]:[a[0],b.b+15];
- else if(['humbucker','singlecoil','p90'].includes(p.type))q=[a[0]+15,a[1]];
+ if(['pot','pushpull'].includes(p.type)){
+  const horizontal=key==='case'||key.startsWith('switch');
+  q=key==='case'?[b.r+35,a[1]]:key.startsWith('switch')?[key.includes('A')?b.l-35:b.r+35,a[1]]:[a[0],b.b+40];
+  const grid=q.map(v=>Math.round(v/step)*step);
+  // Snap within the solder terminal, then leave the body in one straight lane.
+  return squash(horizontal?[a,[a[0],grid[1]],grid]:[a,[grid[0],a[1]],grid]);
+ }
+ else if(['humbucker','singlecoil','p90'].includes(p.type)){
+  q=[a[0]+35,a[1]];const grid=q.map(v=>Math.round(v/step)*step);
+  return squash([a,[a[0],grid[1]],grid]);
+ }
  else if(['capacitor','resistor','network'].includes(p.type))q=[a[0]+(key==='a'?-15:15),a[1]];
  else if(p.type==='toggle')q=key==='ground'?[a[0],b.t-15]:[a[0],b.b+15];
  else if(p.type==='jack')q=key==='tip'?[b.r+15,a[1]]:[b.l-15,a[1]];
@@ -37,10 +46,22 @@ class Heap{constructor(){this.a=[];}push(v){let i=this.a.length;this.a.push(v);w
 const squash=points=>points.filter((p,i,a)=>!(i&&p[0]===a[i-1][0]&&p[1]===a[i-1][1])).filter((p,i,a)=>!i||i===a.length-1||!((a[i-1][0]===p[0]&&p[0]===a[i+1][0])||(a[i-1][1]===p[1]&&p[1]===a[i+1][1])));
 export function routeDiagram(c){
  const key=JSON.stringify([c.components.map(p=>[p.id,p.type,p.x,p.y,p.terminals,p.productMark]),c.connections.map(w=>[w.id,w.from,w.to,w.route,w.category,w.network]),c.contacts]);if(cache.has(key))return cache.get(key);
- const bounds=c.components.map(componentBounds),blocked=new Set(),occupied=new Map(),results=new Map(),semantics=routeSemantics(c);
+ const bounds=c.components.map(componentBounds),blocked=new Set(),reserved=new Map(),occupied=new Map(),occupiedEdges=new Map(),results=new Map(),semantics=routeSemantics(c);
  for(const b of bounds)for(let x=Math.ceil((b.l-5)/step);x<=Math.floor((b.r+5)/step);x++)for(let y=Math.ceil((b.t-5)/step);y<=Math.floor((b.b+5)/step);y++)blocked.add(y*W+x);
  for(const p of c.components)for(const t of Object.values(p.terminals)){const x=p.x+t.x,y=p.y+t.y;for(let gx=Math.ceil((x-6)/step);gx<=Math.floor((x+6)/step);gx++)for(let gy=Math.ceil((y-6)/step);gy<=Math.floor((y+6)/step);gy++)blocked.add(gy*W+gx);}
+ // Keep short, adjacent terminal departures clear for their own connections.
+ for(const p of c.components)if(['pot','pushpull','humbucker','singlecoil','p90'].includes(p.type)){
+  const b=bounds.find(x=>x.id===p.id);
+  for(const terminal of Object.keys(p.terminals)){
+   const ref=p.id+'.'+terminal,escape=port(p,terminal,b).at(-1),x=escape[0]/step,y=escape[1]/step;
+   const pickup=['humbucker','singlecoil','p90'].includes(p.type);
+   const firstX=pickup?Math.ceil((p.x+p.terminals[terminal].x+5)/step):Math.ceil((b.r+5)/step);
+   const positions=pickup||terminal==='case'?Array.from({length:Math.max(0,x-firstX+1)},(_,i)=>[firstX+i,y]):terminal.startsWith('switch')?[]:Array.from({length:Math.max(0,y-Math.ceil((b.b+5)/step)+1)},(_,i)=>[x,Math.ceil((b.b+5)/step)+i]);
+   for(const [gx,gy] of positions){const id=gy*W+gx;if(!reserved.has(id))reserved.set(id,new Set());reserved.get(id).add(ref);}
+  }
+ }
  const endpoint=ref=>{const [id,k]=ref.split('.'),p=c.components.find(p=>p.id===id);return port(p,k,bounds.find(b=>b.id===id));};
+ const edge=(a,b)=>a<b?a+':'+b:b+':'+a;
  const penalty=(id,dir,semantic)=>{
   let cost=0;const x=id%W,y=Math.floor(id/W);
   for(const [otherDir,other] of occupied.get(id)||[]){
@@ -49,16 +70,21 @@ export function routeDiagram(c){
   }
   // Adjacent parallel runs need a whole clear grid lane where possible.
   for(const near of dir===0?[id-W,id+W]:[id-1,id+1])for(const [otherDir,other] of occupied.get(near)||[])
-   if(otherDir===dir)cost+=other.net===semantic.net?1.5:7;
+   if(otherDir===dir)cost+=other.net===semantic.net?1.5:3;
   return cost;
  };
  for(const w of c.connections){const a=endpoint(w.from),b=endpoint(w.to),start=a.at(-1).map(v=>v/step),end=b.at(-1).map(v=>v/step),sid=start[1]*W+start[0],eid=end[1]*W+end[0],open=new Heap(),dist=new Map([[sid,0]]),previous=new Map(),semantic=semantics.get(w.id);open.push([0,sid,-1]);let found=false;
-  while(open.a.length){const [,id,direction]=open.pop();if(id===eid){found=true;break;}const x=id%W,y=Math.floor(id/W);
-   for(const [dx,dy,dir] of [[1,0,0],[-1,0,0],[0,1,1],[0,-1,1]]){const nx=x+dx,ny=y+dy,nid=ny*W+nx;if(nx<2||nx>W-3||ny<6||ny>H||((blocked.has(nid)&&nid!==eid&&nid!==sid)))continue;
-    const cost=dist.get(id)+1+(direction!==-1&&direction!==dir?.55:0)+penalty(nid,dir,semantic);if(cost>=(dist.get(nid)??Infinity))continue;dist.set(nid,cost);previous.set(nid,[id,dir]);open.push([cost+Math.abs(nx-end[0])+Math.abs(ny-end[1]),nid,dir]);
+  const protectedPort=ref=>['pot','pushpull','humbucker','singlecoil','p90'].includes(c.components.find(p=>p.id===ref.split('.')[0])?.type);
+  const outward=points=>[Math.sign(points.at(-1)[0]-points.at(-2)[0]),Math.sign(points.at(-1)[1]-points.at(-2)[1])];
+  const departure=protectedPort(w.from)?outward(a):null,arrival=protectedPort(w.to)?outward(b):null;
+  while(open.a.length){const [,id]=open.pop();if(id===eid){found=true;break;}const x=id%W,y=Math.floor(id/W),direction=previous.get(id)?.[1]??-1,run=previous.get(id)?.[2]??0;
+   for(const [dx,dy,dir] of [[1,0,0],[-1,0,0],[0,1,1],[0,-1,1]]){const nx=x+dx,ny=y+dy,nid=ny*W+nx;
+    if((id===sid&&departure&&(dx!==departure[0]||dy!==departure[1]))||(nid===eid&&arrival&&(dx!==-arrival[0]||dy!==-arrival[1]))||nx<2||nx>W-3||ny<6||ny>H||(occupiedEdges.has(edge(id,nid))&&occupiedEdges.get(edge(id,nid))!==semantic.net)||((blocked.has(nid)&&nid!==eid&&nid!==sid))||(reserved.has(nid)&&![...reserved.get(nid)].every(ref=>ref===w.from||ref===w.to)&&nid!==eid&&nid!==sid))continue;
+    const turn=direction!==-1&&direction!==dir;
+    const cost=dist.get(id)+2.5+(turn?3+Math.max(0,3-run)*4:0)+penalty(nid,dir,semantic);if(cost>=(dist.get(nid)??Infinity))continue;dist.set(nid,cost);previous.set(nid,[id,dir,turn?1:Math.min(run+1,4)]);open.push([cost+2.5*(Math.abs(nx-end[0])+Math.abs(ny-end[1])),nid,dir]);
    }
   }
-  let middle=[];if(found){let id=eid;while(id!==sid){middle.push([id%W*step,Math.floor(id/W)*step]);const [prior,dir]=previous.get(id);if(!occupied.has(id))occupied.set(id,[]);occupied.get(id).push([dir,semantic]);id=prior;}middle.push(a.at(-1));middle.reverse();}
+  let middle=[];if(found){let id=eid;while(id!==sid){middle.push([id%W*step,Math.floor(id/W)*step]);const [prior,dir]=previous.get(id);if(!occupied.has(id))occupied.set(id,[]);occupied.get(id).push([dir,semantic]);occupiedEdges.set(edge(id,prior),semantic.net);id=prior;}middle.push(a.at(-1));middle.reverse();}
   else { // Preserve a legible original path if a crowded legacy layout has no free grid corridor.
    const raw=[a[0],...w.route,b[0]];for(const q of raw){const p=middle.at(-1);if(p&&p[0]!==q[0]&&p[1]!==q[1])middle.push([q[0],p[1]]);middle.push(q);}
   }
