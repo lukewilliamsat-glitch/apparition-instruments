@@ -3,3 +3,59 @@
 .forge-workbench-heading{flex-wrap:wrap}#forge-loading-help{width:100%;padding:.75rem;background:#f8edce;border:1px solid #ae812c;line-height:1.45}#forge-loading-help[hidden]{display:none}#forge-loading-help p{margin:0 0 .6rem}#forge-loading-help button{background:#2d3337;color:#fff;border:0;padding:.55rem .8rem;cursor:pointer}
 
 .forge-role-views{display:flex;flex-wrap:wrap;gap:.4rem;margin:1rem 0}.forge-role-views button{border:1px solid #8f7950;background:#fff;color:#302a22;padding:.5rem .7rem;min-height:42px;cursor:pointer}.forge-role-views button[aria-pressed=true]{background:#2d3337;color:#fff;border-color:#2d3337}
+/* Precision workbench: the diagram owns the visual hierarchy. */
+.forge-main{max-width:1920px;padding-top:clamp(2.5rem,4vw,5rem);color:#e7e3d9}
+.forge-heading{max-width:70ch;margin-bottom:clamp(2.2rem,3vw,4rem)}
+.forge-heading h1{font-size:clamp(3rem,5vw,5.5rem);font-weight:500;letter-spacing:-.065em;line-height:1.02;color:#eee9dc}
+.forge-heading p:last-child{max-width:62ch;color:#b6b2a8;font-size:1.05rem;line-height:1.7}
+.forge-layout{grid-template-columns:minmax(230px,268px) minmax(0,1fr) minmax(250px,306px);gap:clamp(.8rem,1.4vw,1.6rem)}
+.forge-panel{background:#eeeae1;border:1px solid #d3cec1;border-radius:3px;padding:clamp(1.3rem,1.8vw,2rem);color:#242522}
+.forge-workbench{background:#f3f1eb;border:1px solid #d3cec1;border-radius:3px;padding:clamp(1.3rem,1.8vw,2rem);box-shadow:0 22px 50px rgba(0,0,0,.12);color:#242522}
+.forge-step,.forge-control-group-title{font:700 .7rem/1.3 'JetBrains Mono',monospace;letter-spacing:.13em;color:#80673c}
+.forge-panel h2,.forge-workbench h2{font-size:clamp(1.35rem,1.65vw,1.75rem);font-weight:550;letter-spacing:-.035em;margin:.35rem 0 1.4rem}
+.forge-controls label{font-size:.82rem;margin:1.2rem 0 .8rem}
+.forge-controls select{border:1px solid #b8b2a6;border-radius:2px;background:#f9f8f4;min-height:46px;padding:.65rem .8rem;font-size:.88rem}
+.forge-control-group-title{margin:1.7rem 0 .7rem}
+.forge-pickup-profiles{border-top:1px solid #d2cdc1;margin-top:1.8rem}
+.forge-pickup-profiles label{margin:.85rem 0}
+.forge-segmented{border:0;padding:0;margin:1.35rem 0 1.55rem;min-width:0}
+.forge-segmented legend{font-size:.82rem;font-weight:650;margin-bottom:.55rem;padding:0}
+.forge-segmented-options{display:flex;border:1px solid #b8b2a6;border-radius:3px;overflow:hidden;background:#e5e1d8}
+.forge-segmented-options label{flex:1;margin:0;min-width:0;position:relative;text-align:center}
+.forge-segmented-options label+label{border-left:1px solid #b8b2a6}
+.forge-segmented-options input{position:absolute;opacity:0;width:100%;height:100%;inset:0;cursor:pointer}
+.forge-segmented-options span{display:block;padding:.72rem .2rem;font-size:.78rem;font-weight:650;transition:background .16s ease,color .16s ease}
+.forge-segmented-options input:checked+span{background:#292e2d;color:#f7f5ee}
+.forge-segmented-options input:focus-visible+span{outline:3px solid #ac7b27;outline-offset:-3px}
+.forge-options{border-color:#d2cdc1;padding:.95rem 0;margin:1.4rem 0}
+.forge-options summary,.forge-inventory summary{font-size:.88rem}
+.forge-limit{color:#676356;font-size:.8rem;line-height:1.65}
+.forge-workbench-heading{padding-bottom:.6rem;border-bottom:1px solid #d8d4cb}
+.forge-workbench-heading #forge-status{font:500 .73rem/1.45 'JetBrains Mono',monospace;letter-spacing:.03em;color:#6f6c62;text-align:right}
+.forge-role-views{margin:1.25rem 0 .65rem;gap:0;display:inline-flex;border:1px solid #b9b6ac;border-radius:3px;overflow:hidden}
+.forge-role-views button{min-height:38px;border:0;border-right:1px solid #b9b6ac;background:#eae7df;font-size:.76rem;padding:.5rem .75rem;transition:background .16s ease,color .16s ease}
+.forge-role-views button:last-child{border-right:0}
+.forge-role-views button[aria-pressed=true]{background:#303735;color:#fff}
+.forge-path-actions{margin:.55rem 0 1.1rem;gap:.35rem}
+.forge-path-actions button{min-height:36px;border-color:#d1ccc0;background:transparent;border-radius:2px;font-size:.77rem;padding:.45rem .65rem}
+.forge-path-actions button[aria-pressed=true]{background:#303735;color:#fff;border-color:#303735}
+.forge-instruction{font-size:.8rem;color:#6e6b62;margin:0 0 .85rem}
+.forge-viewport{border-color:#d8d5cc;background:#f5f5f2;border-radius:2px}
+.forge-legend{margin:.9rem 0 .45rem;color:#646158}
+.forge-facts{font:500 .72rem/1.5 'JetBrains Mono',monospace;color:#807b70}
+.forge-inspector{max-height:min(86vh,1150px)}
+.forge-inspector-section{border-color:#d2cdc1;padding:1.2rem 0}
+.forge-inspector-section h3{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:#746d5e;margin:0 0 .8rem}
+.forge-inspector-section h4{font-size:1.25rem;letter-spacing:-.03em;font-weight:600}
+.forge-inspector-section p{font-size:.87rem;line-height:1.6}
+.forge-inspection button,.forge-contacts button,.forge-parts button{border-color:#d0cabe;background:#f8f6f0;border-radius:2px}
+.forge-inspection button:hover,.forge-contacts button:hover,.forge-parts button:hover{background:#e8e3d8}
+.forge-inspection details{margin-top:1rem;border-top:1px solid #d2cdc1;padding-top:.7rem}
+.forge-inspection details summary{font-size:.78rem;color:#665e4e;cursor:pointer}
+.forge-parts button{padding:.72rem .8rem}
+.forge-main button,.forge-main select{transition:background .16s ease,color .16s ease,border-color .16s ease,box-shadow .16s ease}
+.forge-viewport .component:hover .metal,.forge-viewport .component:hover .pickup-base{stroke:#8b692e;stroke-width:3}
+.forge-viewport .wire:hover .wire-line{stroke-width:4.5}
+@media(max-width:1300px){.forge-layout{grid-template-columns:minmax(230px,268px) minmax(0,1fr)}}
+@media(max-width:850px){.forge-layout{grid-template-columns:1fr}.forge-workbench-heading #forge-status{text-align:left}.forge-role-views{display:flex;flex-wrap:wrap}}
+@media(prefers-reduced-motion:reduce){.forge-main button,.forge-main select,.forge-segmented-options span{transition:none}}

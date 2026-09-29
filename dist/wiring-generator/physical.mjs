@@ -22,7 +22,8 @@ export function composePhysicalWiring(circuit){
    if(wire.insulate)role='linkA';
    if(kind==='pickup-ground'&&to.component.type==='pot'&&to.component.role==='volume'&&wire.to.endsWith('.case')&&ground.has(wire.to))join=wire.to;
   }else if(from.component.type==='pot'&&to.component.id===from.component.id&&wire.to.endsWith('.case')&&ground.has(wire.from))kind='local-casing-bond';
-  else if(from.component.type==='pot'&&to.component.type==='pot'&&wire.from.endsWith('.case')&&wire.to.endsWith('.case'))kind='ground-bus';
+  else if(from.component.type==='pot'&&to.component.type==='pot'&&wire.from.endsWith('.case')&&wire.to.endsWith('.case')&&ground.has(wire.from)&&ground.has(wire.to))kind='ground-bus';
+  else if(wire.category==='ground'&&ground.has(wire.from)&&ground.has(wire.to))kind='ground-harness-branch';
   const profile=pickup?pickupProfile(circuit,pickup):null;
   const physical={id:wire.id,from:wire.from,to:wire.to,kind,pickup,role,join,profile:profile?.label||null,colour:role?profile.wires[role][1]:null,seriesColours:kind==='local-series'?[profile.wires.linkA[1],profile.wires.linkB[1]]:null,net:[...net(circuit,wire.from)].sort()[0]};
   conductors.set(wire.id,physical);attach(wire.from,wire.id);attach(wire.to,wire.id);

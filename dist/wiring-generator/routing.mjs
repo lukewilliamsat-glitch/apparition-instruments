@@ -78,12 +78,19 @@ export function routeDiagram(c){
   return cost;
  };
  for(const w of c.connections){const a=endpoint(w.from),b=endpoint(w.to),intent=physical.conductors.get(w.id);
+  if(intent.kind==='pickup-hot'&&b[0][0]>a[0][0]){
+   const p=a[0],q=b[0],x=q[0]-Math.min(48,Math.max(25,(q[0]-p[0])/3));
+   results.set(w.id,squash([p,[x,p[1]],[x,q[1]],q]));continue;
+  }
   if(intent.kind==='local-series'){const p=a[0],q=b[0],x=Math.max(p[0],q[0])+22;results.set(w.id,squash([p,[x,p[1]],[x,q[1]],q]));continue;}
   if(intent.kind==='pickup-ground'&&intent.join){
    const p=a[0],q=b[0],shield=intent.role==='shield',x=p[0]+(shield?55:35),y=q[1]+(shield?12:0);
    results.set(w.id,squash(shield?[p,[x,p[1]],[x,y],[q[0]-12,y],[q[0]-12,q[1]],q]:[p,[x,p[1]],[x,q[1]],q]));continue;
   }
   if(intent.kind==='local-casing-bond'){const p=a[0],q=b[0],x=p[0]+12;results.set(w.id,squash([p,[x,p[1]],[x,q[1]],q]));continue;}
+  if(intent.kind==='ground-bus'&&a[0][1]===b[0][1]){
+   results.set(w.id,[a[0],b[0]]);continue;
+  }
   const start=a.at(-1).map(v=>v/step),end=b.at(-1).map(v=>v/step),sid=start[1]*W+start[0],eid=end[1]*W+end[0],open=new Heap(),dist=new Map([[sid,0]]),previous=new Map(),semantic=semantics.get(w.id);open.push([0,sid,-1]);let found=false;
   const protectedPort=ref=>['pot','pushpull','humbucker','singlecoil','p90'].includes(c.components.find(p=>p.id===ref.split('.')[0])?.type);
   const outward=points=>[Math.sign(points.at(-1)[0]-points.at(-2)[0]),Math.sign(points.at(-1)[1]-points.at(-2)[1])];

@@ -40,6 +40,23 @@ assert.deepEqual(selectionHighlight(mixed,{kind:'wire',id:'neckGround'}),{kind:'
 assert.match(inspectSelection(mixed,{kind:'terminal',ref:'neckVolume.case'}).physical,/GREEN.*BARE/);
 const svg=drawCircuit(mixed);assert.match(svg,/data-physical-kind="pickup-hot" data-conductor="BLACK"/);
 assert.match(svg,/data-physical-kind="pickup-hot" data-conductor="RED"/);
+const colourOf=(svg,id)=>svg.match(new RegExp(`data-wire="${id}"[^>]*>[\\s\\S]*?<path class="wire-line[^>]*stroke="([^"]+)"`))?.[1];
+for(const [neck,bridge,neckColour,bridgeColour] of [
+ ['generic','generic','#303b43','#303b43'],['duncan','generic','#202020','#303b43'],
+ ['generic','duncan','#303b43','#202020'],['duncan','dimarzio','#202020','#b91c1c'],
+ ['warman','gibson','#426d48','#b91c1c']
+]){
+ const c=forgeCircuit({neckProfile:neck,bridgeProfile:bridge}).circuit,svg=drawCircuit(c);
+ assert.equal(graph(c),graph(generic));assert.equal(colourOf(svg,'neckHot'),neckColour);
+ assert.equal(colourOf(svg,'bridgeHot'),bridgeColour);
+ assert.match(svg,new RegExp(`data-pickup-profile="${pickupProfile(c,'neckPickup').label}`));
+ assert.match(svg,new RegExp(`data-pickup-profile="${pickupProfile(c,'bridgePickup').label}`));
+}
+for(const ch of ['neck','bridge']){
+ const points=routes.get(ch+'Cases');assert.equal(points.length,2,'direct casing-to-casing physical bus');
+ assert.equal(points[0][1],points[1][1]);
+ const hotPoints=routes.get(ch+'Hot');assert.equal(hotPoints.length,4,'hot takes a direct terminal-first approach');
+}
 for(const id of ['generic','duncan','dimarzio','gibson','tonerider','warman','fender']){
  const c=forgeCircuit({neckProfile:id}).circuit;assert.equal(graph(c),graph(generic));
 }

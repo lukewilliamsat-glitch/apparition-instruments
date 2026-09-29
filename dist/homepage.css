@@ -71,3 +71,19 @@
  .home-page .home-generator,.home-page .home-circuit-preview,.home-page .product summary,.home-page .button{transition:none}
  .home-page .home-generator:hover,.home-page .home-generator:hover .home-circuit-preview,.home-page .product summary:hover,.home-page .button:hover{transform:none;box-shadow:none}
 }
+/* Signal Forge reveal uses the live shared circuit renderer's deterministic SVG. */
+.home-page .home-forge{align-items:center;grid-template-columns:minmax(0,.95fr) minmax(330px,1.05fr);column-gap:clamp(30px,5vw,90px);color:var(--ink)}
+.home-page .home-forge>span,.home-page .home-forge>h3,.home-page .home-forge>p,.home-page .home-forge>.home-forge-links{grid-column:1}
+.home-page .home-forge .home-circuit-preview{grid-column:2;grid-row:1 / span 5;border:1px solid var(--line);background:#f5f5f2;padding:14px}
+.home-page .home-forge .home-circuit-preview img{width:100%;height:330px;object-fit:contain;opacity:1}
+.home-page .home-forge h3{font-size:clamp(36px,4vw,58px);margin:8px 0 0;letter-spacing:-.06em}
+.home-page .home-forge .home-forge-kicker{font:600 .8rem/1.5 var(--mono);letter-spacing:.04em;color:var(--gold);margin:0}
+.home-page .home-forge p:not(.home-forge-kicker){margin:0;max-width:55ch}
+.home-forge-links{display:flex;align-items:center;flex-wrap:wrap;gap:10px 24px;margin-top:14px}
+.home-forge-links a{font-size:13px;line-height:1.5;text-decoration:none}
+.home-page .home-forge .home-forge-links .card-link{margin:0;padding:12px 17px;background:var(--gold);color:#161714;font-weight:700;border-radius:2px}
+.home-forge-links a:last-child{color:var(--technical);text-decoration:underline;text-underline-offset:4px}
+.home-forge-links a:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+@media(max-width:900px){.home-page .home-forge{grid-template-columns:1fr}.home-page .home-forge .home-circuit-preview{grid-column:1;grid-row:auto;margin:18px 0}.home-page .home-forge .home-circuit-preview img{height:240px}.home-page .home-forge>p,.home-page .home-forge>.home-forge-links{grid-row:auto}}
+@media(max-width:600px){.home-page .home-forge .home-circuit-preview img{height:190px}}
+@media(prefers-reduced-motion:reduce){.home-page .home-forge,.home-page .home-forge .home-circuit-preview{transition:none}}
