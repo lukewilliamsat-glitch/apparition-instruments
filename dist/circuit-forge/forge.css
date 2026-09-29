@@ -141,7 +141,7 @@
 .forge-entering .forge-entry,.forge-entry-handoff .forge-entry{position:fixed;z-index:1000;inset:0;display:grid;grid-template-rows:auto 1fr auto;background:#111;color:#ded8ca;padding:clamp(24px,4vw,62px);pointer-events:all}
 .forge-entry-frame{display:flex;justify-content:space-between;gap:1rem;border-top:1px solid #8b7957;padding-top:14px;font:600 .67rem/1.4 'JetBrains Mono',monospace;letter-spacing:.14em;color:#a98c58;animation:forge-entry-rule .55s ease-out both}
 .forge-entry-center{align-self:center;max-width:940px}
-.forge-entry-center p{margin:0 0 clamp(2rem,5vh,4rem);font:500 clamp(2.5rem,6.8vw,7.6rem)/.95 var(--serif);letter-spacing:-.055em;text-transform:uppercase;animation:forge-entry-resolve .45s .12s ease-out both}
+.forge-entry-center p{margin:0 0 clamp(2rem,5vh,4rem);font:500 clamp(2.3rem,5.3vw,5.8rem)/.98 var(--serif);letter-spacing:-.055em;text-transform:uppercase;animation:forge-entry-resolve .45s .12s ease-out both}
 .forge-entry-steps{display:flex;gap:clamp(1rem,4vw,5rem);flex-wrap:wrap;border-top:1px solid #4c4b43;padding-top:18px;font:600 clamp(.65rem,.8vw,.85rem)/1.4 'JetBrains Mono',monospace;letter-spacing:.1em;color:#a98c58}
 .forge-entry-steps span{animation:forge-entry-resolve .38s ease-out both}.forge-entry-steps span:nth-child(1){animation-delay:.28s}.forge-entry-steps span:nth-child(2){animation-delay:.39s}.forge-entry-steps span:nth-child(3){animation-delay:.5s}
 .forge-entry-rule{height:1px;background:#8b7957;transform-origin:left;animation:forge-entry-rule .7s .12s ease-out both}
