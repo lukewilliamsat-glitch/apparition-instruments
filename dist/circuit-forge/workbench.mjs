@@ -1,5 +1,5 @@
 import {endpoint,inspectComponent,net} from '../wiring-generator/model.mjs';
-import {pathDetails,circuitChanges} from './presentation.mjs';
+import {pathDetails,circuitChanges} from '../wiring-generator/inspection.mjs';
 
 export const terminalName=(circuit,ref)=>{const {component,terminal}=endpoint(circuit,ref);return `${component.label} / ${terminal.label}`;};
 function componentRole(part){

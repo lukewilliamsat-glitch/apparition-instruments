@@ -1,26 +1,10 @@
-import {endpoint,net} from '../wiring-generator/model.mjs';
+import {endpoint} from '../wiring-generator/model.mjs';
 import {routeDiagram} from '../wiring-generator/routing.mjs';
 import {drawCircuit} from '../wiring-generator/render.mjs';
 
 const esc=value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[char]));
 const signalColours={signal:'#303b43',ground:'#7a8187',tone:'#ad2929',switching:'#926f31'};
-export function pathDetails(circuit,reference){
- endpoint(circuit,reference);
- const references=[...net(circuit,reference)].sort(),members=new Set(references);
- const wires=circuit.connections.filter(w=>members.has(w.from)&&members.has(w.to));
- const components=circuit.components.filter(part=>references.some(ref=>ref.startsWith(part.id+'.')));
- const contacts=circuit.contacts.filter(([from,to])=>members.has(from)&&members.has(to));
- return {references,wires,components,contacts};
-}
-export function circuitChanges(previous,current){
- if(!previous)return [];
- const before=new Map(previous.connections.map(w=>[w.id,w.from+' → '+w.to]));
- const after=new Map(current.connections.map(w=>[w.id,w.from+' → '+w.to]));
- const changes=[];
- for(const [id,path] of after)if(before.get(id)!==path)changes.push({id,from:before.get(id)||null,to:path});
- for(const [id,path] of before)if(!after.has(id))changes.push({id,from:path,to:null});
- return changes;
-}
+export {pathDetails,circuitChanges} from '../wiring-generator/inspection.mjs';
 const crossing=(a,b,c,d)=>{
  const horizontal=(p,q,r,s)=>p[1]===q[1]&&r[0]===s[0]&&r[0]>Math.min(p[0],q[0])&&r[0]<Math.max(p[0],q[0])&&p[1]>Math.min(r[1],s[1])&&p[1]<Math.max(r[1],s[1])?[r[0],p[1]]:null;
  return horizontal(a,b,c,d)||horizontal(c,d,a,b);

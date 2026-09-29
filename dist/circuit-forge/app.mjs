@@ -49,9 +49,11 @@ function render(){
   const previous=circuit,result=forgeCircuit(choices);circuit=result.circuit;
   if(selection&&!inspectSelection(circuit,selection))selection=null;
   form.elements.bleed.disabled=choices.wiring==='50s';$('#forge-kit').href=result.kitURL;$('#forge-kit').hidden=!result.kitURL;
+  $('#forge-loading-help').hidden=true;
   $('#forge-status').textContent=`${choices.wiring==='50s'?'50s':choices.wiring==='60s'?'60s':'Modern'} wiring · ${choices.position} selector`;
   updateInventory();updateSelector();updateChanges(previous);updateSelection();
- }catch(error){$('#forge-status').textContent='Unsupported circuit choice: '+error.message;}
+ }catch(error){$('#forge-loading-help').hidden=true;
+  $('#forge-status').textContent='Unsupported circuit choice: '+error.message;}
 }
 form.addEventListener('change',event=>{if(event.target.name==='wiring'&&event.target.value==='50s')form.elements.bleed.value='none';render();});
 form.addEventListener('reset',()=>setTimeout(()=>{selection=null;render();},0));

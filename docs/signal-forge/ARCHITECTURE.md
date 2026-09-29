@@ -2,6 +2,18 @@
 
 Status: conceptual architecture, not yet an implementation contract.
 
+## Shared-core rule and current boundary (September 2026)
+
+Electrical truth, component truth, circuit topology, switch/contact behaviour, reusable diagram behaviour and validated electrical models belong at the lowest appropriate shared layer. Tool-specific UI and workflow remain local. Duplication of shared truth needs explicit justification.
+
+**Shared now:** Circuit Forge uses the Wiring Generator's component and terminal definitions, circuit graph, closed contacts, conductive `net`, graph validation, orthogonal router and SVG renderer. Generic conductive-path inspection and external-wire endpoint diffs live in `wiring-generator/inspection.mjs`; the Generator directory currently serves as the shared circuit core despite its tool-specific name. Catalogue Component IDs and Kit Definitions remain separate authorities; a circuit instance ID is not a catalogue Component ID. The supported Les Paul Builder handoff uses the existing configuration contract and leaves stock, price and checkout authority in commerce.
+
+**Tool-specific by design:** Forge owns its constrained template controls, workbench presentation and contextual explanation. The Generator owns its kit/physical wiring workflow. The Treble Bleed Designer owns its graph UI, Frozen Reference and single-pickup state validation. Its `engine.mjs` contains validated single-pickup transfer, taper and treble-bleed-admittance functions that can become shared electrical modules when a consuming circuit model can state the same assumptions. Do not label that response as a complete 2V2T Les Paul simulation.
+
+**Future shared core:** A multi-pickup circuit solver, component-value/unit adapters and richer deterministic diagram lane planning need explicit validation and consumer contracts before extraction. The current shared router uses component exclusion and terminal escape ports with a grid and corridor penalty, but does not guarantee parallel-wire spacing, minimum crossings or label clearance. Its cache identity includes route hints so a revised route cannot reuse stale geometry. Improve congestion through shared routing constraints and comparative diagram fixtures, not family-specific coordinate offsets. The Forge crossing-hop overlay is presentation-local for now; consolidate it only after its visual semantics are accepted for other Generator consumers.
+
+Static Pages builds stamp first-party HTML asset URLs and transitive ES module imports with the deployment revision. HTML itself may remain cached briefly by a client/CDN, so Forge offers delayed reload guidance only if initialization remains at its preparing state. This is a deployment-cache resilience measure, not a browser-specific compatibility claim.
+
 ## 1. Circuit model
 
 Signal Forge should model a circuit as composable components, terminals and electrical connections rather than as one monolithic diagram per guitar configuration.

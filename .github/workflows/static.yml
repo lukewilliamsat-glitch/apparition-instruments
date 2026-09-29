@@ -43,6 +43,8 @@ jobs:
         run: npm ci
       - name: Generate public product pages from Supabase
         run: node scripts/generate-product-pages.mjs
+      - name: Stamp first-party static asset URLs
+        run: node scripts/stamp-static-assets.mjs dist
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
