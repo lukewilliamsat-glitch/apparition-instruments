@@ -12,6 +12,8 @@ Luke accepted the V1 Precision Workbench visual baseline. The next V1 Response L
 
 Signal Lab promotion checkpoint: Luke technically accepted Response Lab V1 and requested it as a first-class central-workspace mode. Forge now switches between default Physical Circuit and Signal Lab without duplicating response math or resetting circuit/control state. The graph, controls, reference and assumptions use the existing implementation; Configure and Understand remain shared. The below-diagram disclosure is retired. Both-selector and 50s/60s analysis remain explicitly unsupported. Luke owns the promoted mode's visual acceptance; preserve the locked Precision Workbench direction.
 
+**V1 core workspace lock point:** Signal Forge contains Physical Circuit (“Where does everything go?”) and Signal Lab (“What does this circuit do?”), both consuming one Forge circuit state. Signal Lab's unsupported Modern + Both state offers Analyse Neck/Bridge through the existing selector controls; 50s/60s remain explanatory only. The shared response core and accepted Precision Workbench architecture are the current baseline pending Luke's final rendered acceptance. Defer wider 50s/60s response, combined Both loading, Compare, Frozen Reference, component-value experimentation, Explore Mods, Fault Finder and Measure.
+
 ## Product direction and shared core
 
 **Circuit Forge is no longer being designed as an enhanced Wiring Diagram Generator. It is being designed as an interactive guitar-electronics workbench.** The Generator primarily answers **“How do I wire this?”** Forge should increasingly answer **“What is my circuit, how does it work, what happens if I change it, and how do I build it?”** The V1 journey is **Configure → See → Understand → Analyse where validated → Build**.

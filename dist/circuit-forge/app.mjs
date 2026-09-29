@@ -54,9 +54,13 @@ function updateLabSelection(){
  box.textContent=element?`${element.label} is a ${element.role==='bleed'?'treble bleed element':element.role+' control'} in the ${element.channel} circuit.${element.channel===circuit.state.position?' It affects the displayed response.':' Select that pickup alone to analyse it.'}`:selection?'This selection has no direct role in the supported response model.':'';
 }
 function renderLab(){
- const report=forgeResponse(circuit),context=$('#forge-response-context'),graph=$('#forge-response-graph'),controls=$('#forge-response-controls'),key=$('#forge-response-key'),assumptions=$('#forge-response-assumptions');
+ const report=forgeResponse(circuit),context=$('#forge-response-context'),graph=$('#forge-response-graph'),controls=$('#forge-response-controls'),key=$('#forge-response-key'),assumptions=$('#forge-response-assumptions'),actions=$('#forge-response-actions');
  graph.replaceChildren();assumptions.replaceChildren();controls.hidden=!report.supported;key.hidden=!report.supported;key.querySelector('.forge-response-reference').hidden=!report.reference;
- if(!report.supported){context.textContent='Model unavailable for this state';$('#forge-response-summary').textContent=report.reason;return;}
+ $('#forge-response-lab').classList.toggle('is-unsupported',!report.supported);
+ actions.hidden=report.supported||circuit.state.wiring!=='modern'||circuit.state.position!=='both';
+ assumptions.closest('details').hidden=!report.supported;
+ $('#forge-response-lab .forge-response-explanation').textContent=report.supported?'What changes?':'Response unavailable for this circuit state';
+ if(!report.supported){context.textContent=circuit.state.wiring==='modern'?'MODEL LIMIT · SELECTOR':'MODEL LIMIT · WIRING';$('#forge-response-summary').textContent=report.reason;return;}
  context.textContent=`${report.channel.toUpperCase()} PICKUP · Modern wiring · ${report.bleed} · ${report.state.toneCap/1000} µF tone capacitor`;
  for(const [name,keyName] of [['volume','volume'],['tone','tonePosition']]){const input=$('#forge-response-'+name),value=report.state[keyName];input.value=value;$('#forge-response-'+name+'-value').textContent=value.toFixed(1)+' / 10';}
  graph.append(responseGraph(report));$('#forge-response-summary').textContent=report.summary;
@@ -103,4 +107,7 @@ for(const button of document.querySelectorAll('[data-role-view]'))button.addEven
 });
 for(const button of document.querySelectorAll('[data-trace]'))button.addEventListener('click',()=>choose('terminal',button.dataset.trace));
 for(const button of document.querySelectorAll('[data-forge-mode]'))button.addEventListener('click',()=>setWorkspaceMode(button.dataset.forgeMode));
+for(const button of document.querySelectorAll('[data-analyse]'))button.addEventListener('click',()=>{
+ form.querySelector(`input[name="position"][value="${button.dataset.analyse}"]`).click();
+});
 render();

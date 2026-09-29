@@ -26,9 +26,9 @@ export function responseComponent(circuit,partId){
 }
 export function forgeResponse(circuit,count=201){
  const selected=circuit.state.position;
- if(selected==='both')return {supported:false,reason:'Both pickups are selected. This V1 model cannot calculate their combined loading; choose Neck or Bridge to analyse one supported channel.'};
- if(!['neck','bridge'].includes(selected))return {supported:false,reason:'The selected pickup is outside this response model.'};
  if(circuit.state.wiring!=='modern')return {supported:false,reason:'This response model assumes Modern tone wiring. Choose Modern to analyse this circuit; 50s and 60s tone placement are not modelled here.'};
+ if(selected==='both')return {supported:false,reason:'Both pickups are selected. The V1 response model analyses one pickup channel at a time.'};
+ if(!['neck','bridge'].includes(selected))return {supported:false,reason:'The selected pickup is outside this response model.'};
  try{
   const channel=selected,volume=component(circuit,p=>p.channel===channel&&p.role==='volume'),tone=component(circuit,p=>p.channel===channel&&p.role==='tone');
   const capWire=circuit.connections.find(w=>w.id===channel+'ToneCap');

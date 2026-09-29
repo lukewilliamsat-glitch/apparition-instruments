@@ -120,3 +120,14 @@
 .forge-response-assumptions summary{cursor:pointer;font-weight:650}
 .forge-response-assumptions ul{padding-left:1.2rem;line-height:1.6}
 @media(max-width:620px){.forge-response-controls{grid-template-columns:1fr}}
+/* Quiet unsupported state with the existing control geometry. */
+.forge-response-lab.is-unsupported .forge-response-content{max-width:650px;min-height:clamp(330px,42vh,460px);padding-top:clamp(2.5rem,6vh,5rem)}
+.forge-response-lab.is-unsupported .forge-response-context{margin-bottom:1.1rem}
+.forge-response-lab.is-unsupported .forge-response-explanation{font-size:1.18rem;letter-spacing:-.025em;text-transform:none;color:#292a26;margin:0 0 .65rem}
+.forge-response-lab.is-unsupported .forge-response-summary{max-width:56ch;color:#5e5b52;margin:0 0 1.25rem}
+.forge-response-actions{display:flex;flex-wrap:wrap;gap:.5rem;margin:1.25rem 0}
+.forge-response-actions[hidden],.forge-response-assumptions[hidden]{display:none}
+.forge-response-actions button{min-height:38px;padding:.5rem .8rem;border:1px solid #b9b6ac;border-radius:2px;background:#eae7df;color:#303735;font-size:.78rem;font-weight:650;cursor:pointer}
+.forge-response-actions button:hover{background:#dad5cb}
+.forge-response-actions button:focus-visible{outline:3px solid #aa7b19;outline-offset:2px}
+.forge-response-key .forge-response-current{font-weight:700;color:#303735}
