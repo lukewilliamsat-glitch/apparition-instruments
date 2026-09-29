@@ -5,11 +5,11 @@ import {selectorReport,changeReport,inspectSelection,selectionHighlight,terminal
 
 const $=query=>document.querySelector(query),form=$('#forge-controls'),mount=$('#forge-diagram'),viewport=$('#forge-viewport');
 const el=(tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
-let circuit,selection=null;
+let circuit,selection=null,roleView='all';
 const choose=(kind,value)=>{selection=kind==='component'?{kind,id:value}:kind==='wire'?{kind,id:value}:{kind:'terminal',ref:value};updateSelection();};
 function paint(){
  const active=document.activeElement,attribute=['data-terminal','data-wire','data-component'].find(name=>active?.hasAttribute?.(name)),value=attribute&&active.getAttribute(attribute),left=viewport.scrollLeft,top=viewport.scrollTop;
- mount.innerHTML=forgeDiagram(circuit,{selection:selectionHighlight(circuit,selection)});viewport.scrollLeft=left;viewport.scrollTop=top;
+ mount.innerHTML=forgeDiagram(circuit,{selection:selectionHighlight(circuit,selection),filter:roleView});viewport.scrollLeft=left;viewport.scrollTop=top;
  if(value)mount.querySelector(`[${attribute}="${value}"]`)?.focus({preventScroll:true});
 }
 function updateSelection(){
@@ -60,5 +60,10 @@ form.addEventListener('reset',()=>setTimeout(()=>{selection=null;render();},0));
 mount.addEventListener('click',event=>{const target=event.target.closest('[data-terminal],[data-wire],[data-component]');if(!target)return;if(target.dataset.terminal)choose('terminal',target.dataset.terminal);else if(target.dataset.wire)choose('wire',target.dataset.wire);else choose('component',target.dataset.component);});
 mount.addEventListener('keydown',event=>{if(!['Enter',' '].includes(event.key))return;const target=event.target.closest('[data-terminal],[data-wire],[data-component]');if(target){event.preventDefault();target.dispatchEvent(new MouseEvent('click',{bubbles:true}));}});
 $('#forge-clear').addEventListener('click',()=>{selection=null;updateSelection();});
+for(const button of document.querySelectorAll('[data-role-view]'))button.addEventListener('click',()=>{
+ roleView=button.dataset.roleView;
+ for(const option of document.querySelectorAll('[data-role-view]'))option.setAttribute('aria-pressed',String(option===button));
+ paint();
+});
 for(const button of document.querySelectorAll('[data-trace]'))button.addEventListener('click',()=>choose('terminal',button.dataset.trace));
 render();

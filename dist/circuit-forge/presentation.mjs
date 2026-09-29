@@ -22,9 +22,9 @@ export function visualCrossings(circuit){
  }
  return [...result.values()];
 }
-export function forgeDiagram(circuit,{selection=null}={}){
- const svg=drawCircuit(circuit,{selection}),crossings=visualCrossings(circuit);
+export function forgeDiagram(circuit,{selection=null,filter='all'}={}){
+ const svg=drawCircuit(circuit,{selection,filter}),crossings=visualCrossings(circuit);
  const hops=crossings.map(({x,y,colour})=>`<g class="forge-crossing" aria-hidden="true"><circle cx="${x}" cy="${y}" r="8" fill="#f5f5f5"/><path d="M${x-9} ${y}Q${x} ${y-13} ${x+9} ${y}" fill="none" stroke="${colour}" stroke-width="3"/></g>`).join('');
- const contacts=circuit.contacts.map(([from,to])=>{const a=endpoint(circuit,from),b=endpoint(circuit,to);return `<path class="forge-closed-contact" d="M${a.x} ${a.y}Q${(a.x+b.x)/2} ${Math.min(a.y,b.y)-28} ${b.x} ${b.y}" fill="none" stroke="#926f31" stroke-width="3" stroke-dasharray="5 4" aria-hidden="true"><title>${esc(from+' ↔ '+to+' closed')}</title></path>`;}).join('');
+ const contacts=circuit.contacts.map(([from,to])=>{const a=endpoint(circuit,from),b=endpoint(circuit,to);return `<path class="forge-closed-contact" data-route-role="switch" d="M${a.x} ${a.y}Q${(a.x+b.x)/2} ${Math.min(a.y,b.y)-28} ${b.x} ${b.y}" fill="none" stroke="#926f31" stroke-width="3" stroke-dasharray="5 4" aria-hidden="true"><title>${esc(from+' ↔ '+to+' closed')}</title></path>`;}).join('');
  return svg.replace('</svg>',`<g pointer-events="none">${hops}${contacts}</g></svg>`);
 }
