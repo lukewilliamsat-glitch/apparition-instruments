@@ -55,6 +55,7 @@ function updateLabSelection(){
 }
 function renderLab(){
  const report=forgeResponse(circuit),context=$('#forge-response-context'),graph=$('#forge-response-graph'),controls=$('#forge-response-controls'),key=$('#forge-response-key'),assumptions=$('#forge-response-assumptions'),actions=$('#forge-response-actions');
+ for(const button of document.querySelectorAll("[data-lab-pickup]"))button.setAttribute("aria-pressed",String(button.dataset.labPickup===circuit.state.position));
  graph.replaceChildren();assumptions.replaceChildren();controls.hidden=!report.supported;key.hidden=!report.supported;key.querySelector('.forge-response-reference').hidden=!report.reference;
  $('#forge-response-lab').classList.toggle('is-unsupported',!report.supported);
  actions.hidden=report.supported||circuit.state.wiring!=='modern'||circuit.state.position!=='both';
@@ -107,7 +108,7 @@ for(const button of document.querySelectorAll('[data-role-view]'))button.addEven
 });
 for(const button of document.querySelectorAll('[data-trace]'))button.addEventListener('click',()=>choose('terminal',button.dataset.trace));
 for(const button of document.querySelectorAll('[data-forge-mode]'))button.addEventListener('click',()=>setWorkspaceMode(button.dataset.forgeMode));
-for(const button of document.querySelectorAll('[data-analyse]'))button.addEventListener('click',()=>{
- form.querySelector(`input[name="position"][value="${button.dataset.analyse}"]`).click();
+for(const button of document.querySelectorAll('[data-analyse],[data-lab-pickup]'))button.addEventListener('click',()=>{
+ form.querySelector(`input[name="position"][value="${button.dataset.analyse||button.dataset.labPickup}"]`).click();
 });
 render();

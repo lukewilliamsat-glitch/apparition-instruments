@@ -29,6 +29,12 @@ assert.equal(forgeResponse(forgeCircuit({position:'neck'}).circuit).reference,nu
 assert.throws(()=>forgeCircuit({}, {neck:{volume:11,tone:10},bridge:{volume:7,tone:10}}));
 const missing=forgeCircuit({position:'neck'}).circuit;missing.components=missing.components.filter(p=>p.id!=='neckTone');assert.equal(forgeResponse(missing).supported,false);
 assert.equal(defaultControls.neck.volume,7);
+for(const bleed of ['none','prs'])for(const volume of [9.9,10]){
+ const report=forgeResponse(forgeCircuit({position:'neck',bleed},{neck:{volume,tone:6},bridge:{volume:7,tone:8}}).circuit);
+ assert.deepEqual(report.points,frequencyResponse(report.state,201));
+ assert.deepEqual(report.reference,bleed==='none'?null:frequencyResponse({...report.state,type:'none'},201));
+ assert.equal(/effectively inactive at full volume/.test(report.summary),bleed!=='none'&&volume===10);
+}
 
 const html=readFileSync('dist/circuit-forge/index.html','utf8');
 const app=readFileSync('dist/circuit-forge/app.mjs','utf8');
@@ -46,6 +52,8 @@ Object.assign(globalThis,{document:win.document,window:win,MouseEvent:win.MouseE
 await import('../dist/circuit-forge/app.mjs?response-lab-test');
 const $=selector=>win.document.querySelector(selector);
 const pick=(name,value)=>$(`[name="${name}"][value="${value}"]`).click();
+const labPick=value=>$(`[data-lab-pickup="${value}"]`).click();
+const selector=()=>win.document.querySelector('#forge-controls').elements.namedItem('position').value;
 const mode=value=>$(`[data-forge-mode="${value}"]`).click();
 assert(!$('#forge-mode-physical').hidden&&$('#forge-response-lab').hidden,'Physical Circuit is the default workspace');
 assert.match($('#forge-response-summary').textContent,/Both pickups/);
@@ -53,6 +61,7 @@ mode('signal');assert($('#forge-mode-physical').hidden&&!$('#forge-response-lab'
 assert.equal($('[data-forge-mode="signal"]').getAttribute('aria-pressed'),'true');
 assert.equal($('#forge-diagram-title').textContent,'Signal Lab');
 assert(!$('#forge-response-actions').hidden&&$('#forge-response-lab').classList.contains('is-unsupported'));
+assert.equal($('[data-lab-pickup="both"]').getAttribute('aria-pressed'),'true');
 $('[data-analyse="neck"]').click();
 assert.equal(win.document.querySelector('#forge-controls').elements.namedItem('position').value,'neck');
 assert(!$('#forge-response-controls').hidden&&$('#forge-response-graph svg'));
@@ -67,12 +76,29 @@ assert.equal($('#forge-response-volume-value').textContent,'4.5 / 10');
 assert.equal($('#forge-response-tone-value').textContent,'6.2 / 10');
 assert(!$('#forge-response-key').hidden&&!$('#forge-response-key .forge-response-reference').hidden);
 assert.match($('#forge-response-context').textContent,/0.18nF/);
+const neckGraph=$('#forge-response-graph').innerHTML;
+labPick('bridge');assert.equal(selector(),'bridge');assert.equal($('[data-lab-pickup="bridge"]').getAttribute('aria-pressed'),'true');
+assert(!$('#forge-response-controls').hidden&&$('#forge-response-graph svg'));
+assert.notEqual($('#forge-response-graph').innerHTML,neckGraph,'new pickup controls recalculate the response');
+assert.equal($('#forge-response-volume-value').textContent,'7.0 / 10');
+labPick('neck');assert.equal(selector(),'neck');assert.equal($('#forge-response-volume-value').textContent,'4.5 / 10');
+assert.equal($('#forge-response-tone-value').textContent,'6.2 / 10');
+assert.equal($('#forge-response-graph').innerHTML,neckGraph,'returning to neck preserves its controls and response');
+$('#forge-response-volume').value='10';$('#forge-response-volume').dispatchEvent(new win.Event('input',{bubbles:true}));
+assert.match($('#forge-response-summary').textContent,/effectively inactive at full volume/);
+$('#forge-response-volume').value='4.5';$('#forge-response-volume').dispatchEvent(new win.Event('input',{bubbles:true}));
+assert.doesNotMatch($('#forge-response-summary').textContent,/effectively inactive at full volume/);
 const component=$('#forge-parts [data-part="neckVolume"]');component.dispatchEvent(new win.MouseEvent('click',{bubbles:true}));
 assert.match($('#forge-response-selection').textContent,/affects the displayed response/);
 pick('position','both');assert($('#forge-response-controls').hidden);assert(!$('#forge-response-graph svg'));
+labPick('neck');assert.equal(selector(),'neck');assert(!$('#forge-response-controls').hidden);
+labPick('both');assert.equal(selector(),'both');assert($('#forge-response-controls').hidden);
 $('[data-analyse="bridge"]').click();
 assert.equal(win.document.querySelector('#forge-controls').elements.namedItem('position').value,'bridge');
 assert(!$('#forge-response-controls').hidden&&$('#forge-response-graph svg'));
+labPick('both');assert.equal(selector(),'both');assert($('#forge-response-controls').hidden);
+labPick('bridge');assert.equal(selector(),'bridge');assert(!$('#forge-response-controls').hidden);
+assert.equal($('select[name="bleed"]').value,'prs');
 pick('position','neck');assert.equal($('#forge-response-volume-value').textContent,'4.5 / 10');
 mode('physical');assert(!$('#forge-mode-physical').hidden&&$('#forge-response-lab').hidden);
 assert.equal($('#forge-diagram-title').textContent,'Physical circuit');
