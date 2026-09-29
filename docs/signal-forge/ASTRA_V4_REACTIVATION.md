@@ -1,6 +1,6 @@
 # Astra V4 — Circuit Forge reactivation
 
-Status: canonical V3 close-out for a fresh implementation chat. Repository: `lukewilliamsat-glitch/apparition-instruments`, branch `main`. The predecessor checkpoint is `c2a86795b440b39f846d5c77377806a2b600fa1a`. The close-out commit containing this document is the V4 starting point; obtain and verify the **current `main` HEAD** before any implementation. A commit cannot embed its own final SHA. The V3 completion report records that SHA, and a later `main` requires intervening-commit reconciliation rather than reset or overwrite. Production is `https://apparitioninstruments.co.uk/`; production Supabase remains authoritative for business data.
+Status: canonical V3 close-out for a fresh implementation chat. Repository: `lukewilliamsat-glitch/apparition-instruments`, branch `main`. The predecessor checkpoint is `c2a86795b440b39f846d5c77377806a2b600fa1a`. The close-out commit containing this document was the original V4 starting point; obtain and verify the **current `main` HEAD** before any implementation and reconcile later HQ documentation commits rather than resetting or overwriting them. Production is `https://apparitioninstruments.co.uk/`; production Supabase remains authoritative for business data.
 
 ## Product direction and shared core
 
@@ -12,37 +12,68 @@ Established foundations should not be reopened without regression evidence: the 
 
 ## Current visual acceptance and debt
 
-Luke considers the shared diagram substantially improved, **not visually finished**. The immediate V4 priority is **desktop workbench visual design and user experience**. Develop intuitive interaction and professional desktop presentation first. Mobile, responsive and accessibility final polish remains necessary at V1 close-out; do not prioritise it over the desktop workbench now. Luke owns rendered visual acceptance; do not claim it from tests or perform routine browser QA.
+Luke considers the shared diagram substantially improved, **not visually finished**. The immediate V4 priority is **desktop workbench visual design and user experience**, with physical wiring composition now identified as the highest-value diagram correction. Mobile, responsive and accessibility final polish remains necessary at V1 close-out; do not prioritise it over the desktop workbench now. Luke owns rendered visual acceptance; do not claim it from tests or perform routine browser QA.
 
 **Diagram debt:** remaining volume-control bends and short doglegs; broader channel planning; deliberate ground trunks and same-net convergence; graph-backed off-terminal junctions; clean approaches around pots, pickups, selector/output and component satellites such as tone capacitors and treble bleeds; final junction/crossing visual grammar; practical label clearance. Avoid family-specific coordinate patches and keep conductive truth separate from drawing geometry.
 
+A key cause of the remaining spaghetti is now explicit: the physical diagram sometimes visualises conductive-net equivalence rather than the real conductor and solder termination a builder should make. The canonical correction is defined in `PHYSICAL_WIRING_COMPOSITION.md`. **Electrical net truth, physical conductor identity and physical termination are distinct concepts.** The router should receive intentional physical wires/terminations rather than being expected to infer assembly practice from the conductive graph alone.
+
 **Workbench debt:** stronger professional hierarchy; less generic form-panel appearance; consolidated diagram controls; contextual actions for the selected object; clearer Configure / Explore / Understand relationship without rows of unrelated buttons; consider progressive Circuit / Response / Compare modes; useful circuit summary/specification, component intelligence, inspection-panel polish and print/export presentation. These are design directions, not an instruction to redesign in one pass.
+
+## Physical Wiring Composition — next substantial V4 implementation
+
+`docs/signal-forge/PHYSICAL_WIRING_COMPOSITION.md` is the canonical implementation specification for the next substantial V4 diagram pass. Read it before implementation. Do not redesign its product decisions during the engineering pass.
+
+The central rules are:
+
+- physical pickup conductors terminate at their real component terminals rather than prematurely merging into another same-net route;
+- normal pickup series links are shown as short local joins where supported;
+- pickup coil-ground and shield/drain remain distinct conductors but may share an authorised local pot-casing solder point;
+- a pot lug intentionally grounded to its own casing should use a compact bent-lug or short-jumper representation rather than a long independent ground branch;
+- pot casings may act as intentional local ground hubs only where physical termination semantics authorise that behaviour;
+- the remaining common ground should be composed as a deliberate physical bus/harness, not as one sprawling route per grounded object;
+- physical-wire selection and electrical path tracing remain distinct interaction concepts;
+- circuit topology and conductive truth must not be changed merely to obtain a cleaner drawing.
+
+For the approved Seymour Duncan standard four-conductor reference behaviour: Black is hot and should terminate at the appropriate volume input lug; Red + White form the local series join; Green + Bare terminate locally at the intended volume-pot casing solder point, while Green and Bare remain semantically distinct.
+
+This work should materially simplify the current Les Paul reference without introducing Les-Paul-only coordinates or a separate routing engine.
+
+## Shared manufacturer conductor UX
+
+Circuit Forge V1 should now consume the same shared manufacturer/conductor mapping authority already specified in `WIRING_SEMANTICS.md` and used by the Wiring Diagram Generator. Do not build a Forge-local manufacturer table.
+
+Forge should expose verified conductor profiles as physical presentation/inspection metadata while preserving topology invariance. The shared architecture remains per-pickup and must not block mixed-brand neck/bridge configurations. Generic / Semantic remains first-class. Fender still requires a verified family/model rather than a guessed universal brand mapping. Do not re-research the approved mappings during this pass.
+
+Manufacturer colours and physical composition reinforce one another: conductor colours identify the real pickup wires; the physical-termination model determines where those conductors are actually soldered.
 
 ## Remaining V1 direction
 
-Professional desktop workbench visual system and contextual inspection; final diagram composition; manufacturer conductor profiles and later Forge conductor UX; shared selected-network response analysis; circuit comparison; summary/component intelligence; exact supported product and kit handoff refinement; SVG/print polish; then additional supported families after the Les Paul architecture is accepted. Classic Telecaster is the next generalisation proof, followed by bounded Strat and validated PRS work. Finish mobile/accessibility and V1 release polish toward close-out. Build Mode, saved circuits, measured physical instances, Your Circuit, QR access and nominal-versus-actual comparison remain later scope.
+After the physical wiring/composition and manufacturer-conductor work reaches Luke's rendered acceptance, continue the professional desktop workbench visual system and contextual inspection, then shared selected-network response analysis, circuit comparison, summary/component intelligence, exact supported product and kit handoff refinement, SVG/print polish, and additional supported families after the Les Paul architecture is accepted. Classic Telecaster remains the next generalisation proof, followed by bounded Strat and validated PRS work. Finish mobile/accessibility and V1 release polish toward close-out.
+
+V2 Guided Build, saved circuits/guitars, measured physical instances, Circuit Passport, Fault Finder and QR access are recorded separately in `V2_PRODUCT_VISION.md` and must not displace V1 work.
 
 Manufacturer profiles are specified in `WIRING_SEMANTICS.md`: Generic, Seymour Duncan, DiMarzio, Gibson, Fender, Tonerider and Warman have different approved/support states and applicability. In particular, do not infer a universal Fender mapping. Physical conductors map to semantic pickup terminals and never create separate electrical topology. The shared API should allow independent neck/bridge profiles and mixed brands. Consume the canonical provenance and mapping details; do not re-research or guess them.
 
 Response analysis belongs in V1. Reuse the Designer's validated calculation architecture through a shared boundary. Initial Forge analysis should be described as a **selected supported pickup/volume/network response** or equivalent. Never claim a complete Les Paul 2V2T frequency response until a multi-pickup, selector and loading model is independently validated.
 
-## Recommended early V4 sequence
+## Recommended V4 sequence
 
 This is a recommendation, not an immutable phase contract:
 
-1. Desktop Workbench Visual System and UX refinement.
-2. Diagram Composition V4 within that accepted visual language.
-3. Shared Manufacturer Wiring Intelligence.
-4. Forge manufacturer/conductor UX.
-5. Shared Designer response-engine extraction.
-6. Forge selected-network Response experience.
-7. Comparison, circuit summary, product/kit and export/print polish.
-8. Classic Telecaster as the next shared-architecture proof.
-9. Strat and validated PRS expansion.
-10. Mobile, accessibility and final V1 release close-out.
+1. Physical Wiring Composition and shared manufacturer conductor UX, while preserving the accepted shared router/renderer architecture.
+2. Desktop Workbench Visual System and contextual UX refinement around the improved physical diagram.
+3. Shared Designer response-engine extraction.
+4. Forge selected-network Response experience.
+5. Comparison, circuit summary, product/kit and export/print polish.
+6. Classic Telecaster as the next shared-architecture proof.
+7. Strat and validated PRS expansion.
+8. Mobile, accessibility and final V1 release close-out.
+
+If physical ground-bus composition proves to require an unexpectedly large graph-layout rewrite, implement the safest coherent shared physical-termination foundation first and report the next bounded step. Do not allow scope to explode and do not fall back to family-specific coordinate patches.
 
 ## Fresh-chat instruction
 
-“Continue Apparition Instruments development from canonical GitHub `main`. Read `docs/signal-forge/ASTRA_V4_REACTIVATION.md`, verify current `main` and reconcile any commits after the V3 close-out, then execute only the next explicitly requested bounded pass. Do not repeat historical architecture discovery.”
+“Continue Apparition Instruments development from canonical GitHub `main`. Read `docs/signal-forge/ASTRA_V4_REACTIVATION.md`, verify current `main` and reconcile any later HQ documentation commits, then execute only the next explicitly requested bounded pass. For the next substantial diagram pass, read `docs/signal-forge/PHYSICAL_WIRING_COMPOSITION.md` and the relevant portions of `WIRING_SEMANTICS.md`. Do not repeat historical architecture discovery.”
 
-Read `V1_EXPERIENCE_CONTRACT.md`, `V1_CONTRACT.md`, `WIRING_SEMANTICS.md`, `ARCHITECTURE.md` and immediately relevant source sections only as required by that specific pass. `NEXT_IMPLEMENTATION.md` records an older proposed order: its crossing-polish item is complete and its manufacturer-first ordering is superseded by Luke's desktop-first V4 priority. Do not implement from that older checklist without a current brief. No production Order, payment, refund, email, Auth, Contact, inventory or business-data mutation is authorised by this reactivation document.
+Read `V1_EXPERIENCE_CONTRACT.md`, `V1_CONTRACT.md`, `WIRING_SEMANTICS.md`, `ARCHITECTURE.md` and immediately relevant source sections only as required by that specific pass. `NEXT_IMPLEMENTATION.md` records an older proposed order and must not override this current V4 direction. No production Order, payment, refund, email, Auth, Contact, inventory or business-data mutation is authorised by this reactivation document.
