@@ -8,7 +8,7 @@ export const layoutInfo={
 export function extraCircuit(state,types){
  const components=[],connections=[],contacts=[],isStrat=state.guitar==='strat',isPRS=state.guitar==='prs';
  const add=(id,type,label,x,y,extra={})=>components.push({id,type,label,x,y,terminals:types[type],...extra});
- const wire=(id,from,to,category='signal',route=[])=>connections.push({id,from,to,category,route});
+ const wire=(id,from,to,category='signal',route=[],extra={})=>connections.push({id,from,to,category,route,...extra});
  const names=isStrat?['neck','middle','bridge']:['neck','bridge'];
  for(const [i,ch] of names.entries()){
   const y=160+i*(isStrat?265:430);add(ch+'Pickup',isPRS?'humbucker':'singlecoil',ch.toUpperCase()+' PICKUP',55,y,{value:isPRS?'4-conductor humbucker':'Passive single coil',channel:ch});
@@ -71,12 +71,12 @@ export function extraCircuit(state,types){
  if(state.shielding==='yes')wire('shieldEarth','shielding.ground','neckTone.case','ground',[[560,1150],[560,932]]);
  if(state.bleed!=='none'){
   add('masterBleedCap','capacitor','TREBLE BLEED',940,360,{value:state.bleed==='prs'?'180pF':'1nF'});
-  wire('bleedIn','masterVolume.lug3','masterBleedCap.a','tone',[[865,622],[865,360]]);
-  wire('bleedOut','masterBleedCap.b','masterVolume.lug2','tone',[[1040,360],[1040,660],[940,660]]);
+  wire('bleedIn','masterVolume.lug3','masterBleedCap.a','tone',[[865,622],[865,360]],{network:'auxiliary'});
+  wire('bleedOut','masterBleedCap.b','masterVolume.lug2','tone',[[1040,360],[1040,660],[940,660]],{network:'auxiliary'});
   if(state.bleed==='duncan'){
    add('masterBleedResistor','resistor','BLEED RESISTOR',940,285,{value:'150kΩ'});
-   wire('bleedRIn','masterBleedCap.a','masterBleedResistor.a','tone',[[875,360],[875,285]]);
-   wire('bleedROut','masterBleedCap.b','masterBleedResistor.b','tone',[[1010,360],[1010,285]]);
+   wire('bleedRIn','masterBleedCap.a','masterBleedResistor.a','tone',[[875,360],[875,285]],{network:'auxiliary'});
+   wire('bleedROut','masterBleedCap.b','masterBleedResistor.b','tone',[[1010,360],[1010,285]],{network:'auxiliary'});
   }
  }
  return {state,components,connections,contacts};

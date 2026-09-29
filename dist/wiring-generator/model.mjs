@@ -46,12 +46,12 @@ export function makeCircuit(value={}){
   wire(ch+'Cases',ch+'Volume.case',ch+'Tone.case','ground',[[520,y+152],[520,y+320],[970,y+320],[970,y+152]]);
   if(state.bleed!=='none'){
    add(ch+'BleedCap','capacitor',title+' TREBLE BLEED',440,y-20,{channel:ch,value:state.bleed==='prs'?'180pF':'1nF'});
-   wire(ch+'BleedIn',ch+'Volume.lug3',ch+'BleedCap.a','tone',[[360,y+212],[360,y-20]]);
-   wire(ch+'BleedOut',ch+'BleedCap.b',ch+'Volume.lug2','tone',[[535,y-20],[535,y+230],[440,y+230]]);
+   wire(ch+'BleedIn',ch+'Volume.lug3',ch+'BleedCap.a','tone',[[360,y+212],[360,y-20]],{network:'auxiliary'});
+   wire(ch+'BleedOut',ch+'BleedCap.b',ch+'Volume.lug2','tone',[[535,y-20],[535,y+230],[440,y+230]],{network:'auxiliary'});
    if(state.bleed==='duncan'){
     add(ch+'BleedResistor','resistor',title+' BLEED RESISTOR',440,y-80,{channel:ch,value:'150kΩ'});
-    wire(ch+'ResistorIn',ch+'BleedCap.a',ch+'BleedResistor.a','tone',[[375,y-20],[375,y-80]]);
-    wire(ch+'ResistorOut',ch+'BleedCap.b',ch+'BleedResistor.b','tone',[[510,y-20],[510,y-80]]);
+    wire(ch+'ResistorIn',ch+'BleedCap.a',ch+'BleedResistor.a','tone',[[375,y-20],[375,y-80]],{network:'auxiliary'});
+    wire(ch+'ResistorOut',ch+'BleedCap.b',ch+'BleedResistor.b','tone',[[510,y-20],[510,y-80]],{network:'auxiliary'});
    }
   }
  }

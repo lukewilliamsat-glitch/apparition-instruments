@@ -3,7 +3,7 @@ const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 const text=(x,y,value,cls='',anchor='middle')=>`<text x="${x}" y="${y}" class="${cls}" text-anchor="${anchor}">${esc(value)}</text>`;
 import {visuals} from './components.mjs';
 export {visuals};
-import {routeDiagram} from './routing.mjs';
+import {routeDiagram,routeSemantics} from './routing.mjs';
 const categoryColours={signal:'#303b43',ground:'#7a8187',tone:'#ad2929',switching:'#926f31'};
 function isActive(c,kind,id,selection,filter){
  if(selection?.kind==='path'){const refs=new Set(selection.refs);if(kind==='wire'){const wire=c.connections.find(w=>w.id===id);return refs.has(wire.from)&&refs.has(wire.to);}return [...refs].some(ref=>ref.startsWith(id+'.'));}
@@ -14,7 +14,7 @@ function isActive(c,kind,id,selection,filter){
  return true;
 }
 export function drawCircuit(c,{selection=null,filter='all',exporting=false,view='full'}={}){
- const routes=routeDiagram(c);
+ const routes=routeDiagram(c),semantics=routeSemantics(c);
  const codes=colourCodes[c.state.colours];
  const meta=`${layoutInfo[c.state.guitar].label} / ${c.state.wiring.toUpperCase()} / SELECTOR ${c.state.position.toUpperCase()}`;
  const labelLayer=[];
@@ -22,8 +22,8 @@ export function drawCircuit(c,{selection=null,filter='all',exporting=false,view=
  const bodies=c.components.map(part=>`<g class="component ${part.existing?'not-supplied':'supplied'} ${isActive(c,'component',part.id,selection,filter)?'':'muted'}" transform="translate(${part.x} ${part.y})" data-component="${part.id}" ${exporting?'':`tabindex="0" role="button" aria-label="Inspect ${esc(part.label)}"`}><title>${esc(part.label+' / '+part.value)}</title>${visuals[part.type](part).replace(/<text[\s\S]*?<\/text>/g,label=>{labelLayer.push(`<g transform="translate(${part.x} ${part.y})" class="${part.existing?'not-supplied':''} ${isActive(c,'component',part.id,selection,filter)?'':'muted'}">${label}</g>`);return '';})}</g>`).join('');
  const contacts=c.contacts.filter(([a])=>['blade','superswitch'].includes(endpoint(c,a).component.type)).map(([a,b])=>{const p=endpoint(c,a),q=endpoint(c,b);return `<path stroke="#926f31" stroke-width="2" stroke-dasharray="4 3" fill="none" d="M${p.x} ${p.y}V${p.y+45}H${q.x}V${q.y}"/>`;}).join('');
  const wires=c.connections.map(w=>{
-  const a=endpoint(c,w.from),b=endpoint(c,w.to),points=routes.get(w.id),d=points.map((p,i)=>(i?'L':'M')+p.join(' ')).join(' '),active=isActive(c,'wire',w.id,selection,filter),colour=w.conductor?codes.wires[w.conductor][0]:categoryColours[w.category];
-  return `<g class="wire ${(w.supplied===false||w.supplied===undefined&&(a.component.existing||b.component.existing))?'not-supplied':'supplied'} ${active?'':'muted'}" data-wire="${w.id}" ${exporting?'':`tabindex="0" role="button" aria-label="Trace ${esc(a.component.label+' '+a.terminal.label+' to '+b.component.label+' '+b.terminal.label)}"`}><title>${esc(w.from+' → '+w.to)}</title><path class="wire-clear" d="${d}"/><path class="wire-line ${w.conductor==='shield'?'bare-wire':''}" stroke="${colour||categoryColours[w.category]}" d="${d}"/>${exporting?'':`<path class="wire-hit" d="${d}"/>`}</g>`;
+  const a=endpoint(c,w.from),b=endpoint(c,w.to),points=routes.get(w.id),d=points.map((p,i)=>(i?'L':'M')+p.join(' ')).join(' '),active=isActive(c,'wire',w.id,selection,filter),colour=w.conductor?codes.wires[w.conductor][0]:categoryColours[w.category],semantic=semantics.get(w.id);
+  return `<g class="wire ${(w.supplied===false||w.supplied===undefined&&(a.component.existing||b.component.existing))?'not-supplied':'supplied'} ${active?'':'muted'}" data-wire="${esc(w.id)}" data-route-role="${semantic.role}" data-route-net="${esc(semantic.net)}" ${exporting?'':`tabindex="0" role="button" aria-label="Trace ${esc(a.component.label+' '+a.terminal.label+' to '+b.component.label+' '+b.terminal.label)}"`}><title>${esc(w.from+' → '+w.to)}</title><path class="wire-clear" d="${d}"/><path class="wire-line ${w.conductor==='shield'?'bare-wire':''}" stroke="${colour||categoryColours[w.category]}" d="${d}"/>${exporting?'':`<path class="wire-hit" d="${d}"/>`}</g>`;
  }).join('');
  const terminals=c.components.map(part=>`<g class="anchors ${part.existing?'not-supplied':''} ${isActive(c,'component',part.id,selection,filter)?'':'muted'}">${Object.entries(part.terminals).map(([key,t])=>{const x=part.x+t.x,y=part.y+t.y,ref=part.id+'.'+key,count=c.connections.filter(w=>w.from===ref||w.to===ref).length;return `${count?`<ellipse class="solder-joint" cx="${x}" cy="${y}" rx="${key==='case'?10:7}" ry="${key==='case'?7:6}"/>`:''}${count>1?`<circle class="junction" cx="${x}" cy="${y}" r="3"/>`:''}<circle class="terminal" cx="${x}" cy="${y}" r="5" data-terminal="${part.id+'.'+key}" ${exporting?'':`tabindex="0" role="button" aria-label="Inspect ${esc(part.label+' '+t.label)}"`}><title>${esc(part.label+' / '+t.label)}</title></circle>`;}).join('')}</g>`).join('');
  const conductors=c.components.filter(p=>['humbucker','singlecoil','p90'].includes(p.type)).map(p=>`<g class="${p.existing?'not-supplied':''} ${isActive(c,'component',p.id,selection,filter)?'':'muted'}">`+Object.keys(p.terminals).map(key=>{const t=p.terminals[key],colour=p.type==='humbucker'?codes.wires[key][0]:categoryColours[key==='hot'?'signal':'ground'];return `<path class="pickup-conductor" stroke="${colour}" d="M${p.x+180} ${p.y+118}Q${p.x+185} ${p.y+t.y} ${p.x+t.x} ${p.y+t.y}"/>`;}).join('')+'</g>').join('');

@@ -1,7 +1,16 @@
-// Presentation only: immutable orthogonal routes between semantic terminals.
-// A coarse visibility grid avoids component bodies; penalties separate shared corridors.
+// Presentation only: orthogonal routes between semantic terminals. The circuit
+// graph, not geometry or colour, determines whether two paths are connected.
 const step=10,W=132,H=119;
 const cache=new Map();
+export function routeSemantics(c){
+ const parent=new Map();
+ const root=ref=>{if(!parent.has(ref))parent.set(ref,ref);let p=parent.get(ref);while(p!==parent.get(p))p=parent.get(p);return p;};
+ const join=(a,b)=>{const x=root(a),y=root(b);if(x!==y)parent.set(y,x);};
+ for(const w of c.connections)join(w.from,w.to);
+ for(const [a,b] of c.contacts||[])join(a,b);
+ const role=w=>w.network==='auxiliary'?'auxiliary':w.category==='ground'?'ground':w.category==='signal'?'signal':w.category==='tone'?'tone':w.category==='switching'?'switch':'unknown';
+ return new Map(c.connections.map(w=>[w.id,{net:root(w.from),role:role(w)}]));
+}
 export function componentBounds(p){
  let b;
  if(['pot','pushpull'].includes(p.type))b=[-75,-16,78,p.type==='pushpull'?335:194];
@@ -27,18 +36,29 @@ function port(p,key,b){const t=p.terminals[key],a=[p.x+t.x,p.y+t.y];let q;
 class Heap{constructor(){this.a=[];}push(v){let i=this.a.length;this.a.push(v);while(i){const p=(i-1)>>1;if(this.a[p][0]<=v[0])break;this.a[i]=this.a[p];i=p;}this.a[i]=v;}pop(){const top=this.a[0],v=this.a.pop();if(this.a.length){let i=0;while(i*2+1<this.a.length){let j=i*2+1;if(j+1<this.a.length&&this.a[j+1][0]<this.a[j][0])j++;if(this.a[j][0]>=v[0])break;this.a[i]=this.a[j];i=j;}this.a[i]=v;}return top;}}
 const squash=points=>points.filter((p,i,a)=>!(i&&p[0]===a[i-1][0]&&p[1]===a[i-1][1])).filter((p,i,a)=>!i||i===a.length-1||!((a[i-1][0]===p[0]&&p[0]===a[i+1][0])||(a[i-1][1]===p[1]&&p[1]===a[i+1][1])));
 export function routeDiagram(c){
- const key=JSON.stringify([c.components.map(p=>[p.id,p.type,p.x,p.y,p.terminals,p.productMark]),c.connections.map(w=>[w.id,w.from,w.to,w.route])]);if(cache.has(key))return cache.get(key);
- const bounds=c.components.map(componentBounds),blocked=new Set(),used=new Map(),results=new Map();
+ const key=JSON.stringify([c.components.map(p=>[p.id,p.type,p.x,p.y,p.terminals,p.productMark]),c.connections.map(w=>[w.id,w.from,w.to,w.route,w.category,w.network]),c.contacts]);if(cache.has(key))return cache.get(key);
+ const bounds=c.components.map(componentBounds),blocked=new Set(),occupied=new Map(),results=new Map(),semantics=routeSemantics(c);
  for(const b of bounds)for(let x=Math.ceil((b.l-5)/step);x<=Math.floor((b.r+5)/step);x++)for(let y=Math.ceil((b.t-5)/step);y<=Math.floor((b.b+5)/step);y++)blocked.add(y*W+x);
  for(const p of c.components)for(const t of Object.values(p.terminals)){const x=p.x+t.x,y=p.y+t.y;for(let gx=Math.ceil((x-6)/step);gx<=Math.floor((x+6)/step);gx++)for(let gy=Math.ceil((y-6)/step);gy<=Math.floor((y+6)/step);gy++)blocked.add(gy*W+gx);}
  const endpoint=ref=>{const [id,k]=ref.split('.'),p=c.components.find(p=>p.id===id);return port(p,k,bounds.find(b=>b.id===id));};
- for(const w of c.connections){const a=endpoint(w.from),b=endpoint(w.to),start=a.at(-1).map(v=>v/step),end=b.at(-1).map(v=>v/step),sid=start[1]*W+start[0],eid=end[1]*W+end[0],open=new Heap(),dist=new Map([[sid,0]]),previous=new Map();open.push([0,sid,-1]);let found=false;
+ const penalty=(id,dir,semantic)=>{
+  let cost=0;const x=id%W,y=Math.floor(id/W);
+  for(const [otherDir,other] of occupied.get(id)||[]){
+   // A perpendicular intersection is a crossing, not a graph junction.
+   cost+=otherDir===dir?(other.net===semantic.net?5:24):8;
+  }
+  // Adjacent parallel runs need a whole clear grid lane where possible.
+  for(const near of dir===0?[id-W,id+W]:[id-1,id+1])for(const [otherDir,other] of occupied.get(near)||[])
+   if(otherDir===dir)cost+=other.net===semantic.net?1.5:7;
+  return cost;
+ };
+ for(const w of c.connections){const a=endpoint(w.from),b=endpoint(w.to),start=a.at(-1).map(v=>v/step),end=b.at(-1).map(v=>v/step),sid=start[1]*W+start[0],eid=end[1]*W+end[0],open=new Heap(),dist=new Map([[sid,0]]),previous=new Map(),semantic=semantics.get(w.id);open.push([0,sid,-1]);let found=false;
   while(open.a.length){const [,id,direction]=open.pop();if(id===eid){found=true;break;}const x=id%W,y=Math.floor(id/W);
    for(const [dx,dy,dir] of [[1,0,0],[-1,0,0],[0,1,1],[0,-1,1]]){const nx=x+dx,ny=y+dy,nid=ny*W+nx;if(nx<2||nx>W-3||ny<6||ny>H||((blocked.has(nid)&&nid!==eid&&nid!==sid)))continue;
-    const cost=dist.get(id)+1+(direction!==-1&&direction!==dir?.55:0)+(used.get(nid)||0)*2.5;if(cost>=(dist.get(nid)??Infinity))continue;dist.set(nid,cost);previous.set(nid,id);open.push([cost+Math.abs(nx-end[0])+Math.abs(ny-end[1]),nid,dir]);
+    const cost=dist.get(id)+1+(direction!==-1&&direction!==dir?.55:0)+penalty(nid,dir,semantic);if(cost>=(dist.get(nid)??Infinity))continue;dist.set(nid,cost);previous.set(nid,[id,dir]);open.push([cost+Math.abs(nx-end[0])+Math.abs(ny-end[1]),nid,dir]);
    }
   }
-  let middle=[];if(found){let id=eid;while(id!==sid){middle.push([id%W*step,Math.floor(id/W)*step]);used.set(id,(used.get(id)||0)+1);id=previous.get(id);}middle.push(a.at(-1));middle.reverse();}
+  let middle=[];if(found){let id=eid;while(id!==sid){middle.push([id%W*step,Math.floor(id/W)*step]);const [prior,dir]=previous.get(id);if(!occupied.has(id))occupied.set(id,[]);occupied.get(id).push([dir,semantic]);id=prior;}middle.push(a.at(-1));middle.reverse();}
   else { // Preserve a legible original path if a crowded legacy layout has no free grid corridor.
    const raw=[a[0],...w.route,b[0]];for(const q of raw){const p=middle.at(-1);if(p&&p[0]!==q[0]&&p[1]!==q[1])middle.push([q[0],p[1]]);middle.push(q);}
   }
