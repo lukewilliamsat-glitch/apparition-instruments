@@ -2,6 +2,7 @@ import {forgeCircuit} from './model.mjs';
 import {forgeDiagram,visualCrossings} from './presentation.mjs';
 import {endpoint} from '../wiring-generator/model.mjs';
 import {selectorReport,changeReport,inspectSelection,selectionHighlight,terminalName} from './workbench.mjs';
+import {pickupConventions} from '../wiring-generator/colours.mjs';
 
 const $=query=>document.querySelector(query),form=$('#forge-controls'),mount=$('#forge-diagram'),viewport=$('#forge-viewport');
 const el=(tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
@@ -17,9 +18,13 @@ function updateSelection(){
  if(!info){selection=null;box.append(el('p','Choose a part from the list or select a terminal or wire in the diagram. Trace buttons reveal a conductive segment.'));}
  else {
   box.append(el('h4',info.heading),el('p',info.subtitle));
+  if(info.physical)box.append(el('p',info.physical));
   if(info.kind==='component'){
    box.append(el('p',info.purpose));
    const list=el('ul');for(const t of info.terminals){const item=el('li'),button=el('button',t.label);button.type='button';button.addEventListener('click',()=>choose('terminal',t.ref));item.append(button,document.createTextNode(' · '+(t.connections.length?t.connections.join(' · '):'No external wire')));list.append(item);}box.append(list);
+  }else if(info.kind==='wire'){
+   box.append(el('p',info.summary));
+   const trace=el('button','Trace complete electrical net');trace.type='button';trace.addEventListener('click',()=>choose('terminal',info.ref));box.append(trace);
   }else{
    box.append(el('p',info.summary));
    const label=el('h5','Connections on this segment'),list=el('ul');for(const wire of info.connections){const item=el('li'),button=el('button',wire.description);button.type='button';button.addEventListener('click',()=>choose('wire',wire.id));item.append(button);list.append(item);}box.append(label,list);
@@ -45,7 +50,7 @@ function updateSelector(){
 function updateChanges(previous){const report=changeReport(previous,circuit),box=$('#forge-change');box.replaceChildren(el('h4',report.heading));const list=el('ul');for(const line of report.lines)list.append(el('li',line));box.append(list);}
 function render(){
  try{
-  const choices=Object.fromEntries(['wiring','bleed','neckCap','bridgeCap','position'].map(key=>[key,form.elements.namedItem(key).value]));
+  const choices=Object.fromEntries(['wiring','bleed','neckCap','bridgeCap','position','neckProfile','bridgeProfile'].map(key=>[key,form.elements.namedItem(key).value]));
   const previous=circuit,result=forgeCircuit(choices);circuit=result.circuit;
   if(selection&&!inspectSelection(circuit,selection))selection=null;
   form.elements.bleed.disabled=choices.wiring==='50s';$('#forge-kit').href=result.kitURL;$('#forge-kit').hidden=!result.kitURL;
@@ -56,6 +61,7 @@ function render(){
   $('#forge-status').textContent='Unsupported circuit choice: '+error.message;}
 }
 form.addEventListener('change',event=>{if(event.target.name==='wiring'&&event.target.value==='50s')form.elements.bleed.value='none';render();});
+for(const channel of ['neck','bridge']){const select=form.elements.namedItem(channel+'Profile');for(const [id,profile] of Object.entries(pickupConventions)){const option=el('option',profile.label);option.value=id;select.append(option);}}
 form.addEventListener('reset',()=>setTimeout(()=>{selection=null;render();},0));
 mount.addEventListener('click',event=>{const target=event.target.closest('[data-terminal],[data-wire],[data-component]');if(!target)return;if(target.dataset.terminal)choose('terminal',target.dataset.terminal);else if(target.dataset.wire)choose('wire',target.dataset.wire);else choose('component',target.dataset.component);});
 mount.addEventListener('keydown',event=>{if(!['Enter',' '].includes(event.key))return;const target=event.target.closest('[data-terminal],[data-wire],[data-component]');if(target){event.preventDefault();target.dispatchEvent(new MouseEvent('click',{bubbles:true}));}});

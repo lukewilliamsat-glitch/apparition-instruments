@@ -1,5 +1,6 @@
 import {endpoint,inspectComponent,net} from '../wiring-generator/model.mjs';
 import {pathDetails,circuitChanges} from '../wiring-generator/inspection.mjs';
+import {composePhysicalWiring,pickupProfile} from '../wiring-generator/physical.mjs';
 
 export const terminalName=(circuit,ref)=>{const {component,terminal}=endpoint(circuit,ref);return `${component.label} / ${terminal.label}`;};
 function componentRole(part){
@@ -33,6 +34,7 @@ export function changeReport(previous,current){
  for(const part of previous.components)if(!current.components.some(x=>x.id===part.id))lines.push(`Removed ${part.label}.`);
  const prior=selectorReport(previous),next=selectorReport(current);
  if(prior.channels.map(x=>x.active).join(',')!==next.channels.map(x=>x.active).join(','))lines.push(`Selector now connects ${next.channels.filter(x=>x.active).map(x=>x.label).join(' and ')} volume output to the jack.`);
+ for(const channel of ['neck','bridge'])if(previous.state.pickupProfiles?.[channel]!==current.state.pickupProfiles?.[channel])lines.push(`${channel==='neck'?'Neck':'Bridge'} pickup conductors now use ${pickupProfile(current,channel+'Pickup').label}. Circuit connections are unchanged.`);
  return {heading:lines.length?'What changed':'Circuit unchanged',lines:lines.length?lines:['The selected choices leave the circuit unchanged.']};
 }
 export function inspectSelection(circuit,selection){
@@ -41,18 +43,27 @@ export function inspectSelection(circuit,selection){
   const part=inspectComponent(circuit,selection.id);if(!part)return null;
   return {kind:'component',heading:part.label,subtitle:part.value||part.type||'',purpose:componentRole({...part,type:circuit.components.find(x=>x.id===selection.id).type,role:circuit.components.find(x=>x.id===selection.id).role}),terminals:part.terminals.map(t=>({...t,connected:t.connections.length>0})),component:part};
  }
- let ref=selection.ref,wire;
+ const physical=composePhysicalWiring(circuit);
  if(selection.kind==='wire'){
-  wire=circuit.connections.find(w=>w.id===selection.id);if(!wire)return null;ref=wire.from;
+  const conductor=physical.conductors.get(selection.id);if(!conductor)return null;
+  const profile=conductor.pickup?pickupProfile(circuit,conductor.pickup):null;
+  const roleNames={hot:'Hot',linkA:'Series link A',linkB:'Series link B',ground:'Coil ground',shield:'Shield / drain'};
+  const attached=conductor.join?physical.terminations.get(conductor.join).filter(id=>id!==conductor.id).map(id=>physical.conductors.get(id).colour||id):[];
+  const destination=terminalName(circuit,conductor.to);
+  const summary=conductor.kind==='local-series'?`Join ${conductor.seriesColours.join(' + ')} locally and insulate the connection.`:conductor.kind==='local-casing-bond'?'Bond this lug directly to its own casing.':`Physical termination: ${destination}.${attached?.length?' Shared solder point with '+attached.join(', ')+'.':''}`;
+  const detail=pathDetails(circuit,conductor.from);
+  return {kind:'wire',heading:conductor.seriesColours?.join(' + ')||conductor.colour||selection.id,subtitle:[conductor.pickup&&endpoint(circuit,conductor.from).component.label,profile?.label,conductor.kind==='local-series'?'Local series join':roleNames[conductor.role]].filter(Boolean).join(' · ')||'Physical conductor',physical:`${terminalName(circuit,conductor.from)} → ${destination}`,ref:conductor.from,summary,references:detail.references,connections:detail.wires.map(w=>({id:w.id,from:w.from,to:w.to,description:`${terminalName(circuit,w.from)} to ${terminalName(circuit,w.to)}`})),contacts:detail.contacts};
  }
+ let ref=selection.ref,wire;
  if(!ref)return null;
  try{endpoint(circuit,ref);}catch{return null;}
  const detail=pathDetails(circuit,ref),members=new Set(detail.references),output=members.has('jack.tip');
  const connections=detail.wires.map(w=>({id:w.id,from:w.from,to:w.to,description:`${terminalName(circuit,w.from)} to ${terminalName(circuit,w.to)}`}));
- return {kind:selection.kind,heading:selection.kind==='wire'?`${terminalName(circuit,wire.from)} → ${terminalName(circuit,wire.to)}`:terminalName(circuit,ref),subtitle:selection.kind==='wire'?'External wire':'Conductive terminal path',ref,references:detail.references,connections,contacts:detail.contacts.map(([a,b])=>`${terminalName(circuit,a)} to ${terminalName(circuit,b)}`),output,summary:`${connections.length} external ${connections.length===1?'connection':'connections'} and ${detail.contacts.length} closed switch ${detail.contacts.length===1?'contact':'contacts'} in this conductive segment.${output?' This segment reaches the output jack.':''}`};
+ return {kind:selection.kind,heading:terminalName(circuit,ref),subtitle:'Conductive terminal path',physical:physical.terminations.get(ref)?.length>1?'Physical conductors at this solder point: '+physical.terminations.get(ref).map(id=>physical.conductors.get(id).colour||id).join(', '):null,ref,references:detail.references,connections,contacts:detail.contacts.map(([a,b])=>`${terminalName(circuit,a)} to ${terminalName(circuit,b)}`),output,summary:`${connections.length} external ${connections.length===1?'connection':'connections'} and ${detail.contacts.length} closed switch ${detail.contacts.length===1?'contact':'contacts'} in this conductive segment.${output?' This segment reaches the output jack.':''}`};
 }
 export function selectionHighlight(circuit,selection){
  const info=inspectSelection(circuit,selection);if(!info)return null;
  if(info.kind==='component')return {kind:'component',id:selection.id};
+ if(info.kind==='wire')return {kind:'physical-wire',id:selection.id};
  return {kind:'path',refs:info.references};
 }

@@ -2,6 +2,7 @@
 // graph, not geometry or colour, determines whether two paths are connected.
 const step=10,W=132,H=119;
 const cache=new Map();
+import {composePhysicalWiring} from './physical.mjs';
 export function routeSemantics(c){
  const parent=new Map();
  const root=ref=>{if(!parent.has(ref))parent.set(ref,ref);let p=parent.get(ref);while(p!==parent.get(p))p=parent.get(p);return p;};
@@ -49,7 +50,7 @@ class Heap{constructor(){this.a=[];}push(v){let i=this.a.length;this.a.push(v);w
 const squash=points=>points.filter((p,i,a)=>!(i&&p[0]===a[i-1][0]&&p[1]===a[i-1][1])).filter((p,i,a)=>!i||i===a.length-1||!((a[i-1][0]===p[0]&&p[0]===a[i+1][0])||(a[i-1][1]===p[1]&&p[1]===a[i+1][1])));
 export function routeDiagram(c){
  const key=JSON.stringify([c.components.map(p=>[p.id,p.type,p.x,p.y,p.terminals,p.productMark]),c.connections.map(w=>[w.id,w.from,w.to,w.route,w.category,w.network]),c.contacts]);if(cache.has(key))return cache.get(key);
- const bounds=c.components.map(componentBounds),blocked=new Set(),reserved=new Map(),occupied=new Map(),occupiedEdges=new Map(),results=new Map(),semantics=routeSemantics(c);
+ const physical=composePhysicalWiring(c),bounds=c.components.map(componentBounds),blocked=new Set(),reserved=new Map(),occupied=new Map(),occupiedEdges=new Map(),results=new Map(),semantics=routeSemantics(c);
  for(const b of bounds)for(let x=Math.ceil((b.l-5)/step);x<=Math.floor((b.r+5)/step);x++)for(let y=Math.ceil((b.t-5)/step);y<=Math.floor((b.b+5)/step);y++)blocked.add(y*W+x);
  for(const p of c.components)for(const t of Object.values(p.terminals)){const x=p.x+t.x,y=p.y+t.y;for(let gx=Math.ceil((x-6)/step);gx<=Math.floor((x+6)/step);gx++)for(let gy=Math.ceil((y-6)/step);gy<=Math.floor((y+6)/step);gy++)blocked.add(gy*W+gx);}
  // Keep short, adjacent terminal departures clear for their own connections.
@@ -76,18 +77,25 @@ export function routeDiagram(c){
    if(otherDir===dir)cost+=other.net===semantic.net?1.5:3;
   return cost;
  };
- for(const w of c.connections){const a=endpoint(w.from),b=endpoint(w.to),start=a.at(-1).map(v=>v/step),end=b.at(-1).map(v=>v/step),sid=start[1]*W+start[0],eid=end[1]*W+end[0],open=new Heap(),dist=new Map([[sid,0]]),previous=new Map(),semantic=semantics.get(w.id);open.push([0,sid,-1]);let found=false;
+ for(const w of c.connections){const a=endpoint(w.from),b=endpoint(w.to),intent=physical.conductors.get(w.id);
+  if(intent.kind==='local-series'){const p=a[0],q=b[0],x=Math.max(p[0],q[0])+22;results.set(w.id,squash([p,[x,p[1]],[x,q[1]],q]));continue;}
+  if(intent.kind==='pickup-ground'&&intent.join){
+   const p=a[0],q=b[0],shield=intent.role==='shield',x=p[0]+(shield?55:35),y=q[1]+(shield?12:0);
+   results.set(w.id,squash(shield?[p,[x,p[1]],[x,y],[q[0]-12,y],[q[0]-12,q[1]],q]:[p,[x,p[1]],[x,q[1]],q]));continue;
+  }
+  if(intent.kind==='local-casing-bond'){const p=a[0],q=b[0],x=p[0]+12;results.set(w.id,squash([p,[x,p[1]],[x,q[1]],q]));continue;}
+  const start=a.at(-1).map(v=>v/step),end=b.at(-1).map(v=>v/step),sid=start[1]*W+start[0],eid=end[1]*W+end[0],open=new Heap(),dist=new Map([[sid,0]]),previous=new Map(),semantic=semantics.get(w.id);open.push([0,sid,-1]);let found=false;
   const protectedPort=ref=>['pot','pushpull','humbucker','singlecoil','p90'].includes(c.components.find(p=>p.id===ref.split('.')[0])?.type);
   const outward=points=>[Math.sign(points.at(-1)[0]-points.at(-2)[0]),Math.sign(points.at(-1)[1]-points.at(-2)[1])];
   const departure=protectedPort(w.from)?outward(a):null,arrival=protectedPort(w.to)?outward(b):null;
   while(open.a.length){const [,id]=open.pop();if(id===eid){found=true;break;}const x=id%W,y=Math.floor(id/W),direction=previous.get(id)?.[1]??-1,run=previous.get(id)?.[2]??0;
    for(const [dx,dy,dir] of [[1,0,0],[-1,0,0],[0,1,1],[0,-1,1]]){const nx=x+dx,ny=y+dy,nid=ny*W+nx;
-    if((id===sid&&departure&&(dx!==departure[0]||dy!==departure[1]))||(nid===eid&&arrival&&(dx!==-arrival[0]||dy!==-arrival[1]))||nx<2||nx>W-3||ny<6||ny>H||(occupiedEdges.has(edge(id,nid))&&occupiedEdges.get(edge(id,nid))!==semantic.net)||((blocked.has(nid)&&nid!==eid&&nid!==sid))||(reserved.has(nid)&&![...reserved.get(nid)].every(ref=>ref===w.from||ref===w.to)&&nid!==eid&&nid!==sid))continue;
+    if((id===sid&&departure&&(dx!==departure[0]||dy!==departure[1]))||(nid===eid&&arrival&&(dx!==-arrival[0]||dy!==-arrival[1]))||nx<2||nx>W-3||ny<6||ny>H||(occupiedEdges.has(edge(id,nid))&&occupiedEdges.get(edge(id,nid)).net!==semantic.net)||((blocked.has(nid)&&nid!==eid&&nid!==sid))||(reserved.has(nid)&&![...reserved.get(nid)].every(ref=>ref===w.from||ref===w.to)&&nid!==eid&&nid!==sid))continue;
     const turn=direction!==-1&&direction!==dir;
-    const cost=dist.get(id)+2.5+(turn?3+Math.max(0,3-run)*4:0)+penalty(nid,dir,semantic);if(cost>=(dist.get(nid)??Infinity))continue;dist.set(nid,cost);previous.set(nid,[id,dir,turn?1:Math.min(run+1,4)]);open.push([cost+2.5*(Math.abs(nx-end[0])+Math.abs(ny-end[1])),nid,dir]);
+    const cost=dist.get(id)+2.5+(turn?3+Math.max(0,3-run)*4:0)+penalty(nid,dir,semantic)+(occupiedEdges.has(edge(id,nid))?40:0);if(cost>=(dist.get(nid)??Infinity))continue;dist.set(nid,cost);previous.set(nid,[id,dir,turn?1:Math.min(run+1,4)]);open.push([cost+2.5*(Math.abs(nx-end[0])+Math.abs(ny-end[1])),nid,dir]);
    }
   }
-  let middle=[];if(found){let id=eid;while(id!==sid){middle.push([id%W*step,Math.floor(id/W)*step]);const [prior,dir]=previous.get(id);if(!occupied.has(id))occupied.set(id,[]);occupied.get(id).push([dir,semantic]);occupiedEdges.set(edge(id,prior),semantic.net);id=prior;}middle.push(a.at(-1));middle.reverse();}
+  let middle=[];if(found){let id=eid;while(id!==sid){middle.push([id%W*step,Math.floor(id/W)*step]);const [prior,dir]=previous.get(id);if(!occupied.has(id))occupied.set(id,[]);occupied.get(id).push([dir,semantic]);occupiedEdges.set(edge(id,prior),{net:semantic.net,wire:w.id});id=prior;}middle.push(a.at(-1));middle.reverse();}
   else { // Preserve a legible original path if a crowded legacy layout has no free grid corridor.
    const raw=[a[0],...w.route,b[0]];for(const q of raw){const p=middle.at(-1);if(p&&p[0]!==q[0]&&p[1]!==q[1])middle.push([q[0],p[1]]);middle.push(q);}
   }

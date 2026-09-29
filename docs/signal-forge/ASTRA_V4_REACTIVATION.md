@@ -2,6 +2,8 @@
 
 Status: canonical V3 close-out for a fresh implementation chat. Repository: `lukewilliamsat-glitch/apparition-instruments`, branch `main`. The predecessor checkpoint is `c2a86795b440b39f846d5c77377806a2b600fa1a`. The close-out commit containing this document was the original V4 starting point; obtain and verify the **current `main` HEAD** before any implementation and reconcile later HQ documentation commits rather than resetting or overwriting them. Production is `https://apparitioninstruments.co.uk/`; production Supabase remains authoritative for business data.
 
+V4 physical composition implementation checkpoint: the shared physical projection, local pickup and pot-casing terminations, per-pickup manufacturer profiles and Forge conductor inspection are recorded in `ARCHITECTURE.md`. The graph remains electrical authority. Luke's rendered acceptance is pending. The next bounded step after review should address specific observed physical bus/lane or workbench visual issues; do not treat automated geometry checks as aesthetic acceptance.
+
 ## Product direction and shared core
 
 **Circuit Forge is no longer being designed as an enhanced Wiring Diagram Generator. It is being designed as an interactive guitar-electronics workbench.** The Generator primarily answers **“How do I wire this?”** Forge should increasingly answer **“What is my circuit, how does it work, what happens if I change it, and how do I build it?”** The V1 journey is **Configure → See → Understand → Analyse where validated → Build**.

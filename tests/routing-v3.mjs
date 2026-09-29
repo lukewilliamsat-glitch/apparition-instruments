@@ -6,16 +6,16 @@ const circuit=makeCircuit({bleed:'duncan'}),routes=routeDiagram(circuit),roles=r
 const point=(id,index)=>routes.get(id)[index];
 for(const channel of ['neck','bridge']){
  const y=channel==='neck'?382:862;
- const departures=[['ToneFeed',400],['BleedIn',400],['Output',440],['VolumeGround',480]];
+ const departures=[['ToneFeed',400],['BleedIn',400],['Output',440]];
  for(const [suffix,x] of departures){const id=channel+suffix,p=routes.get(id);
   const escape=p.findIndex(([px,py],i)=>i>0&&px===x&&py>=y+88);
   assert(escape>0,`${id} leaves the component before turning`);
   for(let i=1;i<=escape;i++)assert.equal(p[i][0],x,`${id} retains its own escape lane`);
  }
  assert.equal(point(channel+'ToneFeed',1)[0],point(channel+'BleedIn',1)[0],'same terminal shares a justified initial lane');
- assert.notEqual(point(channel+'Output',1)[0],point(channel+'VolumeGround',1)[0],'adjacent terminals receive distinct lanes');
+ assert.equal(point(channel+'VolumeGround',0)[0],482,'grounded lug begins at its own terminal');
 }
-for(const suffix of ['ToneFeed','BleedIn','Output','VolumeGround']){
+for(const suffix of ['ToneFeed','BleedIn','Output']){
  const a=routes.get('neck'+suffix),b=routes.get('bridge'+suffix);
  assert.equal(a[1][0],b[1][0],`${suffix} equivalent local topology keeps the same exit lane`);
  assert(a[1][1]>=382&&b[1][1]>=862,`${suffix} both channels depart outward`);
