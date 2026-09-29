@@ -44,6 +44,8 @@ const wire=inspectSelection(mixed,{kind:'wire',id:'neckGround'});
 assert.match(wire.summary,/Shared solder point with BARE/);
 assert.equal(wire.physicalData.termination,'Casing solder point');
 assert.equal(wire.physicalData.manufacturer,pickupProfile(mixed,'neckPickup').label);
+assert.equal(wire.physicalData.path,'Ground network to output jack sleeve');
+assert.match(wire.summary,/Only this physical conductor is selected/);
 const neck=inspectSelection(mixed,{kind:'component',id:'neckPickup'});
 assert.deepEqual(neck.physicalWiring.map(w=>w.colour),['BLACK','WHITE + RED','GREEN','BARE']);
 assert.equal(neck.physicalWiring.find(w=>w.role==='Series link').termination,'Insulated join');
@@ -52,6 +54,7 @@ assert.deepEqual(selectionHighlight(mixed,{kind:'wire',id:'neckGround'}),{kind:'
 assert.match(inspectSelection(mixed,{kind:'terminal',ref:'neckVolume.case'}).physical,/GREEN.*BARE/);
 const svg=drawCircuit(mixed);assert.match(svg,/data-physical-kind="pickup-hot" data-conductor="BLACK"/);
 assert.match(svg,/data-solder-point="neckVolume.case" data-solder-conductors="[^"]*neckGround neckShield/);
+assert.match(svg,/class="solder-joint casing-solder"[^>]*data-terminal="neckVolume.case"/);
 assert.match(svg,/data-local-bonds="neckVolumeGround"/);
 assert.match(drawCircuit(mixed,{selection:selectionHighlight(mixed,{kind:'wire',id:'neckGround'})}),/data-wire="neckGround"[^>]*data-view-state="selected"/);
 assert.match(drawCircuit(mixed,{selection:{kind:'path',refs:[...terminalPath(mixed,'jack.sleeve') ]}}),/data-wire="neckGround"[^>]*data-view-state="traced"/);

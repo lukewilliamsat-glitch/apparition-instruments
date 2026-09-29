@@ -32,7 +32,7 @@ function updateSelection(){
    box.append(el('p',info.purpose));
    const terminals=el('details'),summary=el('summary','Inspect terminals'),list=el('ul');for(const t of info.terminals){const item=el('li'),button=el('button',t.label);button.type='button';button.addEventListener('click',()=>choose('terminal',t.ref));item.append(button,document.createTextNode(' · '+(t.connections.length?t.connections.join(' · '):'No external wire')));list.append(item);}terminals.append(summary,list);box.append(terminals);
   }else if(info.kind==='wire'){
-   if(info.physicalData){const list=el('dl');list.className='forge-inspection-facts';for(const [label,value] of [['Role',info.physicalData.role],['Destination',info.physicalData.destination],['Termination',info.physicalData.termination]]){const term=el('dt',label),definition=el('dd',value);list.append(term,definition);}box.append(list);}
+   if(info.physicalData){const list=el('dl');list.className='forge-inspection-facts';for(const [label,value] of [['Role',info.physicalData.role],['Destination',info.physicalData.destination],['Termination',info.physicalData.termination],['Electrical path',info.physicalData.path]]){const term=el('dt',label),definition=el('dd',value);list.append(term,definition);}box.append(list);}
    box.append(el('p',info.summary));
    const trace=el('button','Trace complete electrical net');trace.type='button';trace.addEventListener('click',()=>choose('terminal',info.ref));box.append(trace);
   }else{
@@ -56,7 +56,7 @@ function updateLabSelection(){
 function renderLab(){
  const report=forgeResponse(circuit),context=$('#forge-response-context'),graph=$('#forge-response-graph'),controls=$('#forge-response-controls'),key=$('#forge-response-key'),assumptions=$('#forge-response-assumptions'),actions=$('#forge-response-actions');
  for(const button of document.querySelectorAll("[data-lab-pickup]"))button.setAttribute("aria-pressed",String(button.dataset.labPickup===circuit.state.position));
- graph.replaceChildren();assumptions.replaceChildren();controls.hidden=!report.supported;key.hidden=!report.supported;key.querySelector('.forge-response-reference').hidden=!report.reference;
+ graph.replaceChildren();assumptions.replaceChildren();controls.hidden=!report.supported;key.hidden=!report.supported;key.querySelector('.forge-response-reference').hidden=!report.reference;key.querySelector('.forge-response-current').textContent=report.reference?'Current circuit · with treble bleed':'Current circuit';
  $('#forge-response-lab').classList.toggle('is-unsupported',!report.supported);
  actions.hidden=report.supported||circuit.state.wiring!=='modern'||circuit.state.position!=='both';
  assumptions.closest('details').hidden=!report.supported;
