@@ -13,7 +13,7 @@ for(const name of ['neckProfile','bridgeProfile','bleed','neckCap','bridgeCap'])
 for(const id of ['all','signal','ground','tone','auxiliary'])assert(html.includes(`data-role-view="${id}"`));
 for(const ref of ['neckPickup.hot','bridgePickup.hot','jack.tip','jack.sleeve'])assert(html.includes(`data-trace="${ref}"`));
 assert(css.includes('input:focus-visible+span')&&css.includes('prefers-reduced-motion:reduce'));
-assert(home.includes('APPARITION SIGNAL FORGE')&&home.includes('Know your circuit.'));
+assert(home.includes('APPARITION / SIGNAL FORGE')&&home.includes('Know your <em>circuit.</em>'));
 assert(home.includes('href="/circuit-forge/"')&&home.includes('href="/wiring-generator/"'));
 assert(!home.includes('SEE THE CIRCUIT BEFORE YOU BUILD IT'));
 const expected=drawCircuit(forgeCircuit({position:'neck'}).circuit,{filter:'signal',exporting:true}).replace('viewBox="0 0 1320 1275"','viewBox="0 125 1320 1030"');
