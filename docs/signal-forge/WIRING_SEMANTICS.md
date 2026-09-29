@@ -139,35 +139,94 @@ Manufacturer conventions can vary by pickup family, construction or era. A brand
 
 ## Verified manufacturer conductor mappings
 
-HQ research is pending. The entries below are deliberately not populated from memory.
+The mappings below are approved only for the construction/family described. Coil labels must be normalised carefully during implementation because manufacturers do not all use the same north/south, slug/screw or start/finish terminology.
 
 ### Generic / Semantic
 
 Canonical semantic representation. No physical manufacturer colours are required.
 
-### Seymour Duncan
+### Seymour Duncan — standard four-conductor humbucker
 
-PENDING FIRST-PARTY VERIFICATION.
+Status: VERIFIED FIRST-PARTY.
 
-### DiMarzio
+- fixed/slug (north in Seymour Duncan documentation) coil pair: black + white;
+- adjustable/screw (south) coil pair: red + green;
+- normal series humbucking: black is hot/output; red + white form the series link; green + bare go to ground;
+- bare is shield/ground and must remain distinct from the coil conductor in the semantic model even when both terminate at ground.
 
-PENDING FIRST-PARTY VERIFICATION.
+Source authority: Seymour Duncan technical documentation/blog describing four-conductor pickup resistance testing and normal series connection.
 
-### Gibson
+Caution: do not apply this profile automatically to Seymour Duncan stacks or other constructions with different conductor systems. Those require model/family profiles.
 
-PENDING FIRST-PARTY VERIFICATION. Treat construction-specific and model-specific wiring as potentially significant.
+### DiMarzio — standard four-conductor humbucker
+
+Status: VERIFIED FIRST-PARTY.
+
+- normal series humbucking: red is hot/output;
+- black + white form the series link;
+- green + bare go to ground;
+- DiMarzio documents phase reversal with other pickups as a wiring variation, not a different default conductor profile.
+
+Source authority: DiMarzio official FAQ, “How do I connect a 4-conductor pickup?”.
+
+Caution: model-specific constructions may differ and require their own profile.
+
+### Gibson — listed four-conductor models
+
+Status: VERIFIED FIRST-PARTY FOR THE MODELS COVERED BY GIBSON'S PUBLISHED FOUR-CONDUCTOR DIAGRAM.
+
+Gibson's published diagram covers 490R/490T, 498T, 496R, 500T and Tony Iommi Signature four-conductor models:
+
+- red to controls/hot;
+- green + white form the normal series link;
+- black + shield go to ground.
+
+Source authority: Gibson Pickup Wiring Diagram for four-conductor models.
+
+Do not treat this as a universal rule for every Gibson pickup. Gibson also sells braided/two-conductor and Quick Connect constructions. Quick Connect and other construction-specific pinouts require their own verified profile before support.
 
 ### Fender
 
-PENDING FIRST-PARTY VERIFICATION. Do not assume a universal multi-conductor convention across Fender pickup families.
+Status: FAMILY/MODEL-SPECIFIC — NO UNIVERSAL BRAND DEFAULT APPROVED.
 
-### Tonerider
+Fender first-party documentation confirms multiple multi-conductor humbucker constructions, including Shawbucker, Twin-Head and Kingfish families, but the reviewed documentation does not justify one universal Fender conductor-colour profile across all Fender humbuckers.
 
-PENDING FIRST-PARTY VERIFICATION.
+Implementation must therefore require a verified Fender family/model profile rather than applying a generic `Fender` colour mapping.
 
-### Warman
+The architecture may retain Fender as a manufacturer choice only when the selected pickup profile identifies a supported conductor family. Do not infer a universal mapping from third-party comparison charts.
 
-PENDING FIRST-PARTY VERIFICATION.
+### Tonerider — standard four-conductor humbucker
+
+Status: VERIFIED FIRST-PARTY.
+
+Tonerider's official colour-code table identifies its standard humbucker conductors by physical coil:
+
+- slug coil start: red;
+- slug coil finish: black;
+- screw coil finish: white;
+- screw coil start: green.
+
+Tonerider states its humbuckers use four-conductor hookup cable. Individual product diagrams remain authoritative for product-specific exceptions.
+
+Source authority: Tonerider official “Pickup Wiring Colour Codes”.
+
+### Warman — documented standard humbucker convention
+
+Status: VERIFIED FIRST-PARTY.
+
+Warman's official wiring guidance identifies:
+
+- black: negative/start of the South coil;
+- white: positive/finish of the South coil;
+- red: negative/finish of the North coil;
+- green: positive/start of the North coil;
+- bare: chassis/shield earth.
+
+For Warman's documented standard series connection, black + bare go to ground, red + white form the series link, and green is hot/output.
+
+Source authority: Warman Guitars official “Humbucker Wire Colours” / “Working out humbucker wire colours” guidance.
+
+Caution: preserve the manufacturer's documented polarity/coil terminology in provenance and normalise to Apparition semantic terminals explicitly rather than assuming another manufacturer's north/south naming convention is equivalent.
 
 ## Implementation boundary
 
@@ -177,7 +236,8 @@ When this specification is handed to an implementation pass:
 - preserve role/net separation;
 - preserve one shared mapping authority;
 - do not independently research or reinterpret manufacturer mappings already approved here;
-- do not populate pending mappings from memory;
+- do not populate unresolved mappings from memory;
+- treat manufacturer family/model exceptions as more specific than brand defaults;
 - keep tool-specific UX local while shared electrical and physical-conductor truth remains in the lowest appropriate shared layer.
 
 ## HQ ownership
