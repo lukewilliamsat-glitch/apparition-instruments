@@ -1,4 +1,6 @@
-import {forgeCircuit} from './model.mjs';
+import {forgeCircuit,defaultControls} from './model.mjs';
+import {forgeResponse,responseComponent} from './response.mjs';
+import {responseGraph} from './response-view.mjs';
 import {forgeDiagram,visualCrossings} from './presentation.mjs';
 import {endpoint} from '../wiring-generator/model.mjs';
 import {selectorReport,changeReport,inspectSelection,selectionHighlight,terminalName} from './workbench.mjs';
@@ -38,6 +40,22 @@ function updateSelection(){
  for(const button of document.querySelectorAll('#forge-parts button'))button.setAttribute('aria-pressed',String(selection?.kind==='component'&&button.dataset.part===selection.id));
  for(const button of document.querySelectorAll('[data-trace]'))button.setAttribute('aria-pressed',String(selection?.kind==='terminal'&&button.dataset.trace===selection.ref));
  paint();
+ updateLabSelection();
+}
+function updateLabSelection(){
+ const target=selection?.kind==='component'?selection.id:selection?.kind==='wire'?circuit.connections.find(w=>w.id===selection.id)?.from.split('.')[0]:selection?.ref?.split('.')[0];
+ const element=target&&responseComponent(circuit,target),box=$('#forge-response-selection');
+ box.textContent=element?`${element.label} is a ${element.role==='bleed'?'treble bleed element':element.role+' control'} in the ${element.channel} circuit.${element.channel===circuit.state.position?' It affects the displayed response.':' Select that pickup alone to analyse it.'}`:selection?'This selection has no direct role in the supported response model.':'';
+ if(element)$('#forge-response-lab').open=true;
+}
+function renderLab(){
+ const report=forgeResponse(circuit),context=$('#forge-response-context'),graph=$('#forge-response-graph'),controls=$('#forge-response-controls'),key=$('#forge-response-key'),assumptions=$('#forge-response-assumptions');
+ graph.replaceChildren();assumptions.replaceChildren();controls.hidden=!report.supported;key.hidden=!report.supported||!report.reference;
+ if(!report.supported){context.textContent='Model unavailable for this state';$('#forge-response-summary').textContent=report.reason;return;}
+ context.textContent=`${report.channel.toUpperCase()} PICKUP · Modern wiring · ${report.bleed} · ${report.state.toneCap/1000} µF tone capacitor`;
+ for(const [name,keyName] of [['volume','volume'],['tone','tonePosition']]){const input=$('#forge-response-'+name),value=report.state[keyName];input.value=value;$('#forge-response-'+name+'-value').textContent=value.toFixed(1)+' / 10';}
+ graph.append(responseGraph(report));$('#forge-response-summary').textContent=report.summary;
+ for(const line of report.assumptions)assumptions.append(el('li',line));
 }
 function updateInventory(){
  const list=$('#forge-parts');list.replaceChildren();
@@ -51,21 +69,25 @@ function updateSelector(){
  const closed=el('p','Closed contacts: '+(report.closed.map(x=>x.description).join('; ')||'none')+'. Unselected switch contacts remain open.');box.append(closed);
 }
 function updateChanges(previous){const report=changeReport(previous,circuit),box=$('#forge-change');box.replaceChildren(el('h4',report.heading));const list=el('ul');for(const line of report.lines)list.append(el('li',line));box.append(list);}
-function render(){
+function render(resetControls=false){
  try{
   const choices=Object.fromEntries(['wiring','bleed','neckCap','bridgeCap','position','neckProfile','bridgeProfile'].map(key=>[key,form.elements.namedItem(key).value]));
-  const previous=circuit,result=forgeCircuit(choices);circuit=result.circuit;
+  const previous=circuit,result=forgeCircuit(choices,resetControls?defaultControls:circuit?.state.controlPositions||defaultControls);circuit=result.circuit;
   if(selection&&!inspectSelection(circuit,selection))selection=null;
   form.elements.bleed.disabled=choices.wiring==='50s';$('#forge-kit').href=result.kitURL;$('#forge-kit').hidden=!result.kitURL;
   $('#forge-loading-help').hidden=true;
   $('#forge-status').textContent=`${choices.wiring==='50s'?'50s':choices.wiring==='60s'?'60s':'Modern'} wiring · ${choices.position} selector`;
-  updateInventory();updateSelector();updateChanges(previous);updateSelection();
+  updateInventory();updateSelector();updateChanges(previous);updateSelection();renderLab();
  }catch(error){$('#forge-loading-help').hidden=true;
   $('#forge-status').textContent='Unsupported circuit choice: '+error.message;}
 }
 form.addEventListener('change',event=>{if(event.target.name==='wiring'&&event.target.value==='50s')form.elements.bleed.value='none';render();});
 for(const channel of ['neck','bridge']){const select=form.elements.namedItem(channel+'Profile');for(const [id,profile] of Object.entries(pickupConventions)){const option=el('option',profile.label);option.value=id;select.append(option);}}
-form.addEventListener('reset',()=>setTimeout(()=>{selection=null;render();},0));
+form.addEventListener('reset',()=>setTimeout(()=>{selection=null;render(true);},0));
+for(const name of ['volume','tone'])$('#forge-response-'+name).addEventListener('input',event=>{
+ const channel=circuit?.state.position;if(!['neck','bridge'].includes(channel))return;
+ circuit.state.controlPositions[channel][name]=Number(event.target.value);renderLab();
+});
 mount.addEventListener('click',event=>{const target=event.target.closest('[data-terminal],[data-wire],[data-component]');if(!target)return;if(target.dataset.terminal)choose('terminal',target.dataset.terminal);else if(target.dataset.wire)choose('wire',target.dataset.wire);else choose('component',target.dataset.component);});
 mount.addEventListener('keydown',event=>{if(!['Enter',' '].includes(event.key))return;const target=event.target.closest('[data-terminal],[data-wire],[data-component]');if(target){event.preventDefault();target.dispatchEvent(new MouseEvent('click',{bubbles:true}));}});
 $('#forge-clear').addEventListener('click',()=>{selection=null;updateSelection();});

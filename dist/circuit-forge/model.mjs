@@ -9,13 +9,19 @@ export const forgeChoices=Object.freeze({
  neckCap:['0.022','0.033','0.047'],bridgeCap:['0.022','0.033','0.047'],
  position:['neck','both','bridge'],neckProfile:Object.keys(pickupConventions),bridgeProfile:Object.keys(pickupConventions)
 });
-export function forgeCircuit(choices={}){
+export const defaultControls=Object.freeze({neck:Object.freeze({volume:7,tone:10}),bridge:Object.freeze({volume:7,tone:10})});
+export function forgeCircuit(choices={},controlPositions=defaultControls){
  if(!choices||typeof choices!=='object'||Array.isArray(choices))throw Error('Invalid circuit choices.');
  for(const [key,value] of Object.entries(choices))if(!forgeChoices[key]?.includes(value))throw Error('Unsupported Circuit Forge choice: '+key);
  const selected={...forgeDefaults,...choices};
  const {neckProfile,bridgeProfile,...electrical}=selected;
  const state=configuration({guitar:'les-paul',...electrical,colours:'generic',pickupProfiles:{neck:neckProfile,bridge:bridgeProfile},shielding:'yes'});
  const circuit=makeCircuit(state);
+ for(const channel of ['neck','bridge'])for(const key of ['volume','tone']){
+  const value=controlPositions?.[channel]?.[key];
+  if(typeof value!=='number'||!Number.isFinite(value)||value<0||value>10)throw Error('Unsupported '+channel+' '+key+' position.');
+ }
+ circuit.state.controlPositions=structuredClone(controlPositions);
  return {circuit,kitURL:kitLink(circuit)};
 }
 export function terminalPath(circuit,reference){

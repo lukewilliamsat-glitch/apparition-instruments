@@ -1,0 +1,64 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {Window} from 'happy-dom';
+import {forgeCircuit,defaultControls} from '../dist/circuit-forge/model.mjs';
+import {forgeResponse,responseComponent} from '../dist/circuit-forge/response.mjs';
+import {frequencyResponse,responseAt,magnitudeDB} from '../dist/electronics/response/engine.mjs';
+import {frequencyResponse as designerLegacy} from '../dist/treble-bleed-designer/engine.mjs';
+import {defaults} from '../dist/electronics/response/circuits.mjs';
+
+const controls={neck:{volume:5,tone:4},bridge:{volume:9,tone:8}};
+for(const channel of ['neck','bridge'])for(const bleed of ['none','prs','cap','duncan'])for(const toneCap of ['0.022','0.047']){
+ const circuit=forgeCircuit({position:channel,bleed,[channel+'Cap']:toneCap},controls).circuit,report=forgeResponse(circuit,61);
+ assert(report.supported,JSON.stringify({channel,bleed,toneCap,report}));
+ const expected={...defaults,type:bleed==='none'?'none':bleed==='duncan'?'duncan':'capacitor',bleedC:bleed==='prs'?.18:1,volume:controls[channel].volume,tonePosition:controls[channel].tone,toneCap:Number(toneCap)*1000};
+ assert.deepEqual(report.state,expected);
+ assert.deepEqual(report.points,frequencyResponse(expected,61));
+ assert.deepEqual(report.points,designerLegacy(expected,61),'Designer compatibility entry uses identical shared model');
+ assert.equal(report.points[30].current,magnitudeDB(responseAt(expected,report.points[30].frequency)));
+ assert.deepEqual(report.reference,bleed==='none'?null:frequencyResponse({...expected,type:'none'},61));
+ assert.deepEqual(circuit.connections,forgeCircuit({position:channel,bleed,[channel+'Cap']:toneCap}).circuit.connections,'controls do not change topology');
+ assert.equal(responseComponent(circuit,channel+'Volume').role,'volume');
+ assert.equal(responseComponent(circuit,channel+'Tone').role,'tone');
+ if(bleed!=='none')assert.equal(responseComponent(circuit,channel+'BleedCap').role,'bleed');
+}
+const off=forgeResponse(forgeCircuit({position:'neck'}, {neck:{volume:0,tone:0},bridge:{volume:7,tone:10}}).circuit);
+assert(off.points.every(p=>p.current===-100));
+for(const choices of [{position:'both'},{position:'neck',wiring:'50s'},{position:'bridge',wiring:'60s'}])assert.equal(forgeResponse(forgeCircuit(choices).circuit).supported,false);
+assert.equal(forgeResponse(forgeCircuit({position:'neck'}).circuit).reference,null);
+assert.throws(()=>forgeCircuit({}, {neck:{volume:11,tone:10},bridge:{volume:7,tone:10}}));
+const missing=forgeCircuit({position:'neck'}).circuit;missing.components=missing.components.filter(p=>p.id!=='neckTone');assert.equal(forgeResponse(missing).supported,false);
+assert.equal(defaultControls.neck.volume,7);
+
+const html=readFileSync('dist/circuit-forge/index.html','utf8');
+const app=readFileSync('dist/circuit-forge/app.mjs','utf8');
+for(const id of ['forge-response-lab','forge-response-volume','forge-response-tone','forge-response-graph','forge-response-assumptions'])assert(html.includes(`id="${id}"`));
+assert(app.includes('circuit.state.controlPositions[channel][name]=Number(event.target.value)'));
+assert(app.includes('renderLab()')&&app.includes('updateLabSelection()'));
+console.log('Response Lab: shared Designer parity, control state, component link and unsupported boundaries PASS');
+
+const win=new Window({url:'https://apparitioninstruments.co.uk/circuit-forge/'});
+win.document.write(html);
+Object.assign(globalThis,{document:win.document,window:win,MouseEvent:win.MouseEvent});
+await import('../dist/circuit-forge/app.mjs?response-lab-test');
+const $=selector=>win.document.querySelector(selector);
+const pick=(name,value)=>{const input=$(`[name="${name}"][value="${value}"]`);input.checked=true;input.dispatchEvent(new win.Event('change',{bubbles:true}));};
+assert.match($('#forge-response-summary').textContent,/Both pickups/);
+pick('position','neck');assert(!$('#forge-response-controls').hidden);
+$('#forge-response-volume').value='4.5';$('#forge-response-volume').dispatchEvent(new win.Event('input',{bubbles:true}));
+assert.equal($('#forge-response-volume-value').textContent,'4.5 / 10');
+$('#forge-response-tone').value='6.2';$('#forge-response-tone').dispatchEvent(new win.Event('input',{bubbles:true}));
+assert.equal($('#forge-response-tone-value').textContent,'6.2 / 10');
+assert($('#forge-response-graph svg[role="img"]'));
+assert($('#forge-response-key').hidden);
+$('select[name="bleed"]').value='prs';$('select[name="bleed"]').dispatchEvent(new win.Event('change',{bubbles:true}));
+assert.equal($('#forge-response-volume-value').textContent,'4.5 / 10');
+assert.equal($('#forge-response-tone-value').textContent,'6.2 / 10');
+assert(!$('#forge-response-key').hidden);
+assert.match($('#forge-response-context').textContent,/0.18nF/);
+const component=$('#forge-parts [data-part="neckVolume"]');component.dispatchEvent(new win.MouseEvent('click',{bubbles:true}));
+assert($('#forge-response-lab').open);assert.match($('#forge-response-selection').textContent,/affects the displayed response/);
+pick('position','both');assert($('#forge-response-controls').hidden);assert(!$('#forge-response-graph svg'));
+pick('position','neck');assert.equal($('#forge-response-volume-value').textContent,'4.5 / 10');
+win.close();
+console.log('Response Lab DOM controls, graph and unsupported state PASS');

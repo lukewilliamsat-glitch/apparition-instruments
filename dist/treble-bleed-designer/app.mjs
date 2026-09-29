@@ -1,5 +1,5 @@
-import {defaults,fields,types,topologies,topologyOf,validateState,bleedSummary} from './circuits.mjs';
-import {audioTaper,frequencyResponse,responseAt,magnitudeDB} from './engine.mjs';
+import {defaults,fields,types,topologies,topologyOf,validateState,bleedSummary} from '../electronics/response/circuits.mjs';
+import {audioTaper,frequencyResponse,responseAt,magnitudeDB} from '../electronics/response/engine.mjs';
 import {renderGraph,graphLimits} from './graph.mjs?v=p10a2';
 import {freezeReference} from './frozen.mjs';
 import {exactBleedMatches} from './product-match.mjs';

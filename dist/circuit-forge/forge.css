@@ -84,3 +84,39 @@
 .forge-viewport .wire:hover:not(.muted) .wire-line{stroke-width:4}
 .forge-viewport .wire:focus-visible .wire-line{stroke-width:4.5}
 @media(prefers-reduced-motion:reduce){.forge-role-views button,.forge-main button,.forge-main select,.forge-segmented-options span{transition:none}}
+/* Response Lab is a deliberate analysis layer below the physical drawing. */
+.forge-response-lab{margin-top:1.25rem;border-top:1px solid #d2cdc1;color:#292a26}
+.forge-response-lab>summary{cursor:pointer;list-style:none;padding:1.1rem 0;display:flex;align-items:center;justify-content:space-between}
+.forge-response-lab>summary::-webkit-details-marker{display:none}
+.forge-response-lab>summary::after{content:'+';font:400 1.35rem/1 'JetBrains Mono',monospace;color:#80673c}
+.forge-response-lab[open]>summary::after{content:'−'}
+.forge-response-lab>summary>span{display:grid;gap:.25rem}
+.forge-response-lab .forge-control-eyebrow{margin:0}
+.forge-response-lab>summary strong{font-size:1.25rem;font-weight:600;letter-spacing:-.025em}
+.forge-response-lab>summary small{font-size:.78rem;color:#706c62}
+.forge-response-content{border-top:1px solid #d8d4cb;padding:1rem 0 .2rem}
+.forge-response-context{font:600 .72rem/1.6 'JetBrains Mono',monospace;color:#655841;letter-spacing:.02em;margin:.1rem 0 1rem}
+.forge-response-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-bottom:1rem}
+.forge-response-controls[hidden],.forge-response-key[hidden]{display:none}
+.forge-response-controls label{font-size:.82rem;font-weight:650;display:grid;grid-template-columns:1fr auto;gap:.4rem;color:#30312d}
+.forge-response-controls output{font:600 .75rem 'JetBrains Mono',monospace;color:#655841}
+.forge-response-controls input{grid-column:1/-1;width:100%;accent-color:#7a623e;cursor:pointer}
+.forge-response-graph{min-height:0;background:#f7f6f2;border:1px solid #d8d4cb}
+.forge-response-graph:empty{display:none}
+.forge-response-graph svg{display:block;width:100%;height:auto}
+.forge-response-graph .response-grid{stroke:#e3e0d7;stroke-width:1}
+.forge-response-graph .response-zero{stroke:#b3aea2;stroke-width:1}
+.forge-response-graph .response-tick,.forge-response-graph .response-axis{fill:#6e6a60;font:11px 'JetBrains Mono',monospace}
+.forge-response-graph .response-axis{font-size:10px;letter-spacing:.08em}
+.forge-response-graph .response-current{stroke:#313b39;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.forge-response-graph .response-reference{stroke:#9a7c4a;stroke-width:2;stroke-dasharray:6 4;stroke-linejoin:round}
+.forge-response-key{display:flex;gap:1.2rem;flex-wrap:wrap;margin:.7rem 0;font-size:.75rem;color:#57554c}
+.forge-response-key span::before{content:'';display:inline-block;width:1.2rem;margin-right:.4rem;vertical-align:middle;border-top:3px solid #313b39}
+.forge-response-key .forge-response-reference::before{border-top:2px dashed #9a7c4a}
+.forge-response-summary{font-size:.88rem;line-height:1.6;margin:1rem 0 .5rem}
+.forge-response-selection{font-size:.78rem;line-height:1.5;color:#655841}
+.forge-response-selection:empty{display:none}
+.forge-response-assumptions{border-top:1px solid #d8d4cb;padding:.75rem 0;font-size:.77rem;color:#5e5b52}
+.forge-response-assumptions summary{cursor:pointer;font-weight:650}
+.forge-response-assumptions ul{padding-left:1.2rem;line-height:1.6}
+@media(max-width:620px){.forge-response-controls{grid-template-columns:1fr}}
