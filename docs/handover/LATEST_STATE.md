@@ -2,6 +2,10 @@
 
 **Created:** 28 September 2026
 
+## Astra V3 close-out / V4 reactivation
+
+The canonical fresh-chat entry point is `docs/signal-forge/ASTRA_V4_REACTIVATION.md`, with the short copyable prompt in `docs/handover/NEW_CHAT_REACTIVATION_PROMPT.md`. Its predecessor checkpoint is `c2a86795b440b39f846d5c77377806a2b600fa1a`; verify current GitHub `main` before any new work. V3's bounded diagram composition checkpoint is published and tested, but Luke has **not** given final V1 visual acceptance. V4 should begin with desktop workbench UX and professional presentation, then continue with a separately briefed bounded implementation slice. The shared-core rule, diagram/workbench visual debt, manufacturer and response-model limits, recommended sequence and mobile/accessibility close-out boundary are in the reactivation document. No new Signal Forge implementation is part of this documentation close-out.
+
 Read this file **before** `APPARITION_CURRENT_HANDOVER.md` because it records repository activity that occurred concurrently while the master handover was being written.
 
 ## Current observed sequence
