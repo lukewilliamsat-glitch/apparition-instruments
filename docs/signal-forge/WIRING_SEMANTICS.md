@@ -228,6 +228,135 @@ Source authority: Warman Guitars official “Humbucker Wire Colours” / “Work
 
 Caution: preserve the manufacturer's documented polarity/coil terminology in provenance and normalise to Apparition semantic terminals explicitly rather than assuming another manufacturer's north/south naming convention is equivalent.
 
+## Manufacturer profile implementation contract
+
+This section is the implementation-ready HQ contract for the next shared manufacturer-profile pass. Implementation should consume these decisions rather than redesigning them.
+
+### Canonical profile shape
+
+The shared manufacturer authority should expose the smallest stable representation compatible with the existing codebase. Exact JavaScript naming may follow repository conventions, but each supported profile must be able to express:
+
+- stable profile ID;
+- manufacturer display name;
+- construction/family applicability;
+- support status;
+- semantic-terminal to physical-conductor mapping;
+- shield/drain as a distinct physical conductor where present;
+- human-readable normal-series instructions derived from the mapping;
+- provenance/status metadata sufficient to preserve the verification rules above;
+- optional model/family exception capability without changing circuit topology.
+
+Do not duplicate derived `hot`, `series link` and `ground` truth if the shared circuit can derive those concepts from semantic terminals. Presentation helpers may expose those derived instructions for consumers.
+
+### Required support states
+
+Profiles must distinguish at least these conditions:
+
+1. `generic` — canonical semantic presentation, deliberately selected and fully supported;
+2. `verified` — approved physical mapping exists for the selected construction/family;
+3. `requires-model` — manufacturer exists but no universal brand mapping is approved, currently Fender;
+4. `unsupported` or `unresolved` — no approved mapping for the requested construction/profile.
+
+Unsupported or unresolved input must fail safely to semantic presentation with a clear consumer-visible explanation where relevant. It must never guess physical colours.
+
+### Per-pickup selection
+
+Profile state belongs to each pickup instance. The shared API must therefore permit neck and bridge pickups to use different profiles in the same circuit.
+
+A consumer may choose to offer a convenience action that applies one profile to both pickups, but this is UI sugar only. The shared authority must not model manufacturer as one guitar-wide electrical setting.
+
+### Electrical invariance rule
+
+Changing manufacturer/profile is presentation and physical-wiring metadata only.
+
+For a fixed circuit configuration, changing `Generic / Semantic` to Seymour Duncan, DiMarzio, Gibson, Tonerider or Warman must not alter:
+
+- components;
+- semantic terminals;
+- connections;
+- selector/contact state;
+- conductive net identity;
+- conductive paths;
+- routing topology except presentation geometry that is strictly necessary to depict physical conductors;
+- kit/product selection logic unless a later explicit product-matching feature intentionally consumes pickup metadata.
+
+This invariance is a required automated regression boundary.
+
+### Mixed-brand acceptance case
+
+The implementation must support, at minimum at the shared-data/API level, a circuit such as:
+
+- neck pickup: Seymour Duncan standard four-conductor;
+- bridge pickup: DiMarzio standard four-conductor.
+
+Each pickup receives its own physical conductor presentation while the underlying graph remains unchanged.
+
+### Generator consumer contract
+
+The Wiring Diagram Generator is the first implementation consumer because it already exposes pickup wire-colour selection.
+
+Its existing control should consume the shared manufacturer authority rather than a Generator-local mapping table. Preserve the Generator's current workflow unless a very small change is required to represent per-pickup profiles safely.
+
+For this first pass:
+
+- `Generic / Semantic` preserves the current semantic/default behaviour;
+- verified profiles display the approved physical conductor mapping;
+- `requires-model`, unsupported and unresolved profiles must not display invented colours;
+- manufacturer selection must not change circuit topology;
+- the existing 54 Generator configurations remain a regression gate;
+- if the current Generator control is guitar-wide, implementation may preserve that UX temporarily only if the underlying shared API is per-pickup and therefore does not block mixed-brand Forge support. Do not perform a broad Generator UI redesign merely to expose mixed-brand selection in this pass.
+
+### Future Circuit Forge consumer contract
+
+Circuit Forge is intentionally not required to receive the full manufacturer UI in the first shared-foundation pass. However, the shared authority created now must support a later Forge UX without redesign.
+
+The intended Forge presentation is per pickup and inspection-led. A future inspector should be able to present, for example:
+
+- `Neck pickup — Seymour Duncan`;
+- `Black → hot → [derived destination]`;
+- `Red + White → series link / join and insulate`;
+- `Green + Bare → ground`, while retaining bare/shield as semantically distinct metadata.
+
+A different profile may be selected independently for the bridge pickup. Clicking/highlighting a physical conductor may later trace the corresponding semantic terminal/path, but that interaction is not required in the first shared-foundation pass.
+
+### Manufacturer acceptance matrix
+
+The first implementation pass should test these representative behaviours rather than exhaustively multiplying every circuit configuration by every manufacturer:
+
+| Case | Expected result |
+| --- | --- |
+| Generic / Semantic | Existing semantic/default presentation; topology unchanged |
+| Seymour Duncan standard 4-conductor | Black hot; red + white series link; green + bare ground; topology unchanged |
+| DiMarzio standard 4-conductor | Red hot; black + white series link; green + bare ground; topology unchanged |
+| Gibson approved 4-conductor family | Red hot; green + white series link; black + shield ground; topology unchanged |
+| Tonerider standard 4-conductor | Mapping derives from approved semantic coil-terminal mapping; topology unchanged |
+| Warman documented standard | Green hot; red + white series link; black + bare ground; topology unchanged |
+| Fender without supported family/model | No universal physical mapping; safe semantic presentation / requires-model state |
+| Mixed SD neck + DiMarzio bridge | Independent physical mappings; one unchanged circuit graph |
+| Unknown/unsupported profile | No guessed colours; safe semantic fallback or explicit unsupported state |
+
+### Research boundary
+
+The next implementation pass must not spend engineering allowance re-researching the approved manufacturer mappings in this document. If implementation discovers an ambiguity in semantic normalisation, model applicability or a missing mapping, hand that exact question back to HQ rather than searching broadly or guessing.
+
+## Crossing/junction renderer polish acceptance
+
+Routing V3 is accepted. The next implementation pass may include one bounded shared-renderer presentation correction before manufacturer-profile work.
+
+The issue is not route planning: Circuit Forge currently leaves a visibly larger interruption around non-conductive crossing hops than the Wiring Diagram Generator reference presentation.
+
+Acceptance:
+
+- reduce the excessive interruption around the hop so the passing conductor reads as one continuous wire;
+- retain an unmistakable non-conductive crossing cue;
+- preserve explicit true-junction treatment;
+- do not change conductive truth or create a junction at a visual crossing;
+- prefer one shared crossing/junction presentation authority for Forge and Generator if the existing architecture permits this cleanly;
+- use the Generator's current compact crossing treatment as the visual reference rather than inventing a new broad style;
+- do not modify the shared router, routing costs, lane allocation or family coordinates solely for this presentation issue;
+- do not call this Routing V4;
+- verify with focused renderer/semantic tests and the existing Forge/Generator regressions; Luke owns rendered visual acceptance.
+
 ## Implementation boundary
 
 When this specification is handed to an implementation pass:
