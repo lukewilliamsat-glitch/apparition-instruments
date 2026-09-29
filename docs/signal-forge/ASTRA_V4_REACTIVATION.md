@@ -10,6 +10,8 @@ V1 Precision Polish + Leica checkpoint: graph-backed casing solder markers, a di
 
 Luke accepted the V1 Precision Workbench visual baseline. The next V1 Response Lab checkpoint is documented in `ARCHITECTURE.md`: Designer and Forge share the single-pickup electrical response authority; Forge exposes a bounded analysis disclosure for one selected pickup with Modern wiring, live volume/tone positions and an optional no-bleed reference. Combined selector and 50s/60s response remain unsupported until validated. Subjective Response Lab acceptance belongs to Luke. Do not reopen the locked workbench visual direction or treat this as a full Les Paul response model.
 
+Signal Lab promotion checkpoint: Luke technically accepted Response Lab V1 and requested it as a first-class central-workspace mode. Forge now switches between default Physical Circuit and Signal Lab without duplicating response math or resetting circuit/control state. The graph, controls, reference and assumptions use the existing implementation; Configure and Understand remain shared. The below-diagram disclosure is retired. Both-selector and 50s/60s analysis remain explicitly unsupported. Luke owns the promoted mode's visual acceptance; preserve the locked Precision Workbench direction.
+
 ## Product direction and shared core
 
 **Circuit Forge is no longer being designed as an enhanced Wiring Diagram Generator. It is being designed as an interactive guitar-electronics workbench.** The Generator primarily answers **“How do I wire this?”** Forge should increasingly answer **“What is my circuit, how does it work, what happens if I change it, and how do I build it?”** The V1 journey is **Configure → See → Understand → Analyse where validated → Build**.

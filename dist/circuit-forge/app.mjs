@@ -9,6 +9,12 @@ import {pickupConventions} from '../wiring-generator/colours.mjs';
 const $=query=>document.querySelector(query),form=$('#forge-controls'),mount=$('#forge-diagram'),viewport=$('#forge-viewport');
 const el=(tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
 let circuit,selection=null,roleView='all';
+function setWorkspaceMode(mode){
+ const physical=mode==='physical';
+ $('#forge-mode-physical').hidden=!physical;$('#forge-response-lab').hidden=physical;
+ $('#forge-diagram-title').textContent=physical?'Physical circuit':'Signal Lab';
+ for(const button of document.querySelectorAll('[data-forge-mode]'))button.setAttribute('aria-pressed',String(button.dataset.forgeMode===mode));
+}
 const choose=(kind,value)=>{selection=kind==='component'?{kind,id:value}:kind==='wire'?{kind,id:value}:{kind:'terminal',ref:value};updateSelection();};
 function paint(){
  const active=document.activeElement,attribute=['data-terminal','data-wire','data-component'].find(name=>active?.hasAttribute?.(name)),value=attribute&&active.getAttribute(attribute),left=viewport.scrollLeft,top=viewport.scrollTop;
@@ -46,11 +52,10 @@ function updateLabSelection(){
  const target=selection?.kind==='component'?selection.id:selection?.kind==='wire'?circuit.connections.find(w=>w.id===selection.id)?.from.split('.')[0]:selection?.ref?.split('.')[0];
  const element=target&&responseComponent(circuit,target),box=$('#forge-response-selection');
  box.textContent=element?`${element.label} is a ${element.role==='bleed'?'treble bleed element':element.role+' control'} in the ${element.channel} circuit.${element.channel===circuit.state.position?' It affects the displayed response.':' Select that pickup alone to analyse it.'}`:selection?'This selection has no direct role in the supported response model.':'';
- if(element)$('#forge-response-lab').open=true;
 }
 function renderLab(){
  const report=forgeResponse(circuit),context=$('#forge-response-context'),graph=$('#forge-response-graph'),controls=$('#forge-response-controls'),key=$('#forge-response-key'),assumptions=$('#forge-response-assumptions');
- graph.replaceChildren();assumptions.replaceChildren();controls.hidden=!report.supported;key.hidden=!report.supported||!report.reference;
+ graph.replaceChildren();assumptions.replaceChildren();controls.hidden=!report.supported;key.hidden=!report.supported;key.querySelector('.forge-response-reference').hidden=!report.reference;
  if(!report.supported){context.textContent='Model unavailable for this state';$('#forge-response-summary').textContent=report.reason;return;}
  context.textContent=`${report.channel.toUpperCase()} PICKUP · Modern wiring · ${report.bleed} · ${report.state.toneCap/1000} µF tone capacitor`;
  for(const [name,keyName] of [['volume','volume'],['tone','tonePosition']]){const input=$('#forge-response-'+name),value=report.state[keyName];input.value=value;$('#forge-response-'+name+'-value').textContent=value.toFixed(1)+' / 10';}
@@ -97,4 +102,5 @@ for(const button of document.querySelectorAll('[data-role-view]'))button.addEven
  paint();
 });
 for(const button of document.querySelectorAll('[data-trace]'))button.addEventListener('click',()=>choose('terminal',button.dataset.trace));
+for(const button of document.querySelectorAll('[data-forge-mode]'))button.addEventListener('click',()=>setWorkspaceMode(button.dataset.forgeMode));
 render();
