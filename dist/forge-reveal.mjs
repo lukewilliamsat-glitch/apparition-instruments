@@ -11,16 +11,16 @@ if(typeof document!=='undefined'){
   const circuit=forgeCircuit({position:'neck'}).circuit;
   const report=forgeResponse(circuit);
   const response=document.querySelector('#forge-reveal-response');
-  if(report.supported)response.append(responseGraph(report));
+  if(report.supported){const graph=responseGraph(report);graph.querySelector('.response-current')?.setAttribute('pathLength','1');response.append(graph);}
   const mount=document.querySelector('#forge-reveal-circuit');
-  const asset=new URL('./assets/signal-forge-full.svg?rev=signal-forge-v1b',import.meta.url);
+  const asset=new URL('./assets/signal-forge-full.svg?rev=signal-forge-v1c',import.meta.url);
   fetch(asset).then(result=>{if(!result.ok)throw Error('Circuit artwork unavailable');return result.text();}).then(markup=>{
    const svg=new DOMParser().parseFromString(markup,'image/svg+xml').documentElement;
    if(svg.localName!=='svg')throw Error('Invalid circuit artwork');
    const wire=(from,to)=>circuit.connections.find(item=>item.from===from&&item.to===to)?.id;
    const path=[wire('neckPickup.hot','neckVolume.lug3'),wire('neckVolume.lug2','selector.neck'),wire('selector.outB','jack.tip')];
    if(path.some(id=>!id)||!circuit.contacts.some(([a,b])=>a==='selector.neck'&&b==='selector.outN'))throw Error('Signal path unavailable');
-   for(const id of path)svg.querySelector(`[data-wire="${id}"]`)?.setAttribute('data-home-trace','');
+   for(const id of path){const wireNode=svg.querySelector(`[data-wire="${id}"]`);wireNode?.setAttribute('data-home-trace','');wireNode?.querySelector('.wire-line')?.setAttribute('pathLength','1');}
    svg.querySelector('[data-component="neckVolume"]')?.setAttribute('data-home-inspect','');
    svg.querySelector('[data-terminal="neckVolume.lug2"]')?.setAttribute('data-home-inspect','');
    mount.replaceChildren(svg);

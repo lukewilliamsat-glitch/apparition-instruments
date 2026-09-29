@@ -88,8 +88,9 @@ function render(resetControls=false){
   $('#forge-loading-help').hidden=true;
   $('#forge-status').textContent=`${choices.wiring==='50s'?'50s':choices.wiring==='60s'?'60s':'Modern'} wiring · ${choices.position} selector`;
   updateInventory();updateSelector();updateChanges(previous);updateSelection();renderLab();
+  return true;
  }catch(error){$('#forge-loading-help').hidden=true;
-  $('#forge-status').textContent='Unsupported circuit choice: '+error.message;}
+  $('#forge-status').textContent='Unsupported circuit choice: '+error.message;return false;}
 }
 form.addEventListener('change',event=>{if(event.target.name==='wiring'&&event.target.value==='50s')form.elements.bleed.value='none';render();});
 for(const channel of ['neck','bridge']){const select=form.elements.namedItem(channel+'Profile');for(const [id,profile] of Object.entries(pickupConventions)){const option=el('option',profile.label);option.value=id;select.append(option);}}
@@ -111,4 +112,4 @@ for(const button of document.querySelectorAll('[data-forge-mode]'))button.addEve
 for(const button of document.querySelectorAll('[data-analyse],[data-lab-pickup]'))button.addEventListener('click',()=>{
  form.querySelector(`input[name="position"][value="${button.dataset.analyse||button.dataset.labPickup}"]`).click();
 });
-render();
+if(render())window.__forgeEntry?.ready();else window.__forgeEntry?.fail();

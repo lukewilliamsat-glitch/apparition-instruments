@@ -10,8 +10,8 @@ import {chapterForProgress} from '../dist/forge-reveal.mjs';
 const html=readFileSync('dist/index.html','utf8'),asset=readFileSync('dist/assets/signal-forge-full.svg','utf8'),css=readFileSync('dist/homepage.css','utf8');
 const circuit=forgeCircuit({position:'neck'}).circuit;
 assert.equal(asset,forgeDiagram(circuit).replace('viewBox="0 0 1320 1275"','viewBox="0 75 1320 1200"').replace('<rect width="1320" height="1275" fill="#f5f5f5"/>',''));
-assert(html.includes('id="signal-forge"')&&html.includes('forge-reveal.mjs?rev=signal-forge-v1b'));
-assert(html.includes('homepage.css?rev=signal-forge-v1b')&&html.includes('signal-forge-full.svg?rev=signal-forge-v1b'));
+assert(html.includes('id="signal-forge"')&&html.includes('forge-reveal.mjs?rev=signal-forge-v1c'));
+assert(html.includes('homepage.css?rev=signal-forge-v1c')&&html.includes('signal-forge-full.svg?rev=signal-forge-v1c'));
 for(const chapter of [0,1,2,3])assert(html.includes(`data-forge-chapter="${chapter}"`));
 assert(html.includes('href="/circuit-forge/"')&&html.includes('href="/wiring-generator/"'));
 assert(html.includes('class="ethos section"')&&html.includes('class="product-list"'));
@@ -29,11 +29,13 @@ async function inspect(reduced){
  const section=win.document.querySelector('#signal-forge');assert(section.classList.contains('has-circuit'));
  const svg=section.querySelector('#forge-reveal-circuit svg');assert(svg);
  assert.equal(svg.querySelectorAll('[data-home-trace]').length,3);
+ assert.equal(svg.querySelectorAll('[data-home-trace] .wire-line[pathLength="1"]').length,3);
  assert(svg.querySelector('[data-component="neckVolume"][data-home-inspect]'));
  assert(svg.querySelector('[data-terminal="neckVolume.lug2"][data-home-inspect]'));
  assert(circuit.contacts.some(([a,b])=>a==='selector.neck'&&b==='selector.outN'));
  const report=forgeResponse(circuit);assert(report.supported&&!report.reference);
  assert.equal(section.querySelector('#forge-reveal-response .response-current').getAttribute('d'),responseGraph(report).querySelector('.response-current').getAttribute('d'));
+ assert.equal(section.querySelector('#forge-reveal-response .response-current').getAttribute('pathLength'),'1');
  assert.equal(section.classList.contains('is-animated'),!reduced);
  if(reduced)assert.equal(section.dataset.stage,'3');
  else{
