@@ -81,7 +81,7 @@
 .forge-reveal h2 em{font-style:normal;color:#9b783c}
 .forge-reveal-proposition{z-index:2;margin:14px 0 0;font:600 clamp(.75rem,1vw,1rem)/1.5 var(--mono);letter-spacing:.07em;color:#51564f}
 .forge-reveal-visual{position:relative;flex:1;min-height:0;margin-top:-15px}
-.forge-reveal-circuit{position:absolute;inset:-3% 20% -7% -3%;display:grid;place-items:center;transition:opacity .65s ease,transform .7s ease}
+.forge-reveal-circuit{position:absolute;inset:5% 20% 0 -3%;display:grid;place-items:center;transition:opacity .65s ease,transform .7s ease}
 .forge-reveal-circuit svg,.forge-reveal-circuit img{display:block;width:100%;height:100%;object-fit:contain}
 .forge-reveal-circuit svg .wire,.forge-reveal-circuit svg .component,.forge-reveal-circuit svg .anchors,.forge-reveal-circuit svg .forge-closed-contact{transition:opacity .7s ease}
 .forge-reveal.is-animated[data-stage="1"] [data-home-trace] .wire-line,.forge-reveal.is-animated[data-stage="2"] [data-home-trace] .wire-line,.forge-reveal.is-animated[data-stage="3"] [data-home-trace] .wire-line{stroke-width:5;stroke:#9b783c}
@@ -91,7 +91,7 @@
 .forge-reveal-response .response-current{stroke:#9b783c;stroke-width:3.6;fill:none;stroke-linejoin:round}
 .forge-reveal-response .response-grid{stroke:#c6c4b9;stroke-width:1}.forge-reveal-response .response-zero{stroke:#777d75;stroke-width:1}
 .forge-reveal-response .response-tick,.forge-reveal-response .response-axis{fill:#535c54;font:12px var(--mono)}
-.forge-reveal-continuation{position:absolute;left:57%;width:5%;top:68%;border-top:3px solid #9b783c;opacity:0;transform:scaleX(0);transform-origin:left;transition:opacity .5s ease,transform .7s ease}
+.forge-reveal-continuation{position:absolute;left:55%;width:7%;top:51%;height:34%;border-top:3px solid #9b783c;border-left:3px solid #9b783c;opacity:0;transform:scaleX(0);transform-origin:left bottom;transition:opacity .5s ease,transform .7s ease}
 .forge-reveal-inspect{position:absolute;left:57%;top:28%;display:grid;gap:5px;border-left:2px solid #9b783c;padding:10px 0 10px 17px;opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
 .forge-reveal-inspect span,.forge-reveal-inspect small{font:600 .68rem/1.5 var(--mono);letter-spacing:.06em;color:#535c54}
 .forge-reveal-inspect strong{font:500 clamp(1.3rem,2vw,2rem)/1.1 var(--serif);color:#202522}

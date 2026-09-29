@@ -9,7 +9,7 @@ import {chapterForProgress} from '../dist/forge-reveal.mjs';
 
 const html=readFileSync('dist/index.html','utf8'),asset=readFileSync('dist/assets/signal-forge-full.svg','utf8'),css=readFileSync('dist/homepage.css','utf8');
 const circuit=forgeCircuit({position:'neck'}).circuit;
-assert.equal(asset,forgeDiagram(circuit).replace('viewBox="0 0 1320 1275"','viewBox="0 75 1320 1200"'));
+assert.equal(asset,forgeDiagram(circuit).replace('viewBox="0 0 1320 1275"','viewBox="0 75 1320 1200"').replace('<rect width="1320" height="1275" fill="#f5f5f5"/>',''));
 assert(html.includes('id="signal-forge"')&&html.includes('forge-reveal.mjs'));
 for(const chapter of [0,1,2,3])assert(html.includes(`data-forge-chapter="${chapter}"`));
 assert(html.includes('href="/circuit-forge/"')&&html.includes('href="/wiring-generator/"'));
