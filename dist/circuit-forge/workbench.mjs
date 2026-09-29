@@ -41,7 +41,11 @@ export function inspectSelection(circuit,selection){
  if(!selection)return null;
  if(selection.kind==='component'){
   const part=inspectComponent(circuit,selection.id);if(!part)return null;
-  return {kind:'component',heading:part.label,subtitle:part.value||part.type||'',purpose:componentRole({...part,type:circuit.components.find(x=>x.id===selection.id).type,role:circuit.components.find(x=>x.id===selection.id).role}),terminals:part.terminals.map(t=>({...t,connected:t.connections.length>0})),component:part};
+  const component=circuit.components.find(x=>x.id===selection.id),pickup=component.type==='humbucker',profile=pickup?pickupProfile(circuit,selection.id):null;
+  const physical=pickup?composePhysicalWiring(circuit):null;
+  const leads=pickup?[...physical.conductors.values()].filter(w=>w.pickup===selection.id):[];
+  const physicalWiring=leads.map(w=>({id:w.id,colour:w.seriesColours?.join(' + ')||w.colour,role:w.kind==='local-series'?'Series link':w.role==='ground'?'Coil ground':w.role==='shield'?'Shield':'Hot',destination:w.kind==='local-series'?'Local insulated join':terminalName(circuit,w.to),termination:w.kind==='local-series'?'Insulated join':physical.solderPoints.has(w.to)?'Casing solder point':'Terminal'}));
+  return {kind:'component',heading:part.label,subtitle:pickup?profile.label+' · '+part.value:part.value||part.type||'',purpose:componentRole({...part,type:component.type,role:component.role}),physicalWiring,terminals:part.terminals.map(t=>({...t,connected:t.connections.length>0})),component:part};
  }
  const physical=composePhysicalWiring(circuit);
  if(selection.kind==='wire'){
@@ -52,7 +56,7 @@ export function inspectSelection(circuit,selection){
   const destination=terminalName(circuit,conductor.to);
   const summary=conductor.kind==='local-series'?`Join ${conductor.seriesColours.join(' + ')} locally and insulate the connection.`:conductor.kind==='local-casing-bond'?'Bond this lug directly to its own casing.':`Physical termination: ${destination}.${attached?.length?' Shared solder point with '+attached.join(', ')+'.':''}`;
   const detail=pathDetails(circuit,conductor.from);
-  return {kind:'wire',heading:conductor.seriesColours?.join(' + ')||conductor.colour||selection.id,subtitle:[conductor.pickup&&endpoint(circuit,conductor.from).component.label,profile?.label,conductor.kind==='local-series'?'Local series join':roleNames[conductor.role]].filter(Boolean).join(' · ')||'Physical conductor',physical:`${terminalName(circuit,conductor.from)} → ${destination}`,ref:conductor.from,summary,references:detail.references,connections:detail.wires.map(w=>({id:w.id,from:w.from,to:w.to,description:`${terminalName(circuit,w.from)} to ${terminalName(circuit,w.to)}`})),contacts:detail.contacts};
+  return {kind:'wire',heading:conductor.seriesColours?.join(' + ')||conductor.colour||endpoint(circuit,conductor.from).component.label,subtitle:[conductor.pickup&&endpoint(circuit,conductor.from).component.label,profile?.label,conductor.kind==='local-series'?'Local series join':roleNames[conductor.role]].filter(Boolean).join(' · ')||'Physical conductor',physical:`${terminalName(circuit,conductor.from)} → ${destination}`,physicalData:{role:conductor.kind==='local-series'?'Series link':roleNames[conductor.role]||conductor.kind.replaceAll('-',' '),destination:conductor.kind==='local-series'?'Local insulated join':destination,termination:conductor.kind==='local-series'?'Insulated join':physical.solderPoints.has(conductor.to)?'Casing solder point':'Terminal',associated:endpoint(circuit,conductor.to).component.label,manufacturer:profile?.label||null},ref:conductor.from,summary,references:detail.references,connections:detail.wires.map(w=>({id:w.id,from:w.from,to:w.to,description:`${terminalName(circuit,w.from)} to ${terminalName(circuit,w.to)}`})),contacts:detail.contacts};
  }
  let ref=selection.ref,wire;
  if(!ref)return null;

@@ -18,14 +18,17 @@ function updateSelection(){
  if(!info){selection=null;box.append(el('p','Choose a part from the list or select a terminal or wire in the diagram. Trace buttons reveal a conductive segment.'));}
  else {
   box.append(el('h4',info.heading),el('p',info.subtitle));
-  if(info.physical)box.append(el('p',info.physical));
   if(info.kind==='component'){
+   if(info.physicalWiring?.length){const heading=el('h5','Physical wiring'),list=el('dl');list.className='forge-wiring-list';for(const lead of info.physicalWiring){const row=el('div'),name=el('dt',lead.colour),detail=el('dd');detail.append(el('strong',lead.role),el('span','→ '+lead.destination),el('small',lead.termination));row.append(name,detail);list.append(row);}box.append(heading,list);}
+   box.append(el('h5','Electrical role'));
    box.append(el('p',info.purpose));
-   const list=el('ul');for(const t of info.terminals){const item=el('li'),button=el('button',t.label);button.type='button';button.addEventListener('click',()=>choose('terminal',t.ref));item.append(button,document.createTextNode(' · '+(t.connections.length?t.connections.join(' · '):'No external wire')));list.append(item);}box.append(list);
+   const terminals=el('details'),summary=el('summary','Inspect terminals'),list=el('ul');for(const t of info.terminals){const item=el('li'),button=el('button',t.label);button.type='button';button.addEventListener('click',()=>choose('terminal',t.ref));item.append(button,document.createTextNode(' · '+(t.connections.length?t.connections.join(' · '):'No external wire')));list.append(item);}terminals.append(summary,list);box.append(terminals);
   }else if(info.kind==='wire'){
+   if(info.physicalData){const list=el('dl');list.className='forge-inspection-facts';for(const [label,value] of [['Role',info.physicalData.role],['Destination',info.physicalData.destination],['Termination',info.physicalData.termination]]){const term=el('dt',label),definition=el('dd',value);list.append(term,definition);}box.append(list);}
    box.append(el('p',info.summary));
    const trace=el('button','Trace complete electrical net');trace.type='button';trace.addEventListener('click',()=>choose('terminal',info.ref));box.append(trace);
   }else{
+   if(info.physical)box.append(el('p',info.physical));
    box.append(el('p',info.summary));
    const label=el('h5','Connections on this segment'),list=el('ul');for(const wire of info.connections){const item=el('li'),button=el('button',wire.description);button.type='button';button.addEventListener('click',()=>choose('wire',wire.id));item.append(button);list.append(item);}box.append(label,list);
    if(info.contacts.length){box.append(el('h5','Closed switch contacts'));const contacts=el('ul');for(const text of info.contacts)contacts.append(el('li',text));box.append(contacts);}

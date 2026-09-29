@@ -28,5 +28,12 @@ export function composePhysicalWiring(circuit){
   const physical={id:wire.id,from:wire.from,to:wire.to,kind,pickup,role,join,profile:profile?.label||null,colour:role?profile.wires[role][1]:null,seriesColours:kind==='local-series'?[profile.wires.linkA[1],profile.wires.linkB[1]]:null,net:[...net(circuit,wire.from)].sort()[0]};
   conductors.set(wire.id,physical);attach(wire.from,wire.id);attach(wire.to,wire.id);
  }
- return {conductors,terminations};
+ const solderPoints=new Map();
+ for(const [ref,ids] of terminations){
+  const {component,terminal}=endpoint(circuit,ref);
+  if(component.type!=='pot'||terminal!==component.terminals.case||!ref.endsWith('.case'))continue;
+  const wires=ids.map(id=>conductors.get(id));
+  solderPoints.set(ref,{ref,kind:'casing-solder',conductors:[...ids],pickupLeads:wires.filter(w=>w.kind==='pickup-ground').map(w=>w.id),localBonds:wires.filter(w=>w.kind==='local-casing-bond').map(w=>w.id),shared:ids.length>1});
+ }
+ return {conductors,terminations,solderPoints};
 }

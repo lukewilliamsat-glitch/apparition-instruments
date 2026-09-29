@@ -6,6 +6,8 @@ V4 physical composition implementation checkpoint: the shared physical projectio
 
 V1 physical composition V2 and Precision Workbench checkpoint: independent pickup profile presentation, shorter pickup-hot termination, deliberate casing-ground bus presentation, desktop Forge controls/inspector styling, and the graph-derived homepage reveal are recorded in `ARCHITECTURE.md`. The Generator remains available. Luke owns the next rendered acceptance; after that, address specific remaining wiring/desktop issues before selected-network response work. No production business data or Supabase changes belong to this checkpoint.
 
+V1 Precision Polish + Leica checkpoint: graph-backed casing solder markers, a direct vertical casing bus lane, explicit VIEW / TRACE PATH grouping, structured manufacturer/physical Inspector data, and restrained desktop control/drawing refinements are recorded in `ARCHITECTURE.md`. Routing and manufacturer presentation remain shared with Generator; the electrical graph and homepage composition are unchanged. Luke's deployed visual acceptance remains the next gate. If accepted, lock this desktop baseline and resume the subsequent V1 workstream; mobile is deferred. The published GitHub commit/tree and Pages verification are recorded in the completion report.
+
 ## Product direction and shared core
 
 **Circuit Forge is no longer being designed as an enhanced Wiring Diagram Generator. It is being designed as an interactive guitar-electronics workbench.** The Generator primarily answers **“How do I wire this?”** Forge should increasingly answer **“What is my circuit, how does it work, what happens if I change it, and how do I build it?”** The V1 journey is **Configure → See → Understand → Analyse where validated → Build**.

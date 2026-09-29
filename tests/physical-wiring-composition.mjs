@@ -24,21 +24,37 @@ for(const ch of ['neck','bridge']){
  assert.notEqual(p.conductors.get(ch+'Ground').id,p.conductors.get(ch+'Shield').id);
  assert(p.terminations.get(ch+'Volume.case').includes(ch+'Ground'));
  assert(p.terminations.get(ch+'Volume.case').includes(ch+'Shield'));
+ const solder=p.solderPoints.get(ch+'Volume.case');assert.equal(solder.kind,'casing-solder');
+ assert(solder.shared&&solder.pickupLeads.includes(ch+'Ground')&&solder.pickupLeads.includes(ch+'Shield'));
+ assert(solder.localBonds.includes(ch+'VolumeGround'));
  assert.equal(p.conductors.get(ch+'VolumeGround').kind,'local-casing-bond');
  assert(routes.get(ch+'VolumeGround').length<=4);
  assert.equal(p.conductors.get(ch+'Cases').kind,'ground-bus');
  assert(trueJunctions(mixed).some(j=>j.ref===ch+'Volume.case'));
 }
 assert(terminalPath(mixed,'jack.sleeve').includes('bridgeGround.ground'));
+assert.deepEqual(routes.get('commonGround').map(([x,y])=>[x,y]),[[870,322],[980,322],[980,802],[870,802]]);
+assert.equal(p.conductors.get('commonGround').kind,'ground-bus');
+assert.equal(p.solderPoints.has('jack.sleeve'),false);
 assert(!terminalPath(mixed,'jack.sleeve').includes('jack.tip'));
 assert.deepEqual([...routes],[...routeDiagram(structuredClone(mixed))]);
 assert.deepEqual([...p.conductors],[...composePhysicalWiring(structuredClone(mixed)).conductors]);
 for(const x of visualCrossings(mixed))assert.notEqual(routeSemantics(mixed).get(x.wires[0]).net,routeSemantics(mixed).get(x.wires[1]).net);
 const wire=inspectSelection(mixed,{kind:'wire',id:'neckGround'});
 assert.match(wire.summary,/Shared solder point with BARE/);
+assert.equal(wire.physicalData.termination,'Casing solder point');
+assert.equal(wire.physicalData.manufacturer,pickupProfile(mixed,'neckPickup').label);
+const neck=inspectSelection(mixed,{kind:'component',id:'neckPickup'});
+assert.deepEqual(neck.physicalWiring.map(w=>w.colour),['BLACK','WHITE + RED','GREEN','BARE']);
+assert.equal(neck.physicalWiring.find(w=>w.role==='Series link').termination,'Insulated join');
+assert.equal(inspectSelection(mixed,{kind:'component',id:'bridgePickup'}).physicalWiring[0].colour,'RED');
 assert.deepEqual(selectionHighlight(mixed,{kind:'wire',id:'neckGround'}),{kind:'physical-wire',id:'neckGround'});
 assert.match(inspectSelection(mixed,{kind:'terminal',ref:'neckVolume.case'}).physical,/GREEN.*BARE/);
 const svg=drawCircuit(mixed);assert.match(svg,/data-physical-kind="pickup-hot" data-conductor="BLACK"/);
+assert.match(svg,/data-solder-point="neckVolume.case" data-solder-conductors="[^"]*neckGround neckShield/);
+assert.match(svg,/data-local-bonds="neckVolumeGround"/);
+assert.match(drawCircuit(mixed,{selection:selectionHighlight(mixed,{kind:'wire',id:'neckGround'})}),/data-wire="neckGround"[^>]*data-view-state="selected"/);
+assert.match(drawCircuit(mixed,{selection:{kind:'path',refs:[...terminalPath(mixed,'jack.sleeve') ]}}),/data-wire="neckGround"[^>]*data-view-state="traced"/);
 assert.match(svg,/data-physical-kind="pickup-hot" data-conductor="RED"/);
 const colourOf=(svg,id)=>svg.match(new RegExp(`data-wire="${id}"[^>]*>[\\s\\S]*?<path class="wire-line[^>]*stroke="([^"]+)"`))?.[1];
 for(const [neck,bridge,neckColour,bridgeColour] of [

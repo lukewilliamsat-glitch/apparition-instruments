@@ -4,6 +4,7 @@ import {routeDiagram,routeSemantics} from '../dist/wiring-generator/routing.mjs'
 import {drawCircuit} from '../dist/wiring-generator/render.mjs';
 import {forgeDiagram} from '../dist/circuit-forge/presentation.mjs';
 import {trueJunctions,visualCrossings} from '../dist/wiring-generator/diagram-semantics.mjs';
+import {composePhysicalWiring} from '../dist/wiring-generator/physical.mjs';
 
 const circuit=makeCircuit({bleed:'duncan'}),routes=routeDiagram(circuit),semantics=routeSemantics(circuit);
 assert.deepEqual([...routes],[...routeDiagram(structuredClone(circuit))]);
@@ -23,8 +24,9 @@ assert(crossings.length>0);
 assert(crossings.every(x=>semantics.get(x.wires[0]).net!==semantics.get(x.wires[1]).net),'crossing markers never represent one conductive net');
 assert(crossings.every(x=>!junctions.some(j=>j.x===x.x&&j.y===x.y)),'a visual crossing does not become a junction');
 const svg=drawCircuit(circuit,{exporting:true}),forge=forgeDiagram(circuit);
-assert(svg.includes('data-junction="neckVolume.case" data-junction-wires='));
-assert.equal((svg.match(/data-junction="/g)||[]).length,junctions.length);
+const solder=composePhysicalWiring(circuit).solderPoints;
+assert(svg.includes('data-solder-point="neckVolume.case" data-solder-conductors='));
+assert.equal((svg.match(/data-junction="/g)||[]).length,junctions.filter(j=>!solder.has(j.ref)).length);
 assert.equal((svg.match(/class="forge-crossing"/g)||[]).length,crossings.length);
 assert.equal((forge.match(/class="forge-crossing"/g)||[]).length,crossings.length,'both tools use the shared crossing renderer');
 assert(svg.includes('r="5" fill="#f5f5f5"/><path d="M'),'compact interruption is shared');

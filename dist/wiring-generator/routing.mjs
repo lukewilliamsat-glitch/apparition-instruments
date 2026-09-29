@@ -91,6 +91,14 @@ export function routeDiagram(c){
   if(intent.kind==='ground-bus'&&a[0][1]===b[0][1]){
    results.set(w.id,[a[0],b[0]]);continue;
   }
+  // A casing-to-casing run is one physical conductor. Keep its long span in
+  // a clear lane outside both bodies, with each end returning to its own
+  // graph-backed solder point. No off-terminal junction is implied.
+  if(intent.kind==='ground-bus'&&a[0][0]===b[0][0]){
+   const from=bounds.find(q=>q.id===w.from.split('.')[0]),to=bounds.find(q=>q.id===w.to.split('.')[0]);
+   const lane=Math.ceil((Math.max(from.r,to.r)+32)/step)*step;
+   results.set(w.id,squash([a[0],[lane,a[0][1]],[lane,b[0][1]],b[0]]));continue;
+  }
   const start=a.at(-1).map(v=>v/step),end=b.at(-1).map(v=>v/step),sid=start[1]*W+start[0],eid=end[1]*W+end[0],open=new Heap(),dist=new Map([[sid,0]]),previous=new Map(),semantic=semantics.get(w.id);open.push([0,sid,-1]);let found=false;
   const protectedPort=ref=>['pot','pushpull','humbucker','singlecoil','p90'].includes(c.components.find(p=>p.id===ref.split('.')[0])?.type);
   const outward=points=>[Math.sign(points.at(-1)[0]-points.at(-2)[0]),Math.sign(points.at(-1)[1]-points.at(-2)[1])];
