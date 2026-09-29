@@ -40,6 +40,9 @@ function port(p,key,b){const t=p.terminals[key],a=[p.x+t.x,p.y+t.y];let q;
  else if(['blade','blade3','blade5','superswitch'].includes(p.type))q=key==='ground'?[a[0]+20,a[1]]:p.type==='superswitch'?[b.l-20,a[1]-18]:[a[0],key.startsWith('A')?b.t-15:b.b+15];
  else q=[a[0],a[1]-18];
  const grid=q.map(v=>Math.round(v/step)*step);
+ // Keep selector leads on one straight escape before entering the grid. The
+ // unsnapped 2px intermediate point otherwise creates a visible micro-jog.
+ if(p.type==='toggle')return squash([a,[a[0],grid[1]],grid]);
  return [a,[a[0],q[1]],q,[grid[0],q[1]],grid].filter((v,i,all)=>!i||v[0]!==all[i-1][0]||v[1]!==all[i-1][1]);
 }
 class Heap{constructor(){this.a=[];}push(v){let i=this.a.length;this.a.push(v);while(i){const p=(i-1)>>1;if(this.a[p][0]<=v[0])break;this.a[i]=this.a[p];i=p;}this.a[i]=v;}pop(){const top=this.a[0],v=this.a.pop();if(this.a.length){let i=0;while(i*2+1<this.a.length){let j=i*2+1;if(j+1<this.a.length&&this.a[j+1][0]<this.a[j][0])j++;if(this.a[j][0]>=v[0])break;this.a[i]=this.a[j];i=j;}this.a[i]=v;}return top;}}
