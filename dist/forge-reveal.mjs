@@ -13,7 +13,7 @@ if(typeof document!=='undefined'){
   const response=document.querySelector('#forge-reveal-response');
   if(report.supported)response.append(responseGraph(report));
   const mount=document.querySelector('#forge-reveal-circuit');
-  const asset=new URL('./assets/signal-forge-full.svg',import.meta.url);
+  const asset=new URL('./assets/signal-forge-full.svg?rev=signal-forge-v1b',import.meta.url);
   fetch(asset).then(result=>{if(!result.ok)throw Error('Circuit artwork unavailable');return result.text();}).then(markup=>{
    const svg=new DOMParser().parseFromString(markup,'image/svg+xml').documentElement;
    if(svg.localName!=='svg')throw Error('Invalid circuit artwork');
