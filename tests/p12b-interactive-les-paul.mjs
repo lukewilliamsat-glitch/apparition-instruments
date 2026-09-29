@@ -23,5 +23,5 @@ const svg=forgeDiagram(current);assert(svg.includes('forge-crossing'));assert(sv
 const selected=drawCircuit(neck,{selection:{kind:'path',refs:pathDetails(neck,'jack.tip').references}});
 assert.match(selected,/class="wire supplied [^"]*" data-wire="jackSignal"/);
 assert.match(selected,/class="wire supplied muted" data-wire="bridgeHot"/);
-const page=readFileSync('dist/circuit-forge/index.html','utf8');for(const id of ['forge-parts','forge-facts','forge-contacts','forge-change','forge-viewport','forge-trace-output','forge-clear'])assert(page.includes('id="'+id+'"'));
+const page=readFileSync('dist/circuit-forge/index.html','utf8');for(const id of ['forge-parts','forge-facts','forge-contacts','forge-change','forge-viewport','forge-clear'])assert(page.includes('id="'+id+'"'));assert(page.includes('data-trace="jack.tip"'));
 console.log('P12B: terminal graph, selector continuity, wiring changes, isolated crossings, SVG overlay and path highlight PASS');

@@ -41,3 +41,9 @@ Luke approved **P12 — Signal Forge V1**, with **Circuit Forge** as the custome
 ## P12B interactive Les Paul
 
 Circuit Forge advances the existing Les Paul terminal graph with model-derived component inventory, connection-change explanation, active selector contacts, conductive-path highlighting and explicit separated-crossing markers. P12B does not add guitar families, full-circuit response claims, persistence or commerce authority. The P12 V1 contract records the slice.
+
+## Circuit Forge Les Paul workbench V1 checkpoint
+
+The public Les Paul workbench now places the shared model-driven diagram at the centre of configuration, inspection and explanation. The controls, component inventory, selected terminal/wire trace, selector-output report and topology/value change summary all derive from the same circuit state. The diagram still uses the shared Generator graph and renderer. Open contacts, passive internals and crossing geometry remain distinct from conductive edges. Selection persists across supported configuration edits when its graph identity survives, otherwise it clears. The page reorganises controls, diagram and inspector responsively; Luke's rendered desktop/mobile visual acceptance remains separate.
+
+Focused workbench state/interaction tests cover all supported Les Paul control combinations, selector continuity, change explanation, terminal/wire/component inspection and graph limits. P12A/P12B regressions and all 54 Generator configurations passed. The publication HEAD and live asset checks are recorded in the completion report for this checkpoint. No migration, Edge Function, catalogue, Kit Definition, commerce or production business-data changes. Full Les Paul response modelling and saved circuits remain deferred. P12C Classic Telecaster is the next additional-family validation after workbench acceptance.
