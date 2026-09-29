@@ -10,13 +10,15 @@ import {chapterForProgress} from '../dist/forge-reveal.mjs';
 const html=readFileSync('dist/index.html','utf8'),asset=readFileSync('dist/assets/signal-forge-full.svg','utf8'),css=readFileSync('dist/homepage.css','utf8');
 const circuit=forgeCircuit({position:'neck'}).circuit;
 assert.equal(asset,forgeDiagram(circuit).replace('viewBox="0 0 1320 1275"','viewBox="0 75 1320 1200"').replace('<rect width="1320" height="1275" fill="#f5f5f5"/>',''));
-assert(html.includes('id="signal-forge"')&&html.includes('forge-reveal.mjs?rev=signal-forge-v1c'));
-assert(html.includes('homepage.css?rev=signal-forge-v1c')&&html.includes('signal-forge-full.svg?rev=signal-forge-v1c'));
+assert(html.includes('id="signal-forge"')&&html.includes('forge-reveal.mjs?rev=signal-forge-v1d'));
+assert(html.includes('homepage.css?rev=signal-forge-v1d')&&html.includes('signal-forge-full.svg?rev=signal-forge-v1d'));
 for(const chapter of [0,1,2,3])assert(html.includes(`data-forge-chapter="${chapter}"`));
 assert(html.includes('href="/circuit-forge/"')&&html.includes('href="/wiring-generator/"'));
 assert(html.includes('class="ethos section"')&&html.includes('class="product-list"'));
 assert.deepEqual([-.1,0,.24,.25,.5,.75,1,2].map(chapterForProgress),[0,0,0,1,2,3,3,3]);
 assert(css.includes('prefers-reduced-motion:reduce')&&css.includes('.forge-reveal:not(.is-animated)'));
+assert(!html.includes('forge-reveal-continuation')&&!css.includes('forge-reveal-continuation'),'Analyse has no decorative conductor');
+assert(css.includes('.forge-crossing:not([data-home-trace]) path{stroke:#777;opacity:.25}'));
 
 async function inspect(reduced){
  const win=new Window({url:'https://apparitioninstruments.co.uk/'});win.document.write(html);
@@ -28,7 +30,8 @@ async function inspect(reduced){
  await new Promise(resolve=>setTimeout(resolve,0));
  const section=win.document.querySelector('#signal-forge');assert(section.classList.contains('has-circuit'));
  const svg=section.querySelector('#forge-reveal-circuit svg');assert(svg);
- assert.equal(svg.querySelectorAll('[data-home-trace]').length,3);
+ assert.equal(svg.querySelectorAll('.wire[data-home-trace]').length,3);
+ for(const hop of svg.querySelectorAll('.forge-crossing'))assert.equal(hop.hasAttribute('data-home-trace'),!!svg.querySelector(`.wire[data-home-trace][data-wire="${hop.getAttribute('data-crossing-wire')}"]`));
  assert.equal(svg.querySelectorAll('[data-home-trace] .wire-line[pathLength="1"]').length,3);
  assert(svg.querySelector('[data-component="neckVolume"][data-home-inspect]'));
  assert(svg.querySelector('[data-terminal="neckVolume.lug2"][data-home-inspect]'));

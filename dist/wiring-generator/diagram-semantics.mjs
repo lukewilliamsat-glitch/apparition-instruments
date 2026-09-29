@@ -41,7 +41,7 @@ export function visualCrossings(circuit){
  return [...result.values()];
 }
 
-export function crossingMarkers(circuit){
+export function crossingMarkers(circuit,isWireActive=()=>true){
  return visualCrossings(circuit).map(({x,y,colour,wires})=>
-  `<g class="forge-crossing" data-crossing-wires="${wires.join(' ')}" aria-hidden="true"><circle cx="${x}" cy="${y}" r="5" fill="#f5f5f5"/><path d="M${x-6} ${y}Q${x} ${y-9} ${x+6} ${y}" fill="none" stroke="${colour}" stroke-width="3"/></g>`).join('');
+  `<g class="forge-crossing" data-crossing-wires="${wires.join(' ')}" data-crossing-wire="${wires[0]}" data-view-state="${isWireActive(wires[0])?'active':'muted'}" aria-hidden="true"><circle cx="${x}" cy="${y}" r="5" fill="#f5f5f5"/><path d="M${x-6} ${y}Q${x} ${y-9} ${x+6} ${y}" fill="none" stroke="${colour}" stroke-width="3"/></g>`).join('');
 }

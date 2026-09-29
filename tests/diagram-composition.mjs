@@ -31,4 +31,8 @@ assert.equal((svg.match(/class="forge-crossing"/g)||[]).length,crossings.length)
 assert.equal((forge.match(/class="forge-crossing"/g)||[]).length,crossings.length,'both tools use the shared crossing renderer');
 assert(svg.includes('r="5" fill="#f5f5f5"/><path d="M'),'compact interruption is shared');
 assert(!forge.includes('r="8" fill="#f5f5f5"'),'oversized Forge-only hop is retired');
+const auxiliary=drawCircuit(circuit,{filter:'auxiliary'});
+assert(auxiliary.includes('data-crossing-wires="neckGround neckBleedIn" data-crossing-wire="neckGround" data-view-state="muted"'),'a crossing follows its overpassing wire, even when the lower wire is active');
+assert(auxiliary.includes('data-crossing-wires="bridgeBleedOut shieldEarth" data-crossing-wire="bridgeBleedOut" data-view-state="active"'),'an active overpassing wire retains its hop');
+assert(auxiliary.includes('.forge-crossing[data-view-state=muted] path{stroke:#777;opacity:.25}'),'inactive hop fades while its opaque gap retains non-conductive meaning');
 console.log('Shared composition, graph junctions and compact crossing presentation PASS');
