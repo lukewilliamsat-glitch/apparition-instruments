@@ -1,5 +1,7 @@
-import {makeCircuit,configuration,endpoint,net,kitLink} from '../wiring-generator/model.mjs';
-import {defaultResponseAssumptions,resolveResponseAssumptions} from '../electronics/response/assumptions.mjs';
+import {makeCircuit,configuration,endpoint,net} from '../wiring-generator/model.mjs';
+import {defaultResponseAssumptions} from '../electronics/response/assumptions.mjs';
+import {defaultControls,kitHandoff,applyCircuitAnalysis} from '../electronics/state/circuit-state.mjs';
+export {defaultControls} from '../electronics/state/circuit-state.mjs';
 import {pickupConventions} from '../wiring-generator/colours.mjs';
 
 // P12A's first public template uses the existing terminal graph and renderer.
@@ -10,22 +12,15 @@ export const forgeChoices=Object.freeze({
  neckCap:['0.010','0.015','0.022','0.033','0.047'],bridgeCap:['0.010','0.015','0.022','0.033','0.047'],
  position:['neck','both','bridge'],neckProfile:Object.keys(pickupConventions),bridgeProfile:Object.keys(pickupConventions)
 });
-export const defaultControls=Object.freeze({neck:Object.freeze({volume:7,tone:10}),bridge:Object.freeze({volume:7,tone:10})});
-export function forgeCircuit(choices={},controlPositions=defaultControls,responseAssumptions=defaultResponseAssumptions()){
+export function forgeCircuit(choices={},controlPositions=defaultControls,responseAssumptions=defaultResponseAssumptions(),shielding='yes'){
  if(!choices||typeof choices!=='object'||Array.isArray(choices))throw Error('Invalid circuit choices.');
  for(const [key,value] of Object.entries(choices))if(!forgeChoices[key]?.includes(value))throw Error('Unsupported Circuit Forge choice: '+key);
  const selected={...forgeDefaults,...choices};
  const {neckProfile,bridgeProfile,...electrical}=selected;
- const state=configuration({guitar:'les-paul',...electrical,colours:'generic',pickupProfiles:{neck:neckProfile,bridge:bridgeProfile},shielding:'yes'});
+ const state=configuration({guitar:'les-paul',...electrical,colours:'generic',pickupProfiles:{neck:neckProfile,bridge:bridgeProfile},shielding});
  const circuit=makeCircuit(state);
- for(const channel of ['neck','bridge'])for(const key of ['volume','tone']){
-  const value=controlPositions?.[channel]?.[key];
-  if(typeof value!=='number'||!Number.isFinite(value)||value<0||value>10)throw Error('Unsupported '+channel+' '+key+' position.');
- }
- circuit.state.controlPositions=structuredClone(controlPositions);
- circuit.state.responseAssumptions=structuredClone(responseAssumptions);
- for(const channel of ['neck','bridge']){const values=resolveResponseAssumptions(responseAssumptions,channel);for(const role of ['volume','tone'])circuit.components.find(p=>p.channel===channel&&p.role===role).value=values[role+'Pot']+'kΩ Audio';}
- return {circuit,kitURL:JSON.stringify(responseAssumptions)===JSON.stringify(defaultResponseAssumptions())&&!['0.010','0.015'].includes(selected.neckCap)&&!['0.010','0.015'].includes(selected.bridgeCap)?kitLink(circuit):null};
+ applyCircuitAnalysis(circuit,{configuration:state,controlPositions,responseAssumptions});
+ return {circuit,kitURL:kitHandoff(circuit).url};
 }
 export function terminalPath(circuit,reference){
  endpoint(circuit,reference);

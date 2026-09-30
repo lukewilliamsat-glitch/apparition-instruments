@@ -1,0 +1,22 @@
+# Signal Forge shared circuit state
+
+Electrical topology remains authoritative in the existing Generator circuit factory. The circuit-to-response adapter now lives in `electronics/response/circuit.mjs`; Forge retains a compatibility export. Response equations, comparisons and pickup presets are unchanged. `electronics/state/circuit-state.mjs` is a validated projection and handoff boundary, not a second solver, topology factory or product mapping.
+
+## Version 1 configuration
+
+The `sf` URL parameter contains deterministic JSON: version, configuration, controlPositions and responseAssumptions. Configuration includes supported Les Paul wiring, selector, bleed, both capacitors, shielding and independent pickup conductor profiles. Controls and pot/pickup assumptions are channel-specific; cable capacitance and input resistance are common. Applying analysis state updates the actual circuit's pot descriptions. Summary, graph, explanations and actions consume that same circuit. Graph inspection, comparison mode and immutable frozen references stay local to Signal Lab.
+
+Only known fields are projected. Unknown future fields are ignored; absent optional values receive documented defaults. Unsupported versions, invalid recognised fields, oversized URLs and malformed JSON show a notice and normal defaults. Values contain no secrets or database identifiers. Form imports change current values without rewriting default values. Reset restores factory controls/assumptions and standard form defaults. No account/cloud persistence is added.
+
+## Tool handoffs
+
+- Circuit Lab and Signal Lab share one circuit instance and its control/analysis state. Forge URLs reflect the current compatible configuration.
+- Designer receives `sr`, the validated response state derived from the actual selected circuit, plus the full `sf` source snapshot. It preserves all represented R/L/C, pots, capacitor, bleed, controls and load values. Modern single-channel modelling is required. Both, 50s and 60s remain unsupported for response transfer. The Designer labels the source, explains that its reference is full Volume, and offers a return to the original circuit. Designer edits do not silently overwrite the source snapshot; arbitrary bleed designs may be outside Forge's supported topology choices.
+- Wiring Generator uses its existing `g` configuration URL plus `sf`. Supported wiring, selector, capacitors and independent conductor profiles transfer exactly; shared application preserves physical pot values. Control positions and pickup/cable/input assumptions are retained for return, without pretending the wiring drawing predicts a response. Changing conductor colours applies the explicit new convention to both channels. Changing guitar layout exits Forge-specific imported context. Reset clears imported context. Its return link carries the current compatible circuit.
+- Kit Builder uses the existing Kit Definition, catalogue resolvers, `kitLink` and `builderDiagramURL`. Actual pot and capacitor values must match resolved components; unsupported values hide the action with an explanation. Analysis-only R/L/C, cable/input and control positions are not supplied components. No new BOM/pricing mapping exists; brands, shafts, availability and fitment remain Builder decisions. No configuration or handoff deducts stock. Generator kit context exits safely if a capacitor no longer maps to the existing authority.
+
+The single-coil electrical preset does not change the physical humbucker topology/drawing. Generic electrical presets are illustrative assumptions, not manufacturer measurements. Coupled Both response, phase/split/series-parallel pickup response, acoustic/psychoacoustic/audio models, measured library, cloud/account projects, exports, V3, External Orders and unrelated store/Admin/CNC work remain deferred.
+
+## Validation
+
+Focused integration unit tests cover deterministic round trips, optional/future/invalid fields, exact response parity across destinations, physical Kit Definition matching and unsupported destinations. Isolated DOM scenarios disable network access and cover imported forms, contextual links, reset, independent channels, frozen/reference/inspection continuity and 320/390/768/1400 px state contracts. Existing response, Designer analytical, Generator and Kit Definition/Builder regressions remain applicable. Rendered QA is skipped when the existing browser executable is unavailable.

@@ -1,3 +1,4 @@
+import {readCircuitState,captureCircuitState,circuitStateURL,circuitStateSummary,wiringHandoff,designerHandoff,kitHandoff} from '../electronics/state/circuit-state.mjs';
 import {setupMobileWorkbench} from './mobile-workbench.mjs';
 import {forgeCircuit,defaultControls} from './model.mjs';
 import {pickupPresets,componentPresets,defaultResponseAssumptions} from '../electronics/response/assumptions.mjs';
@@ -14,6 +15,7 @@ const el=(tag,text)=>{const node=document.createElement(tag);if(text!==undefined
 let circuit,selection=null,roleView='all',mobile;
 let comparisonMode='ab',frozenReference=null,signalReport=null,previousSignal=null,graphView=null,inspectionFrequency=1000,lastCause='',assumptionIdentity='';
 const setText=(node,value)=>{if(node.textContent!==value)node.textContent=value;};
+const importedCircuit=readCircuitState(window.location.search);
 const frequencyLabel=f=>f>=1000?(f/1000).toFixed(2)+' kHz':f.toFixed(0)+' Hz';
 function inspectionReadout(sample){
  inspectionFrequency=sample.frequency;const frequency=frequencyLabel(sample.frequency),format=db=>db<=-100?'≤ −100 dB':db.toFixed(2)+' dB';
@@ -95,6 +97,14 @@ function renderLab(){
  const identity=JSON.stringify(report.assumptions);if(identity!==assumptionIdentity){assumptions.replaceChildren();for(const line of report.assumptions)assumptions.append(el('li',line));assumptions.append(el('li','Magnitude categories use the largest absolute sampled separation: negligible < 0.1 dB; subtle 0.1–<1 dB; moderate 1–<6 dB; strong ≥6 dB. They describe electrical differences, not audibility.'));assumptionIdentity=identity;}
  previousSignal={channel:report.channel,state:{...report.state}};
 }
+function updateContextActions(){
+ setText($('#forge-shared-summary'),circuitStateSummary(circuit,signalReport));
+ $('#forge-view-wiring').href=wiringHandoff(circuit);
+ const designer=designerHandoff(circuit,signalReport),kit=kitHandoff(circuit);
+ $('#forge-design-bleed').hidden=!designer.url;if(designer.url)$('#forge-design-bleed').href=designer.url;
+ setText($('#forge-designer-limit'),designer.reason);$('#forge-kit').hidden=!kit.url;if(kit.url)$('#forge-kit').href=kit.url;setText($('#forge-kit-limit'),kit.reason);
+ window.history.replaceState(null,'',circuitStateURL('/circuit-forge/',captureCircuitState(circuit)));
+}
 function updateInventory(){
  const list=$('#forge-parts');list.replaceChildren();
  for(const part of circuit.components){const item=el('li'),button=el('button');button.type='button';button.dataset.part=part.id;button.append(el('strong',part.label),el('small',part.value||part.type));button.addEventListener('click',()=>choose('component',part.id));item.append(button);list.append(item);}
@@ -110,19 +120,20 @@ function updateChanges(previous){const report=changeReport(previous,circuit),box
 function render(resetControls=false){
  try{
   const choices=Object.fromEntries(['wiring','bleed','neckCap','bridgeCap','position','neckProfile','bridgeProfile'].map(key=>[key,form.elements.namedItem(key).value]));
-  const previous=circuit,result=forgeCircuit(choices,resetControls?defaultControls:circuit?.state.controlPositions||defaultControls,resetControls?defaultResponseAssumptions():circuit?.state.responseAssumptions||defaultResponseAssumptions());circuit=result.circuit;
+  const previous=circuit,result=forgeCircuit(choices,resetControls?defaultControls:circuit?.state.controlPositions||importedCircuit.state?.controlPositions||defaultControls,resetControls?defaultResponseAssumptions():circuit?.state.responseAssumptions||importedCircuit.state?.responseAssumptions||defaultResponseAssumptions(),resetControls?'yes':circuit?.state.shielding||importedCircuit.state?.configuration.shielding||'yes');circuit=result.circuit;
   if(selection&&!inspectSelection(circuit,selection))selection=null;
   form.elements.bleed.disabled=choices.wiring==='50s';$('#forge-kit').href=result.kitURL;$('#forge-kit').hidden=!result.kitURL;
   $('#forge-loading-help').hidden=true;
   $('#forge-status').textContent=`${choices.wiring==='50s'?'50s':choices.wiring==='60s'?'60s':'Modern'} wiring · ${choices.position} selector`;
-  updateInventory();updateSelector();updateChanges(previous);updateSelection();renderLab();
+  updateInventory();updateSelector();updateChanges(previous);updateSelection();renderLab();updateContextActions();
   return true;
- }catch(error){$('#forge-loading-help').hidden=true;
+ }catch(error){updateContextActions();
+  $('#forge-loading-help').hidden=true;
   $('#forge-status').textContent='Unsupported circuit choice: '+error.message;return false;}
 }
 form.addEventListener('change',event=>{if(event.target.name==='wiring'&&event.target.value==='50s')form.elements.bleed.value='none';render();});
 for(const channel of ['neck','bridge']){const select=form.elements.namedItem(channel+'Profile');for(const [id,profile] of Object.entries(pickupConventions)){const option=el('option',profile.label);option.value=id;select.append(option);}}
-form.addEventListener('reset',()=>setTimeout(()=>{selection=null;render(true);},0));
+form.addEventListener('reset',()=>setTimeout(()=>{selection=null;lastCause='';$('#forge-import-note').textContent='';render(true);},0));
 for(const [id,sourceName] of [['forge-lab-bleed','bleed'],['forge-lab-cap','neckCap']]){
  const select=$('#'+id);for(const option of form.elements.namedItem(sourceName).options)select.append(option.cloneNode(true));
  select.addEventListener('change',()=>{const name=id==='forge-lab-bleed'?'bleed':circuit.state.position+'Cap',source=form.elements.namedItem(name);source.value=select.value;source.dispatchEvent(new Event('change',{bubbles:true}));});
@@ -140,7 +151,7 @@ $('#forge-inspect-frequency').addEventListener('input',event=>{graphView?.inspec
 $('#forge-inspect-clear').addEventListener('click',()=>graphView?.clear());
 for(const name of ['volume','tone'])$('#forge-response-'+name).addEventListener('input',event=>{
  const channel=circuit?.state.position;if(!['neck','bridge'].includes(channel))return;
- circuit.state.controlPositions[channel][name]=Number(event.target.value);renderLab();
+ circuit.state.controlPositions[channel][name]=Number(event.target.value);renderLab();updateContextActions();
 });
 mount.addEventListener('click',event=>{const target=event.target.closest('[data-terminal],[data-wire],[data-component]');if(!target)return;if(target.dataset.terminal)choose('terminal',target.dataset.terminal);else if(target.dataset.wire)choose('wire',target.dataset.wire);else choose('component',target.dataset.component);});
 mount.addEventListener('keydown',event=>{if(!['Enter',' '].includes(event.key))return;const target=event.target.closest('[data-terminal],[data-wire],[data-component]');if(target){event.preventDefault();target.dispatchEvent(new MouseEvent('click',{bubbles:true}));}});
@@ -156,4 +167,6 @@ for(const button of document.querySelectorAll('[data-analyse],[data-lab-pickup]'
  form.querySelector(`input[name="position"][value="${button.dataset.analyse||button.dataset.labPickup}"]`).click();
 });
 mobile=setupMobileWorkbench({mount,viewport,onChoose:choose,onLayoutChange:()=>{if(circuit)renderLab();}});
+if(importedCircuit.state){const c=importedCircuit.state.configuration;for(const key of ['wiring','bleed','neckCap','bridgeCap','position']){const radios=form.querySelectorAll('input[type=radio][name='+key+']');if(radios.length)for(const radio of radios)radio.checked=radio.value===c[key];else form.elements.namedItem(key).value=c[key];}for(const channel of ['neck','bridge'])form.elements.namedItem(channel+'Profile').value=c.pickupProfiles[channel];}
+$('#forge-import-note').textContent=importedCircuit.notice;
 if(render())window.__forgeEntry?.ready();else window.__forgeEntry?.fail();

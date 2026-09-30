@@ -1,3 +1,4 @@
+import {readDesignerHandoff,circuitStateURL} from '../electronics/state/circuit-state.mjs';
 import {defaults,fields,types,topologies,topologyOf,validateState,bleedSummary} from '../electronics/response/circuits.mjs';
 import {audioTaper,frequencyResponse,responseAt,magnitudeDB} from '../electronics/response/engine.mjs';
 import {renderGraph,graphLimits} from './graph.mjs?v=p10a2';
@@ -21,7 +22,7 @@ function renderMatches(){
  }
 }
 function showFrozen(){const active=!!frozen;$('#freeze-reference').hidden=active;$('#update-reference').hidden=!active;$('#clear-reference').hidden=!active;$('#frozen-summary').hidden=!active;$('#frozen-key').hidden=!active;$('#frozen-summary').textContent=active?'FROZEN REFERENCE · '+frozen.summary:'';}
-function fill(){for(const [key,value] of Object.entries(defaults)){const shown=key==='toneCap'?value/1000:value;field(key).value=shown;field(key).defaultValue=shown;}}
+function fill(values=defaults){for(const [key,value] of Object.entries(values)){const shown=key==='toneCap'?value/1000:value;field(key).value=shown;if(values===defaults)field(key).defaultValue=shown;}}
 function visibility(){const topology=topologyOf({type:field('type').value,topology:field('topology').value});$('#custom-topology').hidden=field('type').value!=='custom';field('topology').disabled=field('type').value!=='custom';for(const key of ['bleedC','bleedR']){const visible=topology!=='none'&&(key==='bleedC'||topology!=='capacitor');field(key).closest('label').hidden=!visible;field(key).disabled=!visible;}$('#network-info').textContent=topology==='none'?'No bypass network across the volume control.':topology==='capacitor'?'A capacitor connects volume input to the wiper/output.':topology==='parallel'?'The capacitor and resistor each connect across volume input and output, in parallel.':'The capacitor and resistor form one series branch between volume input and output.';}
 function update(){
  visibility();const next={...state,type:field('type').value,topology:field('topology').value};for(const key of Object.keys(fields)){const input=field(key);if(!input.disabled)next[key]=input.value.trim()===''?NaN:Number(input.value)*(key==='toneCap'?1000:1);input.removeAttribute('aria-invalid');}
@@ -32,11 +33,11 @@ function update(){
  }catch(error){points=[];$('#designer-error').textContent=error.message;$('#response-content').hidden=true;$('#circuit-summary').hidden=true;$('#matching-products').hidden=true;for(const [key,meta] of Object.entries(fields)){const input=field(key);if(!input.disabled&&(!Number.isFinite(next[key])||next[key]<meta.min||next[key]>meta.max))input.setAttribute('aria-invalid','true');}}
 }
 for(const key of ['volume','tonePosition']){field(key).addEventListener('input',update);field(key).addEventListener('change',update);}
-form.addEventListener('submit',e=>e.preventDefault());form.addEventListener('input',update);form.addEventListener('change',update);form.addEventListener('reset',()=>{state={...defaults};fill();update();});
+form.addEventListener('submit',e=>e.preventDefault());form.addEventListener('input',update);form.addEventListener('change',update);form.addEventListener('reset',()=>{state={...defaults};frozen=null;$('#designer-import-note').textContent='';$('#designer-source-circuit').hidden=true;fill();showFrozen();update();});
 function capture(){if(!points.length)return;frozen=freezeReference(state);showFrozen();renderGraph($('#response-graph'),points,state.volume,frozen);}
 $('#freeze-reference').addEventListener('click',capture);$('#update-reference').addEventListener('click',capture);
 $('#clear-reference').addEventListener('click',()=>{frozen=null;showFrozen();if(points.length)renderGraph($('#response-graph'),points,state.volume);});
-fill();showFrozen();update();
+fill();const imported=readDesignerHandoff(window.location.search);if(imported.response){state=imported.response;fill(state);$('#designer-import-note').textContent=imported.notice+' '+imported.state.configuration.position+' pickup. Designer compares against full Volume; Signal Lab comparison modes and frozen references remain local. Wiring topology and conductor profiles are retained in the source link, not modelled here.';$('#designer-source-circuit').href=circuitStateURL('/circuit-forge/',imported.state);$('#designer-source-circuit').hidden=false;}else $('#designer-import-note').textContent=imported.notice;showFrozen();update();
 import('../components/catalogue.mjs').then(products=>{
  catalogue=products.catalogue;productsReady=true;renderMatches();
  import('../commerce.mjs').then(basket=>{addComponent=basket.addComponent;renderMatches();}).catch(()=>{});
