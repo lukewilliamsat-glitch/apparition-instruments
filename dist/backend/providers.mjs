@@ -34,7 +34,7 @@ export function createPublicCatalogueClient(config=publicBackendConfig,request=g
 export function createAuthenticatedRepositoryTransport(auth,{config=publicBackendConfig,request=globalThis.fetch}={}){
  if(!auth||typeof auth.accessToken!=='function'||!/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(config?.url||'')||!/^sb_publishable_[A-Za-z0-9_-]+$/.test(config?.publishableKey||'')||typeof request!=='function')throw new Error('Invalid authenticated repository transport.');
  return Object.freeze({async send(table,{method='GET',query='',body,prefer}={}){
-  if(!['components','component_internal','inventory','assemblies','assembly_bom','kit_definitions','kit_definition_internal','kit_permitted_components','catalogue_options','orders','partial_refund_reviews','order_email_deliveries','rpc/delete_unused_component','rpc/advance_order_fulfilment','rpc/acknowledge_partial_refund','rpc/record_order_dispatch_details'].includes(table))throw new Error('Unsupported Admin repository resource.');
+  if(!['components','component_internal','inventory','assemblies','assembly_bom','kit_definitions','kit_definition_internal','kit_permitted_components','catalogue_options','orders','partial_refund_reviews','order_email_deliveries','rpc/create_external_order','rpc/delete_unused_component','rpc/advance_order_fulfilment','rpc/acknowledge_partial_refund','rpc/record_order_dispatch_details'].includes(table))throw new Error('Unsupported Admin repository resource.');
   const token=await auth.accessToken();
   return request(config.url+'/rest/v1/'+table+query,{method,headers:{apikey:config.publishableKey,Authorization:'Bearer '+token,'Content-Type':'application/json',...prefer?{Prefer:prefer}:{}},...body===undefined?{}:{body:JSON.stringify(body)}});
  }});

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {Window} from 'happy-dom';
+import {createAuthenticatedRepositoryTransport} from '../dist/backend/providers.mjs';
 import {createAdminOrderRepository} from '../dist/backend/order-data.mjs';
 import {mountExternalOrderForm,poundsToPence} from '../dist/admin/orders/external-order.mjs';
 import {showOrder} from '../dist/admin/orders/view.mjs';
@@ -8,7 +9,14 @@ const w=new Window({url:'https://apparitioninstruments.co.uk/admin/orders/?new=e
 w.document.write(readFileSync(new URL('../dist/admin/orders/index.html',import.meta.url),'utf8'));
 const calls=[],data={components:[{id:'a',sku:'A',name:'Part A',individually:true,sale_price:123},{id:'b',sku:'B',name:'Part B',individually:false,sale_price:200}],inventory:[{component_id:'a',quantity:8},{component_id:'b',quantity:12}],assemblies:[{id:'asm',sku:'ASM',name:'Assembly'}],assembly_bom:[{assembly_id:'asm',component_id:'a',quantity:2},{assembly_id:'asm',component_id:'b',quantity:3}],order_email_deliveries:[],orders:[{id:'saved',reference:'AI-012345',sales_channel:'EBAY',external_reference:'22-ABC',order_date:'2026-09-30',internal_notes:'note',customer:{name:'Buyer'},delivery:{},items:[{type:'assembly',name:'Assembly',quantity:2,unitPrice:500,lineTotal:1000,snapshot:{components:[{sku:'A',name:'Part A',quantity:2}]}}],payment_status:'paid',status:'pending',subtotal_pence:1000,delivery_pence:91,total_pence:1091,status_history:[]}]};
 let submissions=0,pendingResolve;
-const repository=createAdminOrderRepository({send:async(resource,options)=>{calls.push({resource,options});if(resource==='rpc/create_external_order'){submissions++;return new Promise(resolve=>{pendingResolve=resolve;});}return Response.json(data[resource]);}});
+const transport=createAuthenticatedRepositoryTransport({accessToken:async()=> 'fixture-admin-token'},{request:async(url,options)=>{
+ assert.equal(options.headers.Authorization,'Bearer fixture-admin-token');
+ const resource=new URL(url).pathname.replace('/rest/v1/','');
+ calls.push({resource,options:{...options,...options.body?{body:JSON.parse(options.body)}:{}}});
+ if(resource==='rpc/create_external_order'){assert.equal(options.method,'POST');submissions++;return new Promise(resolve=>{pendingResolve=resolve;});}
+ return Response.json(data[resource]);
+}});
+const repository=createAdminOrderRepository(transport);
 assert.equal(poundsToPence('1.23'),123);assert.equal(poundsToPence('0'),0);assert.throws(()=>poundsToPence('1.234'));
 const products=await repository.externalProducts();assert.equal(products.length,2);assert.equal(products.find(row=>row.type==='assembly').available,4);
 let destination;await mountExternalOrderForm({repository,navigate:url=>{destination=url;},uuid:()=> '11111111-1111-4111-8111-111111111111'});
@@ -17,7 +25,7 @@ const form=w.document.querySelector('form#create-order-form');
 form.reportValidity=()=>true;form.elements.externalReference.value='22-ABC';form.elements.customerName.value='Buyer';form.elements.postage.value='0.91';
 const picker=w.document.querySelector('#external-product-picker');picker.value=String(products.findIndex(row=>row.type==='component'));w.document.querySelector('#external-add-line').click();
 assert.match(w.document.querySelector('#create-order-items').textContent,/Part A.*A/);assert.match(w.document.querySelector('#create-order-total').textContent,/£2.14/);
-const submit=()=>form.dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));submit();submit();assert.equal(submissions,1,w.document.querySelector('#create-order-error').textContent+' '+[...form.elements].filter(el=>el.validity&&!el.validity.valid).map(el=>el.name+': '+el.validationMessage).join('; '));
+const submit=()=>form.dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));submit();submit();await new Promise(resolve=>setTimeout(resolve,0));assert.equal(submissions,1,w.document.querySelector('#create-order-error').textContent+' '+[...form.elements].filter(el=>el.validity&&!el.validity.valid).map(el=>el.name+': '+el.validationMessage).join('; '));
 assert.equal(calls.at(-1).resource,'rpc/create_external_order');assert.equal(calls.at(-1).options.body.p_request.items[0].productId,'a');assert.equal(calls.at(-1).options.body.p_request.postagePence,91);
 pendingResolve(Response.json({id:'saved',reference:'AI-012345',duplicate:false}));await new Promise(resolve=>setTimeout(resolve,0));assert.match(destination,/id=saved/);
 const records=await repository.list();assert.equal(records[0].channel,'EBAY');assert.equal(records[0].externalReference,'22-ABC');assert.equal(records[0].notes,'note');
