@@ -1,6 +1,6 @@
 import {validateKitSnapshot} from '../../les-paul-kits/snapshot.mjs';
 export const orderStorageKey='apparition.admin.orders.v1';
-export const channels={WEBSITE:'Website',EBAY:'eBay',MANUAL:'Manual'};
+export const channels={WEBSITE:'Website',EBAY:'eBay',DIRECT:'Direct',OTHER:'Other',MANUAL:'Manual'};
 export const statuses={PENDING:'Pending',DRAFT:'Draft',AWAITING_PAYMENT:'Awaiting payment',PAID:'Paid',IN_PRODUCTION:'In production',READY_TO_DISPATCH:'Ready to dispatch',DISPATCHED:'Dispatched',CANCELLED:'Cancelled'};
 const copy=x=>structuredClone(x);
 const text=(v,n=300)=>String(v??'').trim().slice(0,n);

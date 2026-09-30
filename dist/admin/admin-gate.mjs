@@ -5,7 +5,7 @@ import {createAdminOptionRepository,setAdminOptionRepository} from '../backend/c
 import {setAssemblyRepository} from './assembly-repository.mjs';
 import {createAdminAssemblyRepository} from '../backend/assembly-data.mjs';
 import {createAuthenticatedRepositoryTransport} from '../backend/providers.mjs?v=p10g';
-import {createAdminOrderRepository,setAdminOrderRepository} from '../backend/order-data.mjs?v=p08b4';
+import {createAdminOrderRepository,setAdminOrderRepository} from '../backend/order-data.mjs?v=external-v1';
 
 const element=(document,tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
 const entryModules=document=>(document.querySelector('script[data-admin-entry]')?.dataset.adminEntry||'').split(',').map(value=>value.trim()).filter(Boolean);

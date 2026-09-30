@@ -1,5 +1,5 @@
 // The Admin gate supplies the authenticated repository before loading this file.
-import {currentAdminOrderRepository} from '../../../backend/order-data.mjs?v=p08b4';
+import {currentAdminOrderRepository} from '../../../backend/order-data.mjs?v=external-v1';
 import {renderInvoiceDocument} from '../../../invoice/document.mjs';
 
 export async function loadAdminInvoice({document,location,repository=currentAdminOrderRepository()}={}){

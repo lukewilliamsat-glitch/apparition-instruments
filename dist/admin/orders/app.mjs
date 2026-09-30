@@ -1,18 +1,23 @@
-import {currentAdminOrderRepository} from '../../backend/order-data.mjs?v=p08b4';
+import {currentAdminOrderRepository} from '../../backend/order-data.mjs?v=external-v1';
 import {fulfilmentLabels,paymentLabels,isPaidOrder,isCheckoutAttempt,nextFulfilment} from './lifecycle.mjs';
-import {el,money,date,showOrder} from './view.mjs?v=p08b4';
+import {el,money,date,showOrder} from './view.mjs?v=external-v1';
+import {mountExternalOrderForm} from './external-order.mjs';
+import {channels} from './model.mjs';
 import {deploymentPath} from '../../deployment.mjs';
 import {createAdminAuth} from '../admin-auth.mjs';
 import {publicBackendConfig} from '../../backend/public-config.mjs';
 const $=selector=>document.querySelector(selector);
 let records=[];
-$('#order-create-actions').hidden=true;
+$('#order-create-actions').hidden=false;
 $('#order-editor').hidden=true;
+const creating=new URLSearchParams(location.search).get('new')==='external';
+if(creating)mountExternalOrderForm({repository:currentAdminOrderRepository()});
 const attempts=new URLSearchParams(location.search).get('view')==='attempts';
 for(const [key,label] of Object.entries(fulfilmentLabels)){const option=el('option',label);option.value=key;$('#order-filter').append(option);}
 const deliveryLabels={in_production:'In Production',ready_to_dispatch:'Ready to Dispatch',dispatched:'Dispatched',full_refund:'Refund Processed'};
 function appendEmailStatus(order){
  const section=el('section',undefined,'order-email-status');section.append(el('h3','Customer communications'));
+ if(order.channel!=='WEBSITE'){section.append(el('p','External sale: customer communications remain with the sales channel. No Apparition customer emails are sent.'));$('#detail-content').append(section);return;}
  section.append(el('p','Lifecycle and refund email delivery is not yet active. Existing order confirmations remain on the approved production path.','storage-note'));
  for(const [kind,label] of Object.entries(deliveryLabels)){
   const row=(order.emailDeliveries||[]).find(item=>item.kind===kind);
@@ -39,8 +44,9 @@ function render(){
  document.querySelector('.dispatch-details')?.remove();
  const id=new URLSearchParams(location.search).get('id'),order=records.find(item=>item.id===id);
  $('#order-detail').hidden=!id;$('#order-list').hidden=!!id;
- if(id){if(!order){$('#order-message').textContent='Order not found in shared Orders. Return to the list and refresh.';return;}$('#detail-title').textContent=order.reference;showOrder(order,$('#detail-content'));if(isPaidOrder(order)){const invoice=el('a','Print / Save Invoice','button');invoice.href=deploymentPath('/admin/orders/invoice/?id='+encodeURIComponent(order.id));$('#detail-content').prepend(invoice);}
-  if(order.reference==='AI-010010'&&order.paymentStatus==='paid'&&order.confirmationEmailStatus==='legacy'){
+ if(creating){$('#order-list').hidden=true;$('#order-detail').hidden=true;return;}
+ if(id){if(!order){$('#order-message').textContent='Order not found in shared Orders. Return to the list and refresh.';return;}$('#detail-title').textContent=order.reference;showOrder(order,$('#detail-content'));if(isPaidOrder(order)&&order.channel==='WEBSITE'){const invoice=el('a','Print / Save Invoice','button');invoice.href=deploymentPath('/admin/orders/invoice/?id='+encodeURIComponent(order.id));$('#detail-content').prepend(invoice);}
+  if(order.channel==='WEBSITE'&&order.reference==='AI-010010'&&order.paymentStatus==='paid'&&order.confirmationEmailStatus==='legacy'){
    const button=el('button','Send one confirmation for AI-010010','button');button.type='button';
    button.addEventListener('click',async()=>{
     if(!window.confirm('Send one order confirmation to the customer email already saved on AI-010010? This cannot be undone.'))return;
@@ -53,8 +59,8 @@ function render(){
   appendEmailStatus(order);appendDispatchEditor(order);
   const next=nextFulfilment(order),form=$('#order-status-form');form.hidden=!next;
   const select=$('#detail-status');select.replaceChildren();if(next){const choice=el('option',fulfilmentLabels[next]);choice.value=next;select.append(choice);}
-  if(next){const button=form.querySelector('button');button.textContent='Advance to '+fulfilmentLabels[next];const note=form.querySelector('p');note.textContent=next==='completed'?'Completed has no customer email. Payment state is unchanged.':'After customer emails are activated, this transition will create a customer '+fulfilmentLabels[next]+' update. Email delivery is currently inactive.';form.querySelector('label').firstChild.textContent=next==='dispatched'?'Step 2 · Advance fulfilment':'Advance fulfilment';}
-  if(order.paymentStatus==='paid'&&(!order.customer.name||!order.delivery.line1)){
+  if(next){const button=form.querySelector('button');button.textContent='Advance to '+fulfilmentLabels[next];const note=form.querySelector('p');note.textContent=order.channel!=='WEBSITE'?'External order fulfilment only. No customer email will be sent.':next==='completed'?'Completed has no customer email. Payment state is unchanged.':'After customer emails are activated, this transition will create a customer '+fulfilmentLabels[next]+' update. Email delivery is currently inactive.';form.querySelector('label').firstChild.textContent=next==='dispatched'?'Step 2 · Advance fulfilment':'Advance fulfilment';}
+  if(order.channel==='WEBSITE'&&order.paymentStatus==='paid'&&(!order.customer.name||!order.delivery.line1)){
    const button=el('button','Retrieve verified Stripe delivery details','button');button.type='button';
    button.addEventListener('click',async()=>{button.disabled=true;$('#order-message').textContent='Retrieving verified delivery details…';
     try{const token=await createAdminAuth().accessToken();const reply=await fetch(publicBackendConfig.url+'/functions/v1/sync-order-contact',{method:'POST',headers:{apikey:publicBackendConfig.publishableKey,Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({reference:order.reference})});
@@ -72,9 +78,9 @@ function render(){
   }else if(order.paymentStatus==='refunded')$('#detail-content').append(el('p','This Order has been fully refunded. Fulfilment progression is unavailable; the existing fulfilment history is unchanged.','storage-note'));
   return;}
  const q=$('#order-search').value.toLowerCase().trim(),filter=$('#order-filter').value;
- const rows=records.filter(item=>(attempts?isCheckoutAttempt(item):isPaidOrder(item))&&(!filter||item.fulfilmentStatus===filter)&&[item.reference,item.customer.name,item.customer.email].join(' ').toLowerCase().includes(q));
+ const rows=records.filter(item=>(attempts?isCheckoutAttempt(item):isPaidOrder(item))&&(!filter||item.fulfilmentStatus===filter)&&[item.reference,item.externalReference,channels[item.channel],item.customer.name,item.customer.email].join(' ').toLowerCase().includes(q));
  $('#order-rows').replaceChildren();$('#orders-empty').hidden=!!rows.length;
- for(const order of rows){const row=el('tr'),cell=el('td'),link=el('a',order.reference);link.href=deploymentPath('/admin/orders/?id='+encodeURIComponent(order.id));cell.append(link);row.append(cell,...[date(order.createdAt),order.customer.name||'Not supplied',money(order.pricing.total),paymentLabels[order.paymentStatus]||order.paymentStatus,isPaidOrder(order)?fulfilmentLabels[order.fulfilmentStatus]||order.fulfilmentStatus:'Checkout attempt'].map((value,index)=>el('td',value,index===3?'order-state '+(isPaidOrder(order)?'paid':'unpaid'):index===4?'order-state':'')));$('#order-rows').append(row);}
+ for(const order of rows){const row=el('tr'),cell=el('td'),link=el('a',order.reference);link.href=deploymentPath('/admin/orders/?id='+encodeURIComponent(order.id));cell.append(link);if(order.externalReference)cell.append(el('small',' · '+order.externalReference));row.append(cell,el('td',channels[order.channel]||order.channel),...[order.orderDate||date(order.createdAt),order.customer.name||'Not supplied',money(order.pricing.total),paymentLabels[order.paymentStatus]||order.paymentStatus,isPaidOrder(order)?fulfilmentLabels[order.fulfilmentStatus]||order.fulfilmentStatus:'Checkout attempt'].map((value,index)=>el('td',value,index===3?'order-state '+(isPaidOrder(order)?'paid':'unpaid'):index===4?'order-state':'')));$('#order-rows').append(row);}
 }
 async function refresh(){try{records=await currentAdminOrderRepository().list();$('#order-message').textContent='';render();}catch(error){$('#order-message').textContent=error.message;}}
 $('#order-search').addEventListener('input',render);$('#order-filter').addEventListener('change',render);
