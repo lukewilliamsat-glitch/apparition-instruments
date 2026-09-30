@@ -11,7 +11,7 @@ const html=readFileSync('dist/index.html','utf8'),asset=readFileSync('dist/asset
 const circuit=forgeCircuit({position:'neck'}).circuit;
 assert.equal(asset,forgeDiagram(circuit).replace('viewBox="0 0 1320 1275"','viewBox="0 75 1320 1200"').replace('<rect width="1320" height="1275" fill="#f5f5f5"/>',''));
 assert(html.includes('id="signal-forge"')&&html.includes('forge-reveal.mjs?rev=signal-forge-identity-v1'));
-assert(html.includes('homepage.css?rev=signal-forge-identity-v1')&&html.includes('signal-forge-full.svg?rev=signal-forge-identity-v1'));
+assert(html.includes('homepage.css?rev=signal-forge-mobile-v1')&&html.includes('signal-forge-full.svg?rev=signal-forge-identity-v1'));
 for(const chapter of [0,1,2,3])assert(html.includes(`data-forge-chapter="${chapter}"`));
 assert(html.includes('href="/circuit-forge/"')&&html.includes('href="/wiring-generator/"'));
 assert(html.includes('class="ethos section"')&&html.includes('class="product-list"'));

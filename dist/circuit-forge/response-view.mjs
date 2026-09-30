@@ -1,8 +1,8 @@
 // Presentation only. Values and frequency samples come from shared response core.
 const ns='http://www.w3.org/2000/svg';
 const node=(tag,attributes={},value)=>{const n=document.createElementNS(ns,tag);for(const [key,v] of Object.entries(attributes))n.setAttribute(key,v);if(value!==undefined)n.textContent=value;return n;};
-export function responseGraph(report){
- const width=760,height=300,left=52,right=18,top=24,bottom=42,plotWidth=width-left-right,plotHeight=height-top-bottom;
+export function responseGraph(report,{compact=false}={}){
+ const width=compact?360:760,height=compact?270:300,left=compact?38:52,right=18,top=24,bottom=42,plotWidth=width-left-right,plotHeight=height-top-bottom;
  const x=f=>left+Math.log10(f/20)/3*plotWidth,y=db=>top+(20-Math.max(-100,Math.min(20,db)))/120*plotHeight;
  const path=points=>points.map((p,i)=>(i?'L':'M')+x(p.frequency).toFixed(2)+' '+y(p.current).toFixed(2)).join(' ');
  const svg=node('svg',{viewBox:`0 0 ${width} ${height}`,role:'img','aria-labelledby':'forge-response-title forge-response-desc'});

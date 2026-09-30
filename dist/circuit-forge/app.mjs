@@ -1,3 +1,4 @@
+import {setupMobileWorkbench} from './mobile-workbench.mjs';
 import {forgeCircuit,defaultControls} from './model.mjs';
 import {forgeResponse,responseComponent} from './response.mjs';
 import {responseGraph} from './response-view.mjs';
@@ -8,21 +9,23 @@ import {pickupConventions} from '../wiring-generator/colours.mjs';
 
 const $=query=>document.querySelector(query),form=$('#forge-controls'),mount=$('#forge-diagram'),viewport=$('#forge-viewport');
 const el=(tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
-let circuit,selection=null,roleView='all';
+let circuit,selection=null,roleView='all',mobile;
 function setWorkspaceMode(mode){
  const physical=mode==='physical';
+ mobile?.modeChanged(mode);
  $('#forge-mode-physical').hidden=!physical;$('#forge-response-lab').hidden=physical;
  $('#forge-diagram-title').textContent=physical?'Circuit Lab':'Signal Lab';
  for(const button of document.querySelectorAll('[data-forge-mode]'))button.setAttribute('aria-pressed',String(button.dataset.forgeMode===mode));
 }
-const choose=(kind,value)=>{selection=kind==='component'?{kind,id:value}:kind==='wire'?{kind,id:value}:{kind:'terminal',ref:value};updateSelection();};
+const choose=(kind,value)=>{selection=kind==='component'?{kind,id:value}:kind==='wire'?{kind,id:value}:{kind:'terminal',ref:value};updateSelection();mobile?.selectionChanged(selection);};
 function paint(){
  const active=document.activeElement,attribute=['data-terminal','data-wire','data-component'].find(name=>active?.hasAttribute?.(name)),value=attribute&&active.getAttribute(attribute),left=viewport.scrollLeft,top=viewport.scrollTop;
- mount.innerHTML=forgeDiagram(circuit,{selection:selectionHighlight(circuit,selection),filter:roleView});viewport.scrollLeft=left;viewport.scrollTop=top;
+ mount.innerHTML=forgeDiagram(circuit,{selection:selectionHighlight(circuit,selection),filter:roleView});mobile?.diagramChanged();viewport.scrollLeft=left;viewport.scrollTop=top;
  if(value)mount.querySelector(`[${attribute}="${value}"]`)?.focus({preventScroll:true});
 }
 function updateSelection(){
  const info=inspectSelection(circuit,selection),box=$('#forge-inspection');box.replaceChildren();
+ mobile?.selectionLabel(info);
  if(!info){selection=null;box.append(el('p','Choose a part from the list or select a terminal or wire in the diagram. Trace buttons reveal a conductive segment.'));}
  else {
   box.append(el('h4',info.heading),el('p',info.subtitle));
@@ -64,7 +67,7 @@ function renderLab(){
  if(!report.supported){context.textContent=circuit.state.wiring==='modern'?'MODEL LIMIT · SELECTOR':'MODEL LIMIT · WIRING';$('#forge-response-summary').textContent=report.reason;return;}
  context.textContent=`${report.channel.toUpperCase()} PICKUP · Modern wiring · ${report.bleed} · ${report.state.toneCap/1000} µF tone capacitor`;
  for(const [name,keyName] of [['volume','volume'],['tone','tonePosition']]){const input=$('#forge-response-'+name),value=report.state[keyName];input.value=value;$('#forge-response-'+name+'-value').textContent=value.toFixed(1)+' / 10';}
- graph.append(responseGraph(report));$('#forge-response-summary').textContent=report.summary;
+ graph.append(responseGraph(report,{compact:mobile?.isMobile}));$('#forge-response-summary').textContent=report.summary;
  for(const line of report.assumptions)assumptions.append(el('li',line));
 }
 function updateInventory(){
@@ -112,4 +115,5 @@ for(const button of document.querySelectorAll('[data-forge-mode]'))button.addEve
 for(const button of document.querySelectorAll('[data-analyse],[data-lab-pickup]'))button.addEventListener('click',()=>{
  form.querySelector(`input[name="position"][value="${button.dataset.analyse||button.dataset.labPickup}"]`).click();
 });
+mobile=setupMobileWorkbench({mount,viewport,onChoose:choose,onLayoutChange:()=>{if(circuit)renderLab();}});
 if(render())window.__forgeEntry?.ready();else window.__forgeEntry?.fail();
