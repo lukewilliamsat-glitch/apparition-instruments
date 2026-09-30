@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>html.forge-entering body{background:#111}html.forge-entering .forge-main,html.forge-entering .site-header,html.forge-entering footer{visibility:hidden}.forge-entry{display:none}</style><script>(function(){
  const root=document.documentElement,started=performance.now(),reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
- let seen=false;try{seen=sessionStorage.getItem('apparition-forge-entered')==='1';}catch{}
- root.classList.add('forge-entering');if(seen||reduced)root.classList.add('forge-entry-brief');
- let settled=false;const minimum=seen||reduced?0:800;
+ root.classList.add('forge-entering');if(reduced)root.classList.add('forge-entry-brief');
+ let settled=false;const minimum=reduced?0:800;
  const fail=()=>{if(settled)return;settled=true;clearTimeout(watchdog);root.classList.add('forge-entry-failed');root.classList.remove('forge-entering');document.querySelector('#forge-entry-error')?.removeAttribute('hidden');};
  const watchdog=setTimeout(fail,8000);
- window.__forgeEntry={ready:async()=>{if(settled)return;try{await Promise.all([document.fonts.ready,new Promise(resolve=>setTimeout(resolve,Math.max(0,minimum-(performance.now()-started))))]);await new Promise(resolve=>requestAnimationFrame(resolve));}catch{fail();return;}if(settled)return;settled=true;clearTimeout(watchdog);try{sessionStorage.setItem('apparition-forge-entered','1');}catch{}root.classList.add('forge-entry-handoff');root.classList.remove('forge-entering');setTimeout(()=>root.classList.remove('forge-entry-handoff','forge-entry-brief'),240);},fail};
+ window.__forgeEntry={ready:async()=>{if(settled)return;try{await Promise.all([document.fonts.ready,new Promise(resolve=>setTimeout(resolve,Math.max(0,minimum-(performance.now()-started))))]);await new Promise(resolve=>requestAnimationFrame(resolve));}catch{fail();return;}if(settled)return;settled=true;clearTimeout(watchdog);root.classList.add('forge-entry-handoff');root.classList.remove('forge-entering');setTimeout(()=>root.classList.remove('forge-entry-handoff','forge-entry-brief'),240);},fail};
 })();</script><title>Circuit Forge | Apparition Instruments</title><link rel="icon" href="../favicon.svg"><link rel="stylesheet" href="../style.css"><link rel="stylesheet" href="../brand.css"><link rel="stylesheet" href="../knowledge.css"><script type="module" src="../site.mjs"></script><!-- SEO METADATA START -->
 <meta name="description" content="Start with a supported Les Paul circuit, explore its wiring and inspect electrical paths in Circuit Forge.">
 <link rel="canonical" href="https://apparitioninstruments.co.uk/circuit-forge/">

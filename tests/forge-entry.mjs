@@ -25,9 +25,9 @@ function setup({reduced=false,seen=false}={}){
 }
 let entry=setup();assert(entry.names.has('forge-entering'));assert(!entry.names.has('forge-entry-brief'));
 const pending=entry.win.__forgeEntry.ready();await flush();assert(entry.names.has('forge-entering'),'readiness alone cannot skip minimum');
-await entry.advance(800);await pending;assert(!entry.names.has('forge-entering'));assert.equal(entry.storage.get('apparition-forge-entered'),'1');
+await entry.advance(800);await pending;assert(!entry.names.has('forge-entering'));assert.equal(entry.storage.get('apparition-forge-entered'),undefined);
 entry=setup({reduced:true});assert(entry.names.has('forge-entry-brief'));const immediate=entry.win.__forgeEntry.ready();await flush();await entry.advance(0);await immediate;assert(!entry.names.has('forge-entering'));
-entry=setup({seen:true});assert(entry.names.has('forge-entry-brief'));const repeat=entry.win.__forgeEntry.ready();await flush();await entry.advance(0);await repeat;assert(!entry.names.has('forge-entering'),'same-session visit still waits for readiness but skips the designed minimum');
+entry=setup({seen:true});assert(!entry.names.has('forge-entry-brief'),'same-session document load runs full sequence');const repeat=entry.win.__forgeEntry.ready();await flush();assert(entry.names.has('forge-entering'));await entry.advance(800);await repeat;assert(!entry.names.has('forge-entering'),'same-session visit hands off after readiness and the minimum');
 entry=setup({seen:true});entry.win.__forgeEntry.fail();assert(entry.error.hidden===false&&entry.names.has('forge-entry-failed'));
 entry=setup();await entry.advance(8000);assert(!entry.names.has('forge-entering')&&!entry.error.hidden,'missing module cannot trap the visitor');
 console.log('Forge entry readiness, minimum, replay, reduced motion and failure recovery PASS');
