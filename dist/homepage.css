@@ -59,7 +59,9 @@
  .home-page .home-generator>p{grid-row:4}
  .home-page .home-generator>.card-link{grid-row:5;padding-top:5px}
  .home-page .hub-preview{padding-block:55px}
- .home-page .editorial-card{min-height:0}
+ .home-page .editorial-card{min-height:0;min-width:0}
+ .home-page .editorial-card h3{max-width:100%;overflow-wrap:anywhere;font-size:clamp(1.5rem,8vw,2rem)}
+ .home-page .editorial-card h3 br{display:initial}
  .home-page .guitar-teaser.section{padding-block:30px}
  .home-page .guitar-teaser>div{display:block}
  .home-page .guitar-teaser h2{font-size:1.9rem;margin:10px 0 16px}
