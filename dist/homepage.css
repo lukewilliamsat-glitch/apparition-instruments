@@ -87,13 +87,13 @@
 .forge-reveal.is-animated[data-stage="1"] [data-home-trace] .wire-line,.forge-reveal.is-animated[data-stage="2"] [data-home-trace] .wire-line,.forge-reveal.is-animated[data-stage="3"] [data-home-trace] .wire-line{stroke-width:5;stroke:#9b783c}
 .forge-reveal.is-animated[data-stage="2"] .forge-reveal-circuit svg .terminal[data-home-inspect]{stroke:#9b783c;stroke-width:5}
 .forge-reveal-response{position:absolute;left:60%;right:0;top:35%;opacity:0;transform:translateX(20px);transition:opacity .7s ease,transform .7s ease}
-.forge-reveal-response svg{display:block;width:100%;height:auto;overflow:visible}
+.forge-reveal-response-context{display:grid;gap:3px;margin-bottom:12px}.forge-reveal-response-context span,.forge-reveal-response-context small{font:600 .67rem/1.45 var(--mono);letter-spacing:.07em;color:#535c54}.forge-reveal-response-context span{color:#80632e}.forge-reveal-response-context strong{font:500 clamp(1.3rem,2vw,2rem)/1.1 var(--serif);text-transform:uppercase}.forge-reveal-response svg{display:block;width:100%;height:auto;overflow:visible}
 .forge-reveal-response .response-current{stroke:#9b783c;stroke-width:3.6;fill:none;stroke-linejoin:round}
 .forge-reveal-response .response-grid{stroke:#c6c4b9;stroke-width:1}.forge-reveal-response .response-zero{stroke:#777d75;stroke-width:1}
 .forge-reveal-response .response-tick,.forge-reveal-response .response-axis{fill:#535c54;font:12px var(--mono)}
 .forge-reveal-inspect{position:absolute;left:68%;top:27%;max-width:30%;display:grid;gap:5px;border-left:2px solid #9b783c;padding:10px 0 10px 17px;opacity:0;transform:translateY(10px);transition:opacity .5s ease,transform .5s ease}
 .forge-reveal-inspect span,.forge-reveal-inspect small{font:600 .68rem/1.5 var(--mono);letter-spacing:.06em;color:#535c54}
-.forge-reveal-inspect strong{font:500 clamp(1.3rem,2vw,2rem)/1.1 var(--serif);color:#202522}
+.forge-reveal-inspect-path{margin-top:5px;color:#66675f!important}.forge-reveal-inspect strong{font:500 clamp(1.3rem,2vw,2rem)/1.1 var(--serif);color:#202522}
 .forge-reveal-bottom{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:end;gap:30px;border-top:1px solid #b8b1a2;padding-top:16px;min-height:84px}
 .forge-reveal-narrative{min-height:44px}.forge-reveal-narrative p{margin:0;font:500 clamp(.85rem,1.2vw,1.05rem)/1.45 var(--sans)}
 .forge-reveal-narrative span{display:block;font:600 .69rem/1.4 var(--mono);letter-spacing:.12em;color:#80632e;margin-bottom:4px}

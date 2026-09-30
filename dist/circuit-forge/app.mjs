@@ -12,7 +12,7 @@ let circuit,selection=null,roleView='all';
 function setWorkspaceMode(mode){
  const physical=mode==='physical';
  $('#forge-mode-physical').hidden=!physical;$('#forge-response-lab').hidden=physical;
- $('#forge-diagram-title').textContent=physical?'Physical circuit':'Signal Lab';
+ $('#forge-diagram-title').textContent=physical?'Circuit Lab':'Signal Lab';
  for(const button of document.querySelectorAll('[data-forge-mode]'))button.setAttribute('aria-pressed',String(button.dataset.forgeMode===mode));
 }
 const choose=(kind,value)=>{selection=kind==='component'?{kind,id:value}:kind==='wire'?{kind,id:value}:{kind:'terminal',ref:value};updateSelection();};

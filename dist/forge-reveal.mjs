@@ -2,6 +2,7 @@
 import {forgeCircuit} from './circuit-forge/model.mjs';
 import {forgeResponse} from './circuit-forge/response.mjs';
 import {responseGraph} from './circuit-forge/response-view.mjs';
+import {inspectSelection,terminalName} from './circuit-forge/workbench.mjs';
 
 export const chapterForProgress=progress=>Math.min(3,Math.max(0,Math.floor(Math.min(1,Math.max(0,progress))*4)));
 
@@ -11,15 +12,28 @@ if(typeof document!=='undefined'){
   const circuit=forgeCircuit({position:'neck'}).circuit;
   const report=forgeResponse(circuit);
   const response=document.querySelector('#forge-reveal-response');
-  if(report.supported){const graph=responseGraph(report);graph.querySelector('.response-current')?.setAttribute('pathLength','1');response.append(graph);}
+  if(report.supported){
+   const context=document.createElement('div');context.className='forge-reveal-response-context';
+   context.innerHTML='<span>SIGNAL ANALYSIS / ELECTRICAL RESPONSE</span><strong>See what the circuit does.</strong><small>Modelled electrical response across 20 Hz–20 kHz.</small><small class="forge-reveal-response-state"></small>';
+   context.querySelector('.forge-reveal-response-state').textContent=`${circuit.state.wiring[0].toUpperCase()+circuit.state.wiring.slice(1)} wiring · ${report.channel[0].toUpperCase()+report.channel.slice(1)} pickup`;
+   const graph=responseGraph(report);graph.querySelector('.response-current')?.setAttribute('pathLength','1');response.append(context,graph);
+  }
   const mount=document.querySelector('#forge-reveal-circuit');
-  const asset=new URL('./assets/signal-forge-full.svg?rev=signal-forge-v1d',import.meta.url);
+  const asset=new URL('./assets/signal-forge-full.svg?rev=signal-forge-identity-v1',import.meta.url);
   fetch(asset).then(result=>{if(!result.ok)throw Error('Circuit artwork unavailable');return result.text();}).then(markup=>{
    const svg=new DOMParser().parseFromString(markup,'image/svg+xml').documentElement;
    if(svg.localName!=='svg')throw Error('Invalid circuit artwork');
    const wire=(from,to)=>circuit.connections.find(item=>item.from===from&&item.to===to)?.id;
    const path=[wire('neckPickup.hot','neckVolume.lug3'),wire('neckVolume.lug2','selector.neck'),wire('selector.outB','jack.tip')];
    if(path.some(id=>!id)||!circuit.contacts.some(([a,b])=>a==='selector.neck'&&b==='selector.outN'))throw Error('Signal path unavailable');
+   const selected=inspectSelection(circuit,{kind:'terminal',ref:'neckVolume.lug2'});
+   const onward=selected?.connections.find(item=>item.from==='neckVolume.lug2'&&item.to==='selector.neck');
+   if(!onward||!selected.output)throw Error('Selected termination unavailable');
+   const annotation=section.querySelector('.forge-reveal-inspect');
+   annotation.querySelector('span').textContent=terminalName(circuit,'neckVolume.lug2').split(' / ')[0];
+   annotation.querySelector('strong').textContent=terminalName(circuit,'neckVolume.lug2').split(' / ')[1];
+   annotation.querySelector('small').textContent=`ROLE / Volume-controlled signal to ${terminalName(circuit,onward.to)}.`;
+   annotation.querySelector('.forge-reveal-inspect-path').textContent='IN THE PATH / Volume wiper → Selector → Output jack';
    for(const id of path){const wireNode=svg.querySelector(`[data-wire="${id}"]`);wireNode?.setAttribute('data-home-trace','');wireNode?.querySelector('.wire-line')?.setAttribute('pathLength','1');}
    for(const hop of svg.querySelectorAll('[data-crossing-wire]'))if(path.includes(hop.getAttribute('data-crossing-wire')))hop.setAttribute('data-home-trace','');
    svg.querySelector('[data-component="neckVolume"]')?.setAttribute('data-home-inspect','');

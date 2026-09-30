@@ -1,3 +1,5 @@
+**SIGNAL FORGE V1 DESKTOP / HOMEPAGE VISUAL BASELINE: LOCKED**, pending Luke’s final rendered acceptance. Public hierarchy: APPARITION SIGNAL FORGE → CIRCUIT LAB → SIGNAL LAB. Both labs share one Forge circuit state. Circuit Lab explains physical connections; Signal Lab shows the validated electrical response. The accepted homepage reveal and entry sequence remain the visual baseline. Explore Mods, Fault Finder, Build With Me, QR/order-linked customer builds, advanced Signal Lab modelling and other V2 functionality remain deferred.
+
 # Astra V4 — Circuit Forge reactivation
 
 Status: canonical V3 close-out for a fresh implementation chat. Repository: `lukewilliamsat-glitch/apparition-instruments`, branch `main`. The predecessor checkpoint is `c2a86795b440b39f846d5c77377806a2b600fa1a`. The close-out commit containing this document was the original V4 starting point; obtain and verify the **current `main` HEAD** before any implementation and reconcile later HQ documentation commits rather than resetting or overwriting them. Production is `https://apparitioninstruments.co.uk/`; production Supabase remains authoritative for business data.

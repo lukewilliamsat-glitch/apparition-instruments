@@ -104,7 +104,7 @@ labPick('bridge');assert.equal(selector(),'bridge');assert(!$('#forge-response-c
 assert.equal($('select[name="bleed"]').value,'prs');
 pick('position','neck');assert.equal($('#forge-response-volume-value').textContent,'4.5 / 10');
 mode('physical');assert(!$('#forge-mode-physical').hidden&&$('#forge-response-lab').hidden);
-assert.equal($('#forge-diagram-title').textContent,'Physical circuit');
+assert.equal($('#forge-diagram-title').textContent,'Circuit Lab');
 assert.equal($('[data-forge-mode="physical"]').getAttribute('aria-pressed'),'true');
 assert.equal(win.document.querySelector('#forge-controls').elements.namedItem('position').value,'neck');
 assert.equal($('select[name="bleed"]').value,'prs');

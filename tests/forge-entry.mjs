@@ -7,9 +7,11 @@ const css=readFileSync('dist/circuit-forge/forge.css','utf8');
 const app=readFileSync('dist/circuit-forge/app.mjs','utf8');
 const boot=html.match(/<script>\(function\(\)\{([\s\S]*?)\}\)\(\);<\/script>/)?.[0].replace(/^<script>|<\/script>$/g,'');
 assert(boot&&html.indexOf(boot)<html.indexOf('<body>'),'entry bootstrap runs before body and modules');
-assert(html.includes('forge-entry-v1b')&&html.includes('id="forge-entry-error"'));
+assert(html.includes('forge-identity-v1')&&html.includes('id="forge-entry-error"'));
 assert(app.includes('if(render())window.__forgeEntry?.ready();else window.__forgeEntry?.fail();'));
 assert.equal((app.match(/__forgeEntry\?\.ready\(\)/g)||[]).length,1,'entry completes once after initial render, not on mode or selector interactions');
+assert(html.includes('APPARITION / INSTRUMENTS')&&html.includes('CONFIGURE · TRACE · UNDERSTAND · ANALYSE'));
+assert(html.includes('>Circuit Lab<')&&html.includes('>Signal Lab<')&&app.includes("physical?'Circuit Lab':'Signal Lab'"));
 assert(css.includes('.forge-entry-brief')&&css.includes('prefers-reduced-motion:reduce'));
 
 const flush=async()=>{for(let i=0;i<4;i++)await Promise.resolve()};
