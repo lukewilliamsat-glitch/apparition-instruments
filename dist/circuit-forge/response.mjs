@@ -1,5 +1,6 @@
 // Forge adapts its authoritative circuit and control state to the validated
 // single-pickup response model. All electrical calculations remain shared.
+import {resolveResponseAssumptions} from '../electronics/response/assumptions.mjs';
 import {defaults,bleedSummary} from '../electronics/response/circuits.mjs';
 import {frequencyResponse} from '../electronics/response/engine.mjs';
 import {composeResponse} from '../electronics/response/analysis.mjs';
@@ -40,9 +41,9 @@ export function forgeResponse(circuit,count=201){
   const type=!bleedCap?'none':bleedResistor?'duncan':'capacitor';
   if((circuit.state.bleed==='none')!==!bleedCap)throw Error('Treble bleed topology is unavailable.');
   const controls=circuit.state.controlPositions?.[channel];if(!controls)throw Error('Control positions are unavailable.');
-  const state={...defaults,type,volume:controls.volume,tonePosition:controls.tone,volumePot:valueOf(volume,'volume pot'),tonePot:valueOf(tone,'tone pot'),toneCap:capacitance(toneCap),bleedC:bleedCap?capacitance(bleedCap):defaults.bleedC,bleedR:bleedResistor?valueOf(bleedResistor,'bleed resistor'):defaults.bleedR};
+  const state={...resolveResponseAssumptions(circuit.state.responseAssumptions,channel),type,volume:controls.volume,tonePosition:controls.tone,volumePot:valueOf(volume,'volume pot'),tonePot:valueOf(tone,'tone pot'),toneCap:capacitance(toneCap),bleedC:bleedCap?capacitance(bleedCap):defaults.bleedC,bleedR:bleedResistor?valueOf(bleedResistor,'bleed resistor'):defaults.bleedR};
   const points=frequencyResponse(state,count),reference=type==='none'?null:frequencyResponse({...state,type:'none'},count);
   const summary=composeResponse({supported:true,channel,state,points,reference},{mode:type==='none'?'live':'ab'}).summary;
-  return {supported:true,channel,state,points,reference,summary,bleed:bleedSummary(state),components:{volume:volume.id,tone:tone.id,toneCap:toneCap.id,bleed:[bleedCap?.id,bleedResistor?.id].filter(Boolean)},assumptions:[`Single pickup with a generic ${state.pickupR} kΩ / ${state.pickupL} H / ${state.pickupC} pF source; manufacturer conductor colour does not set pickup electrical parameters.`,`Modern tone control on the volume input; audio taper assumed for the ${state.volumePot} kΩ volume and ${state.tonePot} kΩ tone pots.`,`${state.loadR} MΩ input load and ${state.cableC} pF cable capacitance. Electrical voltage transfer relative to an ideal pickup source, 20 Hz–20 kHz.`,'Pickup interaction, exact taper, measured pickup values and acoustic sound are not predicted.']};
+  return {supported:true,channel,state,points,reference,summary,bleed:bleedSummary(state),components:{volume:volume.id,tone:tone.id,toneCap:toneCap.id,bleed:[bleedCap?.id,bleedResistor?.id].filter(Boolean)},assumptions:[`Single pickup with a generic illustrative ${state.pickupR} kΩ / ${state.pickupL} H / ${state.pickupC} pF source; manufacturer conductor colour does not set pickup electrical parameters.`,`Modern tone control on the volume input; audio taper assumed for the ${state.volumePot} kΩ volume and ${state.tonePot} kΩ tone pots.`,`${state.loadR} MΩ input load and ${state.cableC} pF cable capacitance. Electrical voltage transfer relative to an ideal pickup source, 20 Hz–20 kHz.`,'Illustrative R/L/C assumptions, not measured pickups. Magnetic/string dynamics, pickup interaction, frequency-dependent pickup losses, exact taper and acoustic sound are not predicted. The physical pickup drawing does not change with source assumptions.']};
  }catch(error){return {supported:false,reason:error.message};}
 }

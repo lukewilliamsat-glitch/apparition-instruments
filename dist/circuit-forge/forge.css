@@ -297,3 +297,22 @@
  .forge-response-comparison,.forge-response-inspect,.forge-response-components,.forge-response-why,.forge-response-cause,.forge-response-limits{grid-column:1/-1}
  .forge-response-graph{grid-column:1;grid-row:auto}.forge-response-key{grid-row:auto;grid-column:1/-1}.forge-response-pickup,.forge-response-context,.forge-response-controls{grid-column:2}
 }
+
+/* V2.1 response-first hierarchy; native controls retain the persistent graph. */
+.forge-output-note{font-size:11px;line-height:1.6;color:#706a5d;margin:4px 0 8px}
+.forge-lab-section-label,.forge-report-label{font-size:10px;font-weight:600;letter-spacing:.1em;color:#82714f;margin:16px 0 6px}
+.forge-response-magnitude{font-size:16px;font-weight:600;margin:8px 0;color:#343d35}
+.forge-response-comparison{padding:12px 0;border-top:1px solid #d8d4cb;margin-top:12px}
+.forge-response-components{gap:10px 16px}.forge-response-summary{font-size:13px;line-height:1.7}
+.forge-response-components select:focus-visible{outline:2px solid #84673e;outline-offset:2px}
+.forge-response-content{min-width:0}.forge-response-content p{overflow-wrap:anywhere}
+.is-unsupported .forge-lab-section-label,.is-unsupported .forge-report-label,.is-unsupported .forge-output-note{display:none}
+@media(max-width:850px){
+ .forge-output-note{order:3}.forge-response-graph{order:4}.forge-response-key{order:5}.forge-response-comparison{order:6}
+ .forge-lab-section-label{order:7}.forge-response-inspect{order:8}.forge-lab-section-label:has(+.forge-response-components){order:9}
+ .forge-response-components{order:10}.forge-response-controls{order:11}.forge-response-explanation{order:12}
+ .forge-response-magnitude{order:13}.forge-response-summary{order:14}.forge-response-cause{order:15}
+ .forge-report-label{display:none}.forge-response-why{order:16}.forge-response-limits{order:17}.forge-response-actions{order:18}.forge-response-selection{order:19}.forge-response-assumptions{order:20}
+ .forge-response-components label{min-width:0}.forge-response-components select{max-width:100%}
+}
+@media(max-width:480px){#forge-lab-pickup{font-size:11px}.forge-response-components label:has(#forge-lab-pickup){grid-column:1/-1}}

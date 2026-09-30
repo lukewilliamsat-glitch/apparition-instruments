@@ -1,4 +1,5 @@
 import {makeCircuit,configuration,endpoint,net,kitLink} from '../wiring-generator/model.mjs';
+import {defaultResponseAssumptions,resolveResponseAssumptions} from '../electronics/response/assumptions.mjs';
 import {pickupConventions} from '../wiring-generator/colours.mjs';
 
 // P12A's first public template uses the existing terminal graph and renderer.
@@ -6,11 +7,11 @@ import {pickupConventions} from '../wiring-generator/colours.mjs';
 export const forgeDefaults=Object.freeze({wiring:'modern',bleed:'none',neckCap:'0.022',bridgeCap:'0.022',position:'both',neckProfile:'generic',bridgeProfile:'generic'});
 export const forgeChoices=Object.freeze({
  wiring:['modern','50s','60s'],bleed:['none','prs','cap','duncan'],
- neckCap:['0.022','0.033','0.047'],bridgeCap:['0.022','0.033','0.047'],
+ neckCap:['0.010','0.015','0.022','0.033','0.047'],bridgeCap:['0.010','0.015','0.022','0.033','0.047'],
  position:['neck','both','bridge'],neckProfile:Object.keys(pickupConventions),bridgeProfile:Object.keys(pickupConventions)
 });
 export const defaultControls=Object.freeze({neck:Object.freeze({volume:7,tone:10}),bridge:Object.freeze({volume:7,tone:10})});
-export function forgeCircuit(choices={},controlPositions=defaultControls){
+export function forgeCircuit(choices={},controlPositions=defaultControls,responseAssumptions=defaultResponseAssumptions()){
  if(!choices||typeof choices!=='object'||Array.isArray(choices))throw Error('Invalid circuit choices.');
  for(const [key,value] of Object.entries(choices))if(!forgeChoices[key]?.includes(value))throw Error('Unsupported Circuit Forge choice: '+key);
  const selected={...forgeDefaults,...choices};
@@ -22,7 +23,9 @@ export function forgeCircuit(choices={},controlPositions=defaultControls){
   if(typeof value!=='number'||!Number.isFinite(value)||value<0||value>10)throw Error('Unsupported '+channel+' '+key+' position.');
  }
  circuit.state.controlPositions=structuredClone(controlPositions);
- return {circuit,kitURL:kitLink(circuit)};
+ circuit.state.responseAssumptions=structuredClone(responseAssumptions);
+ for(const channel of ['neck','bridge']){const values=resolveResponseAssumptions(responseAssumptions,channel);for(const role of ['volume','tone'])circuit.components.find(p=>p.channel===channel&&p.role===role).value=values[role+'Pot']+'kΩ Audio';}
+ return {circuit,kitURL:JSON.stringify(responseAssumptions)===JSON.stringify(defaultResponseAssumptions())&&!['0.010','0.015'].includes(selected.neckCap)&&!['0.010','0.015'].includes(selected.bridgeCap)?kitLink(circuit):null};
 }
 export function terminalPath(circuit,reference){
  endpoint(circuit,reference);

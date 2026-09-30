@@ -39,4 +39,15 @@ win.happyDOM.setWindowSize({width:844,height:390});assert.equal($('#forge-frozen
 click('[data-mobile-open="inspector"]');assert($('#forge-inspector-sheet').open);click('[data-mobile-close="inspector"]');
 win.happyDOM.setWindowSize({width:1200,height:900});assert(!win.document.body.classList.contains('forge-mobile'));assert.equal($('#forge-response-graph svg').getAttribute('viewBox'),'0 0 760 300');assert.equal($('#forge-frozen-description').textContent,retained);assert.equal($('#forge-inspection-readout').textContent,readout);assert.equal($('#forge-response-volume-value').textContent,'7.0 / 10');
 assert.equal(win.localStorage.length,0,'temporary reference is not persisted');
+// V2.1 controls use circuit state, preserve snapshot and persistent graph.
+const graph21=$('#forge-response-graph svg'),saved21=$('#forge-frozen-description').textContent;
+for(const [key,value] of [['volumePot','250'],['tonePot','1000'],['cableC','800'],['loadR','0.5'],['pickup','high']])change('forge-lab-'+key,value);
+assert.equal($('#forge-response-graph svg'),graph21);assert.equal($('#forge-frozen-description').textContent,saved21);
+assert.match($('#forge-frozen-differences').textContent,/Volume potentiometer.*Tone potentiometer.*Cable capacitance.*load.*Pickup/i);
+assert.match($('#forge-response-why').textContent,/capacitance.*Input resistance.*Pickup/s);
+click('[data-lab-pickup="bridge"]');assert.equal($('#forge-lab-volumePot').value,'500');assert.equal($('#forge-lab-pickup').value,'generic');assert.equal($('#forge-lab-cableC').value,'800');
+click('[data-forge-mode="physical"]');click('[data-forge-mode="signal"]');click('[data-lab-pickup="neck"]');assert.equal($('#forge-lab-volumePot').value,'250');assert.equal($('#forge-lab-pickup').value,'high');
+win.happyDOM.setWindowSize({width:320,height:700});assert.equal($('#forge-lab-tonePot').value,'1000');assert.equal($('#forge-frozen-description').textContent,saved21);
+assert.match($('.forge-output-note').textContent,/ideal pickup source.*Not acoustic SPL/);assert.match($('#forge-response-magnitude').textContent,/electrical difference/);
+assert([...$('#forge-response-content')?.children||$('.forge-response-content').children].indexOf($('#forge-response-graph'))<[...$('.forge-response-content').children].indexOf($('#forge-response-comparison')));
 await win.happyDOM.close();console.log('Signal Lab V2 DOM: persistent SVG, pointer/touch + slider inspection, mode state, frozen replace/clear, per-pickup controls, quick circuit choices, unsupported states and responsive/accessibility contracts PASS');
