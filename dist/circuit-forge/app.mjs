@@ -1,7 +1,8 @@
 import {setupMobileWorkbench} from './mobile-workbench.mjs';
 import {forgeCircuit,defaultControls} from './model.mjs';
 import {forgeResponse,responseComponent} from './response.mjs';
-import {responseGraph} from './response-view.mjs';
+import {createResponseGraph} from './response-view.mjs';
+import {composeResponse,captureResponse,referenceDescription,frequencyFromFraction,fractionFromFrequency} from '../electronics/response/analysis.mjs';
 import {forgeDiagram,visualCrossings} from './presentation.mjs';
 import {endpoint} from '../wiring-generator/model.mjs';
 import {selectorReport,changeReport,inspectSelection,selectionHighlight,terminalName} from './workbench.mjs';
@@ -10,6 +11,14 @@ import {pickupConventions} from '../wiring-generator/colours.mjs';
 const $=query=>document.querySelector(query),form=$('#forge-controls'),mount=$('#forge-diagram'),viewport=$('#forge-viewport');
 const el=(tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
 let circuit,selection=null,roleView='all',mobile;
+let comparisonMode='ab',frozenReference=null,signalReport=null,previousSignal=null,graphView=null,inspectionFrequency=1000,lastCause='',assumptionIdentity='';
+const setText=(node,value)=>{if(node.textContent!==value)node.textContent=value;};
+const frequencyLabel=f=>f>=1000?(f/1000).toFixed(2)+' kHz':f.toFixed(0)+' Hz';
+function inspectionReadout(sample){
+ inspectionFrequency=sample.frequency;const frequency=frequencyLabel(sample.frequency),format=db=>db<=-100?'≤ −100 dB':db.toFixed(2)+' dB';
+ setText($('#forge-inspect-frequency-value'),frequency);const input=$('#forge-inspect-frequency');input.value=Math.round(fractionFromFrequency(sample.frequency)*1000);input.setAttribute('aria-valuetext',frequency);
+ setText($('#forge-inspection-readout'),frequency+' · Current '+format(sample.current)+(sample.reference===null?'':' · Reference '+format(sample.reference)+' · Δ '+(sample.clipped?'clipped':(sample.delta>=0?'+':'')+sample.delta.toFixed(2)+' dB')));
+}
 function setWorkspaceMode(mode){
  const physical=mode==='physical';
  mobile?.modeChanged(mode);
@@ -57,18 +66,30 @@ function updateLabSelection(){
  box.textContent=element?`${element.label} is a ${element.role==='bleed'?'treble bleed element':element.role+' control'} in the ${element.channel} circuit.${element.channel===circuit.state.position?' It affects the displayed response.':' Select that pickup alone to analyse it.'}`:selection?'This selection has no direct role in the supported response model.':'';
 }
 function renderLab(){
- const report=forgeResponse(circuit),context=$('#forge-response-context'),graph=$('#forge-response-graph'),controls=$('#forge-response-controls'),key=$('#forge-response-key'),assumptions=$('#forge-response-assumptions'),actions=$('#forge-response-actions');
- for(const button of document.querySelectorAll("[data-lab-pickup]"))button.setAttribute("aria-pressed",String(button.dataset.labPickup===circuit.state.position));
- graph.replaceChildren();assumptions.replaceChildren();controls.hidden=!report.supported;key.hidden=!report.supported;key.querySelector('.forge-response-reference').hidden=!report.reference;key.querySelector('.forge-response-current').textContent=report.reference?'Current circuit · with treble bleed':'Current circuit';
+ const raw=forgeResponse(circuit),report=composeResponse(raw,{mode:comparisonMode,frozen:frozenReference,previous:previousSignal}),context=$('#forge-response-context'),graph=$('#forge-response-graph'),controls=$('#forge-response-controls'),key=$('#forge-response-key'),assumptions=$('#forge-response-assumptions'),actions=$('#forge-response-actions');
+ signalReport=report;
+ for(const button of document.querySelectorAll('[data-lab-pickup]'))button.setAttribute('aria-pressed',String(button.dataset.labPickup===circuit.state.position));
+ for(const button of document.querySelectorAll('[data-response-mode]'))button.setAttribute('aria-pressed',String(button.dataset.responseMode===comparisonMode));
+ $('#forge-frozen-actions').hidden=comparisonMode!=='frozen';$('#forge-freeze').disabled=!report.supported;$('#forge-freeze').textContent=frozenReference?'Replace frozen reference':'Freeze current response';$('#forge-freeze-clear').disabled=!frozenReference;
+ setText($('#forge-frozen-description'),frozenReference?'Saved for this session · '+referenceDescription(frozenReference):'');
+ setText($('#forge-comparison-note'),comparisonMode==='live'?'Only the current response is shown.':comparisonMode==='ab'?'Current circuit versus no treble bleed, with the same pickup, Volume, Tone and loading.':'Freeze a complete response, then change controls or components. The reference stays fixed, including across pickup changes.');
+ controls.hidden=!report.supported;key.hidden=!report.supported;$('#forge-response-inspect').hidden=!report.supported;$('#forge-response-components').hidden=!report.supported;
  $('#forge-response-lab').classList.toggle('is-unsupported',!report.supported);
  actions.hidden=report.supported||circuit.state.wiring!=='modern'||circuit.state.position!=='both';
  assumptions.closest('details').hidden=!report.supported;
  $('#forge-response-lab .forge-response-explanation').textContent=report.supported?'What changes?':'Response unavailable for this circuit state';
- if(!report.supported){context.textContent=circuit.state.wiring==='modern'?'MODEL LIMIT · SELECTOR':'MODEL LIMIT · WIRING';$('#forge-response-summary').textContent=report.reason;return;}
- context.textContent=`${report.channel.toUpperCase()} PICKUP · Modern wiring · ${report.bleed} · ${report.state.toneCap/1000} µF tone capacitor`;
- for(const [name,keyName] of [['volume','volume'],['tone','tonePosition']]){const input=$('#forge-response-'+name),value=report.state[keyName];input.value=value;$('#forge-response-'+name+'-value').textContent=value.toFixed(1)+' / 10';}
- graph.append(responseGraph(report,{compact:mobile?.isMobile}));$('#forge-response-summary').textContent=report.summary;
- for(const line of report.assumptions)assumptions.append(el('li',line));
+ if(!report.supported){graph.replaceChildren();graphView=null;context.textContent=circuit.state.wiring==='modern'?'MODEL LIMIT · SELECTOR':'MODEL LIMIT · WIRING';setText($('#forge-response-summary'),report.reason);for(const id of ['forge-response-cause','forge-response-why','forge-response-limits'])setText($('#'+id),'');return;}
+ setText(context,`${report.channel.toUpperCase()} PICKUP · Modern wiring · ${report.bleed} · ${report.state.toneCap/1000} µF tone capacitor`);
+ for(const [name,keyName] of [['volume','volume'],['tone','tonePosition']]){const input=$('#forge-response-'+name),value=report.state[keyName];input.value=value;setText($('#forge-response-'+name+'-value'),value.toFixed(1)+' / 10');}
+ $('#forge-lab-bleed').value=form.elements.bleed.value;$('#forge-lab-cap').value=form.elements.namedItem(report.channel+'Cap').value;
+ key.querySelector('.forge-response-reference').hidden=!report.reference;setText(key.querySelector('.forge-response-current'),report.legend.current);setText(key.querySelector('.forge-response-reference'),report.legend.reference);
+ if(!graphView||graphView.compact!==!!mobile?.isMobile){const retainedFrequency=inspectionFrequency;graphView=createResponseGraph(report,{compact:!!mobile?.isMobile,onInspect:inspectionReadout});graph.replaceChildren(graphView.svg);graphView.inspect(retainedFrequency,false);}else graphView.update(report);
+ setText($('#forge-response-summary'),report.explanation.what);setText($('#forge-response-why'),report.explanation.why);setText($('#forge-response-limits'),report.explanation.caveat);
+ if(report.changes.length)lastCause=report.changes.map(change=>change.label).join(' · ')+'. '+[...new Set(report.changes.map(change=>change.why))].join(' ');
+ setText($('#forge-response-cause'),lastCause);
+ const difference=report.difference;setText($('#forge-difference-marker'),difference&&!difference.clipped&&Math.abs(difference.delta)>=.1?'◇ Largest sampled difference · '+frequencyLabel(difference.frequency)+' · '+(difference.delta>=0?'+':'')+difference.delta.toFixed(2)+' dB':'');
+ const identity=JSON.stringify(report.assumptions);if(identity!==assumptionIdentity){assumptions.replaceChildren();for(const line of report.assumptions)assumptions.append(el('li',line));assumptions.append(el('li','Magnitude categories use the largest absolute sampled separation: negligible < 0.1 dB; subtle 0.1–<1 dB; moderate 1–<6 dB; strong ≥6 dB. They describe electrical differences, not audibility.'));assumptionIdentity=identity;}
+ previousSignal={channel:report.channel,state:{...report.state}};
 }
 function updateInventory(){
  const list=$('#forge-parts');list.replaceChildren();
@@ -98,6 +119,15 @@ function render(resetControls=false){
 form.addEventListener('change',event=>{if(event.target.name==='wiring'&&event.target.value==='50s')form.elements.bleed.value='none';render();});
 for(const channel of ['neck','bridge']){const select=form.elements.namedItem(channel+'Profile');for(const [id,profile] of Object.entries(pickupConventions)){const option=el('option',profile.label);option.value=id;select.append(option);}}
 form.addEventListener('reset',()=>setTimeout(()=>{selection=null;render(true);},0));
+for(const [id,sourceName] of [['forge-lab-bleed','bleed'],['forge-lab-cap','neckCap']]){
+ const select=$('#'+id);for(const option of form.elements.namedItem(sourceName).options)select.append(option.cloneNode(true));
+ select.addEventListener('change',()=>{const name=id==='forge-lab-bleed'?'bleed':circuit.state.position+'Cap',source=form.elements.namedItem(name);source.value=select.value;source.dispatchEvent(new Event('change',{bubbles:true}));});
+}
+for(const button of document.querySelectorAll('[data-response-mode]'))button.addEventListener('click',()=>{comparisonMode=button.dataset.responseMode;renderLab();});
+$('#forge-freeze').addEventListener('click',()=>{if(!signalReport?.supported)return;frozenReference=captureResponse(signalReport);comparisonMode='frozen';renderLab();});
+$('#forge-freeze-clear').addEventListener('click',()=>{frozenReference=null;renderLab();});
+$('#forge-inspect-frequency').addEventListener('input',event=>{graphView?.inspect(frequencyFromFraction(Number(event.target.value)/1000));});
+$('#forge-inspect-clear').addEventListener('click',()=>graphView?.clear());
 for(const name of ['volume','tone'])$('#forge-response-'+name).addEventListener('input',event=>{
  const channel=circuit?.state.position;if(!['neck','bridge'].includes(channel))return;
  circuit.state.controlPositions[channel][name]=Number(event.target.value);renderLab();

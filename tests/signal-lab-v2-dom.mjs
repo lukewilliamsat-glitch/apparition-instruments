@@ -1,0 +1,42 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {Window} from 'happy-dom';
+const html=readFileSync('dist/circuit-forge/index.html','utf8'),css=readFileSync('dist/circuit-forge/forge.css','utf8');
+const win=new Window({url:'https://apparitioninstruments.co.uk/circuit-forge/',settings:{disableCSSFileLoading:true,disableJavaScriptFileLoading:true}});win.document.write(html);
+Object.assign(globalThis,{document:win.document,window:win,MouseEvent:win.MouseEvent,Event:win.Event});
+await import('../dist/circuit-forge/app.mjs?signal-lab-v2-dom');
+const $=selector=>win.document.querySelector(selector),click=selector=>$(selector).click();
+const input=(id,value)=>{$('#'+id).value=String(value);$('#'+id).dispatchEvent(new win.Event('input',{bubbles:true}));};
+const change=(id,value)=>{$('#'+id).value=value;$('#'+id).dispatchEvent(new win.Event('change',{bubbles:true}));};
+click('[data-forge-mode="signal"]');assert.match($('#forge-response-summary').textContent,/coupled pickup model/);assert.equal($('#forge-freeze').disabled,true);
+click('[data-lab-pickup="neck"]');change('forge-lab-bleed','prs');input('forge-response-volume',3.2);
+assert.equal($('#forge-response-volume-value').textContent,'3.2 / 10');assert.match($('.forge-response-reference').textContent,/same Volume 3.2/);assert.match($('#forge-response-summary').textContent,/largest absolute separation/);
+const svg=$('#forge-response-graph svg'),grid=svg.querySelector('.response-grid'),assumption=$('#forge-response-assumptions li');
+input('forge-response-volume',4);assert.equal($('#forge-response-graph svg'),svg);assert.equal(svg.querySelector('.response-grid'),grid);assert.equal($('#forge-response-assumptions li'),assumption,'sliders do not rebuild static DOM');assert.match($('#forge-response-cause').textContent,/Volume changed/);
+click('[data-response-mode="live"]');assert.equal($('.forge-response-reference').hidden,true);assert.equal(svg.querySelector('.response-reference').style.display,'none');assert.equal(svg.querySelector('.response-reference').getAttribute('d'),'');assert.doesNotMatch($('#forge-inspection-readout').textContent,/Reference|Δ/);
+click('[data-response-mode="ab"]');input('forge-inspect-frequency',500);assert.match($('#forge-inspection-readout').textContent,/Reference.*Δ/);assert.equal(svg.querySelector('.response-inspection').style.display,'');
+assert.match($('#forge-inspect-frequency').getAttribute('aria-valuetext'),/Hz/);click('#forge-inspect-clear');assert.equal(svg.querySelector('.response-inspection').style.display,'none');
+// Deterministic pointer position, including xMidYMid letterboxing at a wide aspect ratio.
+svg.getBoundingClientRect=()=>({left:0,top:0,width:1000,height:300});svg.dispatchEvent(new win.PointerEvent('pointerdown',{clientX:52+120,pointerId:1,pointerType:'touch'}));assert.match($('#forge-inspection-readout').textContent,/20 Hz/);svg.dispatchEvent(new win.PointerEvent('pointermove',{clientX:1000,pointerId:1,pointerType:'touch'}));assert.match($('#forge-inspection-readout').textContent,/20.00 kHz/);svg.dispatchEvent(new win.PointerEvent('pointerup',{pointerId:1,pointerType:'touch'}));
+click('[data-response-mode="frozen"]');assert.match($('#forge-response-summary').textContent,/No frozen reference/);click('#forge-freeze');
+const referencePath=svg.querySelector('.response-reference').getAttribute('d'),metadata=$('#forge-frozen-description').textContent;
+assert.match(metadata,/Neck.*Volume 4.0.*Tone 10.0/);input('forge-response-tone',2);input('forge-response-volume',7);assert.equal(svg.querySelector('.response-reference').getAttribute('d'),referencePath);assert.equal($('#forge-frozen-description').textContent,metadata);assert.notEqual(svg.querySelector('.response-current').getAttribute('d'),referencePath);assert.match($('#forge-response-why').textContent,/Tone changes/);
+change('forge-lab-cap','0.047');assert.match($('#forge-response-cause').textContent,/Tone capacitor changed/);assert.match($('#forge-response-context').textContent,/0.047 µF/);
+click('[data-forge-mode="physical"]');assert.equal($('#forge-response-lab').hidden,true);assert.equal(win.document.querySelector('#forge-controls').elements.neckCap.value,'0.047');click('[data-forge-mode="signal"]');assert.equal($('[data-response-mode="frozen"]').getAttribute('aria-pressed'),'true');assert.equal(svg.querySelector('.response-reference').getAttribute('d'),referencePath);
+click('[data-lab-pickup="bridge"]');assert.equal($('#forge-response-tone-value').textContent,'10.0 / 10');assert.equal($('#forge-lab-cap').value,'0.022');assert.equal(svg.querySelector('.response-reference').getAttribute('d'),referencePath);assert.match($('#forge-response-cause').textContent,/Pickup analysis changed/);
+click('[data-lab-pickup="neck"]');assert.equal($('#forge-response-tone-value').textContent,'2.0 / 10');assert.equal($('#forge-response-volume-value').textContent,'7.0 / 10');assert.equal($('#forge-lab-cap').value,'0.047');
+click('#forge-freeze');assert.notEqual(svg.querySelector('.response-reference').getAttribute('d'),referencePath);assert.match($('#forge-frozen-description').textContent,/Volume 7.0.*Tone 2.0/);assert.match($('#forge-response-summary').textContent,/Negligible/);
+click('[data-lab-pickup="both"]');assert.equal($('#forge-response-graph svg'),null);assert.equal($('#forge-response-inspect').hidden,true);assert.match($('#forge-response-summary').textContent,/not yet available/);assert.match($('#forge-frozen-description').textContent,/Neck/);
+click('[data-lab-pickup="neck"]');assert($('#forge-response-graph svg'));assert.match($('.forge-response-reference').textContent,/Frozen reference/);click('#forge-freeze-clear');assert.equal($('.forge-response-reference').hidden,true);assert.equal($('#forge-frozen-description').textContent,'');assert.equal($('#forge-freeze-clear').disabled,true);assert.match($('#forge-response-summary').textContent,/No frozen reference/);
+// Relevant responsive presentation constraints without a browser installation.
+for(const text of ['touch-action:pan-y','min-height:44px','grid-template-columns:repeat(2,minmax(0,1fr))','.forge-response-content>*{min-width:0}','@media(max-width:850px) and (max-height:500px)','prefers-reduced-motion:reduce'])assert(css.includes(text));
+assert.equal($('#forge-inspect-frequency').getAttribute('type'),'range');assert.equal($('#forge-inspect-frequency').getAttribute('aria-describedby'),'forge-inspect-help');assert.match($('#forge-response-graph svg desc').textContent,/slider.*keyboard.*tap/);
+// Resize across the mobile boundary and rotate inside it without losing state.
+click('#forge-freeze');const retained=$('#forge-frozen-description').textContent;
+win.happyDOM.setWindowSize({width:390,height:844});assert(win.document.body.classList.contains('forge-mobile'));assert($('#forge-configure-sheet .forge-controls'));assert($('#forge-inspector-sheet .forge-inspector'));assert.equal($('#forge-response-graph svg').getAttribute('viewBox'),'0 0 360 270');
+input('forge-inspect-frequency',750);const readout=$('#forge-inspection-readout').textContent;
+win.happyDOM.setWindowSize({width:844,height:390});assert.equal($('#forge-frozen-description').textContent,retained);assert.equal($('#forge-inspection-readout').textContent,readout);assert.equal($('#forge-response-lab').hidden,false);
+click('[data-mobile-open="inspector"]');assert($('#forge-inspector-sheet').open);click('[data-mobile-close="inspector"]');
+win.happyDOM.setWindowSize({width:1200,height:900});assert(!win.document.body.classList.contains('forge-mobile'));assert.equal($('#forge-response-graph svg').getAttribute('viewBox'),'0 0 760 300');assert.equal($('#forge-frozen-description').textContent,retained);assert.equal($('#forge-inspection-readout').textContent,readout);assert.equal($('#forge-response-volume-value').textContent,'7.0 / 10');
+assert.equal(win.localStorage.length,0,'temporary reference is not persisted');
+await win.happyDOM.close();console.log('Signal Lab V2 DOM: persistent SVG, pointer/touch + slider inspection, mode state, frozen replace/clear, per-pickup controls, quick circuit choices, unsupported states and responsive/accessibility contracts PASS');

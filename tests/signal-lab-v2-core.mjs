@@ -1,0 +1,37 @@
+import assert from 'node:assert/strict';
+import {forgeCircuit} from '../dist/circuit-forge/model.mjs';
+import {forgeResponse} from '../dist/circuit-forge/response.mjs';
+import {frequencyResponse} from '../dist/electronics/response/engine.mjs';
+import {composeResponse,captureResponse,referenceDescription,frequencyFromFraction,fractionFromFrequency,interpolateResponse,inspectResponse,strongestDifference,magnitudeInterpretation,responseChanges} from '../dist/electronics/response/analysis.mjs';
+const raw=(channel='neck',bleed='prs',volume=3.2,tone=10,cap='0.022')=>forgeResponse(forgeCircuit({position:channel,bleed,[channel+'Cap']:cap},{neck:{volume,tone},bridge:{volume,tone}}).circuit);
+for(const channel of ['neck','bridge'])for(const bleed of ['none','prs','cap','duncan'])for(const cap of ['0.022','0.033','0.047'])for(const volume of [0,3.2,9.9,10]){
+ const report=raw(channel,bleed,volume,4,cap),ab=composeResponse(report,{mode:'ab'}),live=composeResponse(report,{mode:'live'});
+ assert.deepEqual(ab.points,frequencyResponse(report.state,201));assert.deepEqual(ab.reference,frequencyResponse({...report.state,type:'none'},201));assert.equal(ab.baseline.state.volume,report.state.volume);assert.equal(ab.baseline.state.tonePosition,4);assert.equal(ab.baseline.channel,channel);assert.equal(ab.baseline.state.type,'none');assert.equal(ab.baseline.state.toneCap,Number(cap)*1000);
+ assert.equal(live.reference,null);assert.equal(live.difference,null);assert.equal(live.legend.reference,'');
+ if(volume===10)assert(ab.points.every((point,i)=>point.current===ab.reference[i].current),'full-volume bleed is exactly bypassed');
+ if(bleed==='none')assert.equal(ab.difference.delta,0);
+ assert.equal(report.state.bleedC,bleed==='prs'?.18:1);assert.equal(report.state.bleedR,150);
+ assert.deepEqual(report.points[0].frequency,20);assert.equal(report.points.at(-1).frequency,20000);
+ assert(report.assumptions.some(text=>text.includes('generic'))&&report.assumptions.some(text=>text.includes('500 pF')));
+}
+const reduced=composeResponse(raw(),{mode:'ab'});assert(reduced.difference.delta>0);assert(reduced.difference.frequency!==5000,'difference is measured, not a hard-coded 5 kHz readout');
+assert.match(reduced.explanation.what,/same Volume/);assert.match(reduced.explanation.why,/frequency-dependent path/);assert.match(reduced.explanation.caveat,/do not predict audibility/);
+assert.equal(Math.abs(reduced.difference.delta),Math.max(...reduced.points.map((point,i)=>Math.abs(point.current-reduced.reference[i].current))));
+const atFull=composeResponse(raw('neck','prs',10),{mode:'ab'});assert.match(atFull.explanation.what,/effectively inactive at full volume/);assert.equal(atFull.explanation.magnitude,'Negligible');
+assert.match(composeResponse(raw('neck','none'),{mode:'ab'}).explanation.why,/same circuit/);
+const captured=captureResponse(raw()),bytes=JSON.stringify(captured);assert(Object.isFrozen(captured)&&Object.isFrozen(captured.state)&&Object.isFrozen(captured.points));
+const changed=raw('bridge','duncan',7,2,'0.047'),frozen=composeResponse(changed,{mode:'frozen',frozen:captured,previous:raw()});
+assert.equal(frozen.reference,captured.points);assert.equal(JSON.stringify(captured),bytes);assert.notDeepEqual(frozen.points,frozen.reference);assert.match(frozen.legend.reference,/Neck.*Volume 3.2.*Tone 10.0.*0.18nF/);assert.match(frozen.explanation.what,/frozen reference/);assert.match(frozen.explanation.why,/Tone changes/);assert.match(frozen.explanation.why,/generic pickup source/);
+assert(responseChanges(captured,changed).some(change=>change.key==='toneCap'));assert(responseChanges(captured,changed).some(change=>change.key==='bleed'));
+const replaced=captureResponse(changed);assert.notEqual(referenceDescription(replaced),referenceDescription(captured));assert.equal(composeResponse(changed,{mode:'frozen',frozen:replaced}).difference.delta,0);
+assert.equal(composeResponse(changed,{mode:'frozen',frozen:null}).reference,null);assert.match(composeResponse(changed,{mode:'frozen'}).explanation.what,/No frozen reference/);
+assert.equal(composeResponse(changed,{mode:'live',frozen:captured}).reference,null,'live mode excludes saved references');
+assert.match(composeResponse(raw('neck','prs',0),{mode:'frozen',frozen:captured}).explanation.what,/clipped/);
+const both=composeResponse(forgeResponse(forgeCircuit({position:'both'}).circuit),{mode:'frozen',frozen:captured});assert.equal(both.supported,false);assert.equal(both.reference,null);assert.match(both.reason,/coupled pickup model/);assert.throws(()=>captureResponse(both));
+for(const [delta,label] of [[0,'Negligible'],[.0999,'Negligible'],[.1,'Subtle'],[.999,'Subtle'],[1,'Moderate'],[5.99,'Moderate'],[6,'Strong'],[-6,'Strong']])assert.equal(magnitudeInterpretation(delta),label);
+const synthetic=[{frequency:20,current:-20},{frequency:20000,current:10}];
+assert.equal(frequencyFromFraction(0),20);assert.equal(frequencyFromFraction(1),20000);assert.equal(frequencyFromFraction(-2),20);assert.equal(frequencyFromFraction(2),20000);assert(Math.abs(fractionFromFrequency(frequencyFromFraction(.73))-.73)<1e-12);
+assert(Math.abs(interpolateResponse(synthetic,Math.sqrt(20*20000))+5)<1e-12);assert.equal(interpolateResponse(synthetic,1),-20);assert.equal(interpolateResponse(synthetic,100000),10);
+const inspection=inspectResponse({points:synthetic,reference:[{frequency:20,current:-21},{frequency:20000,current:9}]},Math.sqrt(20*20000));assert(Math.abs(inspection.delta-1)<1e-12);
+assert.equal(inspectResponse({points:synthetic,reference:null},20).delta,null);assert.equal(inspectResponse({points:synthetic},1).frequency,20);assert.equal(inspectResponse({points:synthetic},1e6).frequency,20000);assert.equal(strongestDifference(synthetic,null),null);assert.throws(()=>frequencyFromFraction(NaN));assert.throws(()=>interpolateResponse([],100));
+console.log('Signal Lab V2 core: electrical presets/tone choices/channels, A/B, frozen capture/replace/clear, floor honesty, thresholds, explanations and log-axis inspection PASS');

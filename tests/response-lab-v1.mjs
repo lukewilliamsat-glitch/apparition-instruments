@@ -70,14 +70,14 @@ assert.equal($('#forge-response-volume-value').textContent,'4.5 / 10');
 $('#forge-response-tone').value='6.2';$('#forge-response-tone').dispatchEvent(new win.Event('input',{bubbles:true}));
 assert.equal($('#forge-response-tone-value').textContent,'6.2 / 10');
 assert($('#forge-response-graph svg[role="img"]'));
-assert(!$('#forge-response-key').hidden&&$('#forge-response-key .forge-response-reference').hidden);
-assert.equal($('#forge-response-key .forge-response-current').textContent,'Current circuit');
+assert(!$('#forge-response-key').hidden&&!$('#forge-response-key .forge-response-reference').hidden); // V2 explicitly shows the same-volume baseline, including an identical no-bleed circuit.
+assert.equal($('#forge-response-key .forge-response-current').textContent,'Current circuit · no treble bleed');
 $('select[name="bleed"]').value='prs';$('select[name="bleed"]').dispatchEvent(new win.Event('change',{bubbles:true}));
 assert.equal($('#forge-response-volume-value').textContent,'4.5 / 10');
 assert.equal($('#forge-response-tone-value').textContent,'6.2 / 10');
 assert(!$('#forge-response-key').hidden&&!$('#forge-response-key .forge-response-reference').hidden);
 assert.equal($('#forge-response-key .forge-response-current').textContent,'Current circuit · with treble bleed');
-assert.equal($('#forge-response-key .forge-response-reference').textContent,'Reference · no treble bleed');
+assert.match($('#forge-response-key .forge-response-reference').textContent,/Reference · no treble bleed · same Volume 4.5/);
 assert.match($('#forge-response-context').textContent,/0.18nF/);
 const neckGraph=$('#forge-response-graph').innerHTML;
 labPick('bridge');assert.equal(selector(),'bridge');assert.equal($('[data-lab-pickup="bridge"]').getAttribute('aria-pressed'),'true');
