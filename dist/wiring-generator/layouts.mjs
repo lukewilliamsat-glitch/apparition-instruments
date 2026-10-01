@@ -1,4 +1,6 @@
+import {fiveWayAssignments,fiveWayThrow} from '../electronics/instrument/control-assignments.mjs';
 export const layoutInfo={
+ hss:{label:'HSS SUPERSTRAT',positions:{'1':'1 · Full bridge humbucker','2':'2 · Full bridge humbucker + middle','3':'3 · Middle','4':'4 · Middle + neck','5':'5 · Neck'},description:'HSS · full-series bridge humbucker · 5-way blade · master volume · 1V2T or master tone · no coil split'},
  'les-paul':{label:'Les Paul',positions:{neck:'Neck',both:'Both',bridge:'Bridge'},description:'HH · 2 volume + 2 tone · 500kΩ audio · 3-way toggle'},
  sg:{label:'SG',positions:{neck:'Neck',both:'Both',bridge:'Bridge'},description:'HH · 2 volume + 2 tone · 500kΩ audio · 3-way toggle'},
  strat:{label:'STRATOCASTER',positions:{'1':'1 · Bridge','2':'2 · Bridge + middle','3':'3 · Middle','4':'4 · Middle + neck','5':'5 · Neck'},description:'Classic SSS · 250kΩ audio · master volume · neck and middle tones · bridge without tone · shared 0.047µF cap'},
@@ -6,21 +8,23 @@ export const layoutInfo={
  prs:{label:'PRS CUSTOM 24 STYLE',positions:{'1':'1 · Bridge humbucker','2':'2 · Bridge humbucker + neck single coil','3':'3 · Both humbuckers','4':'4 · Both single coils','5':'5 · Neck humbucker'},description:'HH · 500kΩ audio · master volume and tone · 4-pole superswitch conversion. Not a PRS factory switch pinout.'}
 };
 export function extraCircuit(state,types){
- const components=[],connections=[],contacts=[],isStrat=state.guitar==='strat',isPRS=state.guitar==='prs';
+ const components=[],connections=[],contacts=[],isStrat=['strat','hss'].includes(state.guitar),isHSS=state.guitar==='hss',twoTone=isStrat&&state.controlLayout!=='1V1T',isPRS=state.guitar==='prs';
  const add=(id,type,label,x,y,extra={})=>components.push({id,type,label,x,y,terminals:types[type],...extra});
  const wire=(id,from,to,category='signal',route=[],extra={})=>connections.push({id,from,to,category,route,...extra});
  const names=isStrat?['neck','middle','bridge']:['neck','bridge'];
  for(const [i,ch] of names.entries()){
-  const y=160+i*(isStrat?265:430);add(ch+'Pickup',isPRS?'humbucker':'singlecoil',ch.toUpperCase()+' PICKUP',55,y,{value:isPRS?'4-conductor humbucker':'Passive single coil',channel:ch});
+  const y=160+i*(isStrat?265:430);const humbucker=isPRS||isHSS&&ch==='bridge';add(ch+'Pickup',humbucker?'humbucker':'singlecoil',ch.toUpperCase()+(isHSS?(humbucker?' HUMBUCKER':' SINGLE COIL'):' PICKUP'),55,y,{value:humbucker?(isHSS?'4-conductor · full-series humbucker':'4-conductor humbucker'):'Passive single coil',channel:ch,...isHSS&&humbucker?{coilMode:'full-series'}:{}});
  }
- add('selector',isPRS?'superswitch':'blade',isPRS?'4-POLE SUPERSWITCH':isStrat?'5-WAY BLADE':'3-WAY BLADE',580,200,{value:'Functional pole labels · verify terminal identity',position:state.position});
- add('masterVolume','pot','MASTER VOLUME',940,480,{value:(isPRS?'500':'250')+'kΩ Audio',role:'volume'});
- add('neckTone','pot',isStrat?'NECK TONE':'MASTER TONE',670,850,{value:(isPRS?'500':'250')+'kΩ Audio',role:'tone'});
- if(isStrat)add('middleTone','pot','MIDDLE TONE',940,850,{value:'250kΩ Audio',role:'tone'});
+ add('selector',isPRS?'superswitch':'blade',isPRS?'4-POLE SUPERSWITCH':isStrat?'5-WAY BLADE':'3-WAY BLADE',580,200,{value:'Functional pole labels · verify terminal identity',position:state.position,...isHSS?{displaySelectorPosition:true}:{}});
+ add('masterVolume','pot','MASTER VOLUME',940,480,{value:(isPRS||isHSS?'500':'250')+'kΩ Audio',role:'volume'});
+ add('neckTone','pot',twoTone?'NECK TONE':'MASTER TONE',670,850,{value:(isPRS||isHSS?'500':'250')+'kΩ Audio',role:'tone'});
+ if(twoTone)add('middleTone','pot',isHSS?'MIDDLE / BRIDGE TONE':'MIDDLE TONE',940,850,{value:(isHSS?'500':'250')+'kΩ Audio',role:'tone'});
  add('toneCap','capacitor','TONE CAP',420,1020,{value:state.neckCap+'µF'});
  add('jack','jack','MONO OUTPUT JACK',1135,1030,{value:'Tip / sleeve'});
  add('bridgeGround','ground','BRIDGE / STRINGS',200,1150,{value:'Bridge / string ground'});
  if(state.shielding==='yes')add('shielding','ground','CAVITY SHIELD',500,1150,{value:'Shielding, if fitted'});
+ const controlAssignments=isStrat?fiveWayAssignments(isHSS?'HSS':'SSS',twoTone?'1V2T':'1V1T'):null;
+ if(controlAssignments)for(const part of components){const targets=controlAssignments[part.id==='neckTone'&&!twoTone?'masterTone':part.id];if(targets)part.assignments=[...targets];}
  const pos=Number(state.position);
  if(isPRS){
   // Four independent SP5T poles. Joining the coils stays external; C/D selectively shunt a coil.
@@ -38,9 +42,10 @@ export function extraCircuit(state,types){
   const throws={1:[1],2:[1,2],3:[2],4:[2,3],5:[3]}[pos];for(const pole of ['A','B'])for(const n of throws)contacts.push(['selector.'+pole+'C','selector.'+pole+n]);
   for(const [i,ch] of names.entries())wire(ch+'Select',ch+'Pickup.hot','selector.A'+(3-i),'signal',[[300+i*20,160+i*265+30],[300+i*20,300],[580+(3-i)*42,300]]);
   wire('selectorOut','selector.AC','masterVolume.lug3','signal',[[500,200],[500,700],[898,700]]);
+  if(twoTone){
   wire('toneCommon','selector.AC','selector.BC','tone',[[500,200],[500,400]]);
-  wire('neckToneSelect','selector.B3','neckTone.lug1','tone',[[760,400],[760,1035],[712,1035]]);
-  wire('middleToneSelect','selector.B2','middleTone.lug1','tone',[[780,400],[780,1070],[982,1070]]);
+  for(const id of ['neckTone','middleTone'])for(const target of controlAssignments[id]){const n=fiveWayThrow[target],lane=target==='neck'?760:target==='middle'?780:800,toneX=id==='neckTone'?712:982,bottom=id==='neckTone'?1035:1070;wire(target+'ToneSelect','selector.B'+n,id+'.lug1','tone',[[lane,400],[lane,bottom],[toneX,bottom]]);}
+  }
  }else{
   for(const pole of ['A','B'])contacts.push(['selector.'+pole+'C','selector.'+pole+pos]);
   wire('neckSelect','neckPickup.hot','selector.AC','signal',[[300,190],[300,200]]);
@@ -50,11 +55,12 @@ export function extraCircuit(state,types){
  for(const [i,ch] of names.entries()){
   const y=160+i*(isStrat?265:430);
   wire(ch+'Ground',ch+'Pickup.ground','masterVolume.case','ground',[[270,y+96],[270,800],[1010,800],[1010,562]]);
-  if(isPRS)wire(ch+'Shield',ch+'Pickup.shield','masterVolume.case','ground',[[258,y+118],[258,815],[1025,815],[1025,562]]);
+  if(isHSS&&ch==='bridge')wire(ch+'Series',ch+'Pickup.linkA',ch+'Pickup.linkB','switching',[[277,y+162],[277,y+184]],{insulate:true});
+  if(isPRS||isHSS&&ch==='bridge')wire(ch+'Shield',ch+'Pickup.shield','masterVolume.case','ground',[[258,y+118],[258,815],[1025,815],[1025,562]]);
  }
  wire('volumeGround','masterVolume.lug1','masterVolume.case','ground',[[1035,622],[1035,562]]);
  wire('potCases','masterVolume.case','neckTone.case','ground',[[1060,562],[1060,1120],[740,1120],[740,932]]);
- if(isStrat){
+ if(twoTone){
   wire('toneCases','neckTone.case','middleTone.case','ground',[[740,932],[740,1100],[1030,1100],[1030,932]]);
   wire('neckToneCap','neckTone.lug2','toneCap.a','tone',[[670,1060],[330,1060],[330,1020]]);
   wire('middleToneCap','middleTone.lug2','toneCap.a','tone',[[940,1040],[350,1040],[350,1020]]);
@@ -79,7 +85,7 @@ export function extraCircuit(state,types){
    wire('bleedROut','masterBleedCap.b','masterBleedResistor.b','tone',[[1010,360],[1010,285]],{network:'auxiliary'});
   }
  }
- return {state,components,connections,contacts};
+ return {state,components,connections,contacts,...isHSS?{controlAssignments}:{}};
 }
 // Versioned circuit identities keep a guitar family distinct from an actual supported wiring arrangement.
 export const circuitFamilies={

@@ -17,7 +17,7 @@ function componentRole(part){
 export function selectorReport(circuit){
  const output=net(circuit,'jack.tip');
  const sources=circuit.state.guitar==='les-paul'?[['Neck','neckVolume.lug2'],['Bridge','bridgeVolume.lug2']]:circuit.components.filter(p=>['singlecoil','humbucker'].includes(p.type)).map(p=>[p.channel,p.id+'.hot']);
- const channels=sources.map(([label,ref])=>({label,active:output.has(ref),ref}));
+ const channels=sources.map(([label,ref])=>({label,active:output.has(ref)||circuit.state.guitar==='hss'&&net(circuit,ref).has('masterVolume.lug3')&&output.has('masterVolume.lug2'),ref}));
  const closed=circuit.contacts.map(([a,b])=>({a,b,description:`${terminalName(circuit,a)} to ${terminalName(circuit,b)}`}));
  return {channels,closed,description:channels.filter(x=>x.active).map(x=>x.label).join(' and ')+' volume output'+(channels.filter(x=>x.active).length===1?' is':'s are')+' connected to the jack through the selected switch contacts.'};
 }

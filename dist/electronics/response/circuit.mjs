@@ -33,7 +33,7 @@ export function circuitResponse(circuit,count=201){
  const selected=capabilities?capabilities.selected[0]:circuit.state.position;
  if(circuit.state.wiring!=='modern')return {supported:false,reason:'This response model assumes Modern tone wiring. Choose Modern to analyse this circuit; 50s and 60s tone placement are not modelled here.'};
  if(selected==='both')return {supported:false,reason:'Both pickups: interaction requires the coupled pickup model and is not yet available in Signal Lab. Select Neck or Bridge to analyse one channel.'};
- if(!['neck','bridge'].includes(selected))return {supported:false,reason:'The selected pickup is outside this response model.'};
+ if(!['neck','bridge'].includes(selected)&&!(instrument?.layout==='HSS'&&selected==='middle'))return {supported:false,reason:'The selected pickup is outside this response model.'};
  try{
   const channel=selected,volume=component(circuit,p=>instrument?instrument.controls.some(c=>c.role==='volume'&&c.assignments.includes(channel)&&c.id===p.id):p.channel===channel&&p.role==='volume'),tone=component(circuit,p=>instrument?instrument.controls.some(c=>c.role==='tone'&&c.assignments.includes(channel)&&(c.id===p.id||c.id==='masterTone'&&p.id==='neckTone')):p.channel===channel&&p.role==='tone');
   const capWire=circuit.connections.find(w=>w.id===channel+'ToneCap');
