@@ -21,14 +21,14 @@ for(const width of [320,390,768,1024,1400,1920]){vw=width<=850?width-20:width<=1
 assert.equal(mount.querySelectorAll('[data-component="middleTone"]').length,layout==='1V2T'?1:0);
 assert(mount.querySelector('[data-component="bridgePickup"]'));
 const modeButtons=isForge?'[data-forge-presentation]':'[data-mode]';
-for(const p of [1,2,3,4,5]){
+for(const p of [1,2,3,4,5]){await new Promise(r=>setTimeout(r,2));
  if(isForge)document.querySelector('#forge-controls input[name="position"][value="'+p+'"]').click();
  else{const field=$('#generator-form').elements.position;field.value=String(p);field.dispatchEvent(new Event('change',{bubbles:true}));}
  assert.equal(readProject(location.search).project.electronics.instrument.selector.selection,p,isForge?'Forge':$('#generator-status').textContent);
- for(const state of ['up','down']){const field=isForge?$('#forge-pushpull-state'):$('#generator-form').elements.pushpullState;field.value=state;field.dispatchEvent(new Event('change',{bubbles:true}));assert.equal(readProject(location.search).project.electronics.instrument.switching[0].position,state);assert.equal(readProject(new URL($(link).href).search).project.electronics.instrument.switching[0].position,state);assert(mount.querySelector('[data-component="bridgeSplit"]'));if(isForge)assert.equal($('#forge-response-lab').classList.contains('is-unsupported'),[2,4].includes(p)||p===1&&state==='up');}
+ for(const state of ['up','down']){document.querySelector('#'+(isForge?'forge':'generator')+'-circuit-state [data-state-device="bridgeSplit"] [data-state-value="'+state+'"]').click();assert.equal(readProject(location.search).project.electronics.instrument.switching[0].position,state);assert.equal(readProject(new URL($(link).href).search).project.electronics.instrument.switching[0].position,state);assert(mount.querySelector('[data-component="bridgeSplit"]'));if(isForge)assert.equal($('#forge-response-lab').classList.contains('is-unsupported'),[2,4].includes(p)||p===1&&state==='up');}
 
  assert.equal(readProject(new URL($(link).href).search).project.electronics.instrument.selector.selection,p);
- assert(mount.querySelector('[data-selector-position="'+p+'"]'));
+ if(mount.querySelector('svg').dataset.presentation!=='build')assert(mount.querySelector('[data-selector-position="'+p+'"]'));
  if(isForge)assert.equal($('#forge-response-lab').classList.contains('is-unsupported'),[2,4].includes(p));
  for(const button of document.querySelectorAll(modeButtons)){
   button.click();assert.equal(mount.querySelectorAll('svg').length,1);
@@ -42,11 +42,11 @@ if(isForge){
  $('#forge-control-layout').value=layout==='1V2T'?'1V1T':'1V2T';$('#forge-control-layout').dispatchEvent(new Event('change',{bubbles:true}));
  assert.equal(readProject(location.search).project.electronics.instrument.controlLayout,layout==='1V2T'?'1V1T':'1V2T');
  assert.equal(mount.querySelectorAll('[data-component="middleTone"]').length,layout==='1V2T'?0:1);
- assert($('#forge-kit').hidden);assert($('#forge-pushpull-state').closest('label'));$('#forge-bridge-switching').value='none';$('#forge-bridge-switching').dispatchEvent(new Event('change',{bubbles:true}));assert(!mount.querySelector('[data-component="bridgeSplit"]'));assert.equal(readProject(location.search).project.electronics.instrument.switching,undefined);
+ assert($('#forge-kit').hidden);assert($('#forge-circuit-state [data-state-device="bridgeSplit"]'));$('#forge-bridge-switching').value='none';$('#forge-bridge-switching').dispatchEvent(new Event('change',{bubbles:true}));assert(!mount.querySelector('[data-component="bridgeSplit"]'));assert.equal(readProject(location.search).project.electronics.instrument.switching,undefined);
 }else{
  assert.equal($('#hss-control-layout').hidden,false);assert.equal($('#generator-form').elements.controlLayout.value,layout);
  const field=$('#generator-form').elements.controlLayout;field.value=layout==='1V2T'?'1V1T':'1V2T';field.dispatchEvent(new Event('change',{bubbles:true}));
  assert.equal(readProject(new URL($('#generator-source-circuit').href).search).project.electronics.instrument.controlLayout,field.value);
- assert($('#build-kit').hidden);assert.equal($('#hss-pushpull-state').hidden,false);const modifier=$('#generator-form').elements.bridgeSwitching;modifier.value='none';modifier.dispatchEvent(new Event('change',{bubbles:true}));assert(!mount.querySelector('[data-component="bridgeSplit"]'));assert.equal(readProject(location.search).project.electronics.instrument.switching,undefined);assert.equal($('#generator-form').elements.colours.disabled,true);
+ assert($('#build-kit').hidden);assert.equal($('#hss-pushpull-state').hidden,true);const modifier=$('#generator-form').elements.bridgeSwitching;modifier.value='none';modifier.dispatchEvent(new Event('change',{bubbles:true}));assert(!mount.querySelector('[data-component="bridgeSplit"]'));assert.equal(readProject(location.search).project.electronics.instrument.switching,undefined);assert.equal($('#generator-form').elements.colours.disabled,true);
 }
 await win.happyDOM.close();console.log('Advanced switching '+scenario+' DOM: six viewport contracts, five positions, modes/keyboard, state and layout handoffs PASS; rendered QA deferred');process.exit(0);

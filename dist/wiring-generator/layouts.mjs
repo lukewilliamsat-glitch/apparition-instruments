@@ -1,6 +1,6 @@
 import {fiveWayAssignments,fiveWayThrow} from '../electronics/instrument/control-assignments.mjs';
 export const layoutInfo={
- hss:{label:'HSS SUPERSTRAT',positions:{'1':'1 · Full bridge humbucker','2':'2 · Full bridge humbucker + middle','3':'3 · Middle','4':'4 · Middle + neck','5':'5 · Neck'},description:'HSS · full-series bridge humbucker · 5-way blade · master volume · 1V2T or master tone · no coil split'},
+ hss:{label:'HSS SUPERSTRAT',positions:{'1':'1 · Full bridge humbucker','2':'2 · Full bridge humbucker + middle','3':'3 · Middle','4':'4 · Middle + neck','5':'5 · Neck'},description:'HSS · four-conductor bridge humbucker · 5-way blade · master volume · 1V2T or master tone · optional manual split'},
  'les-paul':{label:'Les Paul',positions:{neck:'Neck',both:'Both',bridge:'Bridge'},description:'HH · 2 volume + 2 tone · 500kΩ audio · 3-way toggle'},
  sg:{label:'SG',positions:{neck:'Neck',both:'Both',bridge:'Bridge'},description:'HH · 2 volume + 2 tone · 500kΩ audio · 3-way toggle'},
  strat:{label:'STRATOCASTER',positions:{'1':'1 · Bridge','2':'2 · Bridge + middle','3':'3 · Middle','4':'4 · Middle + neck','5':'5 · Neck'},description:'Classic SSS · 250kΩ audio · master volume · neck and middle tones · bridge without tone · shared 0.047µF cap'},

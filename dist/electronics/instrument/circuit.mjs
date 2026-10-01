@@ -33,10 +33,13 @@ export function instrumentFromCircuit(circuit){
 
 // Inverse adapter for raw Generator links; shared instrument authority owns defaults.
 export function instrumentFromGeneratorCircuit(circuit){
- if(circuit.state.guitar!=='hss')throw Error('No instrument adapter for this generator circuit.');
- const config=circuit.state,i=configureInstrumentDimensions(createReference('hss'),{controlLayout:config.controlLayout});
- i.selector.selection=Number(config.position);i.wiring=config.wiring;i.shielding=config.shielding;
+ if(!['hss','les-paul','sg'].includes(circuit.state.guitar))throw Error('No instrument adapter for this generator circuit.');
+ const config=circuit.state,hss=config.guitar==='hss',i=hss?configureInstrumentDimensions(createReference('hss'),{controlLayout:config.controlLayout}):configureInstrumentDimensions(createReference('les-paul'),{family:config.guitar});
+ i.selector.selection=hss?Number(config.position):{bridge:1,both:2,neck:3}[config.position];i.wiring=config.wiring;i.shielding=config.shielding;
  if(config.switching)i.switching=structuredClone(config.switching);
- for(const control of i.controls){const part=circuit.components.find(p=>p.id===(control.id==='masterTone'?'neckTone':control.id));control.pot=parseFloat(part.value);if(control.role==='tone')control.capacitor=config.neckCap;else control.bleed=config.bleed;}
+ for(const control of i.controls){const part=circuit.components.find(p=>p.id===(control.id==='masterTone'?'neckTone':control.id));control.pot=parseFloat(part.value);if(control.role==='tone')control.capacitor=hss?config.neckCap:config[control.assignments[0]+'Cap'];else control.bleed=config.bleed;}
+ for(const pickup of i.pickups){const a=config.responseAssumptions?.channels?.[pickup.position];if(a)pickup.assumption=a.pickup;}
+ for(const control of i.controls){const positions=config.controlPositions?.[control.assignments[0]];if(positions)control.position=positions[control.role];}
+ if(config.responseAssumptions)i.load={cableC:config.responseAssumptions.cableC,loadR:config.responseAssumptions.loadR};
  return normaliseInstrument(i);
 }

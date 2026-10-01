@@ -8,12 +8,21 @@ export function dpdtContacts(id,position){
 export function bridgeSplitModifier(position='down'){
  return {id:'bridgeSplit',device:'dpdt',actuator:'push-pull',host:'masterVolume',pickup:'bridge',function:'coil-split',position,coilTopology:'series-ab',activeCoil:'A'};
 }
-export function normaliseSwitching(value,{layout,controlLayout,selector,bridgeAccess='four-conductor'}={}){
+export function toneSplitModifier(pickup,position='down'){
+ if(!['neck','bridge'].includes(pickup))throw Error('Unsupported tone split target.');
+ return {...bridgeSplitModifier(position),id:pickup+'Split',host:pickup+'Tone',pickup};
+}
+export function normaliseSwitching(value,{layout,controlLayout,selector,bridgeAccess='four-conductor',coilAccess={},family='les-paul'}={}){
  if(value===undefined)return undefined;
- if(!Array.isArray(value)||value.length!==1)throw Error('Exactly one optional manual coil-split modifier is supported.');
- if(layout!=='HSS'||!['1V1T','1V2T'].includes(controlLayout)||selector!=='5-way-blade'||bridgeAccess!=='four-conductor')throw Error('Manual split requires validated HSS, a five-way blade and four-conductor bridge coil access.');
- const item=value[0],expected=bridgeSplitModifier(item?.position);
- if(!item||Object.keys(item).length!==Object.keys(expected).length||Object.keys(expected).some(key=>item[key]!==expected[key]))throw Error('Unsupported switching device, host, function or coil topology.');
- dpdtContacts(item.id,item.position);
- return [expected];
+ const hss=layout==='HSS'&&['1V1T','1V2T'].includes(controlLayout)&&selector==='5-way-blade';
+ const lp=layout==='HH'&&controlLayout==='2V2T'&&selector==='3-way-toggle'&&['les-paul','sg'].includes(family);
+ if(!hss&&!lp)throw Error('Manual split requires validated HSS or Les Paul / SG wiring.');
+ if(!Array.isArray(value)||!value.length||value.length>(lp?2:1))throw Error('Unsupported number of manual coil-split modifiers.');
+ const used=new Set();
+ return value.map(item=>{
+  const expected=hss?bridgeSplitModifier(item?.position):toneSplitModifier(item?.pickup,item?.position);
+  if(!item||Object.keys(item).length!==Object.keys(expected).length||Object.keys(expected).some(key=>item[key]!==expected[key])||used.has(item.id))throw Error('Unsupported switching device, host, function or coil topology.');
+  if((coilAccess[item.pickup]||(item.pickup==='bridge'?bridgeAccess:'four-conductor'))!=='four-conductor')throw Error('Manual split requires four-conductor coil access.');
+  dpdtContacts(item.id,item.position);used.add(item.id);return expected;
+ }).sort((a,b)=>a.id.localeCompare(b.id));
 }

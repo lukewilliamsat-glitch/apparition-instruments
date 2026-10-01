@@ -17,13 +17,15 @@ export function componentBounds(p){
  if(['pot','pushpull'].includes(p.type))b=[-75,-16,78,p.type==='pushpull'?335:194];
  else if(['humbucker','singlecoil','p90'].includes(p.type))b=[-20,-30,162,240];
  else if(['capacitor','resistor','network'].includes(p.type))b=[-32,-36,32,p.productMark?45:24];
- else if(p.type==='dpdt')b=[-68,-28,68,99];
+ else if(p.type==='dpdt')b=[-72,-40,72,116];
  else if(p.type==='toggle')b=[-78,-34,82,157];
  else if(p.type==='jack')b=[-83,-33,89,120];
- else if(['blade','blade3','blade5','superswitch'].includes(p.type))b=[-25,-45,195,p.type==='superswitch'?455:155];
+ else if(['blade','blade3','blade5','superswitch'].includes(p.type))b=[-25,-45,205,p.type==='superswitch'?455:155];
  else b=[-24,6,24,32];
  return {id:p.id,l:p.x+b[0],t:p.y+b[1],r:p.x+b[2],b:p.y+b[3]};
 }
+// Protect headline labels in addition to physical bodies; endpoints remain unchanged.
+export function protectedLabelRegions(circuit){return circuit.components.filter(p=>!['capacitor','resistor','network','ground'].includes(p.type)).map(p=>{const title=p.label+(p.physicalControl==='push-pull'?' / PUSH-PULL':''),x=p.x+(['humbucker','singlecoil'].includes(p.type)?77:['blade','superswitch'].includes(p.type)?95:0),y=p.y+(p.type==='pot'?8:['blade','blade3','blade5'].includes(p.type)?-58:-20),half=Math.max(30,title.length*4.5);return {id:p.id+'Label',l:x-half,r:x+half,t:y-16,b:y+5};});}
 function port(p,key,b){const t=p.terminals[key],a=[p.x+t.x,p.y+t.y];let q;
  if(['pot','pushpull'].includes(p.type)){
   const horizontal=key==='case'||key.startsWith('switch');
@@ -54,7 +56,7 @@ export function routeDiagram(c,{mode='trace'}={}){
  const build=mode==='build';
  const key=JSON.stringify([mode,c.components.map(p=>[p.id,p.type,p.x,p.y,p.terminals,p.productMark]),c.connections.map(w=>[w.id,w.from,w.to,w.route,w.category,w.network]),build?[]:c.contacts]);if(cache.has(key))return cache.get(key);
  const physical=composePhysicalWiring(c),bounds=c.components.map(componentBounds),blocked=new Set(),reserved=new Map(),occupied=new Map(),occupiedEdges=new Map(),results=new Map(),semantics=routeSemantics(c,{contacts:!build});
- for(const b of bounds)for(let x=Math.ceil((b.l-5)/step);x<=Math.floor((b.r+5)/step);x++)for(let y=Math.ceil((b.t-5)/step);y<=Math.floor((b.b+5)/step);y++)blocked.add(y*W+x);
+ for(const b of [...bounds,...protectedLabelRegions(c)])for(let x=Math.ceil((b.l-5)/step);x<=Math.floor((b.r+5)/step);x++)for(let y=Math.ceil((b.t-5)/step);y<=Math.floor((b.b+5)/step);y++)blocked.add(y*W+x);
  for(const p of c.components)for(const t of Object.values(p.terminals)){const x=p.x+t.x,y=p.y+t.y;for(let gx=Math.ceil((x-6)/step);gx<=Math.floor((x+6)/step);gx++)for(let gy=Math.ceil((y-6)/step);gy<=Math.floor((y+6)/step);gy++)blocked.add(gy*W+gx);}
  // Keep short, adjacent terminal departures clear for their own connections.
  for(const p of c.components)if(['pot','pushpull','humbucker','singlecoil','p90','blade','blade3','blade5'].includes(p.type)){
@@ -81,7 +83,9 @@ export function routeDiagram(c,{mode='trace'}={}){
    if(otherDir===dir)cost+=other.net===semantic.net?1.5:(build?2:3);
   return cost;
  };
- for(const w of c.connections){const a=endpoint(w.from),b=endpoint(w.to),intent=physical.conductors.get(w.id);
+ for(const w of [...c.connections].sort((a,b)=>({signal:0,switching:1,tone:2,ground:3}[a.category]??4)-({signal:0,switching:1,tone:2,ground:3}[b.category]??4))){const a=endpoint(w.from),b=endpoint(w.to),intent=physical.conductors.get(w.id);
+  const fromPart=c.components.find(p=>p.id===w.from.split('.')[0]),toPart=c.components.find(p=>p.id===w.to.split('.')[0]);
+  if(fromPart.type==='dpdt'&&toPart.id===fromPart.mechanicalHost&&w.to.endsWith('.case')){const p=a[0],q=b[0],lane=toPart.x-108;results.set(w.id,squash([p,[lane,p[1]],[lane,q[1]],q]));continue;}
   if(intent.kind==='pickup-hot'&&b[0][0]>a[0][0]){
    const p=a[0],q=b[0],x=q[0]-Math.min(48,Math.max(25,(q[0]-p[0])/3));
    results.set(w.id,squash([p,[x,p[1]],[x,q[1]],q]));continue;
@@ -104,7 +108,7 @@ export function routeDiagram(c,{mode='trace'}={}){
    results.set(w.id,squash([a[0],[lane,a[0][1]],[lane,b[0][1]],b[0]]));continue;
   }
   const start=a.at(-1).map(v=>v/step),end=b.at(-1).map(v=>v/step),sid=start[1]*W+start[0],eid=end[1]*W+end[0],open=new Heap(),dist=new Map([[sid,0]]),previous=new Map(),semantic=semantics.get(w.id);open.push([0,sid,-1]);let found=false;
-  const protectedPort=ref=>['pot','pushpull','humbucker','singlecoil','p90','blade','blade3','blade5'].includes(c.components.find(p=>p.id===ref.split('.')[0])?.type);
+  const protectedPort=ref=>['pot','pushpull','humbucker','singlecoil','p90','blade','blade3','blade5','dpdt'].includes(c.components.find(p=>p.id===ref.split('.')[0])?.type);
   const outward=points=>[Math.sign(points.at(-1)[0]-points.at(-2)[0]),Math.sign(points.at(-1)[1]-points.at(-2)[1])];
   const departure=protectedPort(w.from)?outward(a):null,arrival=protectedPort(w.to)?outward(b):null;
   while(open.a.length){const [,id]=open.pop();if(id===eid){found=true;break;}const x=id%W,y=Math.floor(id/W),direction=previous.get(id)?.[1]??-1,run=previous.get(id)?.[2]??0;

@@ -20,3 +20,6 @@
 @media(max-width:1100px){.generator-layout{grid-template-columns:224px minmax(0,1fr);gap:18px}}
 @media(max-width:800px){.generator-main{padding-inline:16px}.generator-layout{display:flex;gap:16px}.generator-viewport{height:clamp(340px,60vh,620px)}.inspection-panel #inspection-content dl{grid-template-columns:minmax(0,1fr)}.inspection-heading{flex-wrap:wrap}.generator-actions{grid-template-columns:minmax(0,1fr)}}
 @media print{.generator-main{width:auto;max-width:none}.generator-layout{display:block}.generator-viewport{height:auto;max-height:none;display:block}}
+
+/* Live state belongs at the workbench; hidden selects preserve legacy integrations. */
+#generator-form label:has(select[name=position]),#hss-pushpull-state{display:none!important}.circuit-state-console{margin-top:0}.generator-inspection:empty{display:none}@media(prefers-reduced-motion:reduce){#inspection-content{transition:none}}
