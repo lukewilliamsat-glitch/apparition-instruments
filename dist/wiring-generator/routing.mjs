@@ -54,13 +54,14 @@ export function routeDiagram(c){
  for(const b of bounds)for(let x=Math.ceil((b.l-5)/step);x<=Math.floor((b.r+5)/step);x++)for(let y=Math.ceil((b.t-5)/step);y<=Math.floor((b.b+5)/step);y++)blocked.add(y*W+x);
  for(const p of c.components)for(const t of Object.values(p.terminals)){const x=p.x+t.x,y=p.y+t.y;for(let gx=Math.ceil((x-6)/step);gx<=Math.floor((x+6)/step);gx++)for(let gy=Math.ceil((y-6)/step);gy<=Math.floor((y+6)/step);gy++)blocked.add(gy*W+gx);}
  // Keep short, adjacent terminal departures clear for their own connections.
- for(const p of c.components)if(['pot','pushpull','humbucker','singlecoil','p90'].includes(p.type)){
+ for(const p of c.components)if(['pot','pushpull','humbucker','singlecoil','p90','blade','blade3','blade5'].includes(p.type)){
   const b=bounds.find(x=>x.id===p.id);
   for(const terminal of Object.keys(p.terminals)){
    const ref=p.id+'.'+terminal,escape=port(p,terminal,b).at(-1),x=escape[0]/step,y=escape[1]/step;
    const pickup=['humbucker','singlecoil','p90'].includes(p.type);
    const firstX=pickup?Math.ceil((p.x+p.terminals[terminal].x+5)/step):Math.ceil((b.r+5)/step);
-   const positions=pickup||terminal==='case'?Array.from({length:Math.max(0,x-firstX+1)},(_,i)=>[firstX+i,y]):terminal.startsWith('switch')?[]:Array.from({length:Math.max(0,y-Math.ceil((b.b+5)/step)+1)},(_,i)=>[x,Math.ceil((b.b+5)/step)+i]);
+   const blade=['blade','blade3','blade5'].includes(p.type);
+   const positions=blade&&terminal==='ground'?[]:blade?Array.from({length:Math.max(0,Math.abs(y-Math.round((terminal.startsWith('A')?b.t-5:b.b+5)/step))+1)},(_,i)=>[x,Math.min(y,Math.round((terminal.startsWith('A')?b.t-5:b.b+5)/step))+i]):pickup||terminal==='case'?Array.from({length:Math.max(0,x-firstX+1)},(_,i)=>[firstX+i,y]):terminal.startsWith('switch')?[]:Array.from({length:Math.max(0,y-Math.ceil((b.b+5)/step)+1)},(_,i)=>[x,Math.ceil((b.b+5)/step)+i]);
    for(const [gx,gy] of positions){const id=gy*W+gx;if(!reserved.has(id))reserved.set(id,new Set());reserved.get(id).add(ref);}
   }
  }
@@ -100,7 +101,7 @@ export function routeDiagram(c){
    results.set(w.id,squash([a[0],[lane,a[0][1]],[lane,b[0][1]],b[0]]));continue;
   }
   const start=a.at(-1).map(v=>v/step),end=b.at(-1).map(v=>v/step),sid=start[1]*W+start[0],eid=end[1]*W+end[0],open=new Heap(),dist=new Map([[sid,0]]),previous=new Map(),semantic=semantics.get(w.id);open.push([0,sid,-1]);let found=false;
-  const protectedPort=ref=>['pot','pushpull','humbucker','singlecoil','p90'].includes(c.components.find(p=>p.id===ref.split('.')[0])?.type);
+  const protectedPort=ref=>['pot','pushpull','humbucker','singlecoil','p90','blade','blade3','blade5'].includes(c.components.find(p=>p.id===ref.split('.')[0])?.type);
   const outward=points=>[Math.sign(points.at(-1)[0]-points.at(-2)[0]),Math.sign(points.at(-1)[1]-points.at(-2)[1])];
   const departure=protectedPort(w.from)?outward(a):null,arrival=protectedPort(w.to)?outward(b):null;
   while(open.a.length){const [,id]=open.pop();if(id===eid){found=true;break;}const x=id%W,y=Math.floor(id/W),direction=previous.get(id)?.[1]??-1,run=previous.get(id)?.[2]??0;

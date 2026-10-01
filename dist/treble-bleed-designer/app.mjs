@@ -47,4 +47,4 @@ import('../components/catalogue.mjs').then(products=>{
 }).catch(()=>{$('#matching-products').hidden=false;$('#matching-products').textContent='Catalogue products are temporarily unavailable. The Designer remains available.';});
 if(typeof ResizeObserver!=='undefined')new ResizeObserver(()=>{if(points.length)renderGraph($('#response-graph'),points,state.volume,frozen);}).observe($('#response-graph'));
 
-$('#designer-inputs').after(learningLink(document,'bleeds','Understand treble bleeds and the comparison assumptions'));
+$('#designer-inputs').append(learningLink(document,'bleeds','Understand treble bleeds and the comparison assumptions'));

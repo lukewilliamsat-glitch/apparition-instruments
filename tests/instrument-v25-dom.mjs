@@ -25,4 +25,10 @@ if(tool==='circuit-forge'){
 }else if(tool==='wiring-generator'){
  assert($('#generator-mount svg'));assert.equal($('#generator-form').elements.guitar.value,id);assert.equal($('#generator-form').elements.position.value,String(instrument.selector.selection));const returned=readProject(new URL($('#generator-source-circuit').href).search).project;assert.equal(returned.electronics.instrument.reference,id);assert.equal(returned.electronics.instrument.label,'Private instrument');assert.equal(returned.electronics.instrument.controls.find(c=>c.role==='volume').pot,300);assert.equal(returned.extensions.notes,'secret');const pos=$('#generator-form').elements.position;pos.value='1';pos.dispatchEvent(new Event('change',{bubbles:true}));const changed=readProject(new URL($('#generator-source-circuit').href).search).project;assert.equal(changed.electronics.instrument.selector.selection,1);
 }else{assert.equal(readProject(new URL($('#designer-source-circuit').href).search).project.electronics.instrument.reference,'tele');assert.equal(readProject(new URL($('#designer-source-circuit').href).search).project.electronics.instrument.label,'Private instrument');}
+if(tool==='treble-bleed-designer'){
+ assert($('.contextual-help').closest('#designer-inputs'));assert.match($('#designer-import-note').textContent,/source volume/);assert($('#summary-values').children.length>=7);
+ $('#freeze-reference').click();const frozen=$('#frozen-summary').textContent,path=$('.frozen-curve').getAttribute('d'),source=$('#designer-source-circuit').href;
+ for(const width of [320,390,768,1024,1400,1920]){win.happyDOM.setWindowSize({width,height:900});const volume=$('#volume');volume.value='4';volume.dispatchEvent(new Event('input',{bubbles:true}));assert.equal($('#frozen-summary').textContent,frozen);assert.equal($('.frozen-curve').getAttribute('d'),path);assert.equal($('#designer-source-circuit').href,source);assert.equal($('#response-samples').children.length,6);}
+ $('#clear-reference').click();assert.equal($('#frozen-summary').hidden,true);
+}
 await win.happyDOM.close();console.log('Instrument DOM '+mode+': PASS');process.exit(0);
