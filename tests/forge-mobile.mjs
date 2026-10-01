@@ -48,7 +48,7 @@ try{
  await page.locator('#forge-explore summary').click();await page.locator('[data-role-view="signal"]').click();
  assert.equal(await page.locator('[data-role-view="signal"]').getAttribute('aria-pressed'),'true');
  await page.locator('[data-trace="neckPickup.hot"]').click();
- assert(await page.locator('#forge-inspector-sheet').evaluate(e=>e.open&&!e.matches(':modal')));
+ assert(await page.locator('#forge-inspector-sheet').evaluate(e=>e.open&&e.matches(':modal')));
  assert.match(await page.locator('#forge-inspection').textContent(),/conductive|segment/i);
  await page.screenshot({path:output+'/390-trace-inspector.png'});
  await page.locator('[data-mobile-close="inspector"]').click();

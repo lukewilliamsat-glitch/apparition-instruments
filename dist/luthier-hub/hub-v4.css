@@ -10,3 +10,14 @@
 .hero-v41 .hub-study-heading{padding:4px 0 20px}.hero-v41 .hub-study-parts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 28px}.hero-v41 .hub-study-part{min-width:0;border-top:1px solid var(--hub-rule);padding:14px 0 10px;display:flex;flex-direction:column;justify-content:space-between}.hero-v41 [data-study-part=pickup]{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);align-items:center;gap:20px;padding-block:18px 24px}.hero-v41 .hub-study-label{font:11px/1.6 var(--mono,monospace);letter-spacing:.04em;color:var(--hub-gold)}.hero-v41 .hub-study-label small{display:block;font:11px/1.6 var(--sans,sans-serif);letter-spacing:0;color:var(--hub-muted);margin-top:5px}.hero-v41 .hub-study-object{height:142px;max-height:none;max-width:100%;margin:12px auto 0;overflow:visible}.hero-v41 [data-study-part=pickup] .hub-study-object{height:145px;margin:0}.hero-v41 :is([data-study-part=capacitor],[data-study-part=output]) .hub-study-object{height:95px}.hero-v41 .blade-lever-pointer{fill:#e3c686;stroke:#697063}.hero-v41 .hub-study-object .part-value{font-size:12px}.hero-v41 .pickup-cable{display:none}.hero-v41 figcaption{margin-top:10px}
 @media(max-width:1024px) and (min-width:769px){.hero-v41 .hub-study-parts{gap:0 16px}.hero-v41 [data-study-part=pickup]{grid-template-columns:minmax(0,1fr);gap:12px}.hero-v41 [data-study-part=pickup] .hub-study-object{height:120px}.hero-v41 .hub-study-object{height:125px}}
 @media(max-width:390px){.hero-v41 .hub-study-parts{gap:0 16px}.hero-v41 [data-study-part=pickup]{grid-template-columns:minmax(0,1fr);gap:12px}.hero-v41 [data-study-part=pickup] .hub-study-object{height:130px}.hero-v41 .hub-study-object{height:130px}.hero-v41 .hub-study-label{font-size:11px}}
+/* Shared physical vocabulary, reduced detail for educational recognition. */
+.hub-component-study :is(.metal,.blade-frame,.blade-mounting-ear,.blade-lever,.blade-spindle){fill:#b8b6ad;stroke:#5e625e;stroke-width:1.8}
+.hub-component-study :is(.board,.blade-wafer){fill:#463d31;stroke:#88734d;stroke-width:1.8}
+.hub-component-study :is(.blade-lug,.switch-lug,.switch-leaf){fill:#b29964;stroke:#6e5934;stroke-width:1.6}
+.hub-component-study .lug-hole{fill:#22251f;stroke:#8b784e;stroke-width:1}
+.hub-component-study :is(.rim,.blade-wafer-detail,.blade-lever-slot,.blade-wafer-seam,.resistor-band){fill:none;stroke:#707368;stroke-width:1.5}
+.hub-component-study .common-lug{stroke-width:3}
+.hub-component-study :is(.micro,.coil-label,.terminal-label,.blade-terminal-label,.blade-bank-label,.blade-caption,.blade-orientation){display:none}
+.hub-study-part{transition:background .18s ease}.hub-study-part:hover,.hub-study-part:focus-within{background:#ffffff08}
+.hub-intent summary:focus-visible,.hub-guide a:focus-visible,.hub-study-part a:focus-visible{outline:2px solid #c5ab77;outline-offset:4px}
+@media(prefers-reduced-motion:reduce){.hub-study-part{transition:none}}

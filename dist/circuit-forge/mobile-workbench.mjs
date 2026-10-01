@@ -18,10 +18,10 @@ export function setupMobileWorkbench({mount,viewport,onChoose,onLayoutChange}){
   if(!mobile)return;
   close(name==='configure'?'inspector':'configure',false);
   const active=document.activeElement;opener=active!==document.body?active:$(`[data-mobile-open="${name}"]`);
-  if(!dialogs[name].open){if(name==='configure')dialogs[name].showModal();else dialogs[name].show();}
+  if(!dialogs[name].open){dialogs[name].showModal();}
   document.body.classList.add('forge-'+name+'-open');
   $(`[data-mobile-open="${name}"]`).setAttribute('aria-expanded','true');
-  if(fromSelection)active?.focus?.({preventScroll:true});else dialogs[name].querySelector('[data-mobile-close]').focus();
+  dialogs[name].querySelector('[data-mobile-close]').focus({preventScroll:true});
  }
  for(const name of Object.keys(dialogs)){
   $(`[data-mobile-open="${name}"]`).addEventListener('click',()=>dialogs[name].open?close(name):open(name));
@@ -35,7 +35,7 @@ export function setupMobileWorkbench({mount,viewport,onChoose,onLayoutChange}){
  function applyZoom(next=zoom,anchor){
   const previousWidth=fitWidth*zoom;zoom=Math.min(4,Math.max(1,next));
   const sized=sizeDiagram({mount,viewport,zoom,previousWidth,anchor});if(sized)fitWidth=sized.width/zoom;
-  zoomValue.textContent=Math.round(zoom*100)+'%';$('#forge-zoom-out').disabled=zoom<=1;$('#forge-zoom-in').disabled=zoom>=4;
+  viewport.classList.toggle('is-magnified',zoom>1);zoomValue.textContent=Math.round(zoom*100)+'%';$('#forge-zoom-out').disabled=zoom<=1;$('#forge-zoom-in').disabled=zoom>=4;
  }
  function fit(){zoom=1;applyZoom();viewport.scrollLeft=0;viewport.scrollTop=0;}
  $('#forge-zoom-in').addEventListener('click',()=>applyZoom(zoom+.5));
@@ -71,7 +71,7 @@ export function setupMobileWorkbench({mount,viewport,onChoose,onLayoutChange}){
   const selector=selection?.kind==='terminal'?`[data-terminal="${selection.ref}"]`:selection?.kind==='wire'?`[data-wire="${selection.id}"]`:`[data-component="${selection?.id}"]`;
   const target=mount.querySelector(selector);
   if(target){
-   if(zoom===1)applyZoom(2.5);
+   // Keep the user's zoom when opening contextual inspection.
    const r=target.getBoundingClientRect(),v=viewport.getBoundingClientRect(),sheet=dialogs.inspector.getBoundingClientRect(),path=target.querySelector('.wire-line');
    const point=path?path.getPointAtLength(path.getTotalLength()/2).matrixTransform(path.getScreenCTM()):{x:r.x+r.width/2,y:r.y+r.height/2};
    viewport.scrollLeft+=point.x-v.x-v.width/2;
@@ -97,14 +97,14 @@ export function setupMobileWorkbench({mount,viewport,onChoose,onLayoutChange}){
  }
  viewport.addEventListener('pointerdown',event=>{
   if(!mobile||event.button>0)return;
-  pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});viewport.setPointerCapture(event.pointerId);
+  pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});if(zoom>1||event.pointerType==='mouse')viewport.setPointerCapture(event.pointerId);
   if(pointers.size===1)gesture={x:event.clientX,y:event.clientY,left:viewport.scrollLeft,top:viewport.scrollTop,moved:false,target:event.target};
   if(pointers.size===2){const [a,b]=[...pointers.values()];pinch={distance:Math.hypot(a.x-b.x,a.y-b.y),zoom};gesture.moved=true;}
  });
  viewport.addEventListener('pointermove',event=>{
   if(!pointers.has(event.pointerId))return;pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});
   if(pointers.size===2&&pinch){const [a,b]=[...pointers.values()],rect=viewport.getBoundingClientRect();applyZoom(pinch.zoom*Math.hypot(a.x-b.x,a.y-b.y)/pinch.distance,{x:(a.x+b.x)/2-rect.x,y:(a.y+b.y)/2-rect.y});}
-  else if(pointers.size===1&&gesture){const dx=event.clientX-gesture.x,dy=event.clientY-gesture.y;if(Math.hypot(dx,dy)>7)gesture.moved=true;if(gesture.moved){viewport.scrollLeft=gesture.left-dx;viewport.scrollTop=gesture.top-dy;}}
+  else if(pointers.size===1&&gesture&&(zoom>1||event.pointerType==='mouse')){const dx=event.clientX-gesture.x,dy=event.clientY-gesture.y;if(Math.hypot(dx,dy)>7)gesture.moved=true;if(gesture.moved){viewport.scrollLeft=gesture.left-dx;viewport.scrollTop=gesture.top-dy;}}
  });
  function release(event){
   if(!pointers.has(event.pointerId))return;

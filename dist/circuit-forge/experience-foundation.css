@@ -1,0 +1,38 @@
+/* Phone workbench is normal page flow. Only the drawing and open sheets scroll. */
+.forge-workbench-identity{font:500 12px/1.5 'JetBrains Mono',monospace;color:#c5ab77;margin:4px 0 8px;overflow-wrap:anywhere}
+@media(max-width:850px){
+ .forge-page{height:auto;min-height:100svh;overflow:visible}
+ .forge-page .forge-main{height:auto;min-height:100svh;overflow:visible;padding-bottom:24px}
+ .forge-page .forge-layout{height:auto;display:block;flex:none;min-height:0;overflow:visible}
+ .forge-page .forge-workbench{height:auto;min-height:0;overflow:visible;display:flex;padding:0 8px 12px}
+ .forge-page .forge-workbench-heading{position:static;max-width:none;order:4}
+ .forge-page .forge-workspace-modes{order:0;width:100%;margin:0 0 6px!important}
+ .forge-page #forge-mode-physical{order:3;flex:none;min-height:0}
+ .forge-page .bench-control-region{flex:none;display:contents;gap:6px;margin:0 0 8px}
+ .forge-page .circuit-state-console h3{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);padding:0}
+ .forge-page .circuit-state-controls{display:flex;gap:6px;flex-wrap:wrap;width:100%}
+ .forge-page .circuit-state-controls fieldset{flex:1 1 100%;display:flex;flex-wrap:nowrap}
+ .forge-page .circuit-state-controls legend{font-size:10px;margin:0 0 3px}
+ .forge-page .circuit-state-controls button{flex:1;min-width:44px;min-height:44px;padding:6px 3px;font-size:11px}
+ .forge-page .circuit-state-controls [data-state-device="selector"] button{font-size:0}
+ .forge-page .circuit-state-controls [data-state-device="selector"] button::after{content:attr(data-state-short);font-size:13px}
+ .forge-page .bench-modebar{display:contents}
+ .forge-page .forge-presentation-modes{width:100%;display:flex;gap:3px;margin:0}
+ .forge-page .forge-presentation-modes button{min-width:0;flex:1;min-height:44px;padding:8px}
+ .forge-page .forge-mobile-zoom{width:100%;justify-content:center;margin:0;padding:4px 0;position:static}
+ .forge-page .forge-viewport{height:clamp(320px,60svh,620px);min-height:320px;flex:none;overflow:auto;touch-action:pan-y;overscroll-behavior: auto}
+ .forge-page .forge-viewport.is-magnified{touch-action:none;overscroll-behavior:contain}
+ .forge-page .forge-response-lab{order:3;flex:none;overflow:visible;max-height:none;padding-bottom:18px}
+ .forge-page .forge-response-content{display:flex;flex-direction:column}
+ .forge-page .forge-response-graph svg{height:auto}
+ .forge-page .forge-workbench-identity{order:1}.forge-page #forge-circuit-state{order:2}
+ .forge-page .forge-source-context{order:5;display:block;margin:0}.forge-page .forge-import-note{order:4}
+ .forge-page #forge-mode-physical:not([data-presentation="trace"]) .forge-explore{display:none}
+ .forge-page .forge-explore{flex:none}.forge-page .forge-instruction{font-size:11px}
+ .forge-page .forge-diagram-key{max-height:none;overflow:visible}
+ .forge-page .forge-sheet{overflow:visible;max-height:90dvh}
+ .forge-page .forge-sheet-body{max-height:calc(90dvh - 58px);overflow:auto}
+ .forge-page .forge-inspector-sheet{max-height:60dvh}.forge-page .forge-inspector-sheet .forge-sheet-body{max-height:calc(60dvh - 58px)}
+ .forge-page .forge-inspector-sheet.is-expanded{max-height:90dvh}.forge-page .forge-inspector-sheet.is-expanded .forge-sheet-body{max-height:calc(90dvh - 58px)}
+}
+@media(prefers-reduced-motion:reduce){.forge-page .forge-sheet{scroll-behavior:auto}}

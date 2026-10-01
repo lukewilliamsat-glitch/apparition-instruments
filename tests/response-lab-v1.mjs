@@ -1,3 +1,5 @@
+import {installDOMEnvironment} from './fixtures/dom-environment.mjs';
+import {installCatalogueFixture} from './fixtures/catalogue-fixture.mjs';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {Window} from 'happy-dom';
@@ -46,9 +48,9 @@ assert(app.includes('circuit.state.controlPositions[channel][name]=Number(event.
 assert(app.includes('renderLab()')&&app.includes('updateLabSelection()'));
 console.log('Response Lab: shared Designer parity, control state, component link and unsupported boundaries PASS');
 
-const win=new Window({url:'https://apparitioninstruments.co.uk/circuit-forge/'});
+const win=new Window({url:'https://apparitioninstruments.co.uk/circuit-forge/',settings:{disableCSSFileLoading:true,disableJavaScriptFileLoading:true,disableJavaScriptEvaluation:true}});
 win.document.write(html);
-Object.assign(globalThis,{document:win.document,window:win,MouseEvent:win.MouseEvent});
+installDOMEnvironment(win);installCatalogueFixture();
 await import('../dist/circuit-forge/app.mjs?response-lab-test');
 const $=selector=>win.document.querySelector(selector);
 const pick=(name,value)=>$(`[name="${name}"][value="${value}"]`).click();

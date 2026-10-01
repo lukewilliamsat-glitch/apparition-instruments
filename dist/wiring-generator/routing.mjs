@@ -41,6 +41,7 @@ function port(p,key,b){const t=p.terminals[key],a=[p.x+t.x,p.y+t.y];let q;
  else if(p.type==='toggle')q=key==='ground'?[a[0],b.t-15]:[a[0],b.b+15];
  else if(p.type==='jack')q=key==='tip'?[b.r+15,a[1]]:[b.l-15,a[1]];
  else if(['blade','blade3','blade5','superswitch'].includes(p.type))q=key==='ground'?[a[0]+20,a[1]]:p.type==='superswitch'?[b.l-20,a[1]-18]:[a[0],key.startsWith('A')?b.t-15:b.b+15];
+ else if(p.type==='ground')q=[b.l-25,a[1]]; // Leave beside the shield symbol and its protected title, not inside it.
  else q=[a[0],a[1]-18];
  const grid=q.map(v=>Math.round(v/step)*step);
  // Keep selector leads on one straight escape before entering the grid. The

@@ -62,7 +62,7 @@ setAdminOptionRepository(repo);setComponentRepository({async list(){return [comp
 await import('../dist/admin/catalogue-settings/settings.mjs');
 for(let n=0;n<10&&!document.querySelector('.catalogue-option-section');n++)await new Promise(resolve=>setTimeout(resolve,0));
 assert.equal(document.querySelectorAll('.catalogue-option-section').length,5);
-assert([...document.querySelectorAll('.catalogue-option-section input')].some(input=>input.value==='Push / Pull'));assert(document.body.textContent.includes('In use'));
+assert([...document.querySelectorAll('.catalogue-option-section input')].some(input=>input.value==='Push / Pull'));const used=[...document.querySelectorAll('tbody tr')].find(row=>row.children[1].textContent==='push_pull');assert.equal(used.children[2].textContent,'1','Components using count reflects the assigned option');assert.equal(used.children[3].textContent,'Active');
 const form=document.querySelector('.catalogue-option-section form');form.querySelector('input').value='New Maker';form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
 for(let n=0;n<10&&!findOption(rows,'manufacturer','new_maker');n++)await new Promise(resolve=>setTimeout(resolve,0));
 assert.equal(findOption(rows,'manufacturer','new_maker')?.label,'New Maker');browser.close();

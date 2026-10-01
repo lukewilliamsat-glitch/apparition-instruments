@@ -1,9 +1,11 @@
+import {installDOMEnvironment} from './fixtures/dom-environment.mjs';
+import {installCatalogueFixture} from './fixtures/catalogue-fixture.mjs';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {Window} from 'happy-dom';
 const html=readFileSync('dist/circuit-forge/index.html','utf8'),css=readFileSync('dist/circuit-forge/forge.css','utf8');
-const win=new Window({url:'https://apparitioninstruments.co.uk/circuit-forge/',settings:{disableCSSFileLoading:true,disableJavaScriptFileLoading:true}});win.document.write(html);
-Object.assign(globalThis,{document:win.document,window:win,MouseEvent:win.MouseEvent,Event:win.Event});
+const win=new Window({url:'https://apparitioninstruments.co.uk/circuit-forge/',settings:{disableCSSFileLoading:true,disableJavaScriptFileLoading:true,disableJavaScriptEvaluation:true}});win.document.write(html);
+installDOMEnvironment(win);installCatalogueFixture();
 await import('../dist/circuit-forge/app.mjs?signal-lab-v2-dom');
 const $=selector=>win.document.querySelector(selector),click=selector=>$(selector).click();
 const input=(id,value)=>{$('#'+id).value=String(value);$('#'+id).dispatchEvent(new win.Event('input',{bubbles:true}));};

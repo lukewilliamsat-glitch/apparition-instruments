@@ -158,6 +158,7 @@ function render(resetControls=false){
  try{
   const choices=Object.fromEntries(['wiring','bleed','neckCap','bridgeCap','position','neckProfile','bridgeProfile'].map(key=>[key,form.elements.namedItem(key).value]));
   const previous=circuit,result=instrument?{circuit:makeInstrumentCircuit(instrument),kitURL:null}:forgeCircuit(choices,resetControls?defaultControls:circuit?.state.controlPositions||importedCircuit.state?.controlPositions||defaultControls,resetControls?defaultResponseAssumptions():circuit?.state.responseAssumptions||importedCircuit.state?.responseAssumptions||defaultResponseAssumptions(),resetControls?'yes':circuit?.state.shielding||importedCircuit.state?.configuration.shielding||'yes');circuit=result.circuit;
+  $('#forge-workbench-identity').textContent=instrument?[instrument.layout,instrument.controlLayout,instrument.selector.family.replace('-way-','-WAY ').toUpperCase(),instrument.wiring.toUpperCase()].join(' · '):circuit.state.guitar.toUpperCase()+' · '+circuit.state.wiring.toUpperCase();
   if(circuit.state.guitar==='instrument')selection=null;
   if(selection&&!inspectSelection(circuit,selection))selection=null;
   form.elements.bleed.disabled=choices.wiring==='50s';$('#forge-kit').href=result.kitURL;$('#forge-kit').hidden=!result.kitURL;

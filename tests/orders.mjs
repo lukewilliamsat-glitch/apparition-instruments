@@ -1,11 +1,14 @@
 import assert from 'node:assert/strict';
-import {createOrderStore,componentOrderItem,kitOrderItem,orderStorageKey} from '../dist/admin/orders/model.mjs';
-import {createKitSnapshot} from '../dist/les-paul-kits/snapshot.mjs';
+
+import {installCatalogueFixture} from './fixtures/catalogue-fixture.mjs';
+installCatalogueFixture();
+const {createOrderStore,componentOrderItem,kitOrderItem,orderStorageKey}=await import('../dist/admin/orders/model.mjs');
+const {createKitSnapshot}=await import('../dist/les-paul-kits/snapshot.mjs');
 import {initialComponents} from '../dist/admin/data.mjs';
 const map=new Map(),storage={getItem:k=>map.get(k)??null,setItem:(k,v)=>map.set(k,v)};
 let queue=Promise.resolve();const lock=(key,fn)=>{const work=queue.then(fn);queue=work.catch(()=>{});return work;};
 const store=createOrderStore(storage,{lock});const stock=initialComponents(),original=JSON.stringify(stock);
-const component=stock.find(x=>x.id==='bleed-prs'),kit=createKitSnapshot({wiring:'modern',bleed:'duncan',matching:'precision',jack:'pureTone'});
+const component=stock.find(x=>x.id==='bleed-prs'),kit=createKitSnapshot({wiring:'modern',bleed:'bleed-duncan',matching:'precision',jack:'none'});
 const input={customer:{name:'Test Customer'},delivery:{postcode:'NG1',country:'UK'},channel:'MANUAL',status:'DRAFT',deliveryPrice:300,items:[componentOrderItem(component,2),kitOrderItem(kit,1)]};
 const first=await store.create(input,'request1');assert.equal(first.reference,'AI-10001');assert.equal(first.pricing.total,first.items.reduce((n,i)=>n+i.lineTotal,300));assert.deepEqual(first.items[1].snapshot,kit);
 assert.equal((await store.create(input,'request1')).id,first.id);assert.equal(store.list().length,1);
@@ -26,12 +29,12 @@ const clean=initialComponents();assert.equal(JSON.stringify(clean),original,'No 
 console.log('Orders: mixed snapshots, independent historical content/pricing, reload, unique serialized references, retry idempotence, cancellation without reuse, status history, safe failures and no stock writes passed.');
 
 // Real basket handoff, without rewriting basket or central inventory.
-import {basketOrderItems} from '../dist/admin/orders/handoff.mjs';
+const {basketOrderItems}=await import('../dist/admin/orders/handoff.mjs');
 import {createComponentStore,storageKey} from '../dist/admin/data.mjs';
-import {addKit,addComponent,readBasket} from '../dist/commerce.mjs';
+const {addKit,addComponent,readBasket}=await import('../dist/commerce.mjs');
 const browserMap=new Map();globalThis.localStorage={getItem:k=>browserMap.get(k)??null,setItem:(k,v)=>browserMap.set(k,v)};globalThis.window=new EventTarget();
 const central=createComponentStore(localStorage),seed=central.list();central.save(seed[0],seed[0].id);
-addKit({wiring:'60s',bleed:'premium',selector:'switchcraft'});addComponent('bleed-prs');
+addKit({wiring:'60s',bleed:'bleed-duncan',selector:'none'});addComponent('bleed-prs');
 const inventoryBefore=localStorage.getItem(storageKey),basketBefore=localStorage.getItem('apparition.basket.v1');
 const orders=createOrderStore(localStorage,{lock});
 const handoff=await orders.create({...input,items:basketOrderItems(readBasket(),central.list()),channel:'WEBSITE'},'basket-order');
