@@ -3,7 +3,7 @@ import {readFileSync} from 'node:fs';
 import {spawnSync} from 'node:child_process';
 import {Window} from 'happy-dom';
 
-const scenarios=['base','price-base','defaults','permissions','stock','zero-stock','stock-default','price-difference','zero-code','presentation','hidden-listing','disabled-builder','inactive'];
+const scenarios=['project','base','price-base','defaults','permissions','stock','zero-stock','stock-default','price-difference','zero-code','presentation','hidden-listing','disabled-builder','inactive'];
 if(!process.argv[2]){
  for(const scenario of scenarios){const result=spawnSync(process.execPath,[new URL(import.meta.url).pathname,scenario],{encoding:'utf8'});if(result.status!==0)throw new Error(scenario+' DOM runtime failed:\n'+result.stderr+'\n'+result.stdout);console.log(result.stdout.trim());}
  process.exit(0);
@@ -61,8 +61,22 @@ if(scenario==='presentation'){
  const cap=components.list().find(item=>item.id==='cde-022');components.save({...cap,id:'new-cap',sku:'new-cap',name:'New Maker 0.015µF',productTitle:'New Maker capacitor',manufacturer:'New Maker',specs:{...cap.specs,Value:'15nF'},stock:12},null);kit.kitDefinition.permittedComponentIds.push('new-cap');
 }
 assemblies.save(kit,kit.id);
+if(scenario==='project'){
+ const {forgeCircuit}=await import('../dist/circuit-forge/model.mjs');
+ const {projectFromCircuit,projectURL}=await import('../dist/electronics/state/project.mjs');
+ const circuit=forgeCircuit({position:'neck'}).circuit;circuit.state.controlPositions.neck.volume=4;circuit.state.responseAssumptions.cableC=800;
+ window.location.href='https://example.test'+projectURL('/les-paul-kits/',projectFromCircuit(circuit));
+}
 const errors=[];window.addEventListener('error',event=>errors.push(event.error||event.message));
 await import('../dist/wiring-kits/builder-entry.mjs');
+if(scenario==='project'){
+ const {readProject}=await import('../dist/electronics/state/project.mjs');
+ const link=document.querySelector('#kit-project-context a');assert(link);
+ const returned=readProject(new URL(link.href).search).project;assert.equal(returned.electronics.controlPositions.neck.volume,4);assert.equal(returned.electronics.responseAssumptions.cableC,800);
+ assert.match(document.querySelector('#kit-project-context p').textContent,/retained/);
+ assert(document.querySelector('#view-installation').href.includes('ap='));
+}
+
 assert.deepEqual(errors,[],'no exception in actual Builder entry');
 const $=selector=>document.querySelector(selector);
 if(['disabled-builder','inactive'].includes(scenario)){

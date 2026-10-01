@@ -1,3 +1,5 @@
+import {readProject,projectURL} from '../electronics/state/project.mjs';
+import {learningLink} from '../knowledge/context.mjs';
 import {readDesignerHandoff,circuitStateURL} from '../electronics/state/circuit-state.mjs';
 import {defaults,fields,types,topologies,topologyOf,validateState,bleedSummary} from '../electronics/response/circuits.mjs';
 import {audioTaper,frequencyResponse,responseAt,magnitudeDB} from '../electronics/response/engine.mjs';
@@ -37,9 +39,11 @@ form.addEventListener('submit',e=>e.preventDefault());form.addEventListener('inp
 function capture(){if(!points.length)return;frozen=freezeReference(state);showFrozen();renderGraph($('#response-graph'),points,state.volume,frozen);}
 $('#freeze-reference').addEventListener('click',capture);$('#update-reference').addEventListener('click',capture);
 $('#clear-reference').addEventListener('click',()=>{frozen=null;showFrozen();if(points.length)renderGraph($('#response-graph'),points,state.volume);});
-fill();const imported=readDesignerHandoff(window.location.search);if(imported.response){state=imported.response;fill(state);$('#designer-import-note').textContent=imported.notice+' '+imported.state.configuration.position+' pickup. Designer compares against full Volume; Signal Lab comparison modes and frozen references remain local. Wiring topology and conductor profiles are retained in the source link, not modelled here.';$('#designer-source-circuit').href=circuitStateURL('/circuit-forge/',imported.state);$('#designer-source-circuit').hidden=false;}else $('#designer-import-note').textContent=imported.notice;showFrozen();update();
+fill();const projectSource=readProject(window.location.search);const sourceQuery=new URLSearchParams(window.location.search);if(sourceQuery.has('ap')){if(projectSource.project)sourceQuery.set('sf',JSON.stringify(projectSource.project.electronics));else sourceQuery.set('sf','invalid');}const imported=readDesignerHandoff(sourceQuery.toString());if(imported.response){state=imported.response;fill(state);$('#designer-import-note').textContent=imported.notice+' '+imported.state.configuration.position+' pickup. Designer compares against full Volume; Signal Lab comparison modes and frozen references remain local. Wiring topology and conductor profiles are retained in the source link, not modelled here.';$('#designer-source-circuit').href=readProject(window.location.search).project?projectURL(circuitStateURL('/circuit-forge/',imported.state),readProject(window.location.search).project):circuitStateURL('/circuit-forge/',imported.state);$('#designer-source-circuit').hidden=false;}else $('#designer-import-note').textContent=imported.notice;showFrozen();update();
 import('../components/catalogue.mjs').then(products=>{
  catalogue=products.catalogue;productsReady=true;renderMatches();
  import('../commerce.mjs').then(basket=>{addComponent=basket.addComponent;renderMatches();}).catch(()=>{});
 }).catch(()=>{$('#matching-products').hidden=false;$('#matching-products').textContent='Catalogue products are temporarily unavailable. The Designer remains available.';});
 if(typeof ResizeObserver!=='undefined')new ResizeObserver(()=>{if(points.length)renderGraph($('#response-graph'),points,state.volume,frozen);}).observe($('#response-graph'));
+
+$('#designer-inputs').after(learningLink(document,'bleeds','Understand treble bleeds and the comparison assumptions'));

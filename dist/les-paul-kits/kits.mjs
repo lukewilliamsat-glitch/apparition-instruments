@@ -1,3 +1,5 @@
+import {readProject,projectURL} from '../electronics/state/project.mjs';
+import {kitProjectLink,reconcileKitProject} from '../knowledge/kit-project.mjs';
 import {generatorURL,installationGuideURL,readGeneratorURL,builderDiagramURL} from '../wiring-generator/session.mjs';
 import {renderKitFields,updateFieldSummaries} from './fields.mjs';
 import {choiceDetails} from './choice-details.mjs';
@@ -10,6 +12,7 @@ import {createPublicOptionRepository} from '../backend/catalogue-options.mjs';
 await refreshCatalogue();
 let catalogueOptions=[];try{catalogueOptions=await createPublicOptionRepository().list();}catch{}
 const form=document.querySelector('#kit-options'),field=name=>form.elements.namedItem(name),$=selector=>document.querySelector(selector);
+let projectContext=readProject(location.search).project;
 let drawing={};try{drawing=readGeneratorURL(location.search).state;}catch{}
 renderKitFields(form);
 let diagramView='full',diagramFocus='all',enlarged=false,editId=new URLSearchParams(location.search).get('edit'),lastComponent=null,staleChoices=[];
@@ -17,12 +20,15 @@ function readState(){return normaliseKit(Object.fromEntries(Object.keys(defaults
 function setControl(key,val){const control=field(key);if(!control)return;if(control instanceof RadioNodeList||Array.isArray(control)){for(const input of control)input.checked=input.value===val;return;}control.value=val;if(control.tagName==='SELECT'&&control.selectedIndex<0){const option=[...control.options].find(o=>o.value===val);if(option)option.selected=true;}}
 function setState(value){staleChoices=invalidKitChoices(value);const state=normaliseKit(value);for(const [key,val] of Object.entries(state))setControl(key,val);}
 function updateInstallationLinks(state){
+ if(projectContext){const root=document.querySelector('#kit-project-context');try{const current=reconcileKitProject(projectContext,state);root.querySelector('a').href=projectURL('/circuit-forge/',current);root.querySelector('p').textContent='Project controls and load assumptions are retained. Returning to Signal Forge uses the selected kit’s supported physical values.';}catch{root.querySelector('a').href=projectURL('/circuit-forge/',projectContext);root.querySelector('p').textContent='These kit choices cannot be represented exactly by the shared circuit. Return to the original project; no incompatible choices are substituted.';}}
+
  const caps=toneCaps(state),supported=[caps.neck,caps.bridge].every(cap=>['0.022','0.033','0.047'].includes(cap.value));
  for(const [selector,url] of [['#view-installation',generatorURL],['#kit-installation-guide',installationGuideURL]]){
-  const link=$(selector);if(supported){link.href=url(drawing,state);link.removeAttribute('aria-disabled');link.removeAttribute('title');link.textContent=selector==='#view-installation'?'View installation diagram →':'Read the installation guide →';}
+  const link=$(selector);if(supported){let destination=url(drawing,state);if(projectContext){try{destination=kitProjectLink(destination,projectContext,state);}catch{}}link.href=destination;link.removeAttribute('aria-disabled');link.removeAttribute('title');link.textContent=selector==='#view-installation'?'View installation diagram →':'Read the installation guide →';}
   else{link.removeAttribute('href');link.setAttribute('aria-disabled','true');link.title='The separate installation Generator does not yet support this tone capacitor value.';link.textContent='Installation Generator unavailable for this capacitor value';}
  }
 }
+if(projectContext){const root=document.createElement('section');root.id='kit-project-context';root.className='local-projects';const p=document.createElement('p'),link=document.createElement('a');link.textContent='Return to project in Signal Forge →';root.append(p,link);document.querySelector('main').append(root);}
 setState(defaults);
 function renderDiagram(state){
  const mount=$('#diagram-mount'),scroll=$('#diagram-scroll'),x=scroll.scrollLeft,y=scroll.scrollTop;

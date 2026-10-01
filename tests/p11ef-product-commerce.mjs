@@ -27,5 +27,5 @@ const claimed={...cap,included:'1 assembled network',qcStatement:'Individually v
 const html=productPage(claimed,readFileSync('dist/products/index.html','utf8'),[],[claimed,parallel]);assert(html.includes(claimed.qcStatement));assert(html.includes(claimed.included));assert(html.includes(productURL(parallel.id)));
 assert.equal(productContent(claimed).qcStatement,claimed.qcStatement);win.close();
 const designer=readFileSync('dist/treble-bleed-designer/index.html','utf8');assert(designer.includes('id="matching-products"'));assert(designer.includes('app.mjs?v=p11ef'));
-const generator=readFileSync('dist/wiring-generator/app.mjs','utf8');assert(generator.includes('kitLink(circuit)'));assert(generator.includes('builderDiagramURL'));
+const generator=readFileSync('dist/wiring-generator/app.mjs','utf8');assert(generator.includes('projectKitHandoff(circuit,projectContext)'));assert(generator.includes('builderDiagramURL'));
 console.log('P11E/F: exact semantic matching, unit equivalence, eligibility, related products, content, basket and supported kit bridge PASS');

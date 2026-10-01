@@ -1,3 +1,7 @@
+import {projectKitHandoff} from '../knowledge/kit-project.mjs';
+import {readProject,projectFromCircuit,projectURL} from '../electronics/state/project.mjs';
+import {mountProjectPanel} from '../knowledge/project-panel.mjs';
+import {learningLink,mountKnowledgeCards} from '../knowledge/context.mjs';
 import {readCircuitState,captureCircuitState,circuitStateURL,circuitStateSummary,wiringHandoff,designerHandoff,kitHandoff} from '../electronics/state/circuit-state.mjs';
 import {setupMobileWorkbench} from './mobile-workbench.mjs';
 import {forgeCircuit,defaultControls} from './model.mjs';
@@ -15,7 +19,10 @@ const el=(tag,text)=>{const node=document.createElement(tag);if(text!==undefined
 let circuit,selection=null,roleView='all',mobile;
 let comparisonMode='ab',frozenReference=null,signalReport=null,previousSignal=null,graphView=null,inspectionFrequency=1000,lastCause='',assumptionIdentity='';
 const setText=(node,value)=>{if(node.textContent!==value)node.textContent=value;};
-const importedCircuit=readCircuitState(window.location.search);
+const projectImport=readProject(window.location.search);let projectContext=projectImport.project;
+const initialMode=new URLSearchParams(window.location.search).get('mode');
+const importedCircuit=new URLSearchParams(window.location.search).has('ap')?{state:projectContext?.electronics||null,notice:projectImport.notice}:readCircuitState(window.location.search);
+const withProject=url=>{if(!projectContext)return url;projectContext=projectFromCircuit(circuit,projectContext);return projectURL(url,projectContext);};
 const frequencyLabel=f=>f>=1000?(f/1000).toFixed(2)+' kHz':f.toFixed(0)+' Hz';
 function inspectionReadout(sample){
  inspectionFrequency=sample.frequency;const frequency=frequencyLabel(sample.frequency),format=db=>db<=-100?'≤ −100 dB':db.toFixed(2)+' dB';
@@ -99,11 +106,12 @@ function renderLab(){
 }
 function updateContextActions(){
  setText($('#forge-shared-summary'),circuitStateSummary(circuit,signalReport));
- $('#forge-view-wiring').href=wiringHandoff(circuit);
- const designer=designerHandoff(circuit,signalReport),kit=kitHandoff(circuit);
- $('#forge-design-bleed').hidden=!designer.url;if(designer.url)$('#forge-design-bleed').href=designer.url;
- setText($('#forge-designer-limit'),designer.reason);$('#forge-kit').hidden=!kit.url;if(kit.url)$('#forge-kit').href=kit.url;setText($('#forge-kit-limit'),kit.reason);
- window.history.replaceState(null,'',circuitStateURL('/circuit-forge/',captureCircuitState(circuit)));
+ $('#forge-view-wiring').href=withProject(wiringHandoff(circuit));
+ const designer=designerHandoff(circuit,signalReport),kit=projectKitHandoff(circuit,projectContext);
+ $('#forge-design-bleed').hidden=!designer.url;if(designer.url)$('#forge-design-bleed').href=withProject(designer.url);
+ setText($('#forge-designer-limit'),designer.reason);$('#forge-kit').hidden=!kit.url;if(kit.url)$('#forge-kit').href=withProject(kit.url);setText($('#forge-kit-limit'),kit.reason);
+ const url=withProject(circuitStateURL('/circuit-forge/',captureCircuitState(circuit)));window.history.replaceState(null,'',url);
+ if(projectContext)projectContext=projectFromCircuit(circuit,projectContext);
 }
 function updateInventory(){
  const list=$('#forge-parts');list.replaceChildren();
@@ -133,7 +141,7 @@ function render(resetControls=false){
 }
 form.addEventListener('change',event=>{if(event.target.name==='wiring'&&event.target.value==='50s')form.elements.bleed.value='none';render();});
 for(const channel of ['neck','bridge']){const select=form.elements.namedItem(channel+'Profile');for(const [id,profile] of Object.entries(pickupConventions)){const option=el('option',profile.label);option.value=id;select.append(option);}}
-form.addEventListener('reset',()=>setTimeout(()=>{selection=null;lastCause='';$('#forge-import-note').textContent='';render(true);},0));
+form.addEventListener('reset',()=>setTimeout(()=>{projectContext=null;selection=null;lastCause='';$('#forge-import-note').textContent='';render(true);},0));
 for(const [id,sourceName] of [['forge-lab-bleed','bleed'],['forge-lab-cap','neckCap']]){
  const select=$('#'+id);for(const option of form.elements.namedItem(sourceName).options)select.append(option.cloneNode(true));
  select.addEventListener('change',()=>{const name=id==='forge-lab-bleed'?'bleed':circuit.state.position+'Cap',source=form.elements.namedItem(name);source.value=select.value;source.dispatchEvent(new Event('change',{bubbles:true}));});
@@ -170,3 +178,10 @@ mobile=setupMobileWorkbench({mount,viewport,onChoose:choose,onLayoutChange:()=>{
 if(importedCircuit.state){const c=importedCircuit.state.configuration;for(const key of ['wiring','bleed','neckCap','bridgeCap','position']){const radios=form.querySelectorAll('input[type=radio][name='+key+']');if(radios.length)for(const radio of radios)radio.checked=radio.value===c[key];else form.elements.namedItem(key).value=c[key];}for(const channel of ['neck','bridge'])form.elements.namedItem(channel+'Profile').value=c.pickupProfiles[channel];}
 $('#forge-import-note').textContent=importedCircuit.notice;
 if(render())window.__forgeEntry?.ready();else window.__forgeEntry?.fail();
+
+const projectRoot=el('section');projectRoot.className='local-projects';projectRoot.setAttribute('aria-label','Local circuit projects');document.querySelector('.forge-main').append(projectRoot);
+mountProjectPanel(projectRoot,{getCircuit:()=>circuit,getProject:()=>projectContext,setProject:p=>{projectContext=p;updateContextActions();},reset:()=>form.reset()});
+for(const [selector,key,label] of [['#forge-lab-volumePot','pots','Why pot value matters'],['#forge-lab-cap','caps','Understanding tone capacitors'],['#forge-lab-bleed','bleeds','How treble bleeds work'],['#forge-lab-pickup','pickups','Pickup conductors and model assumptions']])$(selector).closest('label').after(learningLink(document,key,label));
+$('#forge-contacts').after(learningLink(document,'switches','How selector contacts work'));
+const learning=el('details'),learningTitle=el('summary','Learn about these components');learning.append(learningTitle);mountKnowledgeCards(learning,['potentiometers','capacitors','treble-bleeds']);projectRoot.after(learning);
+if(initialMode==='signal')setWorkspaceMode('signal');

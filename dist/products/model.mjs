@@ -1,3 +1,4 @@
+import {relationshipLinks} from '../knowledge/registry.mjs';
 import {categories,fieldLabels} from '../admin/data.mjs';
 import {deploymentPath} from '../deployment.mjs';
 import {potValues} from '../admin/pot-specs.mjs';
@@ -59,7 +60,7 @@ export function productDetails(product,options=[]){
  const seen=new Set();return rows.filter(({label,value})=>{const key=identity(label),val=String(value??'').trim();if(!key||!val||seen.has(key))return false;seen.add(key);return true;}).map(({label,value})=>({label:displayLabel(label),value:String(value).trim()}));
 }
 export const productContext={
- potentiometers:{fitment:'Check mounting depth, hole diameter, knob fit and cavity clearance against your guitar before choosing a potentiometer. Model and year alone do not confirm fit.',links:[['Understand potentiometers','/luthier-hub/potentiometers-explained/']]},
- capacitors:{fitment:'Check the specified capacitance and the space available in your control cavity. Component brand or construction alone does not guarantee a particular audible result.',links:[['Understand tone capacitors','/luthier-hub/capacitors-treble-bleeds/']]},
- 'treble-bleeds':{fitment:'A treble bleed connects across a volume control’s input and output. Its effect depends on your pickups, controls and cable; no one network suits every guitar.',links:[['Understand treble bleeds','/luthier-hub/capacitors-treble-bleeds/'],['Explore the Treble Bleed Designer','/treble-bleed-designer/']]}
+ potentiometers:{fitment:'Check mounting depth, hole diameter, knob fit and cavity clearance against your guitar before choosing a potentiometer. Model and year alone do not confirm fit.',links:relationshipLinks('potentiometers')},
+ capacitors:{fitment:'Check the specified capacitance and the space available in your control cavity. Component brand or construction alone does not guarantee a particular audible result.',links:relationshipLinks('capacitors')},
+ 'treble-bleeds':{fitment:'A treble bleed connects across a volume control’s input and output. Its effect depends on your pickups, controls and cable; no one network suits every guitar.',links:relationshipLinks('treble-bleeds')}
 };

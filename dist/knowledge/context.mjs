@@ -1,0 +1,4 @@
+import {relationships,relationshipLinks,articleURL} from './registry.mjs';
+export function knowledgeCard(doc,key){const r=relationships[key];if(!r)return null;const section=doc.createElement('section');section.className='knowledge-card';const h=doc.createElement('h3');h.textContent='Understand this component';const p=doc.createElement('p');p.textContent=r.role;section.append(h,p);for(const [label,url] of relationshipLinks(key)){const a=doc.createElement('a');a.href=url;a.textContent=label+' →';section.append(a);}return section;}
+export function mountKnowledgeCards(root,keys){for(const key of keys){const card=knowledgeCard(root.ownerDocument,key);if(card)root.append(card);}}
+export function learningLink(doc,key,label){const a=doc.createElement('a');a.className='contextual-help';a.href=articleURL(key);a.textContent=label;return a;}
