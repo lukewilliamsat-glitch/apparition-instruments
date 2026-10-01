@@ -1,3 +1,4 @@
+import {componentTitlePosition} from './composition.mjs';
 // Presentation only: orthogonal routes between semantic terminals. The circuit
 // graph, not geometry or colour, determines whether two paths are connected.
 const step=10,W=132,H=119;
@@ -14,7 +15,7 @@ export function routeSemantics(c,{contacts=true}={}){
 }
 export function componentBounds(p){
  let b;
- if(['pot','pushpull'].includes(p.type))b=[-75,-16,78,p.type==='pushpull'?335:p.physicalControl==='push-pull'?178:194];
+ if(['pot','pushpull'].includes(p.type))b=[-75,-16,78,p.type==='pushpull'?335:194];
  else if(['humbucker','singlecoil','p90'].includes(p.type))b=[-20,-30,162,240];
  else if(['capacitor','resistor','network'].includes(p.type))b=[-32,-36,32,p.productMark?45:24];
  else if(p.type==='dpdt')b=[-64,-18,64,102];
@@ -25,7 +26,7 @@ export function componentBounds(p){
  return {id:p.id,l:p.x+b[0],t:p.y+b[1],r:p.x+b[2],b:p.y+b[3]};
 }
 // Protect headline labels in addition to physical bodies; endpoints remain unchanged.
-export function protectedLabelRegions(circuit){return circuit.components.filter(p=>!['capacitor','resistor','network'].includes(p.type)&&!p.mechanicalHost).map(p=>{const title=p.label+(p.physicalControl==='push-pull'?' / PUSH-PULL':''),x=p.x+(['humbucker','singlecoil'].includes(p.type)?77:['blade','superswitch'].includes(p.type)?95:0),y=p.y+(p.type==='pot'?8:['blade','blade3','blade5'].includes(p.type)?-58:-20),half=Math.max(30,title.length*4.5);return {id:p.id+'Label',l:x-half,r:x+half,t:y-16,b:y+5};});}
+export function protectedLabelRegions(circuit){return circuit.components.filter(p=>!['capacitor','resistor','network'].includes(p.type)&&!p.mechanicalHost).map(p=>{const title=p.label+(p.physicalControl==='push-pull'?' / PUSH-PULL':''),x=p.x+componentTitlePosition(p).x,y=p.y+componentTitlePosition(p).y,half=Math.max(30,title.length*4.5);return {id:p.id+'Label',l:x-half,r:x+half,t:y-16,b:y+5};});}
 function port(p,key,b){const t=p.terminals[key],a=[p.x+t.x,p.y+t.y];let q;
  if(['pot','pushpull'].includes(p.type)){
   const horizontal=key==='case'||key.startsWith('switch');

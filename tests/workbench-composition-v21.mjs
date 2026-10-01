@@ -13,7 +13,7 @@ for(const guitar of ['tele','strat'])for(const position of guitar==='tele'?['1',
 let count=0;
 for(const config of matrix){
  const source=makeCircuit(config),snapshot=JSON.stringify(source),c=composeWorkbench(source);assert.deepEqual(c.contacts,source.contacts);assert.deepEqual(c.connections,source.connections);assert.deepEqual(c.elements,source.elements);for(const p of c.components)assert.deepEqual(p.terminals,source.components.find(s=>s.id===p.id).terminals);
- for(const device of c.components.filter(p=>p.type==='dpdt')){const host=c.components.find(p=>p.id===device.mechanicalHost);assert.equal(device.y-host.y,260);assert.equal(device.x,host.x);assert(device.y+componentBounds({...device,y:0}).b<1190);}
+ for(const device of c.components.filter(p=>p.type==='dpdt')){const host=c.components.find(p=>p.id===device.mechanicalHost);assert(device.y+componentBounds({...device,y:0}).b<host.y+28,'All DPDT terminals and housing above pot body');assert.equal(device.x,host.x);assert(device.y+componentBounds({...device,y:0}).b<1190);}
  const overview=workbenchOverview(source);assert(overview.rows.find(r=>r[0]==='Participating pickups')[1]);
  for(const mode of ['build','trace']){
   const routes=routeDiagram(c,{mode});for(const w of c.connections){const a=endpoint(c,w.from),b=endpoint(c,w.to),points=routes.get(w.id);assert.deepEqual(points[0],[a.x,a.y]);assert.deepEqual(points.at(-1),[b.x,b.y]);assert(points.slice(1).every((p,i)=>p[0]===points[i][0]||p[1]===points[i][1]),w.id+' orthogonal');
