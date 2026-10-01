@@ -5,4 +5,4 @@ export function presentationFor(circuit,mode='trace'){
  mode=presentationModes.includes(mode)?mode:'trace';
  return {circuit,mode,build:mode==='build',routing:mode==='build'?'build':'trace',showContacts:mode!=='build',showTechnicalLabels:mode!=='build'};
 }
-export const buildKey='Rear view · pot lugs left to right: 3 / 2 (wiper) / 1. Solid = signal or component lead; long dashes = ground; short dashes = shield. Silver = lug termination; bronze = casing solder. Crossing hops do not join. Verify lug functions on your hardware.';
+export const buildKey='Rear view · pot lugs left to right: 3 / 2 (wiper) / 1. Solid = signal; dash-dot = tone/component lead; long dashes = ground; short dashes = shield. Silver = lug termination; bronze = casing solder. Crossing hops do not join. Blade switches: solder side, common lugs have a heavier outline. Pot numbering and blade terminal identity must be verified on your hardware.';

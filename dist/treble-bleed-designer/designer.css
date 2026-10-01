@@ -7,3 +7,5 @@
 /* Handoff context is a full-width row, never a workbench column. */
 .designer-layout>#designer-import-note,.designer-layout>#designer-source-circuit{grid-column:1/-1;margin:0;overflow-wrap:anywhere}.designer-layout>#designer-import-note:empty{display:none}.designer-layout>#designer-inputs{grid-column:1}.designer-layout>.response-panel{grid-column:2}.designer-layout>*{min-width:0}.designer-page .local-projects{box-sizing:border-box}.designer-page .sample-scroll{max-width:100%}
 @media(max-width:900px){.designer-layout>#designer-inputs,.designer-layout>.response-panel{grid-column:1}.designer-layout{grid-template-columns:minmax(0,1fr)}}
+/* Shared workbench presentation; responsive columns and graph geometry unchanged. */
+.designer-page .reference-actions button{border-radius:2px}.designer-page legend small{font-family:'JetBrains Mono',monospace}.designer-page input:not([type=range]),.designer-page select{border-radius:2px}.designer-page h2{letter-spacing:-.025em}.designer-page #summary-values dd{font-variant-numeric:tabular-nums}

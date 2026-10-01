@@ -2,6 +2,9 @@
 import {allowed,configuration} from '../../wiring-generator/model.mjs';
 import {componentPresets,pickupPresets} from '../response/assumptions.mjs';
 export const instrumentVersion=1;
+export const instrumentFamilies=Object.freeze({'les-paul':'Les Paul-style',sg:'SG-style',tele:'Tele-style',strat:'Strat-style',superstrat:'Superstrat-style',prs:'PRS-style',custom:'Custom instrument'});
+export const instrumentFamily=i=>i.family||({'les-paul':'les-paul',tele:'tele',strat:'strat',hss:'superstrat','prs-hh':'prs'}[i.reference]||'custom');
+export const familyPickupLayouts=Object.freeze({'les-paul':['HH'],sg:['HH'],tele:['SS'],strat:['SSS','HSS','HSH','HH'],superstrat:['SSS','HSS','HSH','HH'],prs:['HH'],custom:['S','SS','HS','SH','SSS','H','HH','HSS','HSH']});
 export const pickupLayouts=Object.freeze({S:{bridge:'single'},SS:{neck:'single',bridge:'single'},HS:{neck:'single',bridge:'humbucker'},SH:{neck:'humbucker',bridge:'single'},SSS:{neck:'single',middle:'single',bridge:'single'},H:{bridge:'humbucker'},HH:{neck:'humbucker',bridge:'humbucker'},HSS:{neck:'single',middle:'single',bridge:'humbucker'},HSH:{neck:'humbucker',middle:'single',bridge:'humbucker'}});
 export const controlLayouts=Object.freeze({'1V':[1,0],'1V1T':[1,1],'1V2T':[1,2],'2V1T':[2,1],'2V2T':[2,2]});
 export const switchFamilies=Object.freeze({'3-way-toggle':3,'3-way-blade':3,'5-way-blade':5});
@@ -27,6 +30,7 @@ export function createReference(id='les-paul'){
 export function normaliseInstrument(input){
  if(!object(input)||input.version!==instrumentVersion)throw Error('Unsupported instrument version.');
  if(!Object.hasOwn(pickupLayouts,input.layout)||!Object.hasOwn(controlLayouts,input.controlLayout))throw Error('Unsupported pickup or control layout.');
+ if(input.family!==undefined&&!Object.hasOwn(instrumentFamilies,input.family))throw Error('Unknown instrument family.');
  if(input.reference!==undefined&&!Object.hasOwn(references,input.reference))throw Error('Unknown instrument reference.');
  if(input.label!==undefined&&(typeof input.label!=='string'||input.label.length>80))throw Error('Instrument label must be at most 80 characters.');
  if(!Array.isArray(input.pickups)||input.pickups.length!==Object.keys(pickupLayouts[input.layout]).length)throw Error('Missing required pickup positions.');
@@ -40,11 +44,11 @@ export function normaliseInstrument(input){
  if(!allowed.wiring.includes(input.wiring)||input.wiring==='50s'&&controls.some(c=>c.bleed&&c.bleed!=='none'))throw Error('Unsupported wiring/treble bleed combination.');
  if(!object(input.load)||!componentPresets.cableC.includes(input.load.cableC)||!componentPresets.loadR.includes(input.load.loadR))throw Error('Invalid model load.');
  const extensions=safeExtensions(input.extensions||{});if(!object(extensions)||JSON.stringify(extensions).length>2000)throw Error('Instrument extensions are too large.');
- return {version:instrumentVersion,...input.reference?{reference:input.reference}:{},label:(input.label||'').trim(),layout:input.layout,controlLayout:input.controlLayout,pickups,controls,selector:{family:input.selector.family,selection:input.selector.selection},wiring:input.wiring,shielding:input.shielding||'yes',load:{cableC:input.load.cableC,loadR:input.load.loadR},source:{kind:input.reference?'generic-reference':'custom'},extensions};
+ return {version:instrumentVersion,...input.family!==undefined?{family:input.family}:{},...input.reference?{reference:input.reference}:{},label:(input.label||'').trim(),layout:input.layout,controlLayout:input.controlLayout,pickups,controls,selector:{family:input.selector.family,selection:input.selector.selection},wiring:input.wiring,shielding:input.shielding||'yes',load:{cableC:input.load.cableC,loadR:input.load.loadR},source:{kind:input.reference?'generic-reference':'custom'},extensions};
 }
 export function validateInstrument(input){try{return {valid:true,instrument:normaliseInstrument(input),errors:[]};}catch(e){return {valid:false,instrument:null,errors:[e.message]};}}
 // Topology compatibility compares actual relationships, not a reference name alone.
-export function matchingReference(input){const i=normaliseInstrument(input);if(i.pickups.some(p=>p.modification!=='full'))return null;for(const [id,r] of Object.entries(references)){const base=createReference(id);if(i.layout!==r.layout||i.controlLayout!==r.controls||i.selector.family!==r.selector||i.controls.length!==base.controls.length)continue;if(i.controls.every(c=>base.controls.some(b=>b.id===c.id&&b.role===c.role&&JSON.stringify(b.assignments)===JSON.stringify(c.assignments)&&b.capacitorGroup===c.capacitorGroup)))return id;}return null;}
+export function matchingReference(input){const i=normaliseInstrument(input);if(i.pickups.some(p=>p.modification!=='full'))return null;for(const [id,r] of Object.entries(references)){const base=createReference(id),family=instrumentFamily(i);if(family!=='custom'&&!({'les-paul':['les-paul','sg'],tele:['tele'],strat:['strat','superstrat'],hss:['strat','superstrat'],'prs-hh':['prs']}[id]||[]).includes(family))continue;if(i.layout!==r.layout||i.controlLayout!==r.controls||i.selector.family!==r.selector||i.controls.length!==base.controls.length)continue;if(i.controls.every(c=>base.controls.some(b=>b.id===c.id&&b.role===c.role&&JSON.stringify(b.assignments)===JSON.stringify(c.assignments)&&b.capacitorGroup===c.capacitorGroup)))return id;}return null;}
 export function generatorConfiguration(input){const i=normaliseInstrument(input),id=matchingReference(i),r=references[id];if(!r?.generator||i.wiring!=='modern'&&id!=='les-paul')return null;
  const volumes=i.controls.filter(c=>c.role==='volume'),tones=i.controls.filter(c=>c.role==='tone');if(new Set(volumes.map(c=>c.bleed)).size>1)return null;
  const position=id==='les-paul'?{1:'bridge',2:'both',3:'neck'}[i.selector.selection]:String(i.selector.selection);
@@ -55,7 +59,26 @@ export function instrumentCapabilities(input){const i=normaliseInstrument(input)
  const reason=!g?'This configuration can be described, but its switching/control arrangement is not yet modelled by the Wiring Generator or Signal Lab.':selected.length>1?'Combined pickups require the coupled pickup model, which is not yet available.':!supportedSegment?'This selected pickup/control arrangement is not yet modelled by Signal Lab.':'';
  return {canAnalyseResponse:supportedSegment,canGenerateWiring:!!g,canOpenTrebleBleedDesigner:supportedSegment,canBuildKit:id==='les-paul'&&!!g,canShare:true,canEditControlAssignment:false,selected,reason};
 }
-export function instrumentSummary(input){const i=normaliseInstrument(input),r=references[i.reference];return (r?.label||'Custom instrument')+' · '+i.layout+' · '+i.controlLayout+' · '+i.selector.family.replaceAll('-',' ').toUpperCase();}
+export function instrumentSummary(input){const i=normaliseInstrument(input),r=references[i.reference];return (i.family?instrumentFamilies[i.family]:r?.label||'Custom instrument')+' · '+i.layout+' · '+i.controlLayout+' · '+i.selector.family.replaceAll('-',' ').toUpperCase();}
 export function instrumentExplanation(input){const i=normaliseInstrument(input);return i.controls.map(c=>(c.id.replace(/([A-Z])/g,' $1')+': '+c.assignments.join(' + ')+' · '+c.pot+' kΩ'+(c.role==='tone'?' · '+c.capacitor+' µF':' · treble bleed '+c.bleed))).join('; ');}
 export function publicInstrument(input){const i=normaliseInstrument(input);return normaliseInstrument({...i,label:'',extensions:{}});}
 export function instrumentFromLegacy(state){const i=createReference('les-paul'),c=state.configuration;i.wiring=c.wiring;i.shielding=c.shielding;i.selector.selection={bridge:1,both:2,neck:3}[c.position];for(const p of i.pickups){const a=state.responseAssumptions.channels[p.position];p.assumption=a.pickup;p.conductor=c.pickupProfiles?.[p.position]||'generic';p.type='humbucker';}i.layout=i.pickups.every(p=>p.type==='humbucker')?'HH':i.pickups.every(p=>p.type==='single')?'SS':i.pickups.find(p=>p.position==='bridge').type==='humbucker'?'HS':'SH';for(const part of i.controls){const ch=part.assignments[0],role=part.role;part.pot=state.responseAssumptions.channels[ch][role+'Pot'];part.position=state.controlPositions[ch][role];if(role==='tone')part.capacitor=c[ch+'Cap'];else part.bleed=c.bleed;}i.load={cableC:state.responseAssumptions.cableC,loadR:state.responseAssumptions.loadR};return normaliseInstrument(i);}
+
+// Descriptive editing only: capabilities still match the complete validated arrangement.
+export function configureInstrumentDimensions(input,changes={}){
+ const original=normaliseInstrument(input),family=changes.family||instrumentFamily(original);
+ if(!instrumentFamilies[family])throw Error('Unknown instrument family.');
+ const familyChanged=family!==instrumentFamily(original),base=familyChanged?createReference({sg:'les-paul',superstrat:'hss',prs:'prs-hh',custom:'tele'}[family]||family):original;
+ const layout=changes.layout||base.layout,controlLayout=changes.controlLayout||base.controlLayout,selector=changes.selector||base.selector.family;
+ if(!familyPickupLayouts[family].includes(layout))throw Error('Pickup layout is not available for this family.');
+ const next={...base,family,label:original.label,load:original.load,extensions:original.extensions,layout,controlLayout,selector:{family:selector,selection:Math.min(base.selector.selection,switchFamilies[selector]||1)}};
+ if(layout!==base.layout||controlLayout!==base.controlLayout){
+  next.pickups=Object.entries(pickupLayouts[layout]).map(([position,type])=>{const old=base.pickups.find(p=>p.position===position&&p.type===type);return old||{position,type,assumption:type==='single'?'single':'generic',modification:'full'};});
+  const names=next.pickups.map(p=>p.position),[volumes,tones]=controlLayouts[controlLayout],pot=base.controls[0].pot,cap=base.controls.find(c=>c.role==='tone')?.capacitor||'0.022';
+  const assignments=n=>volumes===1?names:n===0?(names.filter(p=>p!=='bridge').length?names.filter(p=>p!=='bridge'):names):[names.includes('bridge')?'bridge':names.at(-1)];
+  next.controls=[];
+  for(let n=0;n<volumes;n++)next.controls.push({id:volumes===1?'masterVolume':n===0?'neckVolume':'bridgeVolume',role:'volume',assignments:assignments(n),pot,position:7,bleed:'none'});
+  for(let n=0;n<tones;n++){const name=tones===1?'masterTone':n===0?'neckTone':names.includes('middle')&&volumes===1?'middleTone':'bridgeTone';next.controls.push({id:name,role:'tone',assignments:tones===1?names:[name.startsWith('middle')?'middle':n===0?names[0]:names.includes('bridge')?'bridge':names.at(-1)],pot,position:10,capacitor:cap,capacitorGroup:controlLayout==='1V2T'?'shared-tone':name});}
+ }
+ return normaliseInstrument(next);
+}
