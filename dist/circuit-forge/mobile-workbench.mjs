@@ -1,3 +1,4 @@
+import {sizeDiagram} from '../wiring-generator/diagram-navigation.mjs';
 // Responsive presentation only: these surfaces keep the original controls and SVG.
 // No circuit, selector or response state is owned here.
 export function setupMobileWorkbench({mount,viewport,onChoose,onLayoutChange}){
@@ -32,29 +33,19 @@ export function setupMobileWorkbench({mount,viewport,onChoose,onLayoutChange}){
   const expanded=dialogs.inspector.classList.toggle('is-expanded');event.currentTarget.setAttribute('aria-expanded',String(expanded));event.currentTarget.textContent=expanded?'Compact':'Expand';
  });
  function applyZoom(next=zoom,anchor){
-  if(!mobile||!mount.querySelector('svg')||!viewport.clientWidth)return;
-  const svg=mount.querySelector('svg'),box=svg.viewBox.baseVal;
-  const previousWidth=fitWidth*zoom||viewport.clientWidth;
-  const point=anchor||{x:viewport.clientWidth/2,y:viewport.clientHeight/2};
-  const left=(viewport.scrollLeft+point.x)/previousWidth,top=(viewport.scrollTop+point.y)/previousWidth;
-  fitWidth=Math.max(1,Math.min(viewport.clientWidth-2,viewport.clientHeight*box.width/box.height-2));
-  zoom=Math.min(4,Math.max(1,next));const width=fitWidth*zoom;
-  viewport.classList.toggle('is-fit',zoom===1);
-  mount.style.width=width+'px';svg.style.width='100%';svg.style.height='auto';
-  viewport.scrollLeft=Math.max(0,left*width-point.x);viewport.scrollTop=Math.max(0,top*width-point.y);
-  zoomValue.textContent=Math.round(zoom*100)+'%';
-  $('#forge-zoom-out').disabled=zoom<=1;$('#forge-zoom-in').disabled=zoom>=4;
+  const previousWidth=fitWidth*zoom;zoom=Math.min(4,Math.max(1,next));
+  const sized=sizeDiagram({mount,viewport,zoom,previousWidth,anchor});if(sized)fitWidth=sized.width/zoom;
+  zoomValue.textContent=Math.round(zoom*100)+'%';$('#forge-zoom-out').disabled=zoom<=1;$('#forge-zoom-in').disabled=zoom>=4;
  }
  function fit(){zoom=1;applyZoom();viewport.scrollLeft=0;viewport.scrollTop=0;}
  $('#forge-zoom-in').addEventListener('click',()=>applyZoom(zoom+.5));
  $('#forge-zoom-out').addEventListener('click',()=>applyZoom(zoom-.5));
  $('#forge-fit').addEventListener('click',fit);
- viewport.addEventListener('keydown',event=>{if(!mobile)return;if(['+','=','-','0'].includes(event.key)){event.preventDefault();if(event.key==='0')fit();else applyZoom(zoom+(event.key==='-'?-.5:.5));}});
+ viewport.addEventListener('keydown',event=>{if(['+','=','-','0'].includes(event.key)){event.preventDefault();if(event.key==='0')fit();else applyZoom(zoom+(event.key==='-'?-.5:.5));}});
  function diagramChanged(){
-  if(!mobile)return;
   if(!viewport.clientWidth||!viewport.clientHeight)return;
   const svg=mount.querySelector('svg');
-  if(svg&&!svg.dataset.desktopViewBox){
+  if(mobile&&svg&&!svg.dataset.desktopViewBox&&svg.getCTM&&svg.createSVGPoint){
    // Fit physical artwork and its labels, rather than the desktop sheet margins.
    // Geometry still comes entirely from the shared renderer.
    const points=[],inverse=svg.getCTM().inverse();
@@ -68,7 +59,7 @@ export function setupMobileWorkbench({mount,viewport,onChoose,onLayoutChange}){
    svg.setAttribute('viewBox',`${left} ${top} ${Math.max(...xs)-left+25} ${Math.max(...ys)-top+25}`);
   }
   // Enlarge invisible wire corridors in CSS pixels; visible artwork is untouched.
-  for(const wire of mount.querySelectorAll('.wire')){if(!wire.dataset.desktopLabel)wire.dataset.desktopLabel=wire.getAttribute('aria-label');wire.setAttribute('aria-label',wire.dataset.desktopLabel.replace(/^Trace /,'Inspect conductor: '));}
+  for(const wire of mobile?mount.querySelectorAll('.wire'):[]){if(!wire.dataset.desktopLabel)wire.dataset.desktopLabel=wire.getAttribute('aria-label');wire.setAttribute('aria-label',wire.dataset.desktopLabel.replace(/^Trace /,'Inspect conductor: '));}
   applyZoom();
  }
  function selectionChanged(selection){
@@ -129,11 +120,11 @@ export function setupMobileWorkbench({mount,viewport,onChoose,onLayoutChange}){
   const next=media.matches;if(next===mobile)return;mobile=next;
   for(const name of Object.keys(panels)){close(name,false);if(mobile)dialogBody(name).append(panels[name]);else homes[name].after(panels[name]);}
   document.body.classList.toggle('forge-mobile',mobile);explore.open=!mobile;key.open=!mobile;
-  if(mobile){diagramChanged();fit();}else{mount.style.width='';for(const svg of mount.querySelectorAll('svg')){svg.style.width='';svg.style.height='';if(svg.dataset.desktopViewBox){svg.setAttribute('viewBox',svg.dataset.desktopViewBox);delete svg.dataset.desktopViewBox;}}for(const wire of mount.querySelectorAll('[data-desktop-label]')){wire.setAttribute('aria-label',wire.dataset.desktopLabel);delete wire.dataset.desktopLabel;}$('#forge-touch-choices').replaceChildren();}
+  if(mobile){diagramChanged();fit();}else{mount.style.width='';for(const svg of mount.querySelectorAll('svg')){svg.style.width='';svg.style.height='';if(svg.dataset.desktopViewBox){svg.setAttribute('viewBox',svg.dataset.desktopViewBox);delete svg.dataset.desktopViewBox;}}for(const wire of mount.querySelectorAll('[data-desktop-label]')){wire.setAttribute('aria-label',wire.dataset.desktopLabel);delete wire.dataset.desktopLabel;}$('#forge-touch-choices').replaceChildren();applyZoom();}
   onLayoutChange();
  }
  media.addEventListener('change',layout);
- if(window.ResizeObserver)new window.ResizeObserver(()=>{if(!mobile||frame)return;frame=requestAnimationFrame(()=>{frame=0;if(mount.querySelector('svg')?.dataset.desktopViewBox)applyZoom();else diagramChanged();});}).observe(viewport);
+ if(window.ResizeObserver)new window.ResizeObserver(()=>{if(frame)return;frame=requestAnimationFrame(()=>{frame=0;if(mount.querySelector('svg')?.dataset.desktopViewBox)applyZoom();else diagramChanged();});}).observe(viewport);
  layout();
- return {get isMobile(){return mobile;},diagramChanged,selectionChanged,selectionLabel(info){const title=info?.heading||'Inspect & explain';$('#forge-mobile-selection').textContent=title;$('#forge-inspector-sheet-title').textContent=title;},modeChanged(mode){close('inspector',false);if(mobile&&mode==='physical')requestAnimationFrame(diagramChanged);}};
+ return {get isMobile(){return mobile;},diagramChanged,selectionChanged,selectionLabel(info){const title=info?.heading||'Inspect & explain';$('#forge-mobile-selection').textContent=title;$('#forge-inspector-sheet-title').textContent=title;},modeChanged(mode){close('inspector',false);if(mode==='physical')requestAnimationFrame(diagramChanged);}};
 }

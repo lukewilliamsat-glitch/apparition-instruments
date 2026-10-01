@@ -1,0 +1,19 @@
+/* Tool Experience V3.1: shared workbench chrome, never electrical state. */
+:is(.forge-page,.generator-page){--bench-paper:#f3f1eb;--bench-ink:#e8e2d5;--bench-muted:#b5ad9c;--bench-rule:#48473e;--bench-accent:#c5ab77}
+:is(.forge-page,.generator-page) :is(.forge-presentation-modes,.presentation-modes){display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 12px}
+:is(.forge-page,.generator-page) :is(.forge-presentation-modes,.presentation-modes) button{flex:0 1 auto;min-width:80px;min-height:44px;border:1px solid var(--bench-rule);border-radius:2px;background:#24251f;color:var(--bench-ink);padding:9px 16px;font:500 14px 'Space Grotesk',sans-serif}
+:is(.forge-page,.generator-page) :is(.forge-presentation-modes,.presentation-modes) button[aria-pressed=true]{background:#403b2e;border-color:var(--bench-accent);box-shadow:inset 0 -3px var(--bench-accent);color:#fff}
+:is(.forge-page,.generator-page) :is(.forge-viewport,.generator-viewport){box-sizing:border-box;background:var(--bench-paper);border:1px solid #666052;border-radius:2px;box-shadow:inset 0 0 0 4px #ddd9cf;overflow:auto;scrollbar-color:#8e816b #ddd9cf}
+:is(.forge-page,.generator-page) :is(#forge-diagram,#generator-mount){min-width:0;margin:0;flex-shrink:0}
+:is(.forge-page,.generator-page) :is(.forge-viewport,.generator-viewport).is-fit :is(#forge-diagram,#generator-mount){margin-inline:auto}
+:is(.forge-page,.generator-page) :is(.forge-mobile-zoom,.zoom-tools){display:flex;align-items:center;flex-wrap:wrap;gap:4px}
+:is(.forge-page,.generator-page) :is(.forge-mobile-zoom,.zoom-tools) button{min-height:44px;min-width:44px;border:1px solid var(--bench-rule);border-radius:2px;background:#24251f;color:var(--bench-ink);padding:8px 12px;font:14px 'JetBrains Mono',monospace;cursor:pointer}
+:is(.forge-page,.generator-page) :is(.forge-mobile-zoom,.zoom-tools) button:disabled{opacity:.4;cursor:default}
+:is(.forge-page,.generator-page) :is(#forge-zoom-value,#zoom-level){min-width:58px;text-align:center;color:var(--bench-muted);font:13px 'JetBrains Mono',monospace}
+:is(.forge-page,.generator-page) :is(.forge-build-key,.build-key){font-size:13px;line-height:1.65;border:0;padding:0;margin:10px 0;color:var(--bench-muted)}
+.diagram-guidance{margin:0 0 10px;border:0;color:var(--bench-muted);font-size:13px;line-height:1.65}.diagram-guidance>summary{min-height:44px;display:flex;align-items:center;cursor:pointer;color:var(--bench-accent)}
+.explanation-section{border:0;margin:16px 0}.explanation-section :is(h3,h5){font:500 13px 'Space Grotesk',sans-serif;color:var(--bench-accent);margin:0 0 6px}.explanation-section p{margin:6px 0;font-size:14px;line-height:1.65}.explanation-section ul{columns:1!important;padding-left:18px;font:14px/1.65 Inter,sans-serif!important}.explanation-section li{margin:7px 0;overflow-wrap:anywhere}.inspection-empty{padding:4px 0 12px}.inspection-empty p{font-size:14px;line-height:1.65}.inspection-empty small{display:block;color:var(--bench-muted);font-size:13px;line-height:1.6}
+@media(max-width:850px){:is(.forge-page,.generator-page) :is(.forge-presentation-modes,.presentation-modes) button{flex:1 1 80px;padding-inline:10px}.diagram-guidance{font-size:13px}}
+@media print{.diagram-guidance,.forge-mobile-zoom{display:none!important}.diagram-paper{fill:#fff}.wire-clear{stroke:#fff}:is(.forge-page,.generator-page) :is(.forge-viewport,.generator-viewport){box-shadow:none;border:0;background:#fff}}
+
+#inspection-content>small{font-size:13px;line-height:1.6;color:var(--bench-muted)}
