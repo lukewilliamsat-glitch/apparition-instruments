@@ -6,7 +6,8 @@ import {resolveConvention} from './colours.mjs';
 export function pickupProfile(circuit,pickupId){
  const part=circuit.components.find(p=>p.id===pickupId);
  const id=circuit.state.pickupProfiles?.[part?.channel]||circuit.state.colours||'generic';
- return resolveConvention(id);
+ const profile=resolveConvention(id);if(!part?.coils)return profile;
+ const labels={hot:'COIL A START / HOT',linkA:'COIL A FINISH',linkB:'COIL B START',ground:'COIL B FINISH / RETURN',shield:'SEPARATE SHIELD'};return {...profile,label:'Neutral four-conductor coil identities',wires:Object.fromEntries(Object.entries(profile.wires).map(([key,wire])=>[key,[wire[0],labels[key]]]))};
 }
 
 export function composePhysicalWiring(circuit){
@@ -18,7 +19,7 @@ export function composePhysicalWiring(circuit){
   const from=endpoint(circuit,wire.from),to=endpoint(circuit,wire.to);
   if(from.component.type==='humbucker'&&(role||wire.insulate)){
    pickup=from.component.id;
-   kind=wire.insulate?'local-series':role==='ground'||role==='shield'?'pickup-ground':'pickup-hot';
+   kind=wire.insulate?'local-series':role?.startsWith('link')?'pickup-series-lead':role==='ground'||role==='shield'?'pickup-ground':'pickup-hot';
    if(wire.insulate)role='linkA';
    if(kind==='pickup-ground'&&to.component.type==='pot'&&to.component.role==='volume'&&wire.to.endsWith('.case')&&ground.has(wire.to))join=wire.to;
   }else if(from.component.type==='pot'&&to.component.id===from.component.id&&wire.to.endsWith('.case')&&ground.has(wire.from))kind='local-casing-bond';

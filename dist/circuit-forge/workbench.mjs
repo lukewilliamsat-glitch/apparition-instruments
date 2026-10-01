@@ -1,3 +1,4 @@
+import {humbuckerCoilState} from '../electronics/switching/coils.mjs';
 import {endpoint,inspectComponent,net} from '../wiring-generator/model.mjs';
 import {pathDetails,circuitChanges} from '../wiring-generator/inspection.mjs';
 import {composePhysicalWiring,pickupProfile} from '../wiring-generator/physical.mjs';
@@ -46,7 +47,7 @@ export function inspectSelection(circuit,selection){
   const physical=pickup?composePhysicalWiring(circuit):null;
   const leads=pickup?[...physical.conductors.values()].filter(w=>w.pickup===selection.id):[];
   const physicalWiring=leads.map(w=>({id:w.id,colour:w.seriesColours?.join(' + ')||w.colour,role:w.kind==='local-series'?'Series link':w.role==='ground'?'Coil ground':w.role==='shield'?'Shield':'Hot',destination:w.kind==='local-series'?'Local insulated join':terminalName(circuit,w.to),termination:w.kind==='local-series'?'Insulated join':physical.solderPoints.has(w.to)?'Casing solder point':'Terminal'}));
-  return {kind:'component',heading:part.label,subtitle:pickup?profile.label+' · '+part.value:part.value||part.type||'',purpose:componentRole({...part,type:component.type,role:component.role}),physicalWiring,terminals:part.terminals.map(t=>({...t,connected:t.connections.length>0})),component:part};
+  return {kind:'component',heading:part.label,subtitle:pickup?profile.label+' · '+part.value:part.value||part.type||'',purpose:componentRole({...part,type:component.type,role:component.role})+(component.coils?(()=>{const state=humbuckerCoilState(circuit,component.id);return ' '+state.coils.map(coil=>'Coil '+coil.coil+': '+(coil.shunted?'shunted':coil.contributes?'contributes to output':'not selected')).join('; ')+'.';})():component.type==='dpdt'?' '+component.position.toUpperCase()+'; Pole A operates the series junction; Pole B unused. Contacts: '+circuit.contacts.filter(pair=>pair[0].startsWith(component.id+'.')).map(pair=>pair.join(' ↔ ')).join('; ')+'.':''),physicalWiring,terminals:part.terminals.map(t=>({...t,connected:t.connections.length>0})),component:part};
  }
  const physical=composePhysicalWiring(circuit);
  if(selection.kind==='wire'){
@@ -64,7 +65,7 @@ export function inspectSelection(circuit,selection){
  try{endpoint(circuit,ref);}catch{return null;}
  const detail=pathDetails(circuit,ref),members=new Set(detail.references),output=members.has('jack.tip');
  const connections=detail.wires.map(w=>({id:w.id,from:w.from,to:w.to,description:`${terminalName(circuit,w.from)} to ${terminalName(circuit,w.to)}`}));
- return {kind:selection.kind,heading:terminalName(circuit,ref),subtitle:'Conductive terminal path',physical:physical.terminations.get(ref)?.length>1?'Physical conductors at this solder point: '+physical.terminations.get(ref).map(id=>physical.conductors.get(id).colour||id).join(', '):null,ref,references:detail.references,connections,contacts:detail.contacts.map(([a,b])=>`${terminalName(circuit,a)} to ${terminalName(circuit,b)}`),output,summary:`${connections.length} external ${connections.length===1?'connection':'connections'} and ${detail.contacts.length} closed switch ${detail.contacts.length===1?'contact':'contacts'} in this conductive segment.${output?' This segment reaches the output jack.':''}`};
+ return {kind:selection.kind,heading:terminalName(circuit,ref),subtitle:'Conductive terminal path',physical:physical.terminations.get(ref)?.length>1?'Physical conductors at this solder point: '+physical.terminations.get(ref).map(id=>physical.conductors.get(id).colour||id).join(', '):null,ref,references:detail.references,connections,contacts:detail.contacts.map(([a,b])=>`${terminalName(circuit,a)} to ${terminalName(circuit,b)}`),output,summary:`${connections.length} external ${connections.length===1?'connection':'connections'} and ${detail.contacts.length} closed switch ${detail.contacts.length===1?'contact':'contacts'} in this conductive segment.${output?' This segment reaches the output jack.':''}${circuit.elements&&detail.elements?.length?' Passive winding elements are not ideal wires. '+humbuckerCoilState(circuit).coils.map(coil=>'Coil '+coil.coil+': '+(coil.shunted?'shunted':coil.contributes?'contributes to output':'not selected')).join('; ')+'.':''}`};
 }
 export function selectionHighlight(circuit,selection){
  const info=inspectSelection(circuit,selection);if(!info)return null;

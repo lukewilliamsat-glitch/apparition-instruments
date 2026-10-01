@@ -21,6 +21,7 @@ import {pickupConventions} from '../wiring-generator/colours.mjs';
 
 const $=query=>document.querySelector(query),form=$('#forge-controls'),mount=$('#forge-diagram'),viewport=$('#forge-viewport');
 const el=(tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
+const pushpullLabel=el('label','Master Volume · Push/Pull'),pushpullState=el('select');pushpullState.id='forge-pushpull-state';for(const [value,label] of [['down','DOWN — Full Humbucker'],['up','UP — Coil A Split']]){const option=el('option',label);option.value=value;pushpullState.append(option);}pushpullLabel.append(pushpullState);pushpullLabel.hidden=true;$('.forge-workbench-heading').append(pushpullLabel);pushpullState.addEventListener('change',()=>{instrument=instrumentFromCircuit(circuit);instrument.switching[0].position=pushpullState.value;configureInstrument();render();});
 let circuit,selection=null,roleView='all',mobile,presentationMode=normalisePresentation(new URLSearchParams(location.search).get('view')||'trace');
 let comparisonMode='ab',frozenReference=null,signalReport=null,previousSignal=null,graphView=null,inspectionFrequency=1000,lastCause='',assumptionIdentity='';
 const setText=(node,value)=>{if(node.textContent!==value)node.textContent=value;};
@@ -147,6 +148,7 @@ function render(resetControls=false){
   form.elements.bleed.disabled=choices.wiring==='50s';$('#forge-kit').href=result.kitURL;$('#forge-kit').hidden=!result.kitURL;
   $('#forge-loading-help').hidden=true;
   $('#forge-status').textContent=`${choices.wiring==='50s'?'50s':choices.wiring==='60s'?'60s':'Modern'} wiring · ${choices.position} selector`;
+  pushpullLabel.hidden=!instrument?.switching;if(instrument?.switching)pushpullState.value=instrument.switching[0].position;
   updateInventory();updateSelector();updateChanges(previous);updateSelection();renderLab();updateContextActions();instrumentPanel?.refresh();
   return true;
  }catch(error){if(circuit)updateContextActions();

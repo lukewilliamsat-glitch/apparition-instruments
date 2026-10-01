@@ -6,7 +6,8 @@ export function pathDetails(circuit,reference){
  const wires=circuit.connections.filter(w=>members.has(w.from)&&members.has(w.to));
  const components=circuit.components.filter(part=>references.some(ref=>ref.startsWith(part.id+'.')));
  const contacts=circuit.contacts.filter(([from,to])=>members.has(from)&&members.has(to));
- return {references,wires,components,contacts};
+ const elements=(circuit.elements||[]).filter(element=>members.has(element.from)||members.has(element.to));
+ return {references,wires,components,contacts,...elements.length?{elements}:{}};
 }
 export function circuitChanges(previous,current){
  if(!previous)return [];

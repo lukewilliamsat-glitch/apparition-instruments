@@ -17,6 +17,7 @@ export function componentBounds(p){
  if(['pot','pushpull'].includes(p.type))b=[-75,-16,78,p.type==='pushpull'?335:194];
  else if(['humbucker','singlecoil','p90'].includes(p.type))b=[-20,-30,162,240];
  else if(['capacitor','resistor','network'].includes(p.type))b=[-32,-36,32,p.productMark?45:24];
+ else if(p.type==='dpdt')b=[-68,-28,68,99];
  else if(p.type==='toggle')b=[-78,-34,82,157];
  else if(p.type==='jack')b=[-83,-33,89,120];
  else if(['blade','blade3','blade5','superswitch'].includes(p.type))b=[-25,-45,195,p.type==='superswitch'?455:155];
@@ -36,6 +37,7 @@ function port(p,key,b){const t=p.terminals[key],a=[p.x+t.x,p.y+t.y];let q;
   return squash([a,[a[0],grid[1]],grid]);
  }
  else if(['capacitor','resistor','network'].includes(p.type))q=[a[0]+(key==='a'?-15:15),a[1]];
+ else if(p.type==='dpdt')q=[key.startsWith('A')?b.l-25:b.r+25,a[1]];
  else if(p.type==='toggle')q=key==='ground'?[a[0],b.t-15]:[a[0],b.b+15];
  else if(p.type==='jack')q=key==='tip'?[b.r+15,a[1]]:[b.l-15,a[1]];
  else if(['blade','blade3','blade5','superswitch'].includes(p.type))q=key==='ground'?[a[0]+20,a[1]]:p.type==='superswitch'?[b.l-20,a[1]-18]:[a[0],key.startsWith('A')?b.t-15:b.b+15];

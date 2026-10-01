@@ -1,4 +1,4 @@
-import {instrumentCircuitState,applyInstrumentValues,instrumentFromCircuit} from '../instrument/circuit.mjs';
+import {instrumentFromGeneratorCircuit,instrumentCircuitState,applyInstrumentValues,instrumentFromCircuit} from '../instrument/circuit.mjs';
 import {instrumentSummary,instrumentCapabilities} from '../instrument/configuration.mjs';
 // Configuration handoff only. Topology, response and catalogue remain authoritative.
 import {configuration,allowed,kitLink} from '../../wiring-generator/model.mjs';
@@ -33,7 +33,7 @@ export function normaliseCircuitState(input={}){
  for(const channel of ['neck','bridge'])resolveResponseAssumptions(a,channel);
  return {version:stateVersion,configuration:config,controlPositions:controls,responseAssumptions:a};
 }
-export function captureCircuitState(circuit){if(circuit.state.instrument)return instrumentCircuitState(instrumentFromCircuit(circuit));return normaliseCircuitState({configuration:circuit.state,controlPositions:circuit.state.controlPositions,responseAssumptions:circuit.state.responseAssumptions});}
+export function captureCircuitState(circuit){if(circuit.state.guitar==='hss'&&!circuit.state.instrument)return instrumentCircuitState(instrumentFromGeneratorCircuit(circuit));if(circuit.state.instrument)return instrumentCircuitState(instrumentFromCircuit(circuit));return normaliseCircuitState({configuration:circuit.state,controlPositions:circuit.state.controlPositions,responseAssumptions:circuit.state.responseAssumptions});}
 export function readCircuitState(search){
  const q=new URLSearchParams(search);if(!q.has('sf'))return {state:null,notice:''};
  try{const raw=q.get('sf');if(raw.length>12000)throw Error('Circuit link too long.');return {state:normaliseCircuitState(JSON.parse(raw)),notice:'Circuit configuration imported from Signal Forge.'};}
