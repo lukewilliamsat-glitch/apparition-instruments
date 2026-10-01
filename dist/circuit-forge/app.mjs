@@ -1,3 +1,6 @@
+import {createReference,generatorConfiguration,instrumentCapabilities,instrumentFromLegacy,references,normaliseInstrument} from '../electronics/instrument/configuration.mjs';
+import {makeInstrumentCircuit,instrumentFromCircuit} from '../electronics/instrument/circuit.mjs';
+import {mountInstrumentPanel} from './instrument-panel.mjs';
 import {projectKitHandoff} from '../knowledge/kit-project.mjs';
 import {readProject,projectFromCircuit,projectURL} from '../electronics/state/project.mjs';
 import {mountProjectPanel} from '../knowledge/project-panel.mjs';
@@ -22,6 +25,8 @@ const setText=(node,value)=>{if(node.textContent!==value)node.textContent=value;
 const projectImport=readProject(window.location.search);let projectContext=projectImport.project;
 const initialMode=new URLSearchParams(window.location.search).get('mode');
 const importedCircuit=new URLSearchParams(window.location.search).has('ap')?{state:projectContext?.electronics||null,notice:projectImport.notice}:readCircuitState(window.location.search);
+let instrument=importedCircuit.state?.instrument||null,instrumentPanel;
+const selectedChannel=()=>signalReport?.supported?signalReport.channel:circuit?.state.position;
 const withProject=url=>{if(!projectContext)return url;projectContext=projectFromCircuit(circuit,projectContext);return projectURL(url,projectContext);};
 const frequencyLabel=f=>f>=1000?(f/1000).toFixed(2)+' kHz':f.toFixed(0)+' Hz';
 function inspectionReadout(sample){
@@ -39,11 +44,12 @@ function setWorkspaceMode(mode){
 const choose=(kind,value)=>{selection=kind==='component'?{kind,id:value}:kind==='wire'?{kind,id:value}:{kind:'terminal',ref:value};updateSelection();mobile?.selectionChanged(selection);};
 function paint(){
  const active=document.activeElement,attribute=['data-terminal','data-wire','data-component'].find(name=>active?.hasAttribute?.(name)),value=attribute&&active.getAttribute(attribute),left=viewport.scrollLeft,top=viewport.scrollTop;
+ if(circuit.state.guitar==='instrument'){mount.replaceChildren(el('p',instrumentCapabilities(instrument).reason));return;}
  mount.innerHTML=forgeDiagram(circuit,{selection:selectionHighlight(circuit,selection),filter:roleView});mobile?.diagramChanged();viewport.scrollLeft=left;viewport.scrollTop=top;
  if(value)mount.querySelector(`[${attribute}="${value}"]`)?.focus({preventScroll:true});
 }
 function updateSelection(){
- const info=inspectSelection(circuit,selection),box=$('#forge-inspection');box.replaceChildren();
+ const info=circuit.state.guitar==='instrument'?null:inspectSelection(circuit,selection),box=$('#forge-inspection');box.replaceChildren();
  mobile?.selectionLabel(info);
  if(!info){selection=null;box.append(el('p','Choose a part from the list or select a terminal or wire in the diagram. Trace buttons reveal a conductive segment.'));}
  else {
@@ -91,12 +97,12 @@ function renderLab(){
  if(!report.supported){setText($('#forge-response-magnitude'),'');setText($('#forge-frozen-differences'),'');graph.replaceChildren();graphView=null;context.textContent=circuit.state.wiring==='modern'?'MODEL LIMIT · SELECTOR':'MODEL LIMIT · WIRING';setText($('#forge-response-summary'),report.reason);for(const id of ['forge-response-cause','forge-response-why','forge-response-limits'])setText($('#'+id),'');return;}
  setText(context,`${report.channel.toUpperCase()} PICKUP · Modern wiring · ${report.bleed} · ${report.state.toneCap/1000} µF tone capacitor`);
  for(const [name,keyName] of [['volume','volume'],['tone','tonePosition']]){const input=$('#forge-response-'+name),value=report.state[keyName];input.value=value;setText($('#forge-response-'+name+'-value'),value.toFixed(1)+' / 10');}
- $('#forge-lab-bleed').value=form.elements.bleed.value;$('#forge-lab-cap').value=form.elements.namedItem(report.channel+'Cap').value;
+ $('#forge-lab-bleed').value=form.elements.bleed.value;$('#forge-lab-cap').value=form.elements.namedItem(instrument&&instrument.reference!=='les-paul'?'neckCap':report.channel+'Cap').value;
  key.querySelector('.forge-response-reference').hidden=!report.reference;setText(key.querySelector('.forge-response-current'),report.legend.current);setText(key.querySelector('.forge-response-reference'),report.legend.reference);
  if(!graphView||graphView.compact!==!!mobile?.isMobile){const retainedFrequency=inspectionFrequency;graphView=createResponseGraph(report,{compact:!!mobile?.isMobile,onInspect:inspectionReadout});graph.replaceChildren(graphView.svg);graphView.inspect(retainedFrequency,false);}else graphView.update(report);
  setText($('#forge-response-magnitude'),report.explanation.magnitude?report.explanation.magnitude+' electrical difference':'');
  setText($('#forge-frozen-differences'),comparisonMode==='frozen'&&frozenReference?(report.comparedChanges.length?'Changed from frozen: '+report.comparedChanges.map(c=>c.label.replace(' changed','')).join(' · '):'Current values match the frozen electrical state.'):'');
- for(const key of Object.keys(componentPresets))$('#forge-lab-'+key).value=String(report.state[key]);$('#forge-lab-pickup').value=circuit.state.responseAssumptions.channels[report.channel].pickup;
+ for(const key of Object.keys(componentPresets))$('#forge-lab-'+key).value=String(report.state[key]);$('#forge-lab-pickup').value=circuit.state.responseAssumptions.channels[report.channel].pickup;for(const option of $('#forge-lab-pickup').options)option.disabled=!!instrument&&(instrument.pickups.find(p=>p.position===report.channel)?.type==='single'?option.value!=='single':option.value==='single');
  setText($('#forge-response-summary'),report.explanation.what);setText($('#forge-response-why'),report.explanation.why);setText($('#forge-response-limits'),report.explanation.caveat);
  if(report.changes.length)lastCause='Latest adjustment: '+report.changes.map(change=>change.label).join(' · ');
  setText($('#forge-response-cause'),lastCause);
@@ -105,8 +111,9 @@ function renderLab(){
  previousSignal={channel:report.channel,state:{...report.state}};
 }
 function updateContextActions(){
+ if(instrument)projectContext=projectFromCircuit(circuit,projectContext||{});
  setText($('#forge-shared-summary'),circuitStateSummary(circuit,signalReport));
- $('#forge-view-wiring').href=withProject(wiringHandoff(circuit));
+ const wiring=wiringHandoff(circuit);$('#forge-view-wiring').hidden=!wiring;if(wiring)$('#forge-view-wiring').href=withProject(wiring);
  const designer=designerHandoff(circuit,signalReport),kit=projectKitHandoff(circuit,projectContext);
  $('#forge-design-bleed').hidden=!designer.url;if(designer.url)$('#forge-design-bleed').href=withProject(designer.url);
  setText($('#forge-designer-limit'),designer.reason);$('#forge-kit').hidden=!kit.url;if(kit.url)$('#forge-kit').href=withProject(kit.url);setText($('#forge-kit-limit'),kit.reason);
@@ -120,46 +127,48 @@ function updateInventory(){
  $('#forge-facts').textContent=`${circuit.components.length} components · ${circuit.connections.length} external connections · ${visualCrossings(circuit).length} separated crossings`;
 }
 function updateSelector(){
+ if(circuit.state.guitar==='instrument'){$('#forge-selector').textContent='Selector described; contact diagram is not yet available.';$('#forge-contacts').replaceChildren();return;}
  const report=selectorReport(circuit),box=$('#forge-contacts');$('#forge-selector').textContent=report.description;box.replaceChildren();
  for(const channel of report.channels){const item=el('div'),button=el('button',channel.label+' volume output');button.type='button';button.addEventListener('click',()=>choose('terminal',channel.ref));item.append(el('strong',channel.active?'Connected to jack':'Not connected to jack'),button);box.append(item);}
  const closed=el('p','Closed contacts: '+(report.closed.map(x=>x.description).join('; ')||'none')+'. Unselected switch contacts remain open.');box.append(closed);
 }
-function updateChanges(previous){const report=changeReport(previous,circuit),box=$('#forge-change');box.replaceChildren(el('h4',report.heading));const list=el('ul');for(const line of report.lines)list.append(el('li',line));box.append(list);}
+function updateChanges(previous){if(circuit.state.guitar==='instrument'||previous?.state.guitar==='instrument'){$('#forge-change').textContent='Instrument configuration updated. Unsupported arrangements are retained as descriptions.';return;}const report=changeReport(previous,circuit),box=$('#forge-change');box.replaceChildren(el('h4',report.heading));const list=el('ul');for(const line of report.lines)list.append(el('li',line));box.append(list);}
 function render(resetControls=false){
  try{
   const choices=Object.fromEntries(['wiring','bleed','neckCap','bridgeCap','position','neckProfile','bridgeProfile'].map(key=>[key,form.elements.namedItem(key).value]));
-  const previous=circuit,result=forgeCircuit(choices,resetControls?defaultControls:circuit?.state.controlPositions||importedCircuit.state?.controlPositions||defaultControls,resetControls?defaultResponseAssumptions():circuit?.state.responseAssumptions||importedCircuit.state?.responseAssumptions||defaultResponseAssumptions(),resetControls?'yes':circuit?.state.shielding||importedCircuit.state?.configuration.shielding||'yes');circuit=result.circuit;
+  const previous=circuit,result=instrument?{circuit:makeInstrumentCircuit(instrument),kitURL:null}:forgeCircuit(choices,resetControls?defaultControls:circuit?.state.controlPositions||importedCircuit.state?.controlPositions||defaultControls,resetControls?defaultResponseAssumptions():circuit?.state.responseAssumptions||importedCircuit.state?.responseAssumptions||defaultResponseAssumptions(),resetControls?'yes':circuit?.state.shielding||importedCircuit.state?.configuration.shielding||'yes');circuit=result.circuit;
+  if(circuit.state.guitar==='instrument')selection=null;
   if(selection&&!inspectSelection(circuit,selection))selection=null;
   form.elements.bleed.disabled=choices.wiring==='50s';$('#forge-kit').href=result.kitURL;$('#forge-kit').hidden=!result.kitURL;
   $('#forge-loading-help').hidden=true;
   $('#forge-status').textContent=`${choices.wiring==='50s'?'50s':choices.wiring==='60s'?'60s':'Modern'} wiring · ${choices.position} selector`;
-  updateInventory();updateSelector();updateChanges(previous);updateSelection();renderLab();updateContextActions();
+  updateInventory();updateSelector();updateChanges(previous);updateSelection();renderLab();updateContextActions();instrumentPanel?.refresh();
   return true;
- }catch(error){updateContextActions();
+ }catch(error){if(circuit)updateContextActions();
   $('#forge-loading-help').hidden=true;
   $('#forge-status').textContent='Unsupported circuit choice: '+error.message;return false;}
 }
-form.addEventListener('change',event=>{if(event.target.name==='wiring'&&event.target.value==='50s')form.elements.bleed.value='none';render();});
+form.addEventListener('change',event=>{if(!event.target.name)return;if(event.target.name==='wiring'&&event.target.value==='50s')form.elements.bleed.value='none';if(instrument){instrument=instrumentFromCircuit(circuit);const n=event.target.name,v=event.target.value;if(n==='neckProfile'||n==='bridgeProfile')instrument.pickups.find(p=>p.position===n.replace('Profile','')).conductor=v;if(n==='position')instrument.selector.selection=instrument.reference==='les-paul'?{bridge:1,both:2,neck:3}[v]:Number(v);if(n==='wiring'){instrument.wiring=v;if(v==='50s')for(const c of instrument.controls)if(c.role==='volume')c.bleed='none';}if(n==='bleed')for(const c of instrument.controls)if(c.role==='volume')c.bleed=v;if(['neckCap','bridgeCap'].includes(n))for(const c of instrument.controls)if(c.role==='tone'&&(instrument.reference!=='les-paul'||c.assignments.includes(n.replace('Cap',''))))c.capacitor=v;}render();});
 for(const channel of ['neck','bridge']){const select=form.elements.namedItem(channel+'Profile');for(const [id,profile] of Object.entries(pickupConventions)){const option=el('option',profile.label);option.value=id;select.append(option);}}
-form.addEventListener('reset',()=>setTimeout(()=>{projectContext=null;selection=null;lastCause='';$('#forge-import-note').textContent='';render(true);},0));
+form.addEventListener('reset',()=>setTimeout(()=>{projectContext=null;selection=null;lastCause='';$('#forge-import-note').textContent='';if(instrument){instrument=createReference(instrument.reference||'les-paul');configureInstrument();}render(true);},0));
 for(const [id,sourceName] of [['forge-lab-bleed','bleed'],['forge-lab-cap','neckCap']]){
  const select=$('#'+id);for(const option of form.elements.namedItem(sourceName).options)select.append(option.cloneNode(true));
- select.addEventListener('change',()=>{const name=id==='forge-lab-bleed'?'bleed':circuit.state.position+'Cap',source=form.elements.namedItem(name);source.value=select.value;source.dispatchEvent(new Event('change',{bubbles:true}));});
+ select.addEventListener('change',()=>{const name=id==='forge-lab-bleed'?'bleed':instrument&&instrument.reference!=='les-paul'?'neckCap':selectedChannel()+'Cap',source=form.elements.namedItem(name);source.value=select.value;source.dispatchEvent(new Event('change',{bubbles:true}));});
 }
 for(const [key,values] of Object.entries(componentPresets)){
  const select=$('#forge-lab-'+key);for(const value of values){const option=el('option',value+(key==='cableC'?' pF':key==='loadR'?' MΩ':' kΩ'));option.value=String(value);select.append(option);}
- select.addEventListener('change',()=>{const a=circuit.state.responseAssumptions;if(['volumePot','tonePot'].includes(key))a.channels[circuit.state.position][key]=Number(select.value);else a[key]=Number(select.value);render();});
+ select.addEventListener('change',()=>{const a=circuit.state.responseAssumptions;if(['volumePot','tonePot'].includes(key))a.channels[selectedChannel()][key]=Number(select.value);else a[key]=Number(select.value);if(instrument)instrument=instrumentFromCircuit(circuit);render();});
 }
 for(const [id,preset] of Object.entries(pickupPresets)){const option=el('option',preset.label+' · '+preset.pickupR+' kΩ / '+preset.pickupL+' H / '+preset.pickupC+' pF');option.value=id;$('#forge-lab-pickup').append(option);}
-$('#forge-lab-pickup').addEventListener('change',event=>{circuit.state.responseAssumptions.channels[circuit.state.position].pickup=event.target.value;render();});
+$('#forge-lab-pickup').addEventListener('change',event=>{circuit.state.responseAssumptions.channels[selectedChannel()].pickup=event.target.value;if(instrument)instrument=instrumentFromCircuit(circuit);render();});
 for(const button of document.querySelectorAll('[data-response-mode]'))button.addEventListener('click',()=>{comparisonMode=button.dataset.responseMode;renderLab();});
 $('#forge-freeze').addEventListener('click',()=>{if(!signalReport?.supported)return;frozenReference=captureResponse(signalReport);comparisonMode='frozen';renderLab();});
 $('#forge-freeze-clear').addEventListener('click',()=>{frozenReference=null;renderLab();});
 $('#forge-inspect-frequency').addEventListener('input',event=>{graphView?.inspect(frequencyFromFraction(Number(event.target.value)/1000));});
 $('#forge-inspect-clear').addEventListener('click',()=>graphView?.clear());
 for(const name of ['volume','tone'])$('#forge-response-'+name).addEventListener('input',event=>{
- const channel=circuit?.state.position;if(!['neck','bridge'].includes(channel))return;
- circuit.state.controlPositions[channel][name]=Number(event.target.value);renderLab();updateContextActions();
+ const channel=selectedChannel();if(!['neck','bridge'].includes(channel))return;
+ circuit.state.controlPositions[channel][name]=Number(event.target.value);if(instrument){instrument=instrumentFromCircuit(circuit);circuit=makeInstrumentCircuit(instrument);}renderLab();updateContextActions();
 });
 mount.addEventListener('click',event=>{const target=event.target.closest('[data-terminal],[data-wire],[data-component]');if(!target)return;if(target.dataset.terminal)choose('terminal',target.dataset.terminal);else if(target.dataset.wire)choose('wire',target.dataset.wire);else choose('component',target.dataset.component);});
 mount.addEventListener('keydown',event=>{if(!['Enter',' '].includes(event.key))return;const target=event.target.closest('[data-terminal],[data-wire],[data-component]');if(target){event.preventDefault();target.dispatchEvent(new MouseEvent('click',{bubbles:true}));}});
@@ -172,11 +181,13 @@ for(const button of document.querySelectorAll('[data-role-view]'))button.addEven
 for(const button of document.querySelectorAll('[data-trace]'))button.addEventListener('click',()=>choose('terminal',button.dataset.trace));
 for(const button of document.querySelectorAll('[data-forge-mode]'))button.addEventListener('click',()=>setWorkspaceMode(button.dataset.forgeMode));
 for(const button of document.querySelectorAll('[data-analyse],[data-lab-pickup]'))button.addEventListener('click',()=>{
- form.querySelector(`input[name="position"][value="${button.dataset.analyse||button.dataset.labPickup}"]`).click();
+ const wanted=button.dataset.analyse||button.dataset.labPickup,value=instrument&&instrument.reference!=='les-paul'?wanted==='neck'?(instrument.selector.family==='5-way-blade'?'5':'3'):wanted==='bridge'?'1':wanted:wanted;form.querySelector(`input[name="position"][value="${value}"]`)?.click();
 });
 mobile=setupMobileWorkbench({mount,viewport,onChoose:choose,onLayoutChange:()=>{if(circuit)renderLab();}});
-if(importedCircuit.state){const c=importedCircuit.state.configuration;for(const key of ['wiring','bleed','neckCap','bridgeCap','position']){const radios=form.querySelectorAll('input[type=radio][name='+key+']');if(radios.length)for(const radio of radios)radio.checked=radio.value===c[key];else form.elements.namedItem(key).value=c[key];}for(const channel of ['neck','bridge'])form.elements.namedItem(channel+'Profile').value=c.pickupProfiles[channel];}
+if(importedCircuit.state?.configuration){const c=importedCircuit.state.configuration;for(const key of ['wiring','bleed','neckCap','bridgeCap','position']){const radios=form.querySelectorAll('input[type=radio][name='+key+']');if(radios.length)for(const radio of radios)radio.checked=radio.value===c[key];else form.elements.namedItem(key).value=c[key];}for(const channel of ['neck','bridge'])form.elements.namedItem(channel+'Profile').value=c.pickupProfiles?.[channel]||'generic';}
 $('#forge-import-note').textContent=importedCircuit.notice;
+instrumentPanel=mountInstrumentPanel($('#forge-instrument-root'),{getInstrument:()=>instrument||instrumentFromLegacy(captureCircuitState(circuit||forgeCircuit().circuit)),onChange:i=>{instrument=i;configureInstrument();render();},onReference:i=>{instrument=i;selection=null;frozenReference=null;previousSignal=null;comparisonMode='ab';if(projectContext)projectContext={...projectContext,kitReference:undefined,extensions:{...projectContext.extensions,kitSelection:null}};configureInstrument();render();}});
+if(instrument)configureInstrument();
 if(render())window.__forgeEntry?.ready();else window.__forgeEntry?.fail();
 
 const projectRoot=el('section');projectRoot.className='local-projects';projectRoot.setAttribute('aria-label','Local circuit projects');document.querySelector('.forge-main').append(projectRoot);
@@ -185,3 +196,14 @@ for(const [selector,key,label] of [['#forge-lab-volumePot','pots','Why pot value
 $('#forge-contacts').after(learningLink(document,'switches','How selector contacts work'));
 const learning=el('details'),learningTitle=el('summary','Learn about these components');learning.append(learningTitle);mountKnowledgeCards(learning,['potentiometers','capacitors','treble-bleeds']);projectRoot.after(learning);
 if(initialMode==='signal')setWorkspaceMode('signal');
+
+function configureInstrument(){
+ const g=generatorConfiguration(instrument),r=references[instrument.reference],formSelector=form.querySelector('input[name="position"]').closest('fieldset'),options=formSelector.querySelector('.forge-segmented-options');options.replaceChildren();
+ const labels=g?.guitar==='les-paul'?{neck:'Neck',both:'Both',bridge:'Bridge'}:instrument.selector.family==='5-way-blade'?{'1':'Bridge','2':'Bridge + middle','3':'Middle','4':'Middle + neck','5':'Neck'}:{'1':'Bridge','2':'Both','3':'Neck'};
+ for(const [value,text] of Object.entries(labels)){const label=el('label'),input=el('input');input.type='radio';input.name='position';input.value=value;input.checked=value===(g?.position||String(instrument.selector.selection));label.append(input,el('span',text));options.append(label);}
+ const lab=$('.forge-response-pickup');lab.replaceChildren();for(const [value,text] of Object.entries(labels)){const b=el('button',text);b.type='button';b.dataset.labPickup=value;b.setAttribute('aria-pressed',String(value===(g?.position||String(instrument.selector.selection))));b.addEventListener('click',()=>form.querySelector('input[name="position"][value="'+value+'"]').click());lab.append(b);}
+ for(const key of ['wiring','bleed','neckCap','bridgeCap']){const v=g?.[key]||(key==='wiring'?instrument.wiring:key==='bleed'?instrument.controls.find(c=>c.role==='volume').bleed:r?.cap||'0.022');const radios=form.querySelectorAll('input[name="'+key+'"][type="radio"]');if(radios.length)for(const radio of radios)radio.checked=radio.value===v;else form.elements.namedItem(key).value=v;}
+ for(const key of ['neckProfile','bridgeProfile'])form.elements.namedItem(key).value=g?.pickupProfiles?.[key.replace('Profile','')]||'generic';
+ form.querySelector('.forge-pickup-profiles').hidden=instrument.reference!=='les-paul';form.querySelector('.forge-options').hidden=instrument.reference!=='les-paul';form.querySelector('input[name="wiring"]').closest('fieldset').hidden=instrument.reference!=='les-paul';
+ for(const button of document.querySelectorAll('[data-trace]'))button.hidden=!!button.dataset.trace.includes('Pickup')&&!instrument.pickups.some(p=>button.dataset.trace.startsWith(p.position));
+}

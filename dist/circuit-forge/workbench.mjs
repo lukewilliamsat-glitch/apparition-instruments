@@ -16,12 +16,13 @@ function componentRole(part){
 }
 export function selectorReport(circuit){
  const output=net(circuit,'jack.tip');
- const channels=[['Neck','neckVolume.lug2'],['Bridge','bridgeVolume.lug2']].map(([label,ref])=>({label,active:output.has(ref),ref}));
+ const sources=circuit.state.guitar==='les-paul'?[['Neck','neckVolume.lug2'],['Bridge','bridgeVolume.lug2']]:circuit.components.filter(p=>['singlecoil','humbucker'].includes(p.type)).map(p=>[p.channel,p.id+'.hot']);
+ const channels=sources.map(([label,ref])=>({label,active:output.has(ref),ref}));
  const closed=circuit.contacts.map(([a,b])=>({a,b,description:`${terminalName(circuit,a)} to ${terminalName(circuit,b)}`}));
  return {channels,closed,description:channels.filter(x=>x.active).map(x=>x.label).join(' and ')+' volume output'+(channels.filter(x=>x.active).length===1?' is':'s are')+' connected to the jack through the selected switch contacts.'};
 }
 export function changeReport(previous,current){
- if(!previous)return {heading:'Circuit ready',lines:['The supported Les Paul circuit is ready to explore. Choose a component, connection or path.']};
+ if(!previous)return {heading:'Circuit ready',lines:['The supported reference circuit is ready to explore. Choose a component, connection or path.']};
  const lines=[];
  for(const change of circuitChanges(previous,current)){
   const old=previous.connections.find(x=>x.id===change.id),now=current.connections.find(x=>x.id===change.id);

@@ -1,3 +1,4 @@
+import {instrumentSummary} from '../electronics/instrument/configuration.mjs';
 import {createProjectStore,projectFromCircuit,shareProjectURL,projectURL} from '../electronics/state/project.mjs';
 export function mountProjectPanel(root,{getCircuit,getProject=()=>null,setProject=()=>{},reset=()=>{},navigate=url=>location.assign(url),storage=globalThis.localStorage}={}){
  const doc=root.ownerDocument,e=(tag,text)=>{const n=doc.createElement(tag);if(text)n.textContent=text;return n;},store=createProjectStore(storage);
@@ -5,9 +6,9 @@ export function mountProjectPanel(root,{getCircuit,getProject=()=>null,setProjec
  const label=e('label','Project name'),name=e('input');name.maxLength=80;name.value=getProject()?.name||'';label.append(name);
  const savedLabel=e('label','Saved projects'),list=e('select');savedLabel.append(list);const status=e('p');status.setAttribute('role','status');
  const actions=e('div');actions.className='project-actions';const links=e('div');links.className='project-actions';
- function refresh(){list.replaceChildren();const option=e('option','Choose a saved project');option.value='';list.append(option);const loaded=store.list();for(const row of loaded.entries){const option=e('option',row.project.name||'Untitled circuit');option.value=row.id;list.append(option);}if(loaded.notice)status.textContent=loaded.notice;}
+ function refresh(){list.replaceChildren();const option=e('option','Choose a saved project');option.value='';list.append(option);const loaded=store.list();for(const row of loaded.entries){const option=e('option',(row.project.name||row.project.electronics.instrument?.label||'Untitled circuit')+(row.project.electronics.instrument?' · '+instrumentSummary(row.project.electronics.instrument):''));option.value=row.id;list.append(option);}if(loaded.notice)status.textContent=loaded.notice;}
  function button(text,run){const b=e('button',text);b.type='button';b.addEventListener('click',async()=>{try{await run();}catch(error){status.textContent=error.message;}});actions.append(b);return b;}
- function current(){const c=getCircuit();if(c.state.guitar!=='les-paul')throw Error('Local project saving currently supports the shared Les Paul configuration only.');return {...projectFromCircuit(c,getProject()||{}),name:name.value};}
+ function current(){const c=getCircuit();if(c.state.guitar!=='les-paul'&&!c.state.instrument)throw Error('Local project saving currently supports the shared Les Paul configuration only.');return {...projectFromCircuit(c,getProject()||{}),name:name.value};}
  button('Save current',()=>{const p=current();store.save(p);setProject(p);refresh();status.textContent='Project saved on this browser.';});
  button('Open',()=>{const p=store.restore(list.value);setProject(p);navigate(projectURL('/circuit-forge/',p));});
  button('Rename',()=>{store.rename(list.value,name.value);refresh();status.textContent='Saved project renamed.';});

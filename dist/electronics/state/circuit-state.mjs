@@ -1,3 +1,5 @@
+import {instrumentCircuitState,applyInstrumentValues,instrumentFromCircuit} from '../instrument/circuit.mjs';
+import {instrumentSummary,instrumentCapabilities} from '../instrument/configuration.mjs';
 // Configuration handoff only. Topology, response and catalogue remain authoritative.
 import {configuration,allowed,kitLink} from '../../wiring-generator/model.mjs';
 import {defaultResponseAssumptions,resolveResponseAssumptions} from '../response/assumptions.mjs';
@@ -11,6 +13,7 @@ export const stateVersion=1;
 export const defaultControls=Object.freeze({neck:Object.freeze({volume:7,tone:10}),bridge:Object.freeze({volume:7,tone:10})});
 const object=v=>v&&typeof v==='object'&&!Array.isArray(v);
 export function normaliseCircuitState(input={}){
+ if(object(input)&&input.version===2)return instrumentCircuitState(input.instrument);
  if(!object(input)||input.version!==undefined&&input.version!==stateVersion)throw Error('Unsupported circuit link version.');
  const raw=input.configuration||{};if(!object(raw))throw Error('Invalid circuit configuration.');
  const known=Object.fromEntries(Object.keys(allowed).filter(k=>Object.hasOwn(raw,k)).map(k=>[k,raw[k]]));
@@ -30,7 +33,7 @@ export function normaliseCircuitState(input={}){
  for(const channel of ['neck','bridge'])resolveResponseAssumptions(a,channel);
  return {version:stateVersion,configuration:config,controlPositions:controls,responseAssumptions:a};
 }
-export function captureCircuitState(circuit){return normaliseCircuitState({configuration:circuit.state,controlPositions:circuit.state.controlPositions,responseAssumptions:circuit.state.responseAssumptions});}
+export function captureCircuitState(circuit){if(circuit.state.instrument)return instrumentCircuitState(instrumentFromCircuit(circuit));return normaliseCircuitState({configuration:circuit.state,controlPositions:circuit.state.controlPositions,responseAssumptions:circuit.state.responseAssumptions});}
 export function readCircuitState(search){
  const q=new URLSearchParams(search);if(!q.has('sf'))return {state:null,notice:''};
  try{const raw=q.get('sf');if(raw.length>12000)throw Error('Circuit link too long.');return {state:normaliseCircuitState(JSON.parse(raw)),notice:'Circuit configuration imported from Signal Forge.'};}
@@ -38,16 +41,17 @@ export function readCircuitState(search){
 }
 export function circuitStateURL(path,state,extra={}){const q=new URLSearchParams();q.set('sf',JSON.stringify(normaliseCircuitState(state)));for(const [key,value] of Object.entries(extra))q.set(key,typeof value==='string'?value:JSON.stringify(value));return deploymentPath(path+'?'+q);}
 export function applyCircuitAnalysis(circuit,state){
- const valid=normaliseCircuitState(state);circuit.state.controlPositions=valid.controlPositions;circuit.state.responseAssumptions=valid.responseAssumptions;
+ const valid=normaliseCircuitState(state);if(valid.version===2)return applyInstrumentValues(circuit,valid.instrument);circuit.state.controlPositions=valid.controlPositions;circuit.state.responseAssumptions=valid.responseAssumptions;
  for(const channel of ['neck','bridge']){const values=resolveResponseAssumptions(valid.responseAssumptions,channel);for(const role of ['volume','tone']){const part=circuit.components.find(p=>p.channel===channel&&p.role===role);if(part)part.value=values[role+'Pot']+'kΩ Audio';}}
  return circuit;
 }
 export function circuitStateSummary(circuit,report=circuitResponse(circuit)){
+ if(circuit.state.instrument)return instrumentSummary(instrumentFromCircuit(circuit))+' · '+(report.supported?referenceDescription(report):report.reason);
  const base=(circuit.state.wiring==='modern'?'Modern':circuit.state.wiring==='50s'?'50s':'60s')+' wiring';
  if(report.supported)return base+' · '+referenceDescription(report);
  return base+' · '+(circuit.state.position==='both'?'Both pickups':circuit.state.position)+' · '+circuit.components.filter(p=>['pot','capacitor','resistor'].includes(p.type)).map(p=>p.label+': '+p.value).join(' · ');
 }
-export function wiringHandoff(circuit){const state=captureCircuitState(circuit);const url=new URL(generatorURL(state.configuration),'https://example.org');url.searchParams.set('sf',JSON.stringify(state));return url.pathname+url.search;}
+export function wiringHandoff(circuit){const state=captureCircuitState(circuit);if(!state.configuration)return null;const url=new URL(generatorURL(state.configuration),'https://example.org');url.searchParams.set('sf',JSON.stringify(state));return url.pathname+url.search;}
 export function designerHandoff(circuit,report=circuitResponse(circuit)){if(!report.supported)return {url:null,reason:'Select Neck or Bridge with Modern wiring to transfer the supported response model.'};return {url:circuitStateURL('/treble-bleed-designer/',captureCircuitState(circuit),{sr:report.state}),reason:''};}
 export function readDesignerHandoff(search){
  const imported=readCircuitState(search),q=new URLSearchParams(search);if(!imported.state)return {...imported,response:null};
@@ -56,6 +60,7 @@ export function readDesignerHandoff(search){
 }
 export function kitCanRepresentCaps(state){return ['neck','bridge'].every(ch=>Object.values(lesPaul.capacitors).some(c=>c.enabled!==false&&Number(c.value)===Number(state[ch+'Cap'])));}
 export function kitHandoff(circuit){
+ if(circuit.state.instrument&&!instrumentCapabilities(circuit.state.instrument).canBuildKit)return {url:null,reason:'No matching Kit Definition exists for this instrument arrangement.'};
  const url=kitLink(circuit);if(!url)return {url:null,reason:'This configuration is not currently available as a preconfigured kit.'};
  const kit=configurationFromURL(new URL(url,'https://example.org').search),pot=resolvedPotentiometer(kit)?.component,caps=toneCaps(kit);
  // Compare actual physical values against the existing resolved Kit Definition.

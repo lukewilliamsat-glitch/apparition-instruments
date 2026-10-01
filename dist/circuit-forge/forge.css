@@ -325,3 +325,7 @@
 .forge-component-group{grid-column:1/-1;margin:3px 0 0;font-size:10px;letter-spacing:.08em;color:#82714f}.forge-component-group small{letter-spacing:0;font-size:10px;font-weight:400}
 .forge-response-inspect{padding:10px 0;border-top:1px solid #d8d4cb;border-bottom:1px solid #d8d4cb;gap:4px 12px}.forge-difference-marker{margin-top:2px}
 @media(max-width:850px){.forge-shared-summary{font-size:10px}.forge-model-group small{display:inline}.forge-context-actions{min-width:0}}
+/* Instrument identity shares the existing configuration drawer and touch contract. */
+.forge-instrument{margin-block:1rem;min-width:0}.forge-instrument summary{cursor:pointer;font-weight:700}.forge-instrument label{display:grid;gap:.4rem;margin-block:.8rem;min-width:0}.forge-instrument select,.forge-instrument input{width:100%;max-width:100%;min-width:0;min-height:44px}.forge-instrument-controls{display:grid;grid-template-columns:minmax(0,1fr);gap:.25rem}.forge-instrument p,#forge-instrument-summary,#forge-instrument-limit{overflow-wrap:anywhere}.forge-instrument button{min-height:44px}.forge-instrument :focus-visible{outline:2px solid #926f31;outline-offset:3px}.forge-segmented-options{flex-wrap:wrap}
+@media(min-width:768px){.forge-instrument-controls{gap:.5rem}}
+@media(max-width:390px){.forge-instrument{max-width:100%}.forge-instrument summary{overflow-wrap:anywhere}}
