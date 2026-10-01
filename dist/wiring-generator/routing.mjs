@@ -3,12 +3,12 @@
 const step=10,W=132,H=119;
 const cache=new Map();
 import {composePhysicalWiring} from './physical.mjs';
-export function routeSemantics(c){
+export function routeSemantics(c,{contacts=true}={}){
  const parent=new Map();
  const root=ref=>{if(!parent.has(ref))parent.set(ref,ref);let p=parent.get(ref);while(p!==parent.get(p))p=parent.get(p);return p;};
  const join=(a,b)=>{const x=root(a),y=root(b);if(x!==y)parent.set(y,x);};
  for(const w of c.connections)join(w.from,w.to);
- for(const [a,b] of c.contacts||[])join(a,b);
+ if(contacts)for(const [a,b] of c.contacts||[])join(a,b);
  const role=w=>w.network==='auxiliary'?'auxiliary':w.category==='ground'?'ground':w.category==='signal'?'signal':w.category==='tone'?'tone':w.category==='switching'?'switch':'unknown';
  return new Map(c.connections.map(w=>[w.id,{net:root(w.from),role:role(w)}]));
 }
@@ -48,9 +48,10 @@ function port(p,key,b){const t=p.terminals[key],a=[p.x+t.x,p.y+t.y];let q;
 }
 class Heap{constructor(){this.a=[];}push(v){let i=this.a.length;this.a.push(v);while(i){const p=(i-1)>>1;if(this.a[p][0]<=v[0])break;this.a[i]=this.a[p];i=p;}this.a[i]=v;}pop(){const top=this.a[0],v=this.a.pop();if(this.a.length){let i=0;while(i*2+1<this.a.length){let j=i*2+1;if(j+1<this.a.length&&this.a[j+1][0]<this.a[j][0])j++;if(this.a[j][0]>=v[0])break;this.a[i]=this.a[j];i=j;}this.a[i]=v;}return top;}}
 const squash=points=>points.filter((p,i,a)=>!(i&&p[0]===a[i-1][0]&&p[1]===a[i-1][1])).filter((p,i,a)=>!i||i===a.length-1||!((a[i-1][0]===p[0]&&p[0]===a[i+1][0])||(a[i-1][1]===p[1]&&p[1]===a[i+1][1])));
-export function routeDiagram(c){
- const key=JSON.stringify([c.components.map(p=>[p.id,p.type,p.x,p.y,p.terminals,p.productMark]),c.connections.map(w=>[w.id,w.from,w.to,w.route,w.category,w.network]),c.contacts]);if(cache.has(key))return cache.get(key);
- const physical=composePhysicalWiring(c),bounds=c.components.map(componentBounds),blocked=new Set(),reserved=new Map(),occupied=new Map(),occupiedEdges=new Map(),results=new Map(),semantics=routeSemantics(c);
+export function routeDiagram(c,{mode='trace'}={}){
+ const build=mode==='build';
+ const key=JSON.stringify([mode,c.components.map(p=>[p.id,p.type,p.x,p.y,p.terminals,p.productMark]),c.connections.map(w=>[w.id,w.from,w.to,w.route,w.category,w.network]),build?[]:c.contacts]);if(cache.has(key))return cache.get(key);
+ const physical=composePhysicalWiring(c),bounds=c.components.map(componentBounds),blocked=new Set(),reserved=new Map(),occupied=new Map(),occupiedEdges=new Map(),results=new Map(),semantics=routeSemantics(c,{contacts:!build});
  for(const b of bounds)for(let x=Math.ceil((b.l-5)/step);x<=Math.floor((b.r+5)/step);x++)for(let y=Math.ceil((b.t-5)/step);y<=Math.floor((b.b+5)/step);y++)blocked.add(y*W+x);
  for(const p of c.components)for(const t of Object.values(p.terminals)){const x=p.x+t.x,y=p.y+t.y;for(let gx=Math.ceil((x-6)/step);gx<=Math.floor((x+6)/step);gx++)for(let gy=Math.ceil((y-6)/step);gy<=Math.floor((y+6)/step);gy++)blocked.add(gy*W+gx);}
  // Keep short, adjacent terminal departures clear for their own connections.
@@ -71,11 +72,11 @@ export function routeDiagram(c){
   let cost=0;const x=id%W,y=Math.floor(id/W);
   for(const [otherDir,other] of occupied.get(id)||[]){
    // A perpendicular intersection is a crossing, not a graph junction.
-   cost+=otherDir===dir?(other.net===semantic.net?5:24):8;
+   cost+=otherDir===dir?(other.net===semantic.net?5:24):(build?3:8);
   }
   // Adjacent parallel runs need a whole clear grid lane where possible.
   for(const near of dir===0?[id-W,id+W]:[id-1,id+1])for(const [otherDir,other] of occupied.get(near)||[])
-   if(otherDir===dir)cost+=other.net===semantic.net?1.5:3;
+   if(otherDir===dir)cost+=other.net===semantic.net?1.5:(build?2:3);
   return cost;
  };
  for(const w of c.connections){const a=endpoint(w.from),b=endpoint(w.to),intent=physical.conductors.get(w.id);
