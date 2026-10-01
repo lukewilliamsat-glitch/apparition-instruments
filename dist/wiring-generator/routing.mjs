@@ -1,15 +1,12 @@
 import {componentTitlePosition} from './composition.mjs';
+import {conductiveIndex} from '../electronics/circuit-connectivity.mjs';
 // Presentation only: orthogonal routes between semantic terminals. The circuit
 // graph, not geometry or colour, determines whether two paths are connected.
 const step=10,W=132,H=119;
 const cache=new Map();
 import {composePhysicalWiring} from './physical.mjs';
 export function routeSemantics(c,{contacts=true}={}){
- const parent=new Map();
- const root=ref=>{if(!parent.has(ref))parent.set(ref,ref);let p=parent.get(ref);while(p!==parent.get(p))p=parent.get(p);return p;};
- const join=(a,b)=>{const x=root(a),y=root(b);if(x!==y)parent.set(y,x);};
- for(const w of c.connections)join(w.from,w.to);
- if(contacts)for(const [a,b] of c.contacts||[])join(a,b);
+ const {root}=conductiveIndex(c,{contacts});
  const role=w=>w.network==='auxiliary'?'auxiliary':w.category==='ground'?'ground':w.category==='signal'?'signal':w.category==='tone'?'tone':w.category==='switching'?'switch':'unknown';
  return new Map(c.connections.map(w=>[w.id,{net:root(w.from),role:role(w)}]));
 }
@@ -53,10 +50,10 @@ function port(p,key,b){const t=p.terminals[key],a=[p.x+t.x,p.y+t.y];let q;
 }
 class Heap{constructor(){this.a=[];}push(v){let i=this.a.length;this.a.push(v);while(i){const p=(i-1)>>1;if(this.a[p][0]<=v[0])break;this.a[i]=this.a[p];i=p;}this.a[i]=v;}pop(){const top=this.a[0],v=this.a.pop();if(this.a.length){let i=0;while(i*2+1<this.a.length){let j=i*2+1;if(j+1<this.a.length&&this.a[j+1][0]<this.a[j][0])j++;if(this.a[j][0]>=v[0])break;this.a[i]=this.a[j];i=j;}this.a[i]=v;}return top;}}
 const squash=points=>points.filter((p,i,a)=>!(i&&p[0]===a[i-1][0]&&p[1]===a[i-1][1])).filter((p,i,a)=>!i||i===a.length-1||!((a[i-1][0]===p[0]&&p[0]===a[i+1][0])||(a[i-1][1]===p[1]&&p[1]===a[i+1][1])));
-export function routeDiagram(c,{mode='trace'}={}){
+export function routeDiagram(c,{mode='trace',physical:providedPhysical=null}={}){
  const build=mode==='build';
  const key=JSON.stringify([mode,c.components.map(p=>[p.id,p.type,p.x,p.y,p.terminals,p.productMark,p.label,p.physicalControl]),c.connections.map(w=>[w.id,w.from,w.to,w.route,w.category,w.network]),build?[]:c.contacts]);if(cache.has(key))return cache.get(key);
- const physical=composePhysicalWiring(c),bounds=c.components.map(componentBounds),blocked=new Set(),reserved=new Map(),occupied=new Map(),occupiedEdges=new Map(),results=new Map(),semantics=routeSemantics(c,{contacts:!build});
+ const physical=providedPhysical||composePhysicalWiring(c),bounds=c.components.map(componentBounds),blocked=new Set(),reserved=new Map(),occupied=new Map(),occupiedEdges=new Map(),results=new Map(),semantics=routeSemantics(c,{contacts:!build});
  for(const b of [...bounds,...protectedLabelRegions(c)])for(let x=Math.ceil((b.l-5)/step);x<=Math.floor((b.r+5)/step);x++)for(let y=Math.ceil((b.t-5)/step);y<=Math.floor((b.b+5)/step);y++)blocked.add(y*W+x);
  for(const p of c.components)for(const t of Object.values(p.terminals)){const x=p.x+t.x,y=p.y+t.y;for(let gx=Math.ceil((x-6)/step);gx<=Math.floor((x+6)/step);gx++)for(let gy=Math.ceil((y-6)/step);gy<=Math.floor((y+6)/step);gy++)blocked.add(gy*W+gx);}
  // Keep short, adjacent terminal departures clear for their own connections.
@@ -139,5 +136,5 @@ export function routeDiagram(c,{mode='trace'}={}){
   }
   results.set(w.id,squash(found?[...a,...middle,...b.toReversed()]:middle));
  }
- if(cache.size>24)cache.clear();cache.set(key,results);return results;
+ if(cache.size>=25)cache.delete(cache.keys().next().value);cache.set(key,results);return results;
 }

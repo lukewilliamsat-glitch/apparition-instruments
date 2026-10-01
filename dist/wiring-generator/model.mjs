@@ -1,5 +1,6 @@
 import {dpdtTerminals,normaliseSwitching} from '../electronics/switching/devices.mjs';
 import {applySwitching} from '../electronics/switching/modifiers.mjs';
+import {conductiveIndex} from '../electronics/circuit-connectivity.mjs';
 import {extraCircuit,layoutInfo} from './layouts.mjs';
 export {layoutInfo};
 import {builderURL} from '../les-paul-kits/config.mjs';
@@ -76,7 +77,7 @@ export function makeCircuit(value={}){
  const circuit=applySwitching({state,components,connections,contacts});routeClearance(circuit);validateCircuit(circuit);return circuit;
 }
 export function endpoint(circuit,ref){const [id,terminal]=ref.split('.'),c=circuit.components.find(x=>x.id===id),t=c?.terminals[terminal];if(!t)throw new Error('Unknown terminal '+ref);return {component:c,terminal:t,x:c.x+t.x,y:c.y+t.y};}
-export function net(circuit,start){const found=new Set([start]);let changed=true;const pairs=[...circuit.connections.map(w=>[w.from,w.to]),...circuit.contacts];while(changed){changed=false;for(const [a,b] of pairs)if(found.has(a)!==found.has(b)){found.add(a);found.add(b);changed=true;}}return found;}
+export function net(circuit,start){return conductiveIndex(circuit).net(start);}
 export function validateCircuit(c){const ids=new Set();for(const component of c.components){if(ids.has(component.id))throw new Error('Duplicate component');ids.add(component.id);}const wires=new Set();for(const w of c.connections){if(wires.has(w.id))throw new Error('Duplicate wire');wires.add(w.id);endpoint(c,w.from);endpoint(c,w.to);}for(const pair of c.contacts)pair.forEach(r=>endpoint(c,r));for(const element of c.elements||[]){if(element.type!=='coil')throw Error('Unsupported passive element.');endpoint(c,element.from);endpoint(c,element.to);}
  const ground=net(c,'jack.sleeve');if(ground.has('jack.tip'))throw new Error('Output is shorted to ground.');for(const part of c.components){if(part.type==='pot'&&!ground.has(part.id+'.case'))throw new Error('Ungrounded pot case');if(part.type==='humbucker'&&(!ground.has(part.id+'.ground')||!ground.has(part.id+'.shield')))throw new Error('Ungrounded pickup');}if(!ground.has('bridgeGround.ground')||!ground.has('selector.ground'))throw new Error('Missing hardware ground');return true;}
 export function inspectComponent(c,id){const component=c.components.find(x=>x.id===id);if(!component)return null;return {label:component.label,value:component.value,terminals:Object.entries(component.terminals).map(([key,t])=>({label:t.label,ref:id+'.'+key,connections:c.connections.filter(w=>w.from===id+'.'+key||w.to===id+'.'+key).map(w=>{const other=endpoint(c,w.from===id+'.'+key?w.to:w.from);return other.component.label+' / '+other.terminal.label;})}))};}

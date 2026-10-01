@@ -3,6 +3,7 @@ import {createLocalAssemblyRepository} from '../admin/assembly-repository.mjs';
 import {publicBackendConfig} from './public-config.mjs';
 import {createPublicComponentRepository} from './component-data.mjs';
 import {createPublicAssemblyRepository} from './assembly-data.mjs';
+import {readPublicRows,componentColumns,kitColumns} from './public-read.mjs';
 
 // The local provider remains available for isolated tests and migration diagnostics.
 export function createRepositoryProviders({source='local',storage,config=publicBackendConfig,request=globalThis.fetch}={}){
@@ -20,12 +21,7 @@ export function createRepositoryProviders({source='local',storage,config=publicB
 export function createPublicCatalogueClient(config=publicBackendConfig,request=globalThis.fetch){
  const {url,publishableKey}=config||{};
  if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(url||'')||!/^sb_publishable_[A-Za-z0-9_-]+$/.test(publishableKey||'')||typeof request!=='function')throw new Error('Invalid public Supabase configuration.');
- const read=async view=>{
-  const response=await request(url+'/rest/v1/'+view+'?select=*',{headers:{apikey:publishableKey,Accept:'application/json'}});
-  if(!response.ok)throw new Error('Public catalogue could not be loaded.');
-  const rows=await response.json();if(!Array.isArray(rows))throw new Error('Invalid catalogue response.');
-  return rows;
- };
+ const read=view=>readPublicRows({config,request},view,'?select='+(view==='catalogue_components'?componentColumns:kitColumns));
  return Object.freeze({listComponents:()=>read('catalogue_components'),listWiringKits:()=>read('catalogue_wiring_kits')});
 }
 

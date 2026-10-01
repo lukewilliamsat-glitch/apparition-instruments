@@ -1,9 +1,10 @@
 import {publicBackendConfig} from './public-config.mjs';
 import {validateOptionInput,normaliseLabel} from '../admin/catalogue-options.mjs';
+import {readPublicRows,optionColumns} from './public-read.mjs';
 const path='/rest/v1/catalogue_options';
 const decode=async response=>{if(!response.ok)throw Error('Catalogue options are unavailable ('+response.status+').');const value=await response.json();if(!Array.isArray(value))throw Error('Invalid catalogue options response.');return value;};
 export function createPublicOptionRepository({config=publicBackendConfig,request=globalThis.fetch}={}){
- return Object.freeze({async list(){return decode(await request(config.url+path+'?select=option_set,option_key,label,aliases,active,sort_order&order=option_set,sort_order,label',{headers:{apikey:config.publishableKey,Accept:'application/json'}}));}});
+ return Object.freeze({list:()=>readPublicRows({config,request},'catalogue_options','?select='+optionColumns+'&order=option_set,sort_order,label','Catalogue options')});
 }
 export function createAdminOptionRepository(transport){
  if(typeof transport?.send!=='function')throw Error('Authenticated Admin transport required.');

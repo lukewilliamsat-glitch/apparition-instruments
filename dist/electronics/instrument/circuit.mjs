@@ -9,14 +9,17 @@ export function instrumentCircuitState(input){
  return {version:2,instrument,configuration:config,controlPositions,responseAssumptions};
 }
 export function applyInstrumentValues(circuit,input){
- const state=instrumentCircuitState(input),i=state.instrument;
+ return applyState(circuit,instrumentCircuitState(input));
+}
+function applyState(circuit,state){
+ const i=state.instrument;
  circuit.state={...circuit.state,controlPositions:state.controlPositions,responseAssumptions:state.responseAssumptions,instrument:i};
  for(const control of i.controls){const id=control.id==='masterTone'?'neckTone':control.id;const part=circuit.components.find(c=>c.id===id);if(part)part.value=control.pot+'kΩ Audio';}
  return circuit;
 }
 export function makeInstrumentCircuit(input){
  const state=instrumentCircuitState(input),c=state.configuration?makeCircuit(state.configuration):{state:{guitar:'instrument',wiring:state.instrument.wiring,position:String(state.instrument.selector.selection),bleed:'none'},components:[],connections:[],contacts:[]};
- return applyInstrumentValues(c,state.instrument);
+ return applyState(c,state);
 }
 export function instrumentFromCircuit(circuit){
  const i=structuredClone(circuit.state.instrument);if(!i)return null;

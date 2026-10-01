@@ -1,4 +1,4 @@
-import {basketCount} from './commerce.mjs';
+import {createBasketCounter} from './basket-count.mjs';
 import {deploymentPath,deploymentRoot} from './deployment.mjs';
 // Keep existing root-relative routes inside a project subpath when the site is
 // hosted below the domain root (for example on GitHub Pages).
@@ -20,7 +20,7 @@ mobileNav?.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&mobileNav&&!mobileNav.hidden){closeMenu();menu.focus();}});
 window.matchMedia('(min-width: 1101px)').addEventListener('change',e=>{if(e.matches)closeMenu();});
 document.querySelectorAll('[data-year]').forEach(el=>el.textContent=new Date().getFullYear());
-function updateCount(){try{document.querySelectorAll('[data-basket-count]').forEach(el=>{el.textContent=basketCount();});}catch{document.querySelectorAll('[data-basket-count]').forEach(el=>el.textContent='—');}}
+const updateCount=createBasketCounter({onCount:count=>document.querySelectorAll('[data-basket-count]').forEach(el=>{el.textContent=String(count);})});
 updateCount();window.addEventListener('storage',updateCount);window.addEventListener('apparition:basket-changed',updateCount);window.addEventListener('pageshow',updateCount);
 const motionQuery=window.matchMedia('(prefers-reduced-motion: reduce)');
 let reduceMotion=motionQuery.matches,queued=false;
@@ -38,13 +38,13 @@ if(!reduceMotion&&'IntersectionObserver' in window){
 }
 const layers=[...document.querySelectorAll('.parallax')],progress=document.querySelector('.progress');
 function updateScroll(){
- const viewport=window.innerHeight,max=document.documentElement.scrollHeight-viewport;
- if(progress)progress.style.transform=`scaleX(${max>0?Math.max(0,Math.min(1,window.scrollY/max)):0})`;
+ const viewport=window.innerHeight;
+ if(progress){const max=document.documentElement.scrollHeight-viewport;progress.style.transform=`scaleX(${max>0?Math.max(0,Math.min(1,window.scrollY/max)):0})`;}
  layers.forEach(layer=>{if(reduceMotion){layer.style.transform='none';return;}const box=layer.parentElement.getBoundingClientRect();if(box.bottom>0&&box.top<viewport){const speed=Number(layer.dataset.speed)||0;const shift=layer.classList.contains('art-parallax')?Math.max(-35,Math.min(35,(viewport/2-box.top-box.height/2)*speed)):-box.top*speed;layer.style.transform=`translate3d(0,${shift}px,0)`;}});
  queued=false;
 }
-window.addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(updateScroll);}},{passive:true});
-window.addEventListener('resize',updateScroll);motionQuery.addEventListener('change',e=>{reduceMotion=e.matches;if(reduceMotion)document.body.classList.remove('motion-ready');updateScroll();});updateScroll();
+if(layers.length||progress){window.addEventListener('scroll',()=>{if(!queued){queued=true;requestAnimationFrame(updateScroll);}},{passive:true});window.addEventListener('resize',updateScroll);}
+motionQuery.addEventListener('change',e=>{reduceMotion=e.matches;if(reduceMotion)document.body.classList.remove('motion-ready');updateScroll();});if(layers.length||progress)updateScroll();
 
 const dropdowns=[...document.querySelectorAll('.nav-components')];
 for(const item of dropdowns){item.addEventListener('toggle',()=>{if(item.open)dropdowns.filter(x=>x!==item).forEach(x=>x.open=false);});item.addEventListener('keydown',e=>{const links=[...item.querySelectorAll('a')];if(e.key==='Escape'){item.open=false;item.querySelector('summary').focus();e.stopPropagation();}if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();item.open=true;const index=links.indexOf(document.activeElement),next=e.key==='ArrowDown'?(index+1)%links.length:(index<=0?links.length-1:index-1);links[next].focus();}});}

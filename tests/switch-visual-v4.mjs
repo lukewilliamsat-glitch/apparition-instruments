@@ -19,7 +19,7 @@ for(const guitar of ['tele','strat','hss']){
   assert.deepEqual(bladeMechanism({...part,closedContacts:contacts.map(pair=>[...pair].reverse())}),projection,'Contact orientation independent');
   for(const mode of ['build','trace','explain']){
    const doc=parse(drawCircuit(c,{mode})),banks=[...doc.querySelectorAll('.blade-contact-bank')];assert.equal(banks.length,2);
-   assert.equal(doc.querySelector('.blade-lever-assembly').getAttribute('transform'),`rotate(${projection.angle} 168 57)`);
+   assert.equal(doc.querySelector('.blade-lever-assembly').getAttribute('transform'),mode==='build'?null:`rotate(${projection.angle} 168 57)`);
    const wipers=[...doc.querySelectorAll('[data-wiper-from]')].map(p=>[p.getAttribute('data-wiper-from'),p.getAttribute('data-wiper-to')].sort().join('|')).sort();
    assert.deepEqual(wipers,mode==='build'?[]:contacts.map(pair=>[...pair].sort().join('|')).sort());
    for(const bank of banks){const pole=bank.getAttribute('data-pole'),expected=projection.banks.find(b=>b.pole===pole).throws;
@@ -44,7 +44,7 @@ for(const guitar of ['hss','les-paul','sg'])for(const state of ['down','up']){
   assert(source.contacts.some(pair=>pair.includes(p.id+'.AC')&&pair.includes(p.id+'.A'+(state==='up'?'2':'1'))));
   assert(!source.connections.some(w=>[w.from,w.to].some(ref=>ref.startsWith(p.id+'.B'))),'Unused pole has no external wiring');
  }
- const doc=parse(drawCircuit(source,{mode:'trace'}));assert([...doc.querySelectorAll('.dpdt-hardware')].every(p=>p.getAttribute('data-actuator-state')===state));assert([...doc.querySelectorAll('.dpdt-caption')].every(p=>p.textContent==='A: SPLIT · B: UNUSED'));
+ const doc=parse(drawCircuit(source,{mode:'trace'}));assert([...doc.querySelectorAll('.dpdt-hardware')].every(p=>p.getAttribute('data-actuator-state')===state));assert([...doc.querySelectorAll('.dpdt-caption')].every(p=>p.textContent==='B: UNUSED'));
  assert.equal(JSON.stringify(source),snapshot);
 }
 const html=readFileSync('dist/luthier-hub/index.html','utf8'),base=execFileSync('git',['show','d271e78cd55b06c2e8897d48004911cd563cf141:dist/luthier-hub/index.html'],{encoding:'utf8'});

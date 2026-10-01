@@ -27,7 +27,7 @@ import {pickupConventions} from '../wiring-generator/colours.mjs';
 const $=query=>document.querySelector(query),form=$('#forge-controls'),mount=$('#forge-diagram'),viewport=$('#forge-viewport');
 const el=(tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
 const stateRoot=el('section');stateRoot.id='forge-circuit-state';$('.forge-workspace-modes').before(stateRoot);
-const stateConsole=mountStateConsole(stateRoot,{onSelector:value=>form.querySelector('input[name="position"][value="'+value+'"]').click(),onSwitch:(id,value)=>{instrument=instrumentFromCircuit(circuit);instrument.switching.find(m=>m.id===id).position=value;configureInstrument();render();}});
+const stateConsole=mountStateConsole(stateRoot,{onSelector:value=>form.querySelector('input[name="position"][value="'+value+'"]').click(),onSwitch:(id,value)=>{instrument=instrumentFromCircuit(circuit);instrument.switching.find(m=>m.id===id).position=value;render();}});
 compactWorkbench(document,'forge');
 // Legacy form controls retain analysis integrations but are not a second visible console.
 for(const node of [...form.children])if(node.id!=='forge-instrument-root'&&node.tagName!=='BUTTON'){node.hidden=true;node.dataset.consoleLegacy='true';}
@@ -40,7 +40,7 @@ const initialMode=new URLSearchParams(window.location.search).get('mode');
 const importedCircuit=new URLSearchParams(window.location.search).has('ap')?{state:projectContext?.electronics||null,notice:projectImport.notice}:readCircuitState(window.location.search);
 let instrument=importedCircuit.state?.instrument||(importedCircuit.state?.configuration?.switching?instrumentFromLegacy(importedCircuit.state):null),instrumentPanel;
 const selectedChannel=()=>signalReport?.supported?signalReport.channel:circuit?.state.position;
-const withProject=url=>{if(!projectContext)return url;projectContext=projectFromCircuit(circuit,projectContext);return projectURL(url,projectContext);};
+const withProject=url=>projectContext?projectURL(url,projectContext):url;
 const frequencyLabel=f=>f>=1000?(f/1000).toFixed(2)+' kHz':f.toFixed(0)+' Hz';
 function inspectionReadout(sample){
  inspectionFrequency=sample.frequency;const frequency=frequencyLabel(sample.frequency),format=db=>db<=-100?'≤ −100 dB':db.toFixed(2)+' dB';
@@ -55,10 +55,12 @@ function setWorkspaceMode(mode){
  for(const button of document.querySelectorAll('[data-forge-mode]'))button.setAttribute('aria-pressed',String(button.dataset.forgeMode===mode));
 }
 const choose=(kind,value)=>{selection=kind==='component'?{kind,id:value}:kind==='wire'?{kind,id:value}:{kind:'terminal',ref:value};updateSelection();mobile?.selectionChanged(selection);};
+let paintedCircuit=null,paintedMode=null;
 function paint(){
+ if(presentationMode==='build'&&paintedMode==='build'&&paintedCircuit===circuit)return;
  const active=document.activeElement,attribute=['data-terminal','data-wire','data-component'].find(name=>active?.hasAttribute?.(name)),value=attribute&&active.getAttribute(attribute),left=viewport.scrollLeft,top=viewport.scrollTop;
  if(circuit.state.guitar==='instrument'){mount.replaceChildren(el('p',instrumentCapabilities(instrument).reason));return;}
- mount.innerHTML=forgeDiagram(circuit,{selection:selectionHighlight(circuit,selection),filter:roleView,mode:presentationMode});mobile?.diagramChanged();viewport.scrollLeft=left;viewport.scrollTop=top;
+ mount.innerHTML=forgeDiagram(circuit,{selection:selectionHighlight(circuit,selection),filter:roleView,mode:presentationMode});paintedCircuit=circuit;paintedMode=presentationMode;mobile?.diagramChanged();viewport.scrollLeft=left;viewport.scrollTop=top;
  if(value)mount.querySelector(`[${attribute}="${value}"]`)?.focus({preventScroll:true});
 }
 function updateSelection(){
@@ -127,18 +129,21 @@ function renderLab(){
  previousSignal={channel:report.channel,state:{...report.state}};
 }
 function updateContextActions(){
- if(instrument)projectContext=projectFromCircuit(circuit,projectContext||{});
+ if(instrument||projectContext)projectContext=projectFromCircuit(circuit,projectContext||{});
  setText($('#forge-shared-summary'),circuitStateSummary(circuit,signalReport));
  const wiring=wiringHandoff(circuit);$('#forge-view-wiring').hidden=!wiring;if(wiring)$('#forge-view-wiring').href=withProject(wiring);
  const designer=designerHandoff(circuit,signalReport),kit=projectKitHandoff(circuit,projectContext);
  $('#forge-design-bleed').hidden=!designer.url;if(designer.url)$('#forge-design-bleed').href=withProject(designer.url);
  setText($('#forge-designer-limit'),designer.reason);$('#forge-kit').hidden=!kit.url;if(kit.url)$('#forge-kit').href=withProject(kit.url);setText($('#forge-kit-limit'),kit.reason);
  const url=withProject(circuitStateURL('/circuit-forge/',captureCircuitState(circuit)));window.history.replaceState(null,'',url);
- if(projectContext)projectContext=projectFromCircuit(circuit,projectContext);
 }
+
+let inventoryKey='';
 function updateInventory(){
- const list=$('#forge-parts');list.replaceChildren();
+ const nextKey=JSON.stringify(circuit.components.map(p=>[p.id,p.label,p.value,p.type]));
+ const list=$('#forge-parts');if(nextKey!==inventoryKey){list.replaceChildren();
  for(const part of circuit.components){const item=el('li'),button=el('button');button.type='button';button.dataset.part=part.id;button.append(el('strong',part.label),el('small',part.value||part.type));button.addEventListener('click',()=>choose('component',part.id));item.append(button);list.append(item);}
+ inventoryKey=nextKey;}
  $('#forge-count').textContent=`(${circuit.components.length})`;
  $('#forge-facts').textContent=`${circuit.components.length} components · ${circuit.connections.length} external connections · ${visualCrossings(composeWorkbench(circuit)).length} separated crossings`;
 }

@@ -5,6 +5,7 @@ import {resolve,join} from 'node:path';
 import {Window} from 'happy-dom';
 import {publicBackendConfig} from '../dist/backend/public-config.mjs';
 import {componentFromRow} from '../dist/backend/component-data.mjs';
+import {readPublicRows,productColumns,optionColumns} from '../dist/backend/public-read.mjs';
 import {productDetails,physicalRows,eligibleProduct,productSlug,productURL,categoryName,productContext,relatedProducts} from '../dist/products/model.mjs';
 
 const dist=resolve(fileURLToPath(new URL('../dist/',import.meta.url)));
@@ -106,10 +107,7 @@ export async function generate({rows,options=[],root=dist}){
  return products;
 }
 async function fetchPublic(table){
- const {url,publishableKey}=publicBackendConfig;
- const response=await fetch(url+'/rest/v1/'+table+'?select=*',{headers:{apikey:publishableKey,Accept:'application/json'}});
- if(!response.ok)throw new Error('Public '+table+' fetch failed: '+response.status);
- const rows=await response.json();if(!Array.isArray(rows))throw new Error('Invalid '+table+' response');return rows;
+ return readPublicRows({config:publicBackendConfig},table,'?select='+(table==='catalogue_components'?productColumns:optionColumns)+(table==='catalogue_components'?'&individually=eq.true&category=in.(potentiometers,capacitors,treble-bleeds)&sale_price=gt.0':''));
 }
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
  try{const [rows,options]=await Promise.all([fetchPublic('catalogue_components'),fetchPublic('catalogue_options')]);const products=await generate({rows,options});console.log('Generated '+products.length+' authoritative public product pages.');}

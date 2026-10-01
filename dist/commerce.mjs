@@ -1,12 +1,9 @@
 import {createKitSnapshot,validateKitSnapshot} from './les-paul-kits/snapshot.mjs';
 import {productById} from './components/catalogue.mjs';
-const STORAGE_KEY='apparition.basket.v1';
+import {basketStorageKey as STORAGE_KEY,readSavedBasket} from './basket-storage.mjs';
 export const MAX_QUANTITY=99;
 export function readBasket(){
- let raw;try{raw=localStorage.getItem(STORAGE_KEY);}catch{throw new Error('This browser cannot read your basket. Please allow site storage and try again.');}
- if(!raw)return [];
- let data;try{data=JSON.parse(raw);}catch{throw new Error('The saved basket could not be read. Please reset the basket below to start again.');}
- if(data?.version!==1||!Array.isArray(data.items))throw new Error('The saved basket could not be read. Please reset the basket below to start again.');
+ const data=readSavedBasket();
  const seen=new Set();
  return data.items.slice(0,50).filter(item=>{
   if(!item||typeof item.id!=='string'||!/^[a-zA-Z0-9-]{1,80}$/.test(item.id)||seen.has(item.id)||!Number.isInteger(item.quantity)||item.quantity<1||item.quantity>MAX_QUANTITY||!['les-paul','component'].includes(item.product)||(item.product==='component'&&!productById(item.sku)))return false;

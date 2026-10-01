@@ -1,0 +1,37 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {checkpointModules} from './fixtures/checkpoint-modules.mjs';
+import {Window} from 'happy-dom';
+import {conductiveIndex} from '../dist/electronics/circuit-connectivity.mjs';
+import {makeCircuit,net} from '../dist/wiring-generator/model.mjs';
+
+import {composePhysicalWiring} from '../dist/wiring-generator/physical.mjs';
+
+import {createReference} from '../dist/electronics/instrument/configuration.mjs';
+import {makeInstrumentCircuit} from '../dist/electronics/instrument/circuit.mjs';
+import {bridgeSplitModifier,toneSplitModifier} from '../dist/electronics/switching/devices.mjs';
+import {readPublicRows,componentColumns,productColumns} from '../dist/backend/public-read.mjs';
+import {createPublicComponentRepository} from '../dist/backend/component-data.mjs';
+import {createPublicCatalogueClient} from '../dist/backend/providers.mjs';
+import {createPublicAssemblyRepository} from '../dist/backend/assembly-data.mjs';
+import {createBasketCounter} from '../dist/basket-count.mjs';
+import {mountStateConsole} from '../dist/electronics/ui/state-console.mjs';
+import {mountInstrumentPanel} from '../dist/circuit-forge/instrument-panel.mjs';
+const baseline=checkpointModules(['dist/wiring-generator/model.mjs','dist/wiring-generator/physical.mjs']);
+const {makeCircuit:baselineCircuit}=await import(baseline.url('dist/wiring-generator/model.mjs')),{composePhysicalWiring:baselinePhysical}=await import(baseline.url('dist/wiring-generator/physical.mjs'));
+const configs=[];
+for(const guitar of ['les-paul','sg'])for(const wiring of ['modern','50s','60s'])for(const hardware of [[],['neck'],['bridge'],['neck','bridge']])for(const n of hardware.includes('neck')?['down','up']:['down'])for(const b of hardware.includes('bridge')?['down','up']:['down'])for(const position of ['neck','both','bridge'])configs.push({guitar,wiring,position,...hardware.length?{switching:hardware.map(p=>toneSplitModifier(p,p==='neck'?n:b))}:{}});
+for(const guitar of ['tele','strat','hss'])for(const position of guitar==='tele'?['1','2','3']:['1','2','3','4','5'])for(const state of guitar==='hss'?['standard','down','up']:['standard'])configs.push({guitar,position,...state!=='standard'?{switching:[bridgeSplitModifier(state)]}:{}});
+for(const config of configs){const c=makeCircuit(config),old=baselineCircuit(config);assert.deepEqual(c,old,'Starting-checkpoint electrical graph exact');assert.deepEqual(composePhysicalWiring(c),baselinePhysical(old),'Physical conductor/solder classifications unchanged');const index=conductiveIndex(c);for(const ref of new Set(c.connections.flatMap(w=>[w.from,w.to]))){assert.deepEqual(index.net(ref),net(c,ref));assert.deepEqual([...index.net(ref)].sort(),[...baselinePhysicalNet(old,ref)].sort());}}
+function baselinePhysicalNet(c,start){const found=new Set([start]);let changed=true;while(changed){changed=false;for(const [a,b] of [...c.connections.map(w=>[w.from,w.to]),...c.contacts])if(found.has(a)!==found.has(b)){found.add(a);found.add(b);changed=true;}}return found;}
+const mutable={connections:[{from:'a',to:'b'}],contacts:[['b','c']],elements:[{from:'c',to:'d'}]};assert.deepEqual([...conductiveIndex(mutable).net('a')].sort(),['a','b','c']);assert.deepEqual([...conductiveIndex(mutable,{contacts:false}).net('a')].sort(),['a','b']);mutable.contacts=[];assert(!conductiveIndex(mutable).net('a').has('c'));assert.deepEqual([...conductiveIndex(mutable).net('unknown')],['unknown']);
+let release,calls=0;const row={id:'fixture',stock:2,specs:{Resistance:'500kΩ'}},config={url:'https://fixture.supabase.co',publishableKey:'sb_publishable_fixture'};
+const request=async()=>{calls++;await new Promise(r=>release=r);return {ok:true,json:async()=>[row]};};
+const p1=createPublicComponentRepository({config,request}).list(),p2=createPublicCatalogueClient(config,request).listComponents();assert.equal(calls,1);release();const [mapped,raw]=await Promise.all([p1,p2]);mapped[0].specs.Resistance='changed';assert.equal(raw[0].specs.Resistance,'500kΩ');const fresh=createPublicComponentRepository({config,request}).list();assert.equal(calls,2);release();await fresh;
+let failures=0;const fail=async()=>{failures++;throw Error('offline fixture');};await assert.rejects(readPublicRows({config,request:fail},'catalogue_components','?select=id'),/offline/);await assert.rejects(readPublicRows({config,request:fail},'catalogue_components','?select=id'),/offline/);assert.equal(failures,2);
+const urls=[];await createPublicAssemblyRepository({config,request:async url=>{urls.push(new URL(url));return {ok:true,json:async()=>[]};}}).get('specific-kit');assert(urls.some(u=>u.searchParams.get('id')==='eq.specific-kit'));assert(urls.some(u=>u.searchParams.get('assembly_id')==='eq.specific-kit'));assert.equal(componentColumns.split(',').length,15);assert.equal(productColumns.split(',').length,12);
+let saved=null,loaded=0,count=null,resolveLoad;const storage={getItem:()=>saved},counter=createBasketCounter({storage,onCount:v=>count=v,loadCommerce:()=>{loaded++;return new Promise(r=>resolveLoad=r);}});await counter();assert.equal(count,0);assert.equal(loaded,0);saved=JSON.stringify({version:1,items:[{}]});const delayed=counter();assert.equal(loaded,1);saved=null;await counter();resolveLoad({basketCount:()=>9});await delayed;assert.equal(count,0,'Old asynchronous count cannot overwrite current empty basket');saved='{bad';await counter();assert.equal(count,'—');assert.equal(loaded,1);
+const win=new Window({settings:{disableCSSFileLoading:true,disableJavaScriptFileLoading:true,disableJavaScriptEvaluation:true}}),doc=win.document;let instrument={...createReference('hss'),switching:[bridgeSplitModifier()]};const root=doc.createElement('section');doc.body.append(root);let changed=0;const consoleUI=mountStateConsole(root,{onSelector:()=>changed++,onSwitch:()=>changed++});consoleUI.update(makeInstrumentCircuit(instrument));const first=root.querySelector('button');first.focus();instrument.selector.selection=5;consoleUI.update(makeInstrumentCircuit(instrument));assert.equal(root.querySelector('button'),first);assert.equal(doc.activeElement,first);root.querySelector('[aria-pressed=true]').click();assert.equal(changed,0);first.click();assert.equal(changed,1);
+const panel=doc.createElement('div');doc.body.append(panel);const ui=mountInstrumentPanel(panel,{getInstrument:()=>instrument,onChange:i=>instrument=i,onReference:i=>instrument=i}),reference=panel.querySelector('#forge-reference'),pickup=panel.querySelector('svg.pickup-layout-art');instrument.selector.selection=2;instrument.switching[0].position='up';ui.refresh();assert.equal(panel.querySelector('#forge-reference'),reference);assert.equal(panel.querySelector('svg.pickup-layout-art'),pickup);instrument.controls[0].pot=250;ui.refresh();assert.notEqual(panel.querySelector('#forge-reference'),reference);
+const workflow=readFileSync('.github/workflows/static.yml','utf8');assert.match(workflow,/name: Install build dependencies\s+if: github.event_name != 'push' \|\| !contains\(github.event.head_commit.message, '\[static-only\]'\)\s+run: npm ci/);assert(workflow.includes("cron: '*/5 * * * *'"),'Snapshot freshness retained');
+await win.happyDOM.close();baseline.close();console.log(`Platform efficiency: ${configs.length} exact baseline graphs/classifications; conductive/passive authority, fresh derivation, public concurrent dedup/error retry/isolation and filtered kit reads; basket lazy loading/races; retained state/configuration DOM; static-only install skip PASS`);

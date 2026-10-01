@@ -40,6 +40,7 @@ jobs:
           node-version: '22'
           cache: npm
       - name: Install build dependencies
+        if: github.event_name != 'push' || !contains(github.event.head_commit.message, '[static-only]')
         run: npm ci
       # Static-only milestones use committed snapshots without backend egress.
       - name: Generate public product pages from Supabase

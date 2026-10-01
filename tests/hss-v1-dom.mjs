@@ -25,7 +25,8 @@ for(const p of [1,2,3,4,5]){
  else{const field=$('#generator-form').elements.position;field.value=String(p);field.dispatchEvent(new Event('change',{bubbles:true}));}
  assert.equal(readProject(location.search).project.electronics.instrument.selector.selection,p,isForge?'Forge':$('#generator-status').textContent);
  assert.equal(readProject(new URL($(link).href).search).project.electronics.instrument.selector.selection,p);
- assert(mount.querySelector('[data-selector-position="'+p+'"]'));
+ const currentMode=mount.querySelector('svg').dataset.presentation;
+ assert.equal(!!mount.querySelector('[data-selector-position="'+p+'"]'),currentMode!=='build','Build retains fixed hardware; Trace/Explain show the active mechanism');
  if(isForge)assert.equal($('#forge-response-lab').classList.contains('is-unsupported'),[2,4].includes(p));
  for(const button of document.querySelectorAll(modeButtons)){
   button.click();assert.equal(mount.querySelectorAll('svg').length,1);

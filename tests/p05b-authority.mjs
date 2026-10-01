@@ -18,7 +18,7 @@ const publicRepo=createPublicComponentRepository({request:async(url,options)=>{p
 const publicRows=await publicRepo.list();
 assert.equal(publicRows[0].salePrice,699);assert.equal(publicRows[0].stock,4);
 assert.equal(publicRows[0].internalUnitCost,null);
-assert.ok(publicCalls[0].url.includes('/catalogue_components?select=*'));
+assert.equal(new URL(publicCalls[0].url).searchParams.get('select'),'id,sku,name,category,manufacturer,description,specs,product_content,individually,in_kits,sale_price,kit_price,image,kit_price_quantity,stock');
 assert.ok(!JSON.stringify(publicCalls).includes('service_role'));
 await assert.rejects(publicRepo.save({}),/authorised backend/);
 await assert.rejects(createPublicComponentRepository({request:async()=>{throw new Error('offline');}}).list(),/offline/);

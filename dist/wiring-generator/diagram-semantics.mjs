@@ -22,8 +22,8 @@ const intersection=(a,b,c,d)=>{
   p[1]>Math.min(r[1],s[1])&&p[1]<Math.max(r[1],s[1])?[r[0],p[1]]:null;
  return horizontal(a,b,c,d)||horizontal(c,d,a,b);
 };
-export function visualCrossings(circuit,{mode='trace'}={}){
- const routes=routeDiagram(circuit,{mode}),semantics=routeSemantics(circuit,{contacts:mode!=='build'}),result=new Map();
+export function visualCrossings(circuit,{mode='trace',routes:providedRoutes=null,semantics:providedSemantics=null}={}){
+ const routes=providedRoutes||routeDiagram(circuit,{mode}),semantics=providedSemantics||routeSemantics(circuit,{contacts:mode!=='build'}),result=new Map();
  for(let i=0;i<circuit.connections.length;i++)for(let j=i+1;j<circuit.connections.length;j++){
   const first=circuit.connections[i],second=circuit.connections[j];
   if(semantics.get(first.id).net===semantics.get(second.id).net)continue;

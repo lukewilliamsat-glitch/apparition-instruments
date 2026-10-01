@@ -1,8 +1,8 @@
 import {publicBackendConfig} from './public-config.mjs';
 import {normaliseKitDefinition} from '../admin/assemblies.mjs';
+import {readPublicRows,kitColumns} from './public-read.mjs';
 
 // P05C: browser-local Assembly records are audit evidence, never production fallback.
-const path=(config,table,query='')=>config.url+'/rest/v1/'+table+query;
 const filter=id=>'?assembly_id=eq.'+encodeURIComponent(id);
 async function decode(response,label){
  if(!response.ok)throw new Error(label+' is unavailable ('+response.status+'). No local configuration was substituted.');
@@ -19,13 +19,14 @@ function assemble(a,definition,bom,permitted,metadata={}){
 
 export function createPublicAssemblyRepository({config=publicBackendConfig,request=globalThis.fetch}={}){
  if(typeof request!=='function')throw new Error('Public Assembly request transport required.');
- const read=async(table)=>decode(await request(path(config,table,'?select=*'),{headers:{apikey:config.publishableKey,Accept:'application/json'}}),'Public '+table);
- const list=async()=>{
-  const [kits,permitted]=await Promise.all([read('catalogue_wiring_kits'),read('kit_permitted_components')]);
+ const read=(table,filter='')=>readPublicRows({config,request},table,'?select='+(table==='catalogue_wiring_kits'?kitColumns:'assembly_id,component_id')+filter);
+ const list=async(id=null)=>{
+  const [kits,permitted]=await Promise.all([read('catalogue_wiring_kits',id===null?'':'&id=eq.'+encodeURIComponent(id)),read('kit_permitted_components',id===null?'':'&assembly_id=eq.'+encodeURIComponent(id))]);
+  const permissions=new Map();for(const row of permitted){if(!permissions.has(row.assembly_id))permissions.set(row.assembly_id,[]);permissions.get(row.assembly_id).push(row);}
   return kits.map(row=>assemble({...row,active:true,kind:'wiring-kit'},
-   {...row,family:row.slug},[],permitted.filter(item=>item.assembly_id===row.id)));
+   {...row,family:row.slug},[],permissions.get(row.id)||[]));
  };
- return Object.freeze({list,async get(id){return (await list()).find(item=>item.id===id)||null;}});
+ return Object.freeze({list:()=>list(),async get(id){return (await list(id)).find(item=>item.id===id)||null;}});
 }
 
 export function createAdminAssemblyRepository(transport){
