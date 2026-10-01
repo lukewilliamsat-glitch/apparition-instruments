@@ -18,7 +18,7 @@ for(const guitar of ['tele','strat','les-paul','sg'])for(const wiring of ['tele'
   assert.equal(build.querySelectorAll('[data-component]').length,c.components.length);
   assert.equal(build.querySelectorAll('[data-wire]').length,c.connections.length);
   assert.equal(build.querySelectorAll('circle[data-terminal]').length,c.components.reduce((sum,p)=>sum+Object.keys(p.terminals).length,0));
-  assert.equal(build.querySelectorAll('[data-contact-state]').length,0);assert.equal(build.querySelectorAll('.blade-terminal-label').length,0);assert.equal(build.querySelectorAll('[data-pickup-profile]').length,0);
+  assert.equal(build.querySelectorAll('[data-contact-state]').length,0);assert.equal(build.querySelectorAll('.blade-terminal-label').length,['tele','strat'].includes(guitar)?8:0);assert.equal(build.querySelectorAll('[data-pickup-profile]').length,0);
   assert(build.querySelectorAll('text').length<trace.querySelectorAll('text').length);labels+=trace.querySelectorAll('text').length;removed+=trace.querySelectorAll('text').length-build.querySelectorAll('text').length;
   for(const mode of ['build','trace','explain']){
    const policy=presentationFor(c,mode);assert.equal(policy.circuit,c);const svg=parse(drawCircuit(c,{mode})),routes=routeDiagram(c,{mode:policy.routing});

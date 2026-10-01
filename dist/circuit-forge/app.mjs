@@ -1,3 +1,6 @@
+import {composeWorkbench} from '../wiring-generator/composition.mjs';
+import {compactWorkbench} from '../electronics/ui/workbench-console.mjs';
+import {appendWorkbenchOverview} from '../electronics/ui/workbench-overview.mjs';
 import {switchContactMap} from '../wiring-generator/components.mjs';
 import {mountStateConsole} from '../electronics/ui/state-console.mjs';
 import {explainSelection,appendExplanation} from '../wiring-generator/explanation.mjs';
@@ -25,6 +28,7 @@ const $=query=>document.querySelector(query),form=$('#forge-controls'),mount=$('
 const el=(tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
 const stateRoot=el('section');stateRoot.id='forge-circuit-state';$('.forge-workspace-modes').before(stateRoot);
 const stateConsole=mountStateConsole(stateRoot,{onSelector:value=>form.querySelector('input[name="position"][value="'+value+'"]').click(),onSwitch:(id,value)=>{instrument=instrumentFromCircuit(circuit);instrument.switching.find(m=>m.id===id).position=value;configureInstrument();render();}});
+compactWorkbench(document,'forge');
 // Legacy form controls retain analysis integrations but are not a second visible console.
 for(const node of [...form.children])if(node.id!=='forge-instrument-root'&&node.tagName!=='BUTTON'){node.hidden=true;node.dataset.consoleLegacy='true';}
 
@@ -60,7 +64,7 @@ function paint(){
 function updateSelection(){
  const info=circuit.state.guitar==='instrument'?null:inspectSelection(circuit,selection),box=$('#forge-inspection');box.replaceChildren();
  mobile?.selectionLabel(info);
- if(!info){selection=null;const empty=el('div');empty.className='inspection-empty';empty.append(el('p','Choose a part or terminal to explore this circuit.'));box.append(empty);}
+ if(!info){selection=null;appendWorkbenchOverview(box,circuit);}
  else if(presentationMode==='explain'){
   const id=selection.id||selection.ref,context=explainSelection(circuit,selection.kind==='terminal'?'terminal':selection.kind,id);
   if(selection.ref)box.append(el('code',selection.ref));box.append(el('h4',context.title),el('p',context.value));appendExplanation(box,context);
@@ -71,12 +75,12 @@ function updateSelection(){
    if(info.physicalWiring?.length){const heading=el('h5','Physical wiring'),list=el('dl');list.className='forge-wiring-list';for(const lead of info.physicalWiring){const row=el('div'),name=el('dt',lead.colour),detail=el('dd');detail.append(el('strong',lead.role),el('span','→ '+lead.destination),el('small',lead.termination));row.append(name,detail);list.append(row);}box.append(heading,list);}
    const terminals=el('details'),summary=el('summary','Inspect terminals'),list=el('ul');for(const t of info.terminals){const item=el('li'),button=el('button',t.label);button.type='button';button.addEventListener('click',()=>choose('terminal',t.ref));item.append(button,document.createTextNode(' · '+(t.connections.length?t.connections.join(' · '):'No external wire')));list.append(item);}terminals.append(summary,list);box.append(terminals);
   }else if(info.kind==='wire'){
-   if(info.physicalData){const list=el('dl');list.className='forge-inspection-facts';for(const [label,value] of [['Role',info.physicalData.role],['Destination',info.physicalData.destination],['Termination',info.physicalData.termination],['Electrical path',info.physicalData.path]]){const term=el('dt',label),definition=el('dd',value);list.append(term,definition);}box.append(list);}
+   if(info.physicalData){box.append(el('p',info.physical));const list=el('dl');list.className='forge-inspection-facts';for(const [label,value] of [['Purpose',info.physicalData.role],['Destination',info.physicalData.destination],['Termination',info.physicalData.termination],['Electrical path',info.physicalData.path]]){const term=el('dt',label),definition=el('dd',value);list.append(term,definition);}box.append(list);}
    box.append(el('p',info.summary));
    const trace=el('button','Trace complete electrical net');trace.type='button';trace.addEventListener('click',()=>choose('terminal',info.ref));box.append(trace);
   }else{
    if(info.physical)box.append(el('p',info.physical));
-   box.append(el('p',info.summary));
+   box.append(el('p',info.summary),el('p','Identify this terminal by continuity on the actual part. Solder only the listed physical conductors; internal switch contacts are not additional wires.'));
    const label=el('h5','Connections on this segment'),list=el('ul');for(const wire of info.connections){const item=el('li'),button=el('button',wire.description);button.type='button';button.addEventListener('click',()=>choose('wire',wire.id));item.append(button);list.append(item);}box.append(label,list);
    if(info.contacts.length){box.append(el('h5','Closed switch contacts'));const contacts=el('ul');for(const text of info.contacts)contacts.append(el('li',text));box.append(contacts);}
    const terminals=el('details'),summary=el('summary','Terminal references ('+info.references.length+')'),refs=el('ul');for(const ref of info.references)refs.append(el('li',terminalName(circuit,ref)));terminals.append(summary,refs);box.append(terminals);
@@ -136,7 +140,7 @@ function updateInventory(){
  const list=$('#forge-parts');list.replaceChildren();
  for(const part of circuit.components){const item=el('li'),button=el('button');button.type='button';button.dataset.part=part.id;button.append(el('strong',part.label),el('small',part.value||part.type));button.addEventListener('click',()=>choose('component',part.id));item.append(button);list.append(item);}
  $('#forge-count').textContent=`(${circuit.components.length})`;
- $('#forge-facts').textContent=`${circuit.components.length} components · ${circuit.connections.length} external connections · ${visualCrossings(circuit).length} separated crossings`;
+ $('#forge-facts').textContent=`${circuit.components.length} components · ${circuit.connections.length} external connections · ${visualCrossings(composeWorkbench(circuit)).length} separated crossings`;
 }
 function updateSelector(){
  if(circuit.state.guitar==='instrument'){$('#forge-selector').textContent='Selector described; contact diagram is not yet available.';$('#forge-contacts').replaceChildren();return;}

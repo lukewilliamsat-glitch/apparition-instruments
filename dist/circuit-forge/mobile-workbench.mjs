@@ -119,7 +119,7 @@ export function setupMobileWorkbench({mount,viewport,onChoose,onLayoutChange}){
  function layout(){
   const next=media.matches;if(next===mobile)return;mobile=next;
   for(const name of Object.keys(panels)){close(name,false);if(mobile)dialogBody(name).append(panels[name]);else homes[name].after(panels[name]);}
-  document.body.classList.toggle('forge-mobile',mobile);explore.open=!mobile;key.open=!mobile;
+  document.body.classList.toggle('forge-mobile',mobile);if(mobile){explore.open=false;key.open=false;}
   if(mobile){diagramChanged();fit();}else{mount.style.width='';for(const svg of mount.querySelectorAll('svg')){svg.style.width='';svg.style.height='';if(svg.dataset.desktopViewBox){svg.setAttribute('viewBox',svg.dataset.desktopViewBox);delete svg.dataset.desktopViewBox;}}for(const wire of mount.querySelectorAll('[data-desktop-label]')){wire.setAttribute('aria-label',wire.dataset.desktopLabel);delete wire.dataset.desktopLabel;}$('#forge-touch-choices').replaceChildren();applyZoom();}
   onLayoutChange();
  }
