@@ -35,7 +35,7 @@ export function normaliseCircuitState(input={}){
  for(const channel of ['neck','bridge'])resolveResponseAssumptions(a,channel);
  return {version:stateVersion,configuration:config,controlPositions:controls,responseAssumptions:a};
 }
-export function captureCircuitState(circuit){if((['hss','tele','strat','sg','prs-se'].includes(circuit.state.guitar)||circuit.state.switching||circuit.state.volumeBleeds)&&!circuit.state.instrument)return instrumentCircuitState(instrumentFromGeneratorCircuit(circuit));if(circuit.state.instrument)return instrumentCircuitState(instrumentFromCircuit(circuit));return normaliseCircuitState({configuration:circuit.state,controlPositions:circuit.state.controlPositions,responseAssumptions:circuit.state.responseAssumptions});}
+export function captureCircuitState(circuit){if((['hss','hsh','hh','tele','strat','sg','prs-se'].includes(circuit.state.guitar)||circuit.state.switching||circuit.state.volumeBleeds)&&!circuit.state.instrument)return instrumentCircuitState(instrumentFromGeneratorCircuit(circuit));if(circuit.state.instrument)return instrumentCircuitState(instrumentFromCircuit(circuit));return normaliseCircuitState({configuration:circuit.state,controlPositions:circuit.state.controlPositions,responseAssumptions:circuit.state.responseAssumptions});}
 export function readCircuitState(search){
  const q=new URLSearchParams(search);if(!q.has('sf'))return {state:null,notice:''};
  try{const raw=q.get('sf');if(raw.length>12000)throw Error('Circuit link too long.');return {state:normaliseCircuitState(JSON.parse(raw)),notice:'Circuit configuration imported from Signal Forge.'};}

@@ -131,7 +131,7 @@ function renderLab(){
 function updateContextActions(){
  if(instrument||projectContext)projectContext=projectFromCircuit(circuit,projectContext||{});
  setText($('#forge-shared-summary'),circuitStateSummary(circuit,signalReport));
- const wiring=wiringHandoff(circuit);$('#forge-view-wiring').hidden=!wiring;if(wiring)$('#forge-view-wiring').href=withProject(wiring);
+ const wiring=wiringHandoff(circuit);$('#forge-view-wiring').hidden=!wiring;if(wiring){$('#forge-view-wiring').href=withProject(wiring);const guided=new URL(withProject(wiring),location.origin);guided.searchParams.set('build','guided');$('#forge-guided-build').href=guided.pathname+guided.search;}$('#forge-guided-build').hidden=!wiring;
  const designer=designerHandoff(circuit,signalReport),kit=projectKitHandoff(circuit,projectContext);
  $('#forge-design-bleed').hidden=!designer.url;if(designer.url)$('#forge-design-bleed').href=withProject(designer.url);
  setText($('#forge-designer-limit'),designer.reason);$('#forge-kit').hidden=!kit.url;if(kit.url)$('#forge-kit').href=withProject(kit.url);setText($('#forge-kit-limit'),kit.reason);

@@ -2,14 +2,14 @@ import {dpdtTerminals,dpdtContacts} from './devices.mjs';
 import {seriesCoils} from './coils.mjs';
 // Applies wiring to the existing circuit; mechanical association owns no contacts.
 export function applySwitching(circuit){
- if(circuit.state.guitar!=='hss'&&!circuit.state.switching)return circuit;
+ if(!['hss','hsh','hh'].includes(circuit.state.guitar)&&!circuit.state.switching)return circuit;
  circuit.elements=[];
  for(const pickup of circuit.components.filter(part=>part.type==='humbucker')){
  const elements=seriesCoils(pickup.id);circuit.elements.push(...elements);pickup.coils=elements.map(element=>element.id);
  const functions={hot:'coilAStart',linkA:'coilAFinish',linkB:'coilBStart',ground:'coilBFinish',shield:'shield'};const names={hot:'Coil A start / hot',linkA:'Coil A finish / series junction',linkB:'Coil B start / series junction',ground:'Coil B finish / return',shield:'Separate shield'};pickup.terminals=Object.fromEntries(Object.entries(pickup.terminals).map(([key,t])=>[key,{...t,label:names[key],coilFunction:functions[key]}]));
  }
  // Physical clearance only: reserve volume lug escapes before the attached housing.
- if(circuit.state.guitar==='hss'&&circuit.state.switching){const tone=circuit.components.find(p=>p.id==='middleTone');if(tone)tone.y=1000;}
+ if(['hss','hsh'].includes(circuit.state.guitar)&&circuit.state.switching){const tone=circuit.components.find(p=>p.id==='middleTone');if(tone)tone.y=1000;}
  for(const modifier of circuit.state.switching||[]){
   if(modifier.pickup==='both'){
   const host=circuit.components.find(p=>p.id==='neckTone');host.physicalControl='push-pull';host.associatedSwitch=modifier.id;

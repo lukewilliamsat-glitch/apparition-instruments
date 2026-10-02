@@ -36,8 +36,8 @@ export function instrumentFromCircuit(circuit){
 
 // Inverse adapter for raw Generator links; shared instrument authority owns defaults.
 export function instrumentFromGeneratorCircuit(circuit){
- if(!['hss','les-paul','sg','tele','strat','prs-se'].includes(circuit.state.guitar))throw Error('No instrument adapter for this generator circuit.');
- const config=circuit.state,hss=config.guitar==='hss',i=hss?configureInstrumentDimensions(createReference('hss'),{controlLayout:config.controlLayout}):['les-paul','sg'].includes(config.guitar)?configureInstrumentDimensions(createReference('les-paul'),{family:config.guitar}):createReference(config.guitar==='prs-se'?'prs-hh':config.guitar);
+ if(!['hss','hsh','hh','les-paul','sg','tele','strat','prs-se'].includes(circuit.state.guitar))throw Error('No instrument adapter for this generator circuit.');
+ const config=circuit.state,hss=['hss','hsh','strat'].includes(config.guitar),i=hss?configureInstrumentDimensions(createReference(config.guitar),{controlLayout:config.controlLayout}):['les-paul','sg'].includes(config.guitar)?configureInstrumentDimensions(createReference('les-paul'),{family:config.guitar}):createReference(config.guitar==='prs-se'?'prs-hh':config.guitar);
  i.selector.selection=['les-paul','sg'].includes(config.guitar)?{bridge:1,both:2,neck:3}[config.position]:Number(config.position);i.wiring=config.wiring;i.shielding=config.shielding;
  if(config.switching)i.switching=structuredClone(config.switching);
  for(const control of i.controls){const part=circuit.components.find(p=>p.id===(control.id==='masterTone'?'neckTone':control.id));control.pot=parseFloat(part.value);if(control.role==='tone')control.capacitor=['les-paul','sg'].includes(config.guitar)?config[control.assignments[0]+'Cap']:config.neckCap;else control.bleed=config.volumeBleeds?.[control.assignments[0]]??config.bleed;}
