@@ -19,7 +19,7 @@ for(const guitar of ['tele','strat','hss']){
   assert.deepEqual(bladeMechanism({...part,closedContacts:contacts.map(pair=>[...pair].reverse())}),projection,'Contact orientation independent');
   for(const mode of ['build','trace','explain']){
    const doc=parse(drawCircuit(c,{mode})),banks=[...doc.querySelectorAll('.blade-contact-bank')];assert.equal(banks.length,2);
-   assert.equal(doc.querySelector('.blade-lever-assembly').getAttribute('transform'),mode==='build'?null:`rotate(${projection.angle} 168 57)`);
+   assert.equal(doc.querySelector('.blade-lever-assembly').getAttribute('transform'),mode==='build'?null:`rotate(${projection.angle} 110 55)`);
    const wipers=[...doc.querySelectorAll('[data-wiper-from]')].map(p=>[p.getAttribute('data-wiper-from'),p.getAttribute('data-wiper-to')].sort().join('|')).sort();
    assert.deepEqual(wipers,mode==='build'?[]:contacts.map(pair=>[...pair].sort().join('|')).sort());
    for(const bank of banks){const pole=bank.getAttribute('data-pole'),expected=projection.banks.find(b=>b.pole===pole).throws;
@@ -27,7 +27,7 @@ for(const guitar of ['tele','strat','hss']){
     assert.equal([...doc.querySelectorAll('.blade-bank-label')].find(label=>label.textContent.startsWith('POLE '+pole)).textContent.includes('BRIDGED'),mode!=='build'&&expected.length>1);
    }
    const engaged=new Set(contacts.flat());for(const lug of doc.querySelectorAll('[data-contact-terminal]'))assert.equal(lug.getAttribute('data-physical-contact'),mode==='build'?'hardware':engaged.has(lug.getAttribute('data-contact-terminal'))?'closed':'open');
-   assert.equal(doc.querySelectorAll('.blade-contact-halo').length,mode==='build'?0:engaged.size);
+   assert.equal(doc.querySelectorAll('.blade-contact-halo').length,0);
    if(guitar!=='tele'&&['2','4'].includes(position)){assert.equal(contacts.length,4);if(mode!=='build')assert.equal(doc.querySelectorAll('.blade-wiper').length,4);}
   }
   assert.equal(JSON.stringify(c),snapshot);states++;

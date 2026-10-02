@@ -11,6 +11,12 @@ export function applySwitching(circuit){
  // Physical clearance only: reserve volume lug escapes before the attached housing.
  if(circuit.state.guitar==='hss'&&circuit.state.switching){const tone=circuit.components.find(p=>p.id==='middleTone');if(tone)tone.y=1000;}
  for(const modifier of circuit.state.switching||[]){
+  if(modifier.pickup==='both'){
+  const host=circuit.components.find(p=>p.id==='neckTone');host.physicalControl='push-pull';host.associatedSwitch=modifier.id;
+  circuit.components.push({id:modifier.id,type:'dpdt',label:'SHARED TONE PUSH/PULL DPDT',value:modifier.position.toUpperCase()+' · A: neck / B: bridge split',x:host.x,y:host.y+225,terminals:dpdtTerminals,mechanicalHost:host.id,actuator:'push-pull',position:modifier.position,usedPoles:['A','B'],function:'coil-split',pickup:'both'});
+  for(const [pole,ch] of [['A','neck'],['B','bridge']])circuit.connections.push({id:modifier.id+ch+'Junction',from:ch+'Pickup.linkA',to:modifier.id+'.'+pole+'C',category:'switching',route:[],conductor:'linkA'},{id:modifier.id+ch+'Ground',from:modifier.id+'.'+pole+'2',to:host.id+'.case',category:'ground',route:[]});
+  circuit.contacts.push(...dpdtContacts(modifier.id,modifier.position));continue;
+ }
   const pickup=circuit.components.find(part=>part.id===modifier.pickup+'Pickup');
   const host=circuit.components.find(part=>part.id===modifier.host&&part.type==='pot');
   if(!host)throw Error('Push/pull host is unavailable.');

@@ -8,7 +8,7 @@ export function pickupProfile(circuit,pickupId){
  const part=circuit.components.find(p=>p.id===pickupId);
  const id=circuit.state.pickupProfiles?.[part?.channel]||circuit.state.colours||'generic';
  const profile=resolveConvention(id);if(!part?.coils)return profile;
- const labels={hot:'COIL A START / HOT',linkA:'COIL A FINISH',linkB:'COIL B START',ground:'COIL B FINISH / RETURN',shield:'SEPARATE SHIELD'};return {...profile,label:'Neutral four-conductor coil identities',wires:Object.fromEntries(Object.entries(profile.wires).map(([key,wire])=>[key,[wire[0],labels[key]]]))};
+ const labels={hot:'COIL A START / HOT',linkA:'COIL A FINISH',linkB:'COIL B START',ground:'COIL B FINISH / RETURN',shield:'SEPARATE SHIELD'};return {...profile,label:id==='generic'?'Neutral four-conductor coil identities':profile.label,wires:Object.fromEntries(Object.entries(profile.wires).map(([key,wire])=>[key,[wire[0],id==='generic'?labels[key]:wire[1]+' · '+labels[key]]]))};
 }
 
 export function composePhysicalWiring(circuit){

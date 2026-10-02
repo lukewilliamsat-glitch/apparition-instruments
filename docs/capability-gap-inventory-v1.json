@@ -1,0 +1,2511 @@
+{
+  "startingHead": "efc61477e48b25f8ec18f6b82039397e10057e34",
+  "uiDimensions": 189,
+  "dimensionClasses": {
+    "descriptive UI option; no validated assignment/topology": 70,
+    "invalid combination": 51,
+    "valid and implemented": 16,
+    "valid; future architecture": 52
+  },
+  "modifierCases": 52,
+  "modifierGapsClosed": 25,
+  "dimensions": [
+    {
+      "dimensions": {
+        "family": "les-paul",
+        "layout": "HH",
+        "controlLayout": "1V1T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "les-paul",
+        "layout": "HH",
+        "controlLayout": "1V1T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "les-paul",
+        "layout": "HH",
+        "controlLayout": "1V1T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "les-paul",
+        "layout": "HH",
+        "controlLayout": "1V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "les-paul",
+        "layout": "HH",
+        "controlLayout": "1V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "les-paul",
+        "layout": "HH",
+        "controlLayout": "1V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "les-paul",
+        "layout": "HH",
+        "controlLayout": "2V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": true,
+      "after": true,
+      "classification": "valid and implemented"
+    },
+    {
+      "dimensions": {
+        "family": "les-paul",
+        "layout": "HH",
+        "controlLayout": "2V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "les-paul",
+        "layout": "HH",
+        "controlLayout": "2V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "sg",
+        "layout": "HH",
+        "controlLayout": "1V1T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "sg",
+        "layout": "HH",
+        "controlLayout": "1V1T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "sg",
+        "layout": "HH",
+        "controlLayout": "1V1T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "sg",
+        "layout": "HH",
+        "controlLayout": "1V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "sg",
+        "layout": "HH",
+        "controlLayout": "1V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "sg",
+        "layout": "HH",
+        "controlLayout": "1V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "sg",
+        "layout": "HH",
+        "controlLayout": "2V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": true,
+      "after": true,
+      "classification": "valid and implemented"
+    },
+    {
+      "dimensions": {
+        "family": "sg",
+        "layout": "HH",
+        "controlLayout": "2V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "sg",
+        "layout": "HH",
+        "controlLayout": "2V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "tele",
+        "layout": "SS",
+        "controlLayout": "1V1T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "tele",
+        "layout": "SS",
+        "controlLayout": "1V1T",
+        "selector": "3-way-blade"
+      },
+      "before": true,
+      "after": true,
+      "classification": "valid and implemented"
+    },
+    {
+      "dimensions": {
+        "family": "tele",
+        "layout": "SS",
+        "controlLayout": "1V1T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "tele",
+        "layout": "SS",
+        "controlLayout": "1V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "tele",
+        "layout": "SS",
+        "controlLayout": "1V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "tele",
+        "layout": "SS",
+        "controlLayout": "1V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "tele",
+        "layout": "SS",
+        "controlLayout": "2V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "tele",
+        "layout": "SS",
+        "controlLayout": "2V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "tele",
+        "layout": "SS",
+        "controlLayout": "2V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "SSS",
+        "controlLayout": "1V1T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "SSS",
+        "controlLayout": "1V1T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "SSS",
+        "controlLayout": "1V1T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "SSS",
+        "controlLayout": "1V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "SSS",
+        "controlLayout": "1V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "SSS",
+        "controlLayout": "1V2T",
+        "selector": "5-way-blade"
+      },
+      "before": true,
+      "after": true,
+      "classification": "valid and implemented"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "SSS",
+        "controlLayout": "2V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "SSS",
+        "controlLayout": "2V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "SSS",
+        "controlLayout": "2V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HSS",
+        "controlLayout": "1V1T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HSS",
+        "controlLayout": "1V1T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HSS",
+        "controlLayout": "1V1T",
+        "selector": "5-way-blade"
+      },
+      "before": true,
+      "after": true,
+      "classification": "valid and implemented"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HSS",
+        "controlLayout": "1V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HSS",
+        "controlLayout": "1V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HSS",
+        "controlLayout": "1V2T",
+        "selector": "5-way-blade"
+      },
+      "before": true,
+      "after": true,
+      "classification": "valid and implemented"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HSS",
+        "controlLayout": "2V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HSS",
+        "controlLayout": "2V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HSS",
+        "controlLayout": "2V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HSH",
+        "controlLayout": "1V1T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HSH",
+        "controlLayout": "1V1T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HSH",
+        "controlLayout": "1V1T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HSH",
+        "controlLayout": "1V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HSH",
+        "controlLayout": "1V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HSH",
+        "controlLayout": "1V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HSH",
+        "controlLayout": "2V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HSH",
+        "controlLayout": "2V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HSH",
+        "controlLayout": "2V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HH",
+        "controlLayout": "1V1T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HH",
+        "controlLayout": "1V1T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HH",
+        "controlLayout": "1V1T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HH",
+        "controlLayout": "1V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HH",
+        "controlLayout": "1V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HH",
+        "controlLayout": "1V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HH",
+        "controlLayout": "2V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HH",
+        "controlLayout": "2V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "strat",
+        "layout": "HH",
+        "controlLayout": "2V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "SSS",
+        "controlLayout": "1V1T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "SSS",
+        "controlLayout": "1V1T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "SSS",
+        "controlLayout": "1V1T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "SSS",
+        "controlLayout": "1V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "SSS",
+        "controlLayout": "1V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "SSS",
+        "controlLayout": "1V2T",
+        "selector": "5-way-blade"
+      },
+      "before": true,
+      "after": true,
+      "classification": "valid and implemented"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "SSS",
+        "controlLayout": "2V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "SSS",
+        "controlLayout": "2V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "SSS",
+        "controlLayout": "2V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HSS",
+        "controlLayout": "1V1T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HSS",
+        "controlLayout": "1V1T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HSS",
+        "controlLayout": "1V1T",
+        "selector": "5-way-blade"
+      },
+      "before": true,
+      "after": true,
+      "classification": "valid and implemented"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HSS",
+        "controlLayout": "1V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HSS",
+        "controlLayout": "1V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HSS",
+        "controlLayout": "1V2T",
+        "selector": "5-way-blade"
+      },
+      "before": true,
+      "after": true,
+      "classification": "valid and implemented"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HSS",
+        "controlLayout": "2V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HSS",
+        "controlLayout": "2V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HSS",
+        "controlLayout": "2V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HSH",
+        "controlLayout": "1V1T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HSH",
+        "controlLayout": "1V1T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HSH",
+        "controlLayout": "1V1T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HSH",
+        "controlLayout": "1V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HSH",
+        "controlLayout": "1V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HSH",
+        "controlLayout": "1V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HSH",
+        "controlLayout": "2V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HSH",
+        "controlLayout": "2V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HSH",
+        "controlLayout": "2V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HH",
+        "controlLayout": "1V1T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HH",
+        "controlLayout": "1V1T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HH",
+        "controlLayout": "1V1T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HH",
+        "controlLayout": "1V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HH",
+        "controlLayout": "1V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HH",
+        "controlLayout": "1V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HH",
+        "controlLayout": "2V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HH",
+        "controlLayout": "2V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "superstrat",
+        "layout": "HH",
+        "controlLayout": "2V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "prs",
+        "layout": "HH",
+        "controlLayout": "1V1T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "prs",
+        "layout": "HH",
+        "controlLayout": "1V1T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": true,
+      "classification": "valid and implemented"
+    },
+    {
+      "dimensions": {
+        "family": "prs",
+        "layout": "HH",
+        "controlLayout": "1V1T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "prs",
+        "layout": "HH",
+        "controlLayout": "1V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "prs",
+        "layout": "HH",
+        "controlLayout": "1V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "prs",
+        "layout": "HH",
+        "controlLayout": "1V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "prs",
+        "layout": "HH",
+        "controlLayout": "2V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "prs",
+        "layout": "HH",
+        "controlLayout": "2V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "prs",
+        "layout": "HH",
+        "controlLayout": "2V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "S",
+        "controlLayout": "1V1T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "S",
+        "controlLayout": "1V1T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "S",
+        "controlLayout": "1V1T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "S",
+        "controlLayout": "1V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "S",
+        "controlLayout": "1V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "S",
+        "controlLayout": "1V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "S",
+        "controlLayout": "2V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "S",
+        "controlLayout": "2V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "S",
+        "controlLayout": "2V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SS",
+        "controlLayout": "1V1T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SS",
+        "controlLayout": "1V1T",
+        "selector": "3-way-blade"
+      },
+      "before": true,
+      "after": true,
+      "classification": "valid and implemented"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SS",
+        "controlLayout": "1V1T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SS",
+        "controlLayout": "1V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SS",
+        "controlLayout": "1V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SS",
+        "controlLayout": "1V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SS",
+        "controlLayout": "2V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SS",
+        "controlLayout": "2V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SS",
+        "controlLayout": "2V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HS",
+        "controlLayout": "1V1T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HS",
+        "controlLayout": "1V1T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HS",
+        "controlLayout": "1V1T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HS",
+        "controlLayout": "1V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HS",
+        "controlLayout": "1V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HS",
+        "controlLayout": "1V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HS",
+        "controlLayout": "2V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HS",
+        "controlLayout": "2V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HS",
+        "controlLayout": "2V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SH",
+        "controlLayout": "1V1T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SH",
+        "controlLayout": "1V1T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SH",
+        "controlLayout": "1V1T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SH",
+        "controlLayout": "1V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SH",
+        "controlLayout": "1V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SH",
+        "controlLayout": "1V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SH",
+        "controlLayout": "2V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SH",
+        "controlLayout": "2V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SH",
+        "controlLayout": "2V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SSS",
+        "controlLayout": "1V1T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SSS",
+        "controlLayout": "1V1T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SSS",
+        "controlLayout": "1V1T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SSS",
+        "controlLayout": "1V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SSS",
+        "controlLayout": "1V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SSS",
+        "controlLayout": "1V2T",
+        "selector": "5-way-blade"
+      },
+      "before": true,
+      "after": true,
+      "classification": "valid and implemented"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SSS",
+        "controlLayout": "2V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SSS",
+        "controlLayout": "2V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "SSS",
+        "controlLayout": "2V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "H",
+        "controlLayout": "1V1T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "H",
+        "controlLayout": "1V1T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "H",
+        "controlLayout": "1V1T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "H",
+        "controlLayout": "1V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "H",
+        "controlLayout": "1V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "H",
+        "controlLayout": "1V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "H",
+        "controlLayout": "2V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "H",
+        "controlLayout": "2V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "H",
+        "controlLayout": "2V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HH",
+        "controlLayout": "1V1T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HH",
+        "controlLayout": "1V1T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": true,
+      "classification": "valid and implemented"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HH",
+        "controlLayout": "1V1T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HH",
+        "controlLayout": "1V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HH",
+        "controlLayout": "1V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HH",
+        "controlLayout": "1V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HH",
+        "controlLayout": "2V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": true,
+      "after": true,
+      "classification": "valid and implemented"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HH",
+        "controlLayout": "2V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HH",
+        "controlLayout": "2V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HSS",
+        "controlLayout": "1V1T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HSS",
+        "controlLayout": "1V1T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HSS",
+        "controlLayout": "1V1T",
+        "selector": "5-way-blade"
+      },
+      "before": true,
+      "after": true,
+      "classification": "valid and implemented"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HSS",
+        "controlLayout": "1V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HSS",
+        "controlLayout": "1V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HSS",
+        "controlLayout": "1V2T",
+        "selector": "5-way-blade"
+      },
+      "before": true,
+      "after": true,
+      "classification": "valid and implemented"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HSS",
+        "controlLayout": "2V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HSS",
+        "controlLayout": "2V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "invalid combination"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HSS",
+        "controlLayout": "2V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "descriptive UI option; no validated assignment/topology"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HSH",
+        "controlLayout": "1V1T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HSH",
+        "controlLayout": "1V1T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HSH",
+        "controlLayout": "1V1T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HSH",
+        "controlLayout": "1V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HSH",
+        "controlLayout": "1V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HSH",
+        "controlLayout": "1V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HSH",
+        "controlLayout": "2V2T",
+        "selector": "3-way-toggle"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HSH",
+        "controlLayout": "2V2T",
+        "selector": "3-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    },
+    {
+      "dimensions": {
+        "family": "custom",
+        "layout": "HSH",
+        "controlLayout": "2V2T",
+        "selector": "5-way-blade"
+      },
+      "before": false,
+      "after": false,
+      "classification": "valid; future architecture"
+    }
+  ],
+  "modifiers": [
+    {
+      "reference": "les-paul",
+      "bleed": "none",
+      "placement": "neck",
+      "wiring": "modern",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "none",
+      "placement": "neck",
+      "wiring": "50s",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "none",
+      "placement": "neck",
+      "wiring": "60s",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "none",
+      "placement": "bridge",
+      "wiring": "modern",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "none",
+      "placement": "bridge",
+      "wiring": "50s",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "none",
+      "placement": "bridge",
+      "wiring": "60s",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "none",
+      "placement": "both",
+      "wiring": "modern",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "none",
+      "placement": "both",
+      "wiring": "50s",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "none",
+      "placement": "both",
+      "wiring": "60s",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "prs",
+      "placement": "neck",
+      "wiring": "modern",
+      "before": false,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "prs",
+      "placement": "neck",
+      "wiring": "50s",
+      "before": false,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "prs",
+      "placement": "neck",
+      "wiring": "60s",
+      "before": false,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "prs",
+      "placement": "bridge",
+      "wiring": "modern",
+      "before": false,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "prs",
+      "placement": "bridge",
+      "wiring": "50s",
+      "before": false,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "prs",
+      "placement": "bridge",
+      "wiring": "60s",
+      "before": false,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "prs",
+      "placement": "both",
+      "wiring": "modern",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "prs",
+      "placement": "both",
+      "wiring": "50s",
+      "before": false,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "prs",
+      "placement": "both",
+      "wiring": "60s",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "cap",
+      "placement": "neck",
+      "wiring": "modern",
+      "before": false,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "cap",
+      "placement": "neck",
+      "wiring": "50s",
+      "before": false,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "cap",
+      "placement": "neck",
+      "wiring": "60s",
+      "before": false,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "cap",
+      "placement": "bridge",
+      "wiring": "modern",
+      "before": false,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "cap",
+      "placement": "bridge",
+      "wiring": "50s",
+      "before": false,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "cap",
+      "placement": "bridge",
+      "wiring": "60s",
+      "before": false,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "cap",
+      "placement": "both",
+      "wiring": "modern",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "cap",
+      "placement": "both",
+      "wiring": "50s",
+      "before": false,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "cap",
+      "placement": "both",
+      "wiring": "60s",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "duncan",
+      "placement": "neck",
+      "wiring": "modern",
+      "before": false,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "duncan",
+      "placement": "neck",
+      "wiring": "50s",
+      "before": false,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "duncan",
+      "placement": "neck",
+      "wiring": "60s",
+      "before": false,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "duncan",
+      "placement": "bridge",
+      "wiring": "modern",
+      "before": false,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "duncan",
+      "placement": "bridge",
+      "wiring": "50s",
+      "before": false,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "duncan",
+      "placement": "bridge",
+      "wiring": "60s",
+      "before": false,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "duncan",
+      "placement": "both",
+      "wiring": "modern",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "duncan",
+      "placement": "both",
+      "wiring": "50s",
+      "before": false,
+      "after": true
+    },
+    {
+      "reference": "les-paul",
+      "bleed": "duncan",
+      "placement": "both",
+      "wiring": "60s",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "tele",
+      "bleed": "none",
+      "placement": "master",
+      "wiring": "modern",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "tele",
+      "bleed": "prs",
+      "placement": "master",
+      "wiring": "modern",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "tele",
+      "bleed": "cap",
+      "placement": "master",
+      "wiring": "modern",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "tele",
+      "bleed": "duncan",
+      "placement": "master",
+      "wiring": "modern",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "strat",
+      "bleed": "none",
+      "placement": "master",
+      "wiring": "modern",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "strat",
+      "bleed": "prs",
+      "placement": "master",
+      "wiring": "modern",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "strat",
+      "bleed": "cap",
+      "placement": "master",
+      "wiring": "modern",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "strat",
+      "bleed": "duncan",
+      "placement": "master",
+      "wiring": "modern",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "hss",
+      "bleed": "none",
+      "placement": "master",
+      "wiring": "modern",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "hss",
+      "bleed": "prs",
+      "placement": "master",
+      "wiring": "modern",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "hss",
+      "bleed": "cap",
+      "placement": "master",
+      "wiring": "modern",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "hss",
+      "bleed": "duncan",
+      "placement": "master",
+      "wiring": "modern",
+      "before": true,
+      "after": true
+    },
+    {
+      "reference": "prs-hh",
+      "bleed": "none",
+      "placement": "master",
+      "wiring": "modern",
+      "before": false,
+      "after": true
+    },
+    {
+      "reference": "prs-hh",
+      "bleed": "prs",
+      "placement": "master",
+      "wiring": "modern",
+      "before": false,
+      "after": true
+    },
+    {
+      "reference": "prs-hh",
+      "bleed": "cap",
+      "placement": "master",
+      "wiring": "modern",
+      "before": false,
+      "after": true
+    },
+    {
+      "reference": "prs-hh",
+      "bleed": "duncan",
+      "placement": "master",
+      "wiring": "modern",
+      "before": false,
+      "after": true
+    }
+  ]
+}

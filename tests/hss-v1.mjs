@@ -39,7 +39,7 @@ for(const controlLayout of ['1V2T','1V1T'])for(let position=1;position<=5;positi
 }
 for(const modification of ['coil-split','partial-split','series','parallel','phase-reversal']){const i=createReference('hss');i.pickups[2].modification=modification;assert.equal(instrumentCapabilities(i).canGenerateWiring,false);assert.equal(makeInstrumentCircuit(i).components.length,0);}
 for(const change of [i=>i.selector.family='superswitch',i=>i.selector.autoSplit=true,i=>i.autoSplit=true,i=>i.pickups[2].coilSelection='north',i=>i.switching={pushpull:true}]){const i=createReference('hss');change(i);assert.equal(validateInstrument(i).valid,false);}
-const coloured=createReference('hss');coloured.pickups[2].conductor='duncan';assert.equal(instrumentCapabilities(coloured).canGenerateWiring,false);
+const coloured=createReference('hss');coloured.pickups[2].conductor='duncan';assert.equal(instrumentCapabilities(coloured).canGenerateWiring,true);
 const custom=createReference('hss');custom.controls.find(c=>c.id==='middleTone').assignments=['middle'];assert.equal(instrumentCapabilities(custom).canGenerateWiring,false,'Historical descriptive HSS stays descriptive, never substituted');
 const legacyGraphs=[];
 for(const guitar of ['tele','strat','les-paul','sg'])for(const wiring of ['modern','50s','60s']){if(['tele','strat'].includes(guitar)&&wiring!=='modern')continue;for(const position of guitar==='strat'?['1','2','3','4','5']:guitar==='tele'?['1','2','3']:['neck','both','bridge']){

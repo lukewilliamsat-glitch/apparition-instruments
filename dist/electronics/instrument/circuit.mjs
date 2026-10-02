@@ -26,9 +26,9 @@ export function instrumentFromCircuit(circuit){
  const config=circuit.state,selected=instrumentCapabilities(i).selected[0];
  if(config.guitar!=='instrument'){
   if(config.switching)i.switching=structuredClone(config.switching);else delete i.switching;
-  i.wiring=config.wiring;i.shielding=config.shielding;i.selector.selection=config.guitar==='les-paul'?{bridge:1,both:2,neck:3}[config.position]:Number(config.position);
-  for(const p of i.pickups){const a=config.responseAssumptions?.channels[p.position];if(a)p.assumption=a.pickup;if(config.pickupProfiles?.[p.position])p.conductor=config.pickupProfiles[p.position];}
-  for(const c of i.controls){const channel=c.assignments.includes(selected)?selected:c.assignments[0],a=config.responseAssumptions?.channels[channel],values=config.controlPositions?.[channel];if(a)c.pot=a[c.role+'Pot'];if(values)c.position=values[c.role];if(c.role==='volume')c.bleed=config.bleed;else c.capacitor=config.guitar==='les-paul'?config[c.assignments[0]+'Cap']:config.neckCap;}
+  i.wiring=config.wiring;i.shielding=config.shielding;i.selector.selection=['les-paul','sg'].includes(config.guitar)?{bridge:1,both:2,neck:3}[config.position]:Number(config.position);
+  for(const p of i.pickups){const a=config.responseAssumptions?.channels[p.position];if(a)p.assumption=a.pickup;if(config.pickupProfiles?.[p.position]&&(p.conductor||config.pickupProfiles[p.position]!=='generic'))p.conductor=config.pickupProfiles[p.position];}
+  for(const c of i.controls){const channel=c.assignments.includes(selected)?selected:c.assignments[0],a=config.responseAssumptions?.channels[channel],values=config.controlPositions?.[channel];if(a)c.pot=a[c.role+'Pot'];if(values)c.position=values[c.role];if(c.role==='volume')c.bleed=config.volumeBleeds?.[c.assignments[0]]??config.bleed;else c.capacitor=['les-paul','sg'].includes(config.guitar)?config[c.assignments[0]+'Cap']:config.neckCap;}
   i.load={cableC:config.responseAssumptions.cableC,loadR:config.responseAssumptions.loadR};
  }
  return normaliseInstrument(i);
@@ -36,12 +36,12 @@ export function instrumentFromCircuit(circuit){
 
 // Inverse adapter for raw Generator links; shared instrument authority owns defaults.
 export function instrumentFromGeneratorCircuit(circuit){
- if(!['hss','les-paul','sg'].includes(circuit.state.guitar))throw Error('No instrument adapter for this generator circuit.');
- const config=circuit.state,hss=config.guitar==='hss',i=hss?configureInstrumentDimensions(createReference('hss'),{controlLayout:config.controlLayout}):configureInstrumentDimensions(createReference('les-paul'),{family:config.guitar});
- i.selector.selection=hss?Number(config.position):{bridge:1,both:2,neck:3}[config.position];i.wiring=config.wiring;i.shielding=config.shielding;
+ if(!['hss','les-paul','sg','tele','strat','prs-se'].includes(circuit.state.guitar))throw Error('No instrument adapter for this generator circuit.');
+ const config=circuit.state,hss=config.guitar==='hss',i=hss?configureInstrumentDimensions(createReference('hss'),{controlLayout:config.controlLayout}):['les-paul','sg'].includes(config.guitar)?configureInstrumentDimensions(createReference('les-paul'),{family:config.guitar}):createReference(config.guitar==='prs-se'?'prs-hh':config.guitar);
+ i.selector.selection=['les-paul','sg'].includes(config.guitar)?{bridge:1,both:2,neck:3}[config.position]:Number(config.position);i.wiring=config.wiring;i.shielding=config.shielding;
  if(config.switching)i.switching=structuredClone(config.switching);
- for(const control of i.controls){const part=circuit.components.find(p=>p.id===(control.id==='masterTone'?'neckTone':control.id));control.pot=parseFloat(part.value);if(control.role==='tone')control.capacitor=hss?config.neckCap:config[control.assignments[0]+'Cap'];else control.bleed=config.bleed;}
- for(const pickup of i.pickups){const a=config.responseAssumptions?.channels?.[pickup.position];if(a)pickup.assumption=a.pickup;}
+ for(const control of i.controls){const part=circuit.components.find(p=>p.id===(control.id==='masterTone'?'neckTone':control.id));control.pot=parseFloat(part.value);if(control.role==='tone')control.capacitor=['les-paul','sg'].includes(config.guitar)?config[control.assignments[0]+'Cap']:config.neckCap;else control.bleed=config.volumeBleeds?.[control.assignments[0]]??config.bleed;}
+ for(const pickup of i.pickups){if(config.pickupProfiles?.[pickup.position])pickup.conductor=config.pickupProfiles[pickup.position];const a=config.responseAssumptions?.channels?.[pickup.position];if(a)pickup.assumption=a.pickup;}
  for(const control of i.controls){const positions=config.controlPositions?.[control.assignments[0]];if(positions)control.position=positions[control.role];}
  if(config.responseAssumptions)i.load={cableC:config.responseAssumptions.cableC,loadR:config.responseAssumptions.loadR};
  return normaliseInstrument(i);

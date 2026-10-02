@@ -47,6 +47,6 @@ if(isForge){
  assert.equal($('#hss-control-layout').hidden,false);assert.equal($('#generator-form').elements.controlLayout.value,layout);
  const field=$('#generator-form').elements.controlLayout;field.value=layout==='1V2T'?'1V1T':'1V2T';field.dispatchEvent(new Event('change',{bubbles:true}));
  assert.equal(readProject(new URL($('#generator-source-circuit').href).search).project.electronics.instrument.controlLayout,field.value);
- assert($('#build-kit').hidden);assert.equal($('#hss-pushpull-state').hidden,true);const modifier=$('#generator-form').elements.bridgeSwitching;modifier.value='none';modifier.dispatchEvent(new Event('change',{bubbles:true}));assert(!mount.querySelector('[data-component="bridgeSplit"]'));assert.equal(readProject(location.search).project.electronics.instrument.switching,undefined);assert.equal($('#generator-form').elements.colours.disabled,true);
+ assert($('#build-kit').hidden);assert.equal($('#hss-pushpull-state').hidden,true);const modifier=$('#generator-form').elements.bridgeSwitching;modifier.value='none';modifier.dispatchEvent(new Event('change',{bubbles:true}));assert(!mount.querySelector('[data-component="bridgeSplit"]'));assert.equal(readProject(location.search).project.electronics.instrument.switching,undefined);assert.equal($('#generator-form').elements.colours.disabled,false);
 }
 await win.happyDOM.close();console.log('Advanced switching '+scenario+' DOM: six viewport contracts, five positions, modes/keyboard, state and layout handoffs PASS; rendered QA deferred');process.exit(0);

@@ -39,12 +39,12 @@ export function circuitResponse(circuit,count=201){
  try{
   const channel=selected,volume=component(circuit,p=>instrument?instrument.controls.some(c=>c.role==='volume'&&c.assignments.includes(channel)&&c.id===p.id):p.channel===channel&&p.role==='volume'),tone=component(circuit,p=>instrument?instrument.controls.some(c=>c.role==='tone'&&c.assignments.includes(channel)&&(c.id===p.id||c.id==='masterTone'&&p.id==='neckTone')):p.channel===channel&&p.role==='tone');
   const capWire=circuit.connections.find(w=>w.id===channel+'ToneCap');
-  const toneCap=component(circuit,p=>p.id===(instrument&&circuit.state.guitar!=='les-paul'?'toneCap':capWire?.from.split('.')[0])&&p.type==='capacitor');
-  const auxiliary=circuit.connections.filter(w=>w.network==='auxiliary'&&(instrument&&circuit.state.guitar!=='les-paul'||w.from.startsWith(channel)||w.to.startsWith(channel)));
-  const bleedCap=component(circuit,p=>(instrument&&circuit.state.guitar!=='les-paul'||p.channel===channel)&&p.type==='capacitor'&&auxiliary.some(w=>w.from.startsWith(p.id+'.')||w.to.startsWith(p.id+'.')));
-  const bleedResistor=component(circuit,p=>(instrument&&circuit.state.guitar!=='les-paul'||p.channel===channel)&&p.type==='resistor'&&auxiliary.some(w=>w.from.startsWith(p.id+'.')||w.to.startsWith(p.id+'.')));
+  const toneCap=component(circuit,p=>p.id===(instrument&&!['les-paul','sg'].includes(circuit.state.guitar)?'toneCap':capWire?.from.split('.')[0])&&p.type==='capacitor');
+  const auxiliary=circuit.connections.filter(w=>w.network==='auxiliary'&&(instrument&&!['les-paul','sg'].includes(circuit.state.guitar)||w.from.startsWith(channel)||w.to.startsWith(channel)));
+  const bleedCap=component(circuit,p=>(instrument&&!['les-paul','sg'].includes(circuit.state.guitar)||p.channel===channel)&&p.type==='capacitor'&&auxiliary.some(w=>w.from.startsWith(p.id+'.')||w.to.startsWith(p.id+'.')));
+  const bleedResistor=component(circuit,p=>(instrument&&!['les-paul','sg'].includes(circuit.state.guitar)||p.channel===channel)&&p.type==='resistor'&&auxiliary.some(w=>w.from.startsWith(p.id+'.')||w.to.startsWith(p.id+'.')));
   const type=!bleedCap?'none':bleedResistor?'duncan':'capacitor';
-  if((circuit.state.bleed==='none')!==!bleedCap)throw Error('Treble bleed topology is unavailable.');
+  if(((circuit.state.volumeBleeds?.[channel]??circuit.state.bleed)==='none')!==!bleedCap)throw Error('Treble bleed topology is unavailable.');
   const controls=circuit.state.controlPositions?.[channel];if(!controls)throw Error('Control positions are unavailable.');
   const state={...resolveResponseAssumptions(circuit.state.responseAssumptions,channel),type,volume:controls.volume,tonePosition:controls.tone,volumePot:valueOf(volume,'volume pot'),tonePot:valueOf(tone,'tone pot'),toneCap:capacitance(toneCap),bleedC:bleedCap?capacitance(bleedCap):defaults.bleedC,bleedR:bleedResistor?valueOf(bleedResistor,'bleed resistor'):defaults.bleedR};
   const points=frequencyResponse(state,count),reference=type==='none'?null:frequencyResponse({...state,type:'none'},count);
