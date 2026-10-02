@@ -4,6 +4,11 @@ do $migration$
 declare function_sql text := pg_get_functiondef('public.create_guest_kit_order(jsonb)'::regprocedure);
 begin
  if position('from public.commerce_shipping where country=''GB''' in function_sql)=0 then
+  -- Fresh source installs already contain the qualified shipping reference.
+  -- Preserve the applied repair and still reject an unexpected function body.
+  if position('from public.commerce_shipping shipping where shipping.country=''GB''' in function_sql)>0 then
+   return;
+  end if;
   raise exception 'Expected P07B checkout function body was not installed';
  end if;
  execute replace(function_sql,

@@ -11,9 +11,9 @@ assert.throws(()=>invoiceFromOrder({...paid,paymentStatus:'unpaid'}),/paid Order
 assert.throws(()=>invoiceFromOrder({...paid,pricing:{subtotal:1,delivery:399,total:401}}),/totals/);
 assert.throws(()=>invoiceFromOrder({...paid,items:[{...paid.items[0],lineTotal:2}]}),/items/);
 const invoiceApp=fs.readFileSync('dist/admin/orders/invoice/app.mjs','utf8'),invoiceHtml=fs.readFileSync('dist/admin/orders/invoice/index.html','utf8');
-assert.match(invoiceApp,/currentAdminOrderRepository\(\)\.list\(\)/);
+assert.match(invoiceApp,/repository=currentAdminOrderRepository\(\)/);
 assert.match(invoiceHtml,/data-admin-entry/);
-assert.match(invoiceApp,/invoiceFromOrder\(record\)/);
+assert.match(invoiceApp,/renderInvoiceDocument\(root,record,document\)/);
 assert.doesNotMatch(invoiceApp,/localStorage|location\.search.*paymentStatus/);
 const webhook=fs.readFileSync('supabase/functions/stripe-webhook/index.ts','utf8');
 assert.match(webhook,/verifyStripeSignature\(raw/);
@@ -21,5 +21,5 @@ assert.match(webhook,/if\(!response\.ok\)return reply\(503,'Order fulfilment cou
 const foundation=fs.readFileSync('supabase/functions/stripe-webhook/confirmation.ts','utf8');
 assert.match(foundation,/payment_status!=='paid'/);
 assert.match(foundation,/fulfillment_applied_at/);
-assert.match(foundation,/Server-only template/);
+assert.match(foundation,/renderEmailV2\('order_confirmed',order\)/);
 console.log('P07B.6: paid persisted invoice, address, gated page and inactive trusted confirmation foundation PASS');

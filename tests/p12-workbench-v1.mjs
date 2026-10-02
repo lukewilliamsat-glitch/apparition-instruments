@@ -18,7 +18,7 @@ for(const wiring of ['modern','50s','60s'])for(const bleed of (wiring==='50s'?['
  assert.equal(selectorReport(c).channels.filter(x=>x.active).length,position==='both'?2:1);
  assert(inspectSelection(c,{kind:'terminal',ref:'jack.tip'}).references.includes('jack.tip'));
 }
-assert.throws(()=>forgeCircuit({wiring:'50s',bleed:'duncan'}),/50s wiring/);
+assert(forgeCircuit({wiring:'50s',bleed:'duncan'}).circuit.connections.some(w=>w.from==='neckVolume.lug3'&&w.to==='neckBleedCap.a'));
 for(const [position,expected] of [['neck',[true,false]],['both',[true,true]],['bridge',[false,true]]]){
  const c=circuit({position}),report=selectorReport(c);
  assert.deepEqual(report.channels.map(x=>x.active),expected);

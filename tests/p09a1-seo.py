@@ -14,6 +14,8 @@ class Page(HTMLParser):
     def __init__(self):
         super().__init__()
         self.meta = {}
+        self.inhead = False
+        self.meta_counts = {}
         self.canonical = []
         self.jsonld = []
         self.title = ''
@@ -23,19 +25,25 @@ class Page(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
+        if tag == 'head':
+            self.inhead = True
         if tag == 'meta':
-            self.meta[attrs.get('property') or attrs.get('name')] = attrs.get('content')
+            key=attrs.get('property') or attrs.get('name')
+            self.meta[key] = attrs.get('content')
+            self.meta_counts[key] = self.meta_counts.get(key,0)+1
         if tag == 'link' and attrs.get('rel') == 'canonical':
             self.canonical.append(attrs['href'])
         if tag == 'script' and attrs.get('type') == 'application/ld+json':
             self.current = 'jsonld'
             self.jsonld.append('')
-        if tag in ('title', 'h1'):
+        if tag == 'h1' or tag == 'title' and self.inhead:
             self.current = tag
         if tag == 'a' and attrs.get('href'):
             self.links.add(attrs['href'])
 
     def handle_endtag(self, tag):
+        if tag == 'head':
+            self.inhead = False
         if tag == 'script' and self.current == 'jsonld':
             self.current = ''
         if tag == self.current:
@@ -60,7 +68,7 @@ xml = ET.parse(ROOT / 'dist/sitemap.xml')
 namespace = {'s': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
 urls = [node.text for node in xml.findall('s:url/s:loc', namespace)]
 assert urls[:len(seo.PAGES)] == [seo.BASE + route for route in seo.PAGES]
-assert set(urls[len(seo.PAGES):]) == {seo.BASE + '/products/' + f.parent.name + '/' for f in (ROOT / 'dist/products').glob('*/index.html')}
+assert set(urls) == {seo.BASE + route for route in seo.public_routes(list((ROOT / 'dist').rglob('index.html')))}
 assert len(urls) == len(set(urls))
 titles = set()
 for route, (title, description) in seo.PAGES.items():
@@ -106,3 +114,42 @@ assert {'/contact/', '/faq/', '/terms/', '/privacy/'}.issubset(home.links)
 assert read('/wiring-diagrams/').canonical == [seo.BASE + '/wiring-generator/']
 assert all(urlparse(url).netloc == 'apparitioninstruments.co.uk' for url in urls)
 print(f'P09A.1 SEO: {len(urls)} canonical public pages, {len(seo.NOINDEX)} utility routes, admin and 404 verified')
+
+# Generated editorial routes participate in the same metadata/discovery contract.
+for url in urls:
+    route=url.removeprefix(seo.BASE)
+    page=read(route)
+    assert page.canonical==[url]
+    assert page.title.strip() and page.meta.get('description')
+    assert page.meta_counts['description']==1
+    assert page.meta.get('og:title')==page.title
+    assert page.meta.get('og:description')==page.meta['description']
+    assert page.meta.get('og:url')==url
+    assert page.jsonld
+    if not route.startswith('/products/'):
+        graph=json.loads(page.jsonld[0])['@graph']
+        assert graph[0]['url']==url and graph[0]['name']==page.title
+
+# Rebuilding metadata preserves scripts/styles and body, and is idempotent.
+import tempfile,shutil,re
+original_root=seo.ROOT
+with tempfile.TemporaryDirectory() as folder:
+    target=Path(folder)/'dist'
+    shutil.copytree(original_root,target)
+    seo.ROOT=target
+    selected=['/terms/','/luthier-hub/']
+    def protected(source):
+        body=source.split('</head>',1)[1]
+        return (body,re.findall(r'<(?:script|style)\b(?![^>]*application/ld\+json)[\s\S]*?</(?:script|style)>',source))
+    before={route:protected((target/route.strip('/')/'index.html').read_text()) for route in selected}
+    seo.main(selected)
+    first={route:(target/route.strip('/')/'index.html').read_text() for route in selected}
+    for route,source in first.items():
+        assert protected(source)==before[route]
+        assert len(re.findall(r'<meta name="description"',source))==1
+        assert len(re.findall(r'<link rel="canonical"',source))==1
+    seo.main(selected)
+    assert all((target/route.strip('/')/'index.html').read_text()==source for route,source in first.items())
+    assert set(ET.parse(target/'sitemap.xml').findall('s:url/s:loc',namespace)[i].text for i in range(len(urls)))==set(urls)
+seo.ROOT=original_root
+print('Generated editorial metadata, complete sitemap, node-safe regeneration and idempotence PASS')

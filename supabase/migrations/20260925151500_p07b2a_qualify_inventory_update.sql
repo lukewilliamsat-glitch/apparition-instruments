@@ -4,6 +4,11 @@ do $migration$
 declare function_sql text := pg_get_functiondef('public.fulfil_paid_stripe_checkout(text,text,uuid,text,text,text,bigint,text)'::regprocedure);
 begin
  if position('update public.inventory set quantity=quantity-wanted.value::bigint,updated_at=now()' in function_sql)=0 then
+  -- The source baseline already includes this repair on a fresh installation.
+  if position('update public.inventory inventory_row set quantity=inventory_row.quantity-wanted.value::bigint,updated_at=now()
+   where inventory_row.component_id=wanted.key and inventory_row.quantity>=wanted.value::bigint' in function_sql)>0 then
+   return;
+  end if;
   raise exception 'Expected P07B.2A function body was not installed';
  end if;
  execute replace(function_sql,

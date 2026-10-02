@@ -18,7 +18,7 @@ function closeMenu(){if(!menu||!mobileNav)return;menu.setAttribute('aria-expande
 menu?.addEventListener('click',()=>{const open=menu.getAttribute('aria-expanded')==='true';menu.setAttribute('aria-expanded',String(!open));mobileNav.hidden=open;menu.querySelector('span').textContent=open?'+':'−';});
 mobileNav?.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&mobileNav&&!mobileNav.hidden){closeMenu();menu.focus();}});
-window.matchMedia('(min-width: 1101px)').addEventListener('change',e=>{if(e.matches)closeMenu();});
+window.matchMedia('(min-width: 1181px)').addEventListener('change',e=>{if(e.matches)closeMenu();});
 document.querySelectorAll('[data-year]').forEach(el=>el.textContent=new Date().getFullYear());
 const updateCount=createBasketCounter({onCount:count=>document.querySelectorAll('[data-basket-count]').forEach(el=>{el.textContent=String(count);})});
 updateCount();window.addEventListener('storage',updateCount);window.addEventListener('apparition:basket-changed',updateCount);window.addEventListener('pageshow',updateCount);
@@ -50,5 +50,5 @@ const dropdowns=[...document.querySelectorAll('.nav-components')];
 for(const item of dropdowns){item.addEventListener('toggle',()=>{if(item.open)dropdowns.filter(x=>x!==item).forEach(x=>x.open=false);});item.addEventListener('keydown',e=>{const links=[...item.querySelectorAll('a')];if(e.key==='Escape'){item.open=false;item.querySelector('summary').focus();e.stopPropagation();}if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();item.open=true;const index=links.indexOf(document.activeElement),next=e.key==='ArrowDown'?(index+1)%links.length:(index<=0?links.length-1:index-1);links[next].focus();}});}
 document.addEventListener('click',e=>dropdowns.forEach(d=>{if(!d.contains(e.target))d.open=false;}));
 // Hover is an enhancement to native disclosure, not a dependency for touch or keyboard use.
-const hoverNavigation=matchMedia('(hover: hover) and (min-width: 1101px)');
+const hoverNavigation=matchMedia('(hover: hover) and (min-width: 1181px)');
 for(const item of dropdowns){item.addEventListener('pointerenter',()=>{if(hoverNavigation.matches)item.open=true;});item.addEventListener('pointerleave',()=>{if(hoverNavigation.matches&&!item.contains(document.activeElement))item.open=false;});item.addEventListener('focusout',()=>queueMicrotask(()=>{if(!item.contains(document.activeElement)&&!item.matches(':hover'))item.open=false;}));}

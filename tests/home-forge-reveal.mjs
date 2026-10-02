@@ -1,27 +1,27 @@
-import {createHash} from 'node:crypto';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {Window} from 'happy-dom';
 import {forgeCircuit} from '../dist/circuit-forge/model.mjs';
-import {forgeDiagram} from '../dist/circuit-forge/presentation.mjs';
+import {drawCircuit} from '../dist/wiring-generator/render.mjs';
+import {homepageCircuit,homepageSpecificationKey} from '../dist/electronics/presentation/homepage-state.mjs';
 import {forgeResponse} from '../dist/circuit-forge/response.mjs';
 import {responseGraph} from '../dist/circuit-forge/response-view.mjs';
 import {chapterForProgress} from '../dist/forge-reveal.mjs';
 
 const html=readFileSync('dist/index.html','utf8'),asset=readFileSync('dist/assets/signal-forge-full.svg','utf8'),css=readFileSync('dist/homepage.css','utf8');
 const circuit=forgeCircuit({position:'neck'}).circuit;
-// The accepted homepage preview is a published visual checkpoint. Generator
-// export semantics can evolve without regenerating this accepted composition.
-assert.equal(createHash('sha256').update(asset).digest('hex'),'9e90ed1617a095dbe1dcc60566af5f3356673d1d6f98d83721f7c02019f8da2f');
+// Generated output follows the current graph and presentation authority.
+const expected=drawCircuit(homepageCircuit(),{exporting:true,mode:'trace',palette:'editorial',surface:'dark'}).replace('<svg ','<svg data-homepage-specification="'+homepageSpecificationKey(homepageCircuit()).replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;')+'" ');
+assert.equal(asset,expected);
 assert(html.includes('id="signal-forge"')&&html.includes('forge-reveal.mjs?rev=signal-forge-identity-v1'));
-assert(html.includes('homepage.css?rev=signal-forge-mobile-v1')&&html.includes('signal-forge-full.svg?rev=signal-forge-identity-v1'));
+assert(html.includes('homepage.css?rev=signal-forge-mobile-v1')&&html.includes('signal-forge-full.svg?rev=platform-qa-v1'));
 for(const chapter of [0,1,2,3])assert(html.includes(`data-forge-chapter="${chapter}"`));
 assert(html.includes('href="/circuit-forge/"')&&html.includes('href="/wiring-generator/"'));
 assert(html.includes('class="ethos section"')&&html.includes('class="product-list"'));
 assert.deepEqual([-.1,0,.24,.25,.5,.75,1,2].map(chapterForProgress),[0,0,0,1,2,3,3,3]);
 assert(css.includes('prefers-reduced-motion:reduce')&&css.includes('.forge-reveal:not(.is-animated)'));
 assert(!html.includes('forge-reveal-continuation')&&!css.includes('forge-reveal-continuation'),'Analyse has no decorative conductor');
-assert(css.includes('.forge-crossing:not([data-home-trace]) path{stroke:#777;opacity:.25}'));
+assert(css.includes('.forge-crossing:not([data-home-trace]) path{stroke:#8d7a55;opacity:.48}'));
 
 async function inspect(reduced){
  const win=new Window({url:'https://apparitioninstruments.co.uk/'});win.document.write(html);

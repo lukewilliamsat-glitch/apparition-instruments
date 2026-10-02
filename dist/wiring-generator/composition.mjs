@@ -12,6 +12,8 @@ export function composeWorkbench(circuit){
 // One title anchor contract for drawing and protected routing regions.
 export function componentTitlePosition(part){
  const x=['humbucker','singlecoil'].includes(part.type)?77:['blade','blade3','blade5','superswitch'].includes(part.type)?95:0;
- const y=part.physicalControl==='push-pull'?-155:part.type==='pot'?-12:['blade','blade3','blade5'].includes(part.type)?-58:-20;
+ // The pot value sits at -8. Reserve a full label line above it; routing uses
+ // this same anchor, so the title remains protected from conductors too.
+ const y=part.physicalControl==='push-pull'?-155:part.type==='pot'?-36:['blade','blade3','blade5'].includes(part.type)?-58:-20;
  return {x,y};
 }

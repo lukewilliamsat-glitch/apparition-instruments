@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {Window} from 'happy-dom';
 import {readFile} from 'node:fs/promises';
 import {forgeCircuit} from '../dist/circuit-forge/model.mjs';
 import {forgeDiagram} from '../dist/circuit-forge/presentation.mjs';
@@ -30,7 +31,7 @@ assert(wire(drawCircuit(circuit,{filter:'switching'}),'toggleJoin').includes('da
 const traced=drawCircuit(circuit,{filter:'ground',selection:{kind:'path',refs:[...net(circuit,'jack.tip')]}});
 assert(wire(traced,'jackSignal').includes('data-view-state="traced"'),'explicit trace wins over ground filter');
 assert(wire(traced,'jackGround').includes('data-view-state="muted"'));
-assert(traced.includes('[data-view-state=traced] .wire-line{stroke-width:4.5}'));
+const win=new Window({settings:{disableCSSFileLoading:true,disableJavaScriptFileLoading:true,disableJavaScriptEvaluation:true}}),svg=new win.DOMParser().parseFromString(traced,'image/svg+xml').documentElement;win.document.body.append(svg);const style=win.document.createElement('style');style.textContent=svg.querySelector('style').textContent;win.document.head.append(style);assert.equal(win.getComputedStyle(svg.querySelector('[data-wire=jackSignal] .wire-line')).strokeWidth,'4.5');win.close();
 assert(forgeDiagram(circuit,{filter:'ground'}).includes('data-route-role="ground"'));
 assert.deepEqual(circuit,before,'view rendering does not alter circuit topology or state');
 assert.equal(drawCircuit(circuit,{filter:'ground'}),ground,'same circuit and role view is deterministic');

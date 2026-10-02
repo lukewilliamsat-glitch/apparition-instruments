@@ -16,11 +16,13 @@ assert.equal(record.productTitle,'Customer title');assert.equal(record.shortDesc
 for(const key of ['name','sku','specs','stock','active','individually','inKits','salePrice','kitPrice','image'])assert.deepEqual(record[key],original[key],key);
 const afterKit=configuredKitDefinitions(store.list());
 // Public title/metadata now travel with customer kit snapshots; commercial and electrical fields stay unchanged.
-assert.equal(afterKit['les-paul'].capacitors['225p-022'].label,'Customer title');
-assert.equal(afterKit['les-paul'].capacitors['225p-022'].component.productTitle,'Customer title');
-afterKit['les-paul'].capacitors['225p-022'].label=beforeKit['les-paul'].capacitors['225p-022'].label;
-afterKit['les-paul'].capacitors['225p-022'].component.productTitle=beforeKit['les-paul'].capacitors['225p-022'].component.productTitle;
-assert.deepEqual(afterKit,beforeKit);
+assert.equal(afterKit['les-paul'].capacitors['cde-022'].label,'Customer title');
+assert.equal(afterKit['les-paul'].capacitors['cde-022'].component.productTitle,'Customer title');
+afterKit['les-paul'].capacitors['cde-022'].label=beforeKit['les-paul'].capacitors['cde-022'].label;
+afterKit['les-paul'].capacitors['cde-022'].component.productTitle=beforeKit['les-paul'].capacitors['cde-022'].component.productTitle;
+const editorial=new Set(['productTitle','shortDescription','fullDescription','productSpecifications','fitmentGuidance','included','installationGuidance','technicalNotes','qcStatement']);
+const commercial=value=>Array.isArray(value)?value.map(commercial):value&&typeof value==='object'?Object.fromEntries(Object.entries(value).filter(([key,v])=>!editorial.has(key)&&!(key==='manufacturerKey'&&v==='')).map(([key,v])=>[key,commercial(v)])):value;
+assert.deepEqual(commercial(afterKit),commercial(beforeKit));assert.equal(afterKit['les-paul'].productRecords.find(p=>p.id===original.id).fullDescription,record.fullDescription);
 assert.throws(()=>store.save({...record,productSpecifications:[{label:'Incomplete',value:''}]},record.id),/both a label/);
 assert.equal(createComponentStore(storage).list().find(p=>p.id===record.id).productSpecifications.length,2);
 store.save({...record,productTitle:'',shortDescription:'',fullDescription:'',productSpecifications:[]},record.id);

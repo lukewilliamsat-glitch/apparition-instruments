@@ -11,6 +11,7 @@ const {initialComponents}=await import('../dist/admin/data.mjs');
 const {lesPaulKitAssembly,normaliseKitDefinition}=await import('../dist/admin/assemblies.mjs');
 const {setAssemblyRepository}=await import('../dist/admin/assembly-repository.mjs');
 const {renderAssemblies}=await import('../dist/admin/assembly-ui.mjs');
+const {installCatalogueFixture}=await import('./fixtures/catalogue-fixture.mjs');installCatalogueFixture(window.localStorage);
 const {configuredKitDefinitions,resolveKitComponent,availableKitValues}=await import('../dist/wiring-kits/kit-data.mjs');
 const {kitAdminCandidates}=await import('../dist/wiring-kits/kit-component-discovery.mjs');
 const unique=randomUUID(),maker='Unregistered '+unique,fixture=(category,specs)=>({id:randomUUID(),name:'Physical '+randomUUID(),sku:randomUUID(),manufacturer:maker,category,specs,active:true,inKits:true,stock:50,kitPrice:199});

@@ -19,9 +19,11 @@ if(typeof document!=='undefined'){
    const graph=responseGraph(report);graph.querySelector('.response-current')?.setAttribute('pathLength','1');response.append(context,graph);
   }
   const mount=document.querySelector('#forge-reveal-circuit');
-  const asset=new URL('./assets/signal-forge-full.svg?rev=signal-forge-identity-v1',import.meta.url);
+  const asset=new URL('./assets/signal-forge-full.svg',import.meta.url);
+  asset.search=new URL(import.meta.url).search||'?rev=platform-qa-v1';
   fetch(asset).then(result=>{if(!result.ok)throw Error('Circuit artwork unavailable');return result.text();}).then(markup=>{
    const svg=new DOMParser().parseFromString(markup,'image/svg+xml').documentElement;
+   if(svg.getAttribute('data-diagram-surface')!=='dark')throw Error('Circuit artwork surface mismatch');
    if(svg.getAttribute('data-homepage-specification')!==homepageSpecificationKey(circuit))throw Error('Circuit artwork specification mismatch');
    if(svg.getAttribute('data-circuit-state')!==homepageStateKey(circuit))throw Error('Circuit artwork state mismatch');
    if(svg.localName!=='svg')throw Error('Invalid circuit artwork');

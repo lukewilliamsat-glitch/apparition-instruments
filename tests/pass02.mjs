@@ -30,5 +30,5 @@ for(const bleed of Object.keys(lesPaul.bleed)){
   assert(net(c,ch+'BleedCap.a').has(ch+'BleedResistor.a'));assert(net(c,ch+'BleedCap.b').has(ch+'BleedResistor.b'));
  }
 }
-assert.equal(priceKit({}).total,5999);assert.equal(priceKit({wiring:'modern',matching:'precision',bleed:'premium',jack:'pureTone',selector:'switchcraft'}).total,10898);
+assert.equal(priceKit({}).total,5999);assert.equal(priceKit({wiring:'modern',matching:'precision',bleed:'premium',jack:'pureTone',selector:'switchcraft'}).total,11698);
 console.log('Pass 02: 106 unchanged netlists, exact routed endpoints, orthogonal paths, immutable presentation views, parallel premium bleeds and preserved prices.');

@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {forgeCircuit} from '../dist/circuit-forge/model.mjs';
-import {forgeDiagram} from '../dist/circuit-forge/presentation.mjs';
+import {drawCircuit} from '../dist/wiring-generator/render.mjs';
+import {homepageCircuit,homepageSpecificationKey} from '../dist/electronics/presentation/homepage-state.mjs';
 const html=readFileSync(new URL('../dist/circuit-forge/index.html',import.meta.url),'utf8');
 const css=readFileSync(new URL('../dist/circuit-forge/forge.css',import.meta.url),'utf8');
 const home=readFileSync(new URL('../dist/index.html',import.meta.url),'utf8');
@@ -16,7 +17,7 @@ assert(css.includes('input:focus-visible+span')&&css.includes('prefers-reduced-m
 assert(home.includes('APPARITION / SIGNAL FORGE')&&home.includes('Know your <em>circuit.</em>'));
 assert(home.includes('href="/circuit-forge/"')&&home.includes('href="/wiring-generator/"'));
 assert(!home.includes('SEE THE CIRCUIT BEFORE YOU BUILD IT'));
-const expected=forgeDiagram(forgeCircuit({position:'neck'}).circuit).replace('viewBox="0 0 1320 1275"','viewBox="0 75 1320 1200"').replace('<rect width="1320" height="1275" fill="#f5f5f5"/>','');
+const expected=drawCircuit(homepageCircuit(),{exporting:true,mode:'trace',palette:'editorial',surface:'dark'}).replace('<svg ','<svg data-homepage-specification="'+homepageSpecificationKey(homepageCircuit()).replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;')+'" ');
 assert.equal(asset,expected,'homepage artwork is the actual shared circuit renderer output');
 assert(asset.includes('data-route-role="signal"')&&asset.includes('data-route-net='));
 console.log('Precision workbench controls and graph-derived homepage reveal PASS');
