@@ -1,3 +1,4 @@
+import {refineCatalogueCard} from '../products/presentation.mjs';
 import {money} from './catalogue.mjs';
 import {categories} from '../admin/data.mjs';
 import {imageSource} from '../admin/images.mjs';
@@ -21,7 +22,7 @@ export function renderComponentCards(catalogue){
    const body=el('div','component-card-body'),title=el('h3');if(detail){const a=el('a','component-detail-link',p.name);a.href=detail;title.append(a);}else title.textContent=p.name;body.append(el('p','component-stock'+(p.stock===0?' stock-empty':''),p.stock===0?'Out of stock':'In stock'),title);
    if(p.cardDescription)body.append(el('p','component-description',p.cardDescription));
    const dl=el('dl');for(const {label:key,value} of p.displaySpecifications){const row=el('div');row.append(el('dt','',key),el('dd','',value));dl.append(row);}body.append(dl);
-   const purchase=el('div','component-purchase'),button=el('button','button secondary',p.stock===0?'Out of stock':Number.isSafeInteger(p.price)&&p.price>0?'Add to basket +':'Not available');button.type='button';button.dataset.add=p.id;button.disabled=true;purchase.append(el('strong','',money(p.price)),button);const feedback=el('p','product-feedback');feedback.setAttribute('role','status');body.append(purchase,feedback);if(detail){const a=el('a','component-details-action','View details →');a.href=detail;body.append(a);}card.append(body);grid.append(card);
+   const purchase=el('div','component-purchase'),button=el('button','button secondary',p.stock===0?'Out of stock':Number.isSafeInteger(p.price)&&p.price>0?'Add to basket +':'Not available');button.type='button';button.dataset.add=p.id;button.disabled=true;purchase.append(el('strong','',money(p.price)),button);const feedback=el('p','product-feedback');feedback.setAttribute('role','status');body.append(purchase,feedback);if(detail){const a=el('a','component-details-action','View details →');a.href=detail;body.append(a);}card.append(body);refineCatalogueCard(card,p);grid.append(card);
   }
   if(!grid.children.length)grid.append(el('p','', 'No individual components are currently available in this category.'));
  }

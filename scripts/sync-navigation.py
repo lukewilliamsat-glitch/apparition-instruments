@@ -5,7 +5,7 @@ root=Path(__file__).resolve().parents[1];data=json.loads((root/'scripts/navigati
 def anchor(label,url,current):return f'<a href="{url}"'+(' aria-current="page"' if url==current else '')+f'>{label}</a>'
 for p in (root/'dist').rglob('index.html'):
  s=p.read_text()
- if '<header class="site-header">' not in s:continue
+ if '<header class="site-header">' not in s or 'aria-label="Main navigation"' not in s:continue
  current='/'+str(p.parent.relative_to(root/'dist'))+'/'
  if current=='/./':current='/'
  def componentLink(index,label,url):
@@ -14,7 +14,13 @@ for p in (root/'dist').rglob('index.html'):
  dropdown='<details class="nav-components"><summary>Components</summary><div class="components-menu">'+''.join(componentLink(i,a,b) for i,(a,b) in enumerate(data['components']))+'</div></details>'
  nav=dropdown+''.join(anchor(a,b,current) for a,b in data['primary'])
  s=re.sub(r'<nav aria-label="Main navigation">.*?</nav>','<nav aria-label="Main navigation">'+nav+'</nav>',s,flags=re.S)
- s=re.sub(r'<nav id="mobile-nav".*?</nav>','<nav id="mobile-nav" class="mobile-nav" aria-label="Mobile navigation" hidden>'+nav+anchor('Basket','/basket/',current)+'</nav>',s,flags=re.S)
+ s=re.sub(r'<nav\b(?=[^>]*\bid="mobile-nav")[^>]*>.*?</nav>','<nav id="mobile-nav" class="mobile-nav" aria-label="Mobile navigation" hidden>'+nav+anchor('Basket','/basket/',current)+'</nav>',s,flags=re.S)
  s=re.sub(r'<div class="footer-links">.*?</div>','<div class="footer-links">'+''.join(anchor(a,b,current) for a,b in data['footer'])+'</div>',s,flags=re.S)
- if 'href="/knowledge.css"' not in s:s=s.replace('</head>','<link rel="stylesheet" href="/knowledge.css"></head>')
+ if 'class="footer-links"' not in s:
+  s=s.replace('</footer>','<div class="footer-links">'+''.join(anchor(a,b,current) for a,b in data['footer'])+'</div></footer>')
+ if 'class="basket-link"' not in s:
+  controls='<a class="basket-link" href="/basket/">Basket <span data-basket-count>0</span></a><button class="menu-button" type="button" aria-expanded="false" aria-controls="mobile-nav">Menu <span aria-hidden="true">+</span></button>'
+  s=s.replace('</header>',controls+'</header>')
+ if 'id="mobile-nav"' not in s:
+  s=s.replace('</header>','</header><nav id="mobile-nav" class="mobile-nav" aria-label="Mobile navigation" hidden>'+nav+anchor('Basket','/basket/',current)+'</nav>')
  p.write_text(s)

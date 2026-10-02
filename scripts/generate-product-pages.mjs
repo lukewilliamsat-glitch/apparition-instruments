@@ -1,3 +1,4 @@
+import {refineProductPresentation,refineCatalogueCard} from '../dist/products/presentation.mjs';
 // Production SEO is an output of the public Supabase catalogue, never a hand-maintained product database.
 import {readFile,writeFile,mkdir,readdir,rm} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
@@ -61,7 +62,7 @@ export function productPage(p,shell,options=[],related=[]){
  const optional=[['included','What is included'],['installationGuidance','Installation guidance'],['technicalNotes','Technical notes'],['qcStatement','Testing and QC']].map(([key,title])=>safeText(p[key])?`<section class="product-fitment"><h2>${title}</h2><p>${esc(p[key])}</p></section>`:'').join('');
  const alternatives=relatedProducts(p,related),relatedHTML=alternatives.length?`<section class="product-related"><h2>Related ${esc(category)}</h2><ul>${alternatives.map(item=>`<li><a href="${esc(productURL(item.id))}">${esc(item.name)}</a><span>${item.stock===0?' · Out of stock':' · '+money(item.price)}</span></li>`).join('')}</ul></section>`:'';
  const staticInfo=`<a class="product-back" href="/components/${esc(p.category)}/">← ${esc(category)}</a><div class="product-layout"><div class="product-visual">${image}</div><div class="product-info"><p class="eyebrow">${esc(category)}</p><h1>${esc(p.name)}</h1><p class="product-description">${esc(safeText(p.fullDescription)||description)}</p><p class="product-stock">${p.stock?'In stock':'Out of stock'}</p><p class="product-price">${money(p.price)}</p><button class="button" type="button" disabled>Loading current availability…</button>${dl}<section class="product-fitment"><h2>Before you choose</h2><p>${esc(safeText(p.fitmentGuidance)||context.fitment)}</p></section>${optional}<section class="product-learning"><h2>Explore the circuit</h2>${links}</section></div></div>${relatedHTML}`;
- main.insertAdjacentHTML('afterbegin',nav);d.querySelector('#product-status').textContent='';const root=d.querySelector('#product-detail');root.innerHTML=staticInfo;root.hidden=false;
+ main.insertAdjacentHTML('afterbegin',nav);d.querySelector('#product-status').textContent='';const root=d.querySelector('#product-detail');root.innerHTML=staticInfo;refineProductPresentation(root,p);root.hidden=false;
  const result='<!doctype html>\n'+d.documentElement.outerHTML;w.close();return result;
 }
 export function injectCategoryLinks(html,products,category){
@@ -77,7 +78,7 @@ export function injectCategoryLinks(html,products,category){
  }
  grid.replaceChildren();for(const p of products.filter(p=>p.category===category)){
   const card=d.createElement('article');card.className='component-card';card.dataset.product=p.id;
-  card.innerHTML=`<div class="component-card-body"><h3><a class="component-detail-link" href="${esc(productURL(p.id))}">${esc(p.name)}</a></h3><p>${esc(productDescription(p))}</p><a class="component-details-action" href="${esc(productURL(p.id))}">View details →</a></div>`;grid.append(card);
+  card.innerHTML=`<div class="component-card-body"><h3><a class="component-detail-link" href="${esc(productURL(p.id))}">${esc(p.name)}</a></h3><p>${esc(productDescription(p))}</p><a class="component-details-action" href="${esc(productURL(p.id))}">View details →</a></div>`;refineCatalogueCard(card,p);grid.append(card);
  }
  return '<!doctype html>\n'+d.documentElement.outerHTML;
 }

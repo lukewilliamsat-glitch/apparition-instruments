@@ -1,3 +1,4 @@
+import {refineProductPresentation} from './presentation.mjs';
 import {catalogue,refreshCatalogue,money} from '../components/catalogue.mjs';
 import {imageSource} from '../admin/images.mjs';
 import {addComponent} from '../commerce.mjs';
@@ -26,6 +27,7 @@ export function renderProductDetail(root,product,{document:doc=root.ownerDocumen
  const links=e('section','product-learning');links.append(e('h2','','Explore the circuit'));for(const [label,url] of context.links){const a=e('a','',label+' →');a.href=url;links.append(a);}info.append(links);
  layout.append(visual,info);root.replaceChildren(back,layout);
  const alternatives=relatedProducts(product,related);if(alternatives.length){const section=e('section','product-related');section.append(e('h2','','Related '+category));const list=e('ul');for(const item of alternatives){const li=e('li'),link=e('a','',item.name);link.href=productURL(item.id);li.append(link,e('span','',item.stock===0?' · Out of stock':' · '+money(item.price)));list.append(li);}section.append(list);root.append(section);}
+ refineProductPresentation(root,product);
  root.hidden=false;
  return {button,feedback};
 }
