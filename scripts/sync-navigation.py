@@ -24,3 +24,7 @@ for p in (root/'dist').rglob('index.html'):
  if 'id="mobile-nav"' not in s:
   s=s.replace('</header>','</header><nav id="mobile-nav" class="mobile-nav" aria-label="Mobile navigation" hidden>'+nav+anchor('Basket','/basket/',current)+'</nav>')
  p.write_text(s)
+
+# Keep the shared public UI layer last after shell regeneration.
+from runpy import run_path
+run_path(str(root/"scripts/sync-customer-ui.py"))["sync"]()
