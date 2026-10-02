@@ -3,7 +3,7 @@ import {fiveWayAssignments,fiveWayThrow} from '../electronics/instrument/control
 export const layoutInfo={
  'prs-se':{label:'PRS SE CUSTOM 24-STYLE · 3-WAY',positions:{'1':'1 · Bridge','2':'2 · Both','3':'3 · Neck'},description:'SE Custom 24-style · HH · master volume and tone · 3-way blade · optional shared tone push/pull full coil split; functional terminals, verify hardware pinout'},
  hsh:{label:'HSH · FULL HUMBUCKERS',positions:{'1':'1 · Bridge humbucker','2':'2 · Bridge + middle','3':'3 · Middle','4':'4 · Middle + neck','5':'5 · Neck humbucker'},description:'HSH · full-series neck and bridge · conventional 5-way blade · 1V2T or master tone · no automatic split'},
- hh:{label:'HH · MASTER CONTROLS',positions:{'1':'1 · Bridge','2':'2 · Both','3':'3 · Neck'},description:'Generic HH · master volume and tone · conventional 3-way blade · full humbuckers'},
+ hh:{label:'HH · MASTER CONTROLS',positions:{'1':'1 · Bridge','2':'2 · Both','3':'3 · Neck'},description:'Generic HH · master volume and tone · conventional 3-way blade · 1V1T or independent neck/bridge tones · full humbuckers'},
  hss:{label:'HSS SUPERSTRAT',positions:{'1':'1 · Full bridge humbucker','2':'2 · Full bridge humbucker + middle','3':'3 · Middle','4':'4 · Middle + neck','5':'5 · Neck'},description:'HSS · four-conductor bridge humbucker · 5-way blade · master volume · 1V2T or master tone · optional manual split'},
  'les-paul':{label:'Les Paul',positions:{neck:'Neck',both:'Both',bridge:'Bridge'},description:'HH · 2 volume + 2 tone · 500kΩ audio · 3-way toggle'},
  sg:{label:'SG',positions:{neck:'Neck',both:'Both',bridge:'Bridge'},description:'HH · 2 volume + 2 tone · 500kΩ audio · 3-way toggle'},
@@ -12,7 +12,8 @@ export const layoutInfo={
  prs:{label:'PRS CUSTOM 24 STYLE',positions:{'1':'1 · Bridge humbucker','2':'2 · Bridge humbucker + neck single coil','3':'3 · Both humbuckers','4':'4 · Both single coils','5':'5 · Neck humbucker'},description:'HH · 500kΩ audio · master volume and tone · 4-pole superswitch conversion. Not a PRS factory switch pinout.'}
 };
 export function extraCircuit(state,types){
- const components=[],connections=[],contacts=[],isStrat=['strat','hss','hsh'].includes(state.guitar),isHSS=state.guitar==='hss',twoTone=isStrat&&state.controlLayout!=='1V1T',isPRS=state.guitar==='prs';
+ const hhTwoTone=state.guitar==='hh'&&state.controlLayout==='1V2T';
+ const components=[],connections=[],contacts=[],isStrat=['strat','hss','hsh'].includes(state.guitar),isHSS=state.guitar==='hss',twoTone=isStrat&&state.controlLayout!=='1V1T'||hhTwoTone,isPRS=state.guitar==='prs';
  const add=(id,type,label,x,y,extra={})=>components.push({id,type,label,x,y,terminals:types[type],...extra});
  const wire=(id,from,to,category='signal',route=[],extra={})=>connections.push({id,from,to,category,route,...extra});
  const names=isStrat?['neck','middle','bridge']:['neck','bridge'];
@@ -22,8 +23,9 @@ export function extraCircuit(state,types){
  add('selector',isPRS?'superswitch':'blade',isPRS?'4-POLE SUPERSWITCH':isStrat?'5-WAY BLADE':'3-WAY BLADE',580,200,{value:'Functional pole labels · verify terminal identity',position:state.position,...isHSS?{displaySelectorPosition:true}:{}});
  add('masterVolume','pot','MASTER VOLUME',940,480,{value:(isPRS||['prs-se','hh','hsh'].includes(state.guitar)||isHSS?'500':'250')+'kΩ Audio',role:'volume'});
  add('neckTone','pot',twoTone?'NECK TONE':'MASTER TONE',670,850,{value:(isPRS||['prs-se','hh','hsh'].includes(state.guitar)||isHSS?'500':'250')+'kΩ Audio',role:'tone'});
- if(twoTone)add('middleTone','pot',isHSS||state.guitar==='hsh'?'MIDDLE / BRIDGE TONE':'MIDDLE TONE',940,850,{value:(isHSS||state.guitar==='hsh'?'500':'250')+'kΩ Audio',role:'tone'});
- add('toneCap','capacitor','TONE CAP',420,1020,{value:state.neckCap+'µF'});
+ if(twoTone)add(hhTwoTone?'bridgeTone':'middleTone','pot',hhTwoTone?'BRIDGE TONE':isHSS||state.guitar==='hsh'?'MIDDLE / BRIDGE TONE':'MIDDLE TONE',940,850,{value:(isHSS||state.guitar==='hsh'||hhTwoTone?'500':'250')+'kΩ Audio',role:'tone'});
+ add('toneCap','capacitor',hhTwoTone?'NECK TONE CAP':'TONE CAP',420,1020,{value:state.neckCap+'µF'});
+ if(hhTwoTone)add('bridgeCap','capacitor','BRIDGE TONE CAP',940,1040,{value:state.bridgeCap+'µF',channel:'bridge'});
  add('jack','jack','MONO OUTPUT JACK',1135,1030,{value:'Tip / sleeve'});
  add('bridgeGround','ground','BRIDGE / STRINGS',200,1150,{value:'Bridge / string ground'});
  if(state.shielding==='yes')add('shielding','ground','CAVITY SHIELD',500,1150,{value:'Shielding, if fitted'});
@@ -64,7 +66,14 @@ export function extraCircuit(state,types){
  }
  wire('volumeGround','masterVolume.lug1','masterVolume.case','ground',[[1035,622],[1035,562]]);
  wire('potCases','masterVolume.case','neckTone.case','ground',[[1060,562],[1060,1120],[740,1120],[740,932]]);
- if(twoTone){
+ if(hhTwoTone){
+  wire('toneCases','neckTone.case','bridgeTone.case','ground',[[740,932],[740,1100],[1030,1100],[1030,932]]);
+  for(const [ch,cap,tone] of [['neck','toneCap','neckTone'],['bridge','bridgeCap','bridgeTone']]){
+   wire(ch+'ToneFeed',ch+'Pickup.hot',cap+'.a','tone');
+   wire(ch+'ToneCap',cap+'.b',tone+'.lug2','tone');
+   wire(ch+'ToneGround',tone+'.lug1',tone+'.case','ground');
+  }
+ }else if(twoTone){
   wire('toneCases','neckTone.case','middleTone.case','ground',[[740,932],[740,1100],[1030,1100],[1030,932]]);
   wire('neckToneCap','neckTone.lug2','toneCap.a','tone',[[670,1060],[330,1060],[330,1020]]);
   wire('middleToneCap','middleTone.lug2','toneCap.a','tone',[[940,1040],[350,1040],[350,1020]]);

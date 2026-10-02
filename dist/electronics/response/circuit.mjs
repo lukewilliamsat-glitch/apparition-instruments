@@ -39,7 +39,7 @@ export function circuitResponse(circuit,count=201){
  try{
   const channel=selected,volume=component(circuit,p=>instrument?instrument.controls.some(c=>c.role==='volume'&&c.assignments.includes(channel)&&c.id===p.id):p.channel===channel&&p.role==='volume'),tone=component(circuit,p=>instrument?instrument.controls.some(c=>c.role==='tone'&&c.assignments.includes(channel)&&(c.id===p.id||c.id==='masterTone'&&p.id==='neckTone')):p.channel===channel&&p.role==='tone');
   const capWire=circuit.connections.find(w=>w.id===channel+'ToneCap');
-  const toneCap=component(circuit,p=>p.id===(instrument&&!['les-paul','sg'].includes(circuit.state.guitar)?'toneCap':capWire?.from.split('.')[0])&&p.type==='capacitor');
+  const toneCap=component(circuit,p=>p.id===(instrument&&!['les-paul','sg'].includes(circuit.state.guitar)?circuit.state.guitar==='hh'&&instrument.controlLayout==='1V2T'&&channel==='bridge'?'bridgeCap':'toneCap':capWire?.from.split('.')[0])&&p.type==='capacitor');
   const auxiliary=circuit.connections.filter(w=>w.network==='auxiliary'&&(instrument&&!['les-paul','sg'].includes(circuit.state.guitar)||w.from.startsWith(channel)||w.to.startsWith(channel)));
   const bleedCap=component(circuit,p=>(instrument&&!['les-paul','sg'].includes(circuit.state.guitar)||p.channel===channel)&&p.type==='capacitor'&&auxiliary.some(w=>w.from.startsWith(p.id+'.')||w.to.startsWith(p.id+'.')));
   const bleedResistor=component(circuit,p=>(instrument&&!['les-paul','sg'].includes(circuit.state.guitar)||p.channel===channel)&&p.type==='resistor'&&auxiliary.some(w=>w.from.startsWith(p.id+'.')||w.to.startsWith(p.id+'.')));

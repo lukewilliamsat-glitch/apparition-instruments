@@ -1,5 +1,5 @@
 // Homepage choreography consumes the same circuit and response authorities as Forge.
-import {forgeCircuit} from './circuit-forge/model.mjs';
+import {homepageCircuit,homepageStateKey,homepageSpecificationKey} from './electronics/presentation/homepage-state.mjs';
 import {forgeResponse} from './circuit-forge/response.mjs';
 import {responseGraph} from './circuit-forge/response-view.mjs';
 import {inspectSelection,terminalName} from './circuit-forge/workbench.mjs';
@@ -9,7 +9,7 @@ export const chapterForProgress=progress=>Math.min(3,Math.max(0,Math.floor(Math.
 if(typeof document!=='undefined'){
  const section=document.querySelector('#signal-forge');
  if(section){
-  const circuit=forgeCircuit({position:'neck'}).circuit;
+  const circuit=homepageCircuit();
   const report=forgeResponse(circuit);
   const response=document.querySelector('#forge-reveal-response');
   if(report.supported){
@@ -22,6 +22,8 @@ if(typeof document!=='undefined'){
   const asset=new URL('./assets/signal-forge-full.svg?rev=signal-forge-identity-v1',import.meta.url);
   fetch(asset).then(result=>{if(!result.ok)throw Error('Circuit artwork unavailable');return result.text();}).then(markup=>{
    const svg=new DOMParser().parseFromString(markup,'image/svg+xml').documentElement;
+   if(svg.getAttribute('data-homepage-specification')!==homepageSpecificationKey(circuit))throw Error('Circuit artwork specification mismatch');
+   if(svg.getAttribute('data-circuit-state')!==homepageStateKey(circuit))throw Error('Circuit artwork state mismatch');
    if(svg.localName!=='svg')throw Error('Invalid circuit artwork');
    const wire=(from,to)=>circuit.connections.find(item=>item.from===from&&item.to===to)?.id;
    const path=[wire('neckPickup.hot','neckVolume.lug3'),wire('neckVolume.lug2','selector.neck'),wire('selector.outB','jack.tip')];
