@@ -37,3 +37,7 @@ for(const item of articles){
 let directory=await read('interactive-tools/index.html');directory=directory.replace(/(?:<h2>Tools by purpose<\/h2>)?<div class="(?:hub-grid editorial-index|knowledge-grid)">[\s\S]*?<\/main>/,`<h2>Tools by purpose</h2><div class="knowledge-grid">${toolCards}</div><p class="editorial-note">${a('Learn the fundamentals and follow a guided path','/luthier-hub/')}</p></main>`);await write('interactive-tools/index.html',directory);
 let sitemap=await read('sitemap.xml');for(const item of articles){const url='https://apparitioninstruments.co.uk/luthier-hub/'+item.slug+'/';if(!sitemap.includes('<loc>'+url+'</loc>'))sitemap=sitemap.replace('</urlset>','<url><loc>'+url+'</loc></url></urlset>');}await write('sitemap.xml',sitemap);
 console.log('Knowledge V2: preserved existing URLs and generated '+articles.length+' editorial routes.');
+
+// Keep the current Hub presentation and schema authoritative on a legacy knowledge rebuild.
+const {generateHub}=await import('./generate-luthier-hub.mjs');
+await generateHub();

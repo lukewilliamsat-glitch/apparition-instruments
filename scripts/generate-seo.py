@@ -88,6 +88,9 @@ def main(routes=None):
         if routes is not None and route not in routes:
             continue
         html = file.read_text()
+        # Hub templates own Article/Breadcrumb schema and metadata; sitemap discovery remains shared.
+        if route.startswith('/luthier-hub/') and 'data-hub-reference="v1"' in html:
+            continue
         if route in PAGES or route in indexable and route not in products:
             title, description = PAGES.get(route, (unescape(re.search(r'<title>(.*?)</title>', html, re.S)[1]), unescape(re.search(r'<meta name="description" content="([^"]*)"', html)[1])))
             html = re.sub(r'<!-- SEO METADATA START -->.*?<!-- SEO METADATA END -->\n?', '', html, flags=re.S)
