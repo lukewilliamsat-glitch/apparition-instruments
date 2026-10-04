@@ -1,63 +1,17 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {Window} from 'happy-dom';
-import {forgeCircuit} from '../dist/circuit-forge/model.mjs';
-import {drawCircuit} from '../dist/wiring-generator/render.mjs';
 import {homepageCircuit,homepageSpecificationKey} from '../dist/electronics/presentation/homepage-state.mjs';
+import {homepageEditorial} from '../dist/electronics/presentation/homepage-editorial.mjs';
+import {conventionalSignalStudy} from '../dist/electronics/presentation/educational-truth.mjs';
 import {forgeResponse} from '../dist/circuit-forge/response.mjs';
 import {responseGraph} from '../dist/circuit-forge/response-view.mjs';
 import {chapterForProgress} from '../dist/forge-reveal.mjs';
-
-const html=readFileSync('dist/index.html','utf8'),asset=readFileSync('dist/assets/signal-forge-full.svg','utf8'),css=readFileSync('dist/homepage.css','utf8');
-const circuit=forgeCircuit({position:'neck'}).circuit;
-// Generated output follows the current graph and presentation authority.
-const expected=drawCircuit(homepageCircuit(),{exporting:true,mode:'trace',palette:'editorial',surface:'dark'}).replace('<svg ','<svg data-homepage-specification="'+homepageSpecificationKey(homepageCircuit()).replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;')+'" ');
-assert.equal(asset,expected);
-assert(html.includes('id="signal-forge"')&&html.includes('forge-reveal.mjs?rev=signal-forge-identity-v1'));
-assert(html.includes('homepage.css?rev=signal-forge-mobile-v1')&&html.includes('signal-forge-full.svg?rev=platform-qa-v1'));
-for(const chapter of [0,1,2,3])assert(html.includes(`data-forge-chapter="${chapter}"`));
-assert(html.includes('href="/circuit-forge/"')&&html.includes('href="/wiring-generator/"'));
-assert(html.includes('class="ethos section"')&&html.includes('class="product-list"'));
+const read=p=>readFileSync(p,'utf8'),html=read('dist/index.html'),asset=read('dist/assets/signal-forge-full.svg'),css=read('dist/homepage.css'),settings={disableCSSFileLoading:true,disableJavaScriptFileLoading:true,disableJavaScriptEvaluation:true};
+assert.equal(asset,homepageEditorial());assert(html.includes(homepageEditorial({compact:true}).replace(/<style>[\s\S]*?<\/style>/,'')));assert(!html.includes('class="home-signal-study"'),'One educational section');assert(html.includes('forge-reveal.mjs?rev=operations-v1'));
 assert.deepEqual([-.1,0,.24,.25,.5,.75,1,2].map(chapterForProgress),[0,0,0,1,2,3,3,3]);
-assert(css.includes('prefers-reduced-motion:reduce')&&css.includes('.forge-reveal:not(.is-animated)'));
-assert(!html.includes('forge-reveal-continuation')&&!css.includes('forge-reveal-continuation'),'Analyse has no decorative conductor');
-assert(css.includes('.forge-crossing:not([data-home-trace]) path{stroke:#8d7a55;opacity:.48}'));
-
-async function inspect(reduced){
- const win=new Window({url:'https://apparitioninstruments.co.uk/'});win.document.write(html);
- const motion={matches:reduced,addEventListener(){}};
- Object.assign(globalThis,{window:win,document:win.document,DOMParser:win.DOMParser,matchMedia:query=>query.includes('min-width')?{matches:true,addEventListener(){}}:motion,addEventListener:win.addEventListener.bind(win),requestAnimationFrame:callback=>callback(),fetch:async()=>({ok:true,text:async()=>asset})});
- win.IntersectionObserver=class{constructor(callback){this.callback=callback}observe(){this.callback([{isIntersecting:true}])}};globalThis.IntersectionObserver=win.IntersectionObserver;
- await import(`../dist/forge-reveal.mjs?test=${reduced}`);
- for(let i=0;i<10&&!win.document.querySelector('.forge-reveal.has-circuit');i++)await new Promise(resolve=>setTimeout(resolve,0));
- await new Promise(resolve=>setTimeout(resolve,0));
- const section=win.document.querySelector('#signal-forge');assert(section.classList.contains('has-circuit'));
- const svg=section.querySelector('#forge-reveal-circuit svg');assert(svg);
- assert.equal(svg.querySelectorAll('.wire[data-home-trace]').length,3);
- for(const hop of svg.querySelectorAll('.forge-crossing'))assert.equal(hop.hasAttribute('data-home-trace'),!!svg.querySelector(`.wire[data-home-trace][data-wire="${hop.getAttribute('data-crossing-wire')}"]`));
- assert.equal(svg.querySelectorAll('[data-home-trace] .wire-line[pathLength="1"]').length,3);
- assert(svg.querySelector('[data-component="neckVolume"][data-home-inspect]'));
- assert(svg.querySelector('[data-terminal="neckVolume.lug2"][data-home-inspect]'));
- assert(circuit.contacts.some(([a,b])=>a==='selector.neck'&&b==='selector.outN'));
- const report=forgeResponse(circuit);assert(report.supported&&!report.reference);
- assert(section.querySelector('.forge-reveal-inspect small').textContent.includes('selector.neck')===false);
- assert(section.querySelector('.forge-reveal-inspect small').textContent.includes('Neck input'));
- assert(section.querySelector('.forge-reveal-inspect-path').textContent.includes('Selector → Output jack'));
- assert(section.querySelector('.forge-reveal-response-context').textContent.includes('Modelled electrical response across 20 Hz–20 kHz.'));
- assert(section.querySelector('.forge-reveal-response-state').textContent.includes('Modern wiring · Neck pickup'));
- assert.equal(section.querySelector('#forge-reveal-response .response-current').getAttribute('d'),responseGraph(report).querySelector('.response-current').getAttribute('d'));
- assert.equal(section.querySelector('#forge-reveal-response .response-current').getAttribute('pathLength'),'1');
- assert.equal(section.classList.contains('is-animated'),!reduced);
- if(reduced)assert.equal(section.dataset.stage,'3');
- else{
-  Object.defineProperty(section,'offsetHeight',{value:3000});Object.defineProperty(globalThis,'innerHeight',{value:1000,configurable:true});
-  for(const [top,stage] of [[0,'0'],[-600,'1'],[-1100,'2'],[-1700,'3']]){
-   section.getBoundingClientRect=()=>({top});win.dispatchEvent(new win.Event('scroll'));
-   assert.equal(section.dataset.stage,stage);
-  }
- }
- assert.equal(section.querySelector('.forge-reveal-primary').getAttribute('href'),'/circuit-forge/');
- win.close();
-}
+for(const compact of [false,true]){const w=new Window({settings}),svg=new w.DOMParser().parseFromString(homepageEditorial({compact}),'image/svg+xml');const study=conventionalSignalStudy(homepageCircuit()),path=svg.querySelector('[data-home-signal-to="jack.tip"]'),tip=svg.querySelector('[data-terminal="jack.tip"]');assert.equal(svg.documentElement.dataset.diagramSurface,'cream');assert.equal(svg.documentElement.getAttribute('data-homepage-specification'),homepageSpecificationKey(homepageCircuit()));assert.equal(svg.querySelectorAll('[data-shared-artwork]').length,6);assert.equal(svg.querySelectorAll('[data-shared-artwork="pot"] .pot-solder-lug').length,6);assert.equal(svg.querySelector('[data-signal-input]').dataset.signalInput,study.volume.id+'.lug3');assert.equal(path.dataset.signalOutput,study.volume.id+'.lug2');assert(path.getAttribute('d').endsWith('V'+tip.getAttribute('cy')+'H'+tip.getAttribute('cx')),'Signal ends on exact TIP anchor');assert.equal(svg.querySelector('[data-tone-branch]').dataset.from,study.volume.id+'.lug3');assert.equal(svg.querySelectorAll('.signal-travel').length,3);assert(svg.querySelector('style').textContent.includes('prefers-reduced-motion:reduce'));assert(!/opacity:|filter:/.test(svg.querySelector('style').textContent));w.close();}
+async function inspect(reduced){const w=new Window({settings,url:'https://apparitioninstruments.co.uk/'});w.document.write(html);const motion={matches:reduced,addEventListener(){}};Object.assign(globalThis,{window:w,document:w.document,DOMParser:w.DOMParser,matchMedia:q=>q.includes('min-width')?{matches:true,addEventListener(){}}:motion,addEventListener:w.addEventListener.bind(w),requestAnimationFrame:callback=>callback(),fetch:async()=>({ok:true,text:async()=>asset})});w.IntersectionObserver=class{constructor(cb){this.cb=cb;}observe(){this.cb([{isIntersecting:true}]);}};globalThis.IntersectionObserver=w.IntersectionObserver;await import('../dist/forge-reveal.mjs?home-operations='+reduced);for(let i=0;i<20&&!w.document.querySelector('.has-circuit');i++)await new Promise(r=>setTimeout(r,0));const section=w.document.querySelector('#signal-forge');assert(section.classList.contains('has-circuit'));assert.equal(section.querySelectorAll('.forge-reveal-wide [data-home-trace]').length,3);assert.equal(section.classList.contains('is-animated'),!reduced);assert(section.querySelector('.forge-reveal-inspect-path').textContent.endsWith('Output jack TIP'));const report=forgeResponse(homepageCircuit());assert(report.supported&&report.channel==='neck');assert.equal(section.querySelector('.response-current').getAttribute('d'),responseGraph(report).querySelector('.response-current').getAttribute('d'));if(reduced)assert.equal(section.dataset.stage,'3');w.close();}
 await inspect(false);await inspect(true);
-console.log('Homepage Forge narrative, shared circuit, response authority, static and reduced-motion states PASS');
+for(const width of [320,360,390,412,768,1024,1400,1920]){const w=new Window({settings,width});w.document.write(html);const s=w.document.createElement('style');s.textContent=css.replace(/@media\(/g,'@media (');w.document.head.append(s);const section=w.document.querySelector('.forge-reveal'),get=e=>w.getComputedStyle(e);assert.equal(get(section).backgroundColor,'#eee8db');assert.equal(get(section).color,'#292c24');assert.equal(get(section.querySelector('.forge-reveal-narrow')).display,width<=600?'block':'none');assert.equal(get(section.querySelector('.forge-reveal-wide')).display,width<=600?'none':'block');assert.equal(get(section.querySelector('.forge-reveal-circuit')).minWidth,'0');assert.equal(get(section.querySelector('.forge-reveal-response')).minWidth,'0');assert(get(section.querySelector('.forge-reveal-proposition')).color==='#555c4c');assert.equal(section.querySelector('.forge-reveal-primary').getAttribute('href'),'/circuit-forge/');w.close();}
+console.log('Homepage editorial: shared topology and geometry, responsive layouts at eight widths, exact TIP endpoint, lug 3 tone branch, travelling gold/reduced motion and shared response PASS');

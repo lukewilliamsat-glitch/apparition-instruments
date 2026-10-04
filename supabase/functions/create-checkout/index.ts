@@ -4,6 +4,16 @@ const origin='https://apparitioninstruments.co.uk';
 const checkoutPage=origin+'/checkout/success/';
 const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:{'Content-Type':'application/json','Access-Control-Allow-Origin':origin,'Vary':'Origin'}});
 const err=(message:string,status=400)=>json({message},status);
+// Never use a client snapshot for purchase availability. A missing row, network
+// error or invalid result fails closed; existing fulfilment is independent.
+async function availability(url:string,key:string,request:typeof fetch):Promise<Response|null>{
+ try{const response=await request(url+'/rest/v1/rpc/assert_store_accepting_orders',{method:'POST',headers:{apikey:key,Authorization:'Bearer '+key,'Content-Type':'application/json'},body:'{}'});
+  const data=await response.json();
+  if(!response.ok){if(data?.message==='Orders are temporarily paused')return json({code:'STORE_PAUSED',message:'Orders are temporarily paused. '+String(data.details||'Your basket is saved; please return when ordering reopens.').slice(0,1000)},409);return err('Store availability could not be checked. Please retry shortly.',503);}
+  if(data?.store?.state!=='OPEN')return err('Store availability could not be checked. Please retry shortly.',503);
+  return null;
+ }catch{return err('Store availability could not be checked. Please retry shortly.',503);}
+}
 type Environment={get:(key:string)=>string|undefined};
 export async function startCheckout(req:Request,env:Environment=Deno.env,request:typeof fetch=fetch):Promise<Response>{
  if(req.headers.get('origin')&&req.headers.get('origin')!==origin)return err('Checkout origin is unavailable.',403);
@@ -18,9 +28,10 @@ export async function startCheckout(req:Request,env:Environment=Deno.env,request
  const hasAuthorization=req.headers.has('Authorization');
  const owner=hasAuthorization?await verifiedCustomer(req,env,request):null;
  if(hasAuthorization&&!owner)return err('Your account session has expired. Sign in again or continue as a guest.',401);
+ const storeError=await availability(supabaseUrl,serviceKey,request);if(storeError)return storeError;
  // This privileged RPC remains independently validating. Browser callers have no EXECUTE permission.
  const rpc=await request(supabaseUrl+'/rest/v1/rpc/create_guest_kit_order',{method:'POST',headers:{apikey:serviceKey,Authorization:'Bearer '+serviceKey,'Content-Type':'application/json'},body:JSON.stringify({p_request:{requestId:input.requestId,items:input.items,checkoutMode:'stripe',...(owner?{ownerUserId:owner.id}:{})}})});
- if(!rpc.ok){const details=await rpc.json().catch(()=>({}));const stale=/price|total|unavailable/i.test(details?.message||'');return err(stale?'The basket price or configuration has changed. Review your basket before checkout.':'Your basket could not be verified. Review your selections before checkout.',400);}
+ if(!rpc.ok){const details=await rpc.json().catch(()=>({}));if(details?.message==='Orders are temporarily paused')return json({code:'STORE_PAUSED',message:'Orders are temporarily paused. '+String(details.details||'Your basket remains saved.').slice(0,1000)},409);const stale=/price|total|unavailable/i.test(details?.message||'');return err(stale?'The basket price or configuration has changed. Review your basket before checkout.':'Your basket could not be verified. Review your selections before checkout.',400);}
  const receipt=await rpc.json();if(!/^[0-9a-f-]{36}$/i.test(receipt?.id||'')||!/^AI-\d+$/.test(receipt?.reference||''))return err('Order validation response was incomplete.',502);
  const orderResponse=await request(supabaseUrl+'/rest/v1/orders?id=eq.'+encodeURIComponent(receipt.id)+'&select=id,reference,subtotal_pence,delivery_pence,total_pence,payment_status,status,stripe_checkout_session_id,owner_user_id,items',{headers:{apikey:serviceKey,Authorization:'Bearer '+serviceKey}});
  if(!orderResponse.ok)return err('Order could not be verified for checkout.',502);
@@ -36,6 +47,7 @@ export async function startCheckout(req:Request,env:Environment=Deno.env,request
   const description=[s.wiring,s.pots,s.matching,s.neck&&s.bridge?`${s.neck} / ${s.bridge}`:null,s.bleed].filter(value=>typeof value==='string'&&value.trim()).join(' · ').slice(0,500);
   if(description)form.set(`line_items[${index}][price_data][product_data][description]`,description);
  }});
+ const finalStoreError=await availability(supabaseUrl,serviceKey,request);if(finalStoreError)return finalStoreError;
  const stripe=await request('https://api.stripe.com/v1/checkout/sessions',{method:'POST',headers:{Authorization:'Bearer '+stripeKey,'Content-Type':'application/x-www-form-urlencoded','Idempotency-Key':'apparition-'+order.id},body:form});
  if(!stripe.ok)return err('Secure checkout is temporarily unavailable. Your order remains Pending and Unpaid. Retry shortly.',502);
  const session=await stripe.json();if(session?.livemode!==true||!/^cs_live_[A-Za-z0-9]+$/.test(session?.id||'')||!/^https:\/\/checkout\.stripe\.com\//.test(session?.url||'')||session?.amount_total!==order.total_pence||session?.currency!=='gbp')return err('Stripe did not return a valid live Checkout session.',502);

@@ -2,7 +2,7 @@
 import {homepageCircuit,homepageStateKey,homepageSpecificationKey} from './electronics/presentation/homepage-state.mjs';
 import {forgeResponse} from './circuit-forge/response.mjs';
 import {responseGraph} from './circuit-forge/response-view.mjs';
-import {inspectSelection,terminalName} from './circuit-forge/workbench.mjs';
+import {conventionalSignalStudy} from './electronics/presentation/educational-truth.mjs';
 
 export const chapterForProgress=progress=>Math.min(3,Math.max(0,Math.floor(Math.min(1,Math.max(0,progress))*4)));
 
@@ -14,35 +14,26 @@ if(typeof document!=='undefined'){
   const response=document.querySelector('#forge-reveal-response');
   if(report.supported){
    const context=document.createElement('div');context.className='forge-reveal-response-context';
-   context.innerHTML='<span>SIGNAL ANALYSIS / ELECTRICAL RESPONSE</span><strong>See what the circuit does.</strong><small>Modelled electrical response across 20 Hz–20 kHz.</small><small class="forge-reveal-response-state"></small>';
+   context.innerHTML='<span>SIGNAL ANALYSIS / ELECTRICAL RESPONSE</span><strong>See what the circuit does.</strong><small>Modelled electrical response across 20 Hz–20 kHz.</small><small>Illustrative single-pickup source assumptions; not measured pickup or acoustic sound.</small><small class="forge-reveal-response-state"></small>';
    context.querySelector('.forge-reveal-response-state').textContent=`${circuit.state.wiring[0].toUpperCase()+circuit.state.wiring.slice(1)} wiring · ${report.channel[0].toUpperCase()+report.channel.slice(1)} pickup`;
-   const graph=responseGraph(report);graph.querySelector('.response-current')?.setAttribute('pathLength','1');response.append(context,graph);
+   const graph=responseGraph(report);graph.querySelector('desc').textContent='Illustrative neck pickup electrical response, 20 Hz to 20 kHz. Relative output in decibels. Modern tone wiring with generic single-pickup R/L/C assumptions; not a measured pickup or an acoustic sound prediction.';graph.querySelector('.response-current')?.setAttribute('pathLength','1');response.append(context,graph);
   }
   const mount=document.querySelector('#forge-reveal-circuit');
   const asset=new URL('./assets/signal-forge-full.svg',import.meta.url);
-  asset.search=new URL(import.meta.url).search||'?rev=platform-qa-v1';
+  asset.search=new URL(import.meta.url).search||'?rev=operations-v1';
   fetch(asset).then(result=>{if(!result.ok)throw Error('Circuit artwork unavailable');return result.text();}).then(markup=>{
    const svg=new DOMParser().parseFromString(markup,'image/svg+xml').documentElement;
-   if(svg.getAttribute('data-diagram-surface')!=='dark')throw Error('Circuit artwork surface mismatch');
-   if(svg.getAttribute('data-homepage-specification')!==homepageSpecificationKey(circuit))throw Error('Circuit artwork specification mismatch');
-   if(svg.getAttribute('data-circuit-state')!==homepageStateKey(circuit))throw Error('Circuit artwork state mismatch');
-   if(svg.localName!=='svg')throw Error('Invalid circuit artwork');
-   const wire=(from,to)=>circuit.connections.find(item=>item.from===from&&item.to===to)?.id;
-   const path=[wire('neckPickup.hot','neckVolume.lug3'),wire('neckVolume.lug2','selector.neck'),wire('selector.outB','jack.tip')];
-   if(path.some(id=>!id)||!circuit.contacts.some(([a,b])=>a==='selector.neck'&&b==='selector.outN'))throw Error('Signal path unavailable');
-   const selected=inspectSelection(circuit,{kind:'terminal',ref:'neckVolume.lug2'});
-   const onward=selected?.connections.find(item=>item.from==='neckVolume.lug2'&&item.to==='selector.neck');
-   if(!onward||!selected.output)throw Error('Selected termination unavailable');
+   if(svg.localName!=='svg'||svg.getAttribute('data-home-renderer')!=='editorial-v1'||svg.getAttribute('data-diagram-surface')!=='cream')throw Error('Editorial artwork mismatch');
+   if(svg.getAttribute('data-homepage-specification')!==homepageSpecificationKey(circuit)||svg.getAttribute('data-circuit-state')!==homepageStateKey(circuit))throw Error('Circuit artwork specification mismatch');
+   const study=conventionalSignalStudy(circuit),path=svg.querySelector('[data-home-signal-to="jack.tip"]');
+   const tip=svg.querySelector('[data-terminal="jack.tip"]');
+   if(!path||!path.getAttribute('d').endsWith('H'+tip.getAttribute('cx'))||path.getAttribute('data-signal-output')!==study.volume.id+'.lug2')throw Error('Signal destination mismatch');
    const annotation=section.querySelector('.forge-reveal-inspect');
-   annotation.querySelector('span').textContent=terminalName(circuit,'neckVolume.lug2').split(' / ')[0];
-   annotation.querySelector('strong').textContent=terminalName(circuit,'neckVolume.lug2').split(' / ')[1];
-   annotation.querySelector('small').textContent=`ROLE / Volume-controlled signal to ${terminalName(circuit,onward.to)}.`;
-   annotation.querySelector('.forge-reveal-inspect-path').textContent='IN THE PATH / Volume wiper → Selector → Output jack';
-   for(const id of path){const wireNode=svg.querySelector(`[data-wire="${id}"]`);wireNode?.setAttribute('data-home-trace','');wireNode?.querySelector('.wire-line')?.setAttribute('pathLength','1');}
-   for(const hop of svg.querySelectorAll('[data-crossing-wire]'))if(path.includes(hop.getAttribute('data-crossing-wire')))hop.setAttribute('data-home-trace','');
-   svg.querySelector('[data-component="neckVolume"]')?.setAttribute('data-home-inspect','');
-   svg.querySelector('[data-terminal="neckVolume.lug2"]')?.setAttribute('data-home-inspect','');
-   mount.replaceChildren(svg);
+   annotation.querySelector('span').textContent='VOLUME CONTROL';
+   annotation.querySelector('strong').textContent='INPUT 3 / WIPER 2';
+   annotation.querySelector('small').textContent='Tone loads input lug 3; the wiper sends the signal to the jack TIP.';
+   annotation.querySelector('.forge-reveal-inspect-path').textContent='Pickup → Selector → Volume → Output jack TIP';
+   const desktopMount=mount.querySelector('.forge-reveal-wide');desktopMount.replaceChildren(svg);
    section.classList.add('has-circuit');
    const motion=matchMedia('(prefers-reduced-motion: reduce)');
    const desktop=matchMedia('(min-width: 901px)');

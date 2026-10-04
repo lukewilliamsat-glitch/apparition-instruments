@@ -46,6 +46,9 @@ jobs:
       - name: Generate public product pages from Supabase
         if: github.event_name != 'push' || !contains(github.event.head_commit.message, '[static-only]')
         run: node scripts/generate-product-pages.mjs
+      - name: Generate public News and Operations presentation
+        if: github.event_name != 'push' || !contains(github.event.head_commit.message, '[static-only]')
+        run: node scripts/generate-site-operations.mjs
       - name: Stamp first-party static asset URLs
         run: node scripts/stamp-static-assets.mjs dist
       - name: Setup Pages

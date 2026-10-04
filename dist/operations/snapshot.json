@@ -1,0 +1,12 @@
+{
+  "store": {
+    "desired_state": "OPEN",
+    "state": "OPEN",
+    "customer_title": "Orders are temporarily paused",
+    "customer_message": "You can browse and save your basket. Checkout will return when orders reopen.",
+    "pause_from": null,
+    "resume_at": null,
+    "updated_at": "2026-10-04T17:46:09.061308+00:00"
+  },
+  "news": []
+}

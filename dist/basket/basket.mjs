@@ -1,6 +1,7 @@
 import {readBasket,changeQuantity,removeKit,resetBasket} from '../commerce.mjs';
 import {el,itemCard,totalCard,emptyBasket,errorBasket} from '../basket-ui.mjs';
 const content=document.querySelector('#basket-content'),status=document.querySelector('#basket-status');
+window.apparitionStoreState||={state:'UNAVAILABLE',customer_message:'Checking current store availability…'};
 function showError(error){status.textContent=error.message;}
 function render(){
  const activeId=document.activeElement?.id;
@@ -9,4 +10,4 @@ function render(){
  layout.append(list,totalCard(items));content.append(layout);if(activeId)document.getElementById(activeId)?.focus();
  }catch(error){content.replaceChildren(errorBasket(error.message,()=>{try{resetBasket();status.textContent='Saved basket reset.';}catch(e){showError(e);}}));}
 }
-window.addEventListener('storage',render);window.addEventListener('apparition:basket-changed',render);window.addEventListener('pageshow',render);render();
+window.addEventListener('apparition:store-status',render);window.addEventListener('storage',render);window.addEventListener('apparition:basket-changed',render);window.addEventListener('pageshow',render);render();

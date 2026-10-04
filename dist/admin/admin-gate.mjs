@@ -6,6 +6,7 @@ import {setAssemblyRepository} from './assembly-repository.mjs';
 import {createAdminAssemblyRepository} from '../backend/assembly-data.mjs';
 import {createAuthenticatedRepositoryTransport} from '../backend/providers.mjs?v=p10g';
 import {createAdminOrderRepository,setAdminOrderRepository} from '../backend/order-data.mjs?v=external-v1';
+import {createOperationsRepository,setOperationsRepository} from '../backend/operations-admin.mjs';
 
 const element=(document,tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
 const entryModules=document=>(document.querySelector('script[data-admin-entry]')?.dataset.adminEntry||'').split(',').map(value=>value.trim()).filter(Boolean);
@@ -26,6 +27,7 @@ export async function bootAdminGate({document=globalThis.document,auth=createAdm
   setAdminOptionRepository(null);
   setAssemblyRepository(null);
   setAdminOrderRepository(null);
+  setOperationsRepository(null);
   body.classList.remove('admin-authorized');main.hidden=false;panel.replaceChildren(eyebrow,title,note,feedback);
   note.textContent='Signing out…';feedback.textContent='';
   try{await auth.signOut();document.querySelector('.admin-lock')?.remove();render('signed-out');}catch{render('sign-out-error');}
@@ -59,10 +61,13 @@ export async function bootAdminGate({document=globalThis.document,auth=createAdm
     setAdminOptionRepository(createAdminOptionRepository(transport));
     setAssemblyRepository(createAdminAssemblyRepository(transport));
     setAdminOrderRepository(createAdminOrderRepository(transport));
+    setOperationsRepository(createOperationsRepository(transport));
    }
+   const navigation=document.querySelector('.admin-navigation')||document.querySelector('.admin-tabs');
+   if(navigation&&!navigation.querySelector('a[href="/admin/site-operations/"]')){const group=element(document,'div'),label=element(document,'span','Operations'),link=element(document,'a','Site Operations');link.href='/admin/site-operations/';group.append(label,link);if(navigation.classList.contains('admin-navigation'))navigation.append(group);else navigation.append(link);}
    for(const entry of entryModules(document))await load(new URL(entry,document.baseURI).href);
    main.hidden=true;body.classList.add('admin-authorized');
-  }catch{setComponentRepository(null);setAdminOptionRepository(null);setAssemblyRepository(null);setAdminOrderRepository(null);signOutControl.remove();render('checking');feedback.textContent='Admin could not load. Please reload and try again.';}
+  }catch{setComponentRepository(null);setAdminOptionRepository(null);setAssemblyRepository(null);setAdminOrderRepository(null);setOperationsRepository(null);signOutControl.remove();render('checking');feedback.textContent='Admin could not load. Please reload and try again.';}
  };
  render('checking');
  try{const result=await auth.restore();if(result.status==='authorized')await reveal();else render(result.status==='denied'?'denied':'signed-out');}

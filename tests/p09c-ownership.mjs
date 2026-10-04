@@ -50,6 +50,7 @@ assert(queries.every(q=>!q.toString().includes('customer')));
 const basket={requestId:reqId,items:[{product:'component',sku:'COMP-1',quantity:1}],ownerUserId:b,email:'forged@example.co.uk'};
 const order=(owner)=>({id:orderId,reference:'AI-010030',subtotal_pence:100,delivery_pence:399,total_pence:499,status:'pending',payment_status:'unpaid',stripe_checkout_session_id:null,owner_user_id:owner,items:[{type:'component',unitPrice:100,quantity:1,name:'Part'}]});
 async function checkout(token,actualOwner){const calls=[];const send=async(url,init)=>{calls.push([url,init]);if(url.endsWith('/auth/v1/user'))return transport(url,init);
+ if(url.endsWith('/rpc/assert_store_accepting_orders'))return Response.json({store:{state:'OPEN'}});
  if(url.endsWith('/rpc/create_guest_kit_order'))return Response.json({id:orderId,reference:'AI-010030',totalPence:499});
  if(url.includes('/rest/v1/orders?')&&init.method!=='PATCH')return Response.json([order(actualOwner)]);
  if(url.startsWith('https://api.stripe.com'))return Response.json({id:'cs_live_123456789',url:'https://checkout.stripe.com/c/pay/cs_live_123456789',livemode:true,amount_total:499,currency:'gbp'});
@@ -57,9 +58,9 @@ async function checkout(token,actualOwner){const calls=[];const send=async(url,i
  const request=new Request('https://example.supabase.co/functions/v1/create-checkout',{method:'POST',headers:token?bearer(token):{Origin:'https://apparitioninstruments.co.uk'},body:JSON.stringify(basket)});
  const response=await startCheckout(request,env,send);return {response,calls};}
 let checkoutResult=await checkout(null,null);assert.equal(checkoutResult.response.status,200);
-let payload=JSON.parse(checkoutResult.calls[0][1].body).p_request;assert.equal(payload.ownerUserId,undefined);assert.equal(payload.email,undefined);
+let payload=JSON.parse(checkoutResult.calls.find(([url])=>url.endsWith('/rpc/create_guest_kit_order'))[1].body).p_request;assert.equal(payload.ownerUserId,undefined);assert.equal(payload.email,undefined);
 checkoutResult=await checkout(tokenA,a);assert.equal(checkoutResult.response.status,200);
-payload=JSON.parse(checkoutResult.calls[1][1].body).p_request;assert.equal(payload.ownerUserId,a);assert.equal(payload.email,undefined);
+payload=JSON.parse(checkoutResult.calls.find(([url])=>url.endsWith('/rpc/create_guest_kit_order'))[1].body).p_request;assert.equal(payload.ownerUserId,a);assert.equal(payload.email,undefined);
 checkoutResult=await checkout(tokenA,b);assert.equal(checkoutResult.response.status,409);assert(!checkoutResult.calls.some(([url])=>url.startsWith('https://api.stripe.com')));
 checkoutResult=await checkout('invalid'.repeat(12),null);assert.equal(checkoutResult.response.status,401);assert.equal(checkoutResult.calls.length,1);
 const rep=createSecureCheckoutRepository({config:{url:'https://example.supabase.co',publishableKey:'public'},request:async(_url,init)=>{assert.equal(init.headers.Authorization,'Bearer '+tokenA);return Response.json({url:'https://checkout.stripe.com/c/pay/cs_live_123456789',reference:'AI-010030',totalPence:499});}});await rep.create(basket,{accessToken:tokenA});

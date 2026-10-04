@@ -126,7 +126,11 @@ for url in urls:
     assert page.meta.get('og:description')==page.meta['description']
     assert page.meta.get('og:url')==url
     assert page.jsonld
-    if not route.startswith('/products/'):
+    if route.startswith('/news/') and route != '/news/':
+        article=json.loads(page.jsonld[0])
+        assert article['@type']=='Article' and article['url']==url and article['headline']
+        assert article['datePublished'] and article['dateModified']
+    elif not route.startswith('/products/'):
         graph=json.loads(page.jsonld[0])['@graph']
         assert graph[0]['url']==url and graph[0]['name']==page.title
 

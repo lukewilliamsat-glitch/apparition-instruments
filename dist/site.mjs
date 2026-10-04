@@ -1,5 +1,6 @@
 import {createBasketCounter} from './basket-count.mjs';
 import {deploymentPath,deploymentRoot} from './deployment.mjs';
+import {bootOperations} from './operations/public.mjs';
 // Keep existing root-relative routes inside a project subpath when the site is
 // hosted below the domain root (for example on GitHub Pages).
 function keepInDeploymentRoot(element){
@@ -14,6 +15,7 @@ if(deploymentRoot.pathname!=='/'){
  document.addEventListener('submit',event=>keepInDeploymentRoot(event.target),true);
 }
 const menu=document.querySelector('.menu-button'),mobileNav=document.querySelector('#mobile-nav');
+if(!document.location?.pathname.includes('/admin/')){const footer=document.querySelector('.footer-links');if(footer&&!footer.querySelector('a[href="/news/"]')){const link=document.createElement('a');link.href=deploymentPath('/news/');link.textContent='News';footer.append(link);}bootOperations(document);}
 function closeMenu(){if(!menu||!mobileNav)return;menu.setAttribute('aria-expanded','false');mobileNav.hidden=true;menu.querySelector('span').textContent='+';}
 menu?.addEventListener('click',()=>{const open=menu.getAttribute('aria-expanded')==='true';menu.setAttribute('aria-expanded',String(!open));mobileNav.hidden=open;menu.querySelector('span').textContent=open?'+':'−';});
 mobileNav?.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));

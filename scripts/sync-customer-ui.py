@@ -9,7 +9,7 @@ def mode(path):
         return 'technical'
     if route.startswith(('account/', 'basket/', 'contact/', 'checkout/', 'success/')):
         return 'service'
-    if route.startswith(('luthier-hub/', 'faq/', 'terms/', 'privacy/', 'interactive-tools/')):
+    if route.startswith(('luthier-hub/', 'faq/', 'terms/', 'privacy/', 'interactive-tools/', 'news/')):
         return 'editorial'
     return 'commercial'
 

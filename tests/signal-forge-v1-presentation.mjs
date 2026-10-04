@@ -1,3 +1,4 @@
+import {homepageEditorial} from '../dist/electronics/presentation/homepage-editorial.mjs';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {forgeCircuit} from '../dist/circuit-forge/model.mjs';
@@ -14,10 +15,10 @@ for(const name of ['neckProfile','bridgeProfile','bleed','neckCap','bridgeCap'])
 for(const id of ['all','signal','ground','tone','auxiliary'])assert(html.includes(`data-role-view="${id}"`));
 for(const ref of ['neckPickup.hot','bridgePickup.hot','jack.tip','jack.sleeve'])assert(html.includes(`data-trace="${ref}"`));
 assert(css.includes('input:focus-visible+span')&&css.includes('prefers-reduced-motion:reduce'));
-assert(home.includes('APPARITION / SIGNAL FORGE')&&home.includes('Know your <em>circuit.</em>'));
+assert(home.includes('APPARITION / THE SIGNAL PATH')&&home.includes('Know your <em>circuit.</em>'));
 assert(home.includes('href="/circuit-forge/"')&&home.includes('href="/wiring-generator/"'));
 assert(!home.includes('SEE THE CIRCUIT BEFORE YOU BUILD IT'));
-const expected=drawCircuit(homepageCircuit(),{exporting:true,mode:'trace',palette:'editorial',surface:'dark'}).replace('<svg ','<svg data-homepage-specification="'+homepageSpecificationKey(homepageCircuit()).replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;')+'" ');
-assert.equal(asset,expected,'homepage artwork is the actual shared circuit renderer output');
-assert(asset.includes('data-route-role="signal"')&&asset.includes('data-route-net='));
+const expected=homepageEditorial();
+assert.equal(asset,expected,'homepage artwork is the bounded editorial projection of shared graph and geometry');
+assert(asset.includes('data-main-signal=')&&asset.includes('data-tone-branch="loading"')&&asset.includes('data-home-signal-to="jack.tip"'));assert(!asset.includes('data-route-net='),'Editorial adapter omits technical routing metadata');
 console.log('Precision workbench controls and graph-derived homepage reveal PASS');

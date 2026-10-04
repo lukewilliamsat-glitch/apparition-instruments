@@ -6,6 +6,7 @@ import {productById} from '../components/catalogue.mjs';
 import {customerAuth} from '../account/client.mjs';
 const content=document.querySelector('#checkout-content'),repository=createSecureCheckoutRepository();
 let requestId=crypto.randomUUID(),shipping=null;
+window.apparitionStoreState||={state:'UNAVAILABLE',customer_message:'Checking current store availability…'};
 async function loadShipping(){
  const response=await fetch(publicBackendConfig.url+'/rest/v1/commerce_shipping?country=eq.GB&select=*',{headers:{apikey:publicBackendConfig.publishableKey}});
  if(!response.ok)throw new Error('UK delivery prices are unavailable. Please retry later.');
@@ -19,6 +20,7 @@ function orderForm(items){
  const button=el('button','button','Proceed to Secure Checkout'),status=el('p','status-message');button.type='submit';status.setAttribute('role','status');form.append(title,note,button,status);
  form.addEventListener('submit',async event=>{event.preventDefault();if(button.disabled)return;button.disabled=true;status.textContent='Preparing secure checkout…';
   try{
+   if(window.apparitionStoreState?.state!=='OPEN')throw new Error(window.apparitionStoreState?.customer_message||'Checkout availability could not be checked. Please retry shortly.');
    const current=readBasket();if(JSON.stringify(current)!==JSON.stringify(items))throw new Error('Your basket changed. Review it and reload before submitting.');
    const {data:session,error:sessionError}=await customerAuth.getSession();
    if(sessionError)throw new Error('Your account session could not be checked. Please reload and try again.');
@@ -36,6 +38,7 @@ function render(){try{
  const layout=el('div','basket-layout'),list=el('div','basket-items');items.forEach(item=>list.append(itemCard(item)));layout.append(list,totalCard(items,true,shipping));content.append(layout);
  if(items.some(item=>item.product==='les-paul'&&item.record?.legacyReconstructed)){content.append(el('p','status-message','Review and resave older kit configurations in the Builder before secure checkout.'));return;}
  if(!shipping){content.append(el('p','status-message','Loading current UK delivery pricing…'));return;}
+ if(window.apparitionStoreState?.state!=='OPEN')return;
  content.append(orderForm(items));
  }catch(error){content.replaceChildren(errorBasket(error.message,()=>{try{resetBasket();}catch(e){content.prepend(el('p','status-message',e.message));}}));}}
-window.addEventListener('storage',render);window.addEventListener('apparition:basket-changed',render);window.addEventListener('pageshow',render);render();loadShipping().catch(error=>{content.append(el('p','status-message',error.message));});
+window.addEventListener('apparition:store-status',render);window.addEventListener('storage',render);window.addEventListener('apparition:basket-changed',render);window.addEventListener('pageshow',render);render();loadShipping().catch(error=>{content.append(el('p','status-message',error.message));});

@@ -1,3 +1,4 @@
+@import url('./operations/operations.css?rev=operations-v1');
 /* Display the supplied artwork without altering its pixels or transparency.
    The logo viewport excludes the empty margins of the original square PNG. */
 :root{--brand-gold:#d9b96f;--brand-bone:#c5bea0}
