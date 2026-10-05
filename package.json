@@ -13,6 +13,7 @@
     "@electric-sql/pglite": "0.5.8",
     "@supabase/supabase-js": "2.117.2",
     "esbuild": "0.28.2",
+    "fflate": "0.8.3",
     "happy-dom": "^20.14.5",
     "parse5": "8.0.0",
     "prosemirror-commands": "1.7.2",

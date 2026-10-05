@@ -11,3 +11,18 @@
 [data-hub-cms] [data-cms-choices]{display:grid;gap:8px}
 [data-hub-cms] iframe{display:block;width:100%;height:800px;border:1px solid currentColor;margin:24px 0}
 [data-hub-cms] [hidden]{display:none!important}
+[data-hub-cms] .cms-library-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:12px;margin:20px 0}
+[data-hub-cms] .cms-library-filters label{display:grid;gap:6px}
+[data-hub-cms] .cms-state{white-space:nowrap;overflow-wrap:normal;word-break:normal}
+[data-hub-cms] .cms-library-actions{min-width:180px}
+[data-hub-cms] .cms-library-actions button{margin:3px}
+[data-hub-cms] .cms-toolbar{position:sticky;top:0;z-index:2;background:var(--paper,#f4efe5);color:var(--ink,#171716);padding:10px;border:1px solid currentColor}
+[data-hub-cms] .cms-toolbar-group{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+[data-hub-cms] .cms-toolbar-label{width:100%;font-size:.75rem;font-weight:700;text-transform:uppercase}
+[data-hub-cms] .ProseMirror{max-width:82ch;line-height:1.65;margin-inline:auto}
+[data-hub-cms] #cms-related-selected button{margin:4px}
+[data-hub-cms] #cms-import-review{border:1px solid currentColor;padding:18px;margin:24px 0}
+[data-hub-cms] #cms-import-diff{max-height:520px;overflow:auto}
+[data-hub-cms] #cms-import-diff p{white-space:pre-wrap;overflow-wrap:anywhere}
+[data-hub-cms] button:focus-visible,[data-hub-cms] input:focus-visible,[data-hub-cms] select:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+@media(max-width:640px){[data-hub-cms] .cms-toolbar{position:static}}

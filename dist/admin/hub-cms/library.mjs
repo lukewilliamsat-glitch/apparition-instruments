@@ -1,0 +1,6 @@
+import {stable} from '../../hub-cms/body.mjs';import {cmsConfig} from '../../hub-cms/config.mjs';
+const format=new Intl.DateTimeFormat('en-GB',{dateStyle:'medium',timeStyle:'short',timeZone:'Europe/London'});
+export const categoryLabel=id=>cmsConfig.categories.find(c=>c.id===id)?.title||id;
+export function readableDate(value,{dateOnly=false}={}){if(!value)return 'Date not recorded';const d=new Date(value);return Number.isNaN(d.getTime())?'Date not recorded':dateOnly||/^\d{4}-\d{2}-\d{2}$/.test(value)?new Intl.DateTimeFormat('en-GB',{dateStyle:'medium',timeZone:'UTC'}).format(d):format.format(d);}
+export function articleState(a){if(!a.published_revision_id)return 'Never published';return a.published_content&&stable(a.draft)!==stable(a.published_content)?'Draft changes pending':'Published';}
+export function libraryRows(articles,{search='',category='',state='',order='updated'}={}){const q=search.trim().toLocaleLowerCase('en-GB');return articles.filter(a=>(!q||(a.draft.title+' '+a.draft.slug).toLocaleLowerCase('en-GB').includes(q))&&(!category||a.draft.category===category)&&(!state||articleState(a)===state||(state==='Draft'&&!a.published_revision_id))).sort((a,b)=>order==='title'?(a.draft.title||'').localeCompare(b.draft.title||'','en-GB'):Date.parse(b.updated_at)-Date.parse(a.updated_at));}
