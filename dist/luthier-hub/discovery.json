@@ -1,0 +1,113 @@
+{
+  "version": 1,
+  "intents": [
+    {
+      "guide": "pots",
+      "queries": [
+        "guitar potentiometers explained"
+      ],
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/potentiometers-explained/"
+    },
+    {
+      "guide": "values",
+      "queries": [
+        "250k vs 500k pots"
+      ],
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/250k-vs-500k-pots/"
+    },
+    {
+      "guide": "taper",
+      "queries": [
+        "audio vs linear taper guitar pots"
+      ],
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/audio-vs-linear-taper-pots/"
+    },
+    {
+      "guide": "lugs",
+      "queries": [
+        "guitar pot lug numbering",
+        "guitar volume pot wiring"
+      ],
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-pot-lug-numbering-wiring/"
+    },
+    {
+      "guide": "tone",
+      "queries": [
+        "how guitar tone controls work",
+        "guitar tone pot wiring"
+      ],
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/how-a-guitar-tone-control-works/"
+    },
+    {
+      "guide": "capacitor-values",
+      "queries": [
+        "0.022 vs 0.047 guitar capacitor",
+        "guitar tone capacitor values"
+      ],
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/022-vs-047-tone-capacitors/"
+    },
+    {
+      "guide": "bleeds",
+      "queries": [
+        "guitar treble bleed",
+        "treble bleed explained",
+        "treble bleed capacitor resistor",
+        "treble bleed values",
+        "cap only vs resistor treble bleed"
+      ],
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/treble-bleeds/"
+    },
+    {
+      "guide": "circuits",
+      "queries": [
+        "guitar wiring explained"
+      ],
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/wiring-circuits-explained/"
+    },
+    {
+      "guide": "lp-controls",
+      "queries": [
+        "Les Paul wiring",
+        "how Les Paul controls work"
+      ],
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/how-les-paul-controls-work/"
+    },
+    {
+      "guide": "modern-50s",
+      "queries": [
+        "modern vs 50s wiring"
+      ],
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/modern-vs-50s-les-paul-wiring/"
+    },
+    {
+      "guide": "toggle-guide",
+      "queries": [
+        "guitar selector wiring"
+      ],
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-three-way-toggle-switch-wiring/"
+    },
+    {
+      "guide": "grounding-guide",
+      "queries": [
+        "guitar grounding"
+      ],
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-grounding-common-problems/"
+    },
+    {
+      "guide": "coil-split-guide",
+      "queries": [
+        "coil split wiring"
+      ],
+      "limits": "Supported configurations only; no universal physical pinout.",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/coil-splitting-explained/"
+    },
+    {
+      "guide": "series-parallel-guide",
+      "queries": [
+        "series parallel guitar wiring"
+      ],
+      "limits": "Conceptual comparison; alternate parallel connection recipes are not added.",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/series-vs-parallel-pickup-wiring/"
+    }
+  ]
+}

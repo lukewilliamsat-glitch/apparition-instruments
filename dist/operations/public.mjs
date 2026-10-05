@@ -1,3 +1,4 @@
+import {mountCommercialHandoff} from '../commercial/handoff.mjs';
 import {readOperationsPresentation,readCurrentStore} from '../backend/site-operations.mjs';
 import {activeAnnouncement,effectiveStore,safeHref,ukDate} from './model.mjs';
 import {newsCards} from './news-render.mjs';
@@ -12,7 +13,7 @@ export async function bootOperations(document=globalThis.document){
  if(!document?.querySelector('.site-header')||document.location?.pathname.includes('/admin/'))return;
  const view=document.defaultView,purchasing=/\/(basket|checkout)\/$/.test(document.location?.pathname||'');let snapshot=null,store=null,offset=0,timer=null,inflight=null;
  const dispatch=state=>{view.apparitionStoreState=state;view.dispatchEvent(new view.CustomEvent('apparition:store-status',{detail:state}));};
- function paint(){if(!store)return;const now=Date.now()+offset;mountAnnouncement(document,activeAnnouncement(store,snapshot?.news||[],now));arm(now);}
+ function paint(){if(!store)return;const now=Date.now()+offset;mountAnnouncement(document,activeAnnouncement(store,snapshot?.news||[],now));mountCommercialHandoff(document,effectiveStore(store,now));arm(now);}
  function arm(now){view.clearTimeout(timer);const boundaries=[store?.pause_from,store?.resume_at,...(snapshot?.news||[]).filter(p=>p.announcement).map(p=>p.expires_at)].map(Date.parse).filter(t=>Number.isFinite(t)&&t>now);if(!boundaries.length)return;const delay=Math.min(...boundaries)-now+25;if(delay<=2147483647)timer=view.setTimeout(()=>purchasing?refresh():paint(),delay);}
  function refresh(){if(inflight)return inflight;inflight=readCurrentStore().then(current=>{store=current;offset=Date.parse(current.observed_at)-Date.now();dispatch(current);paint();}).catch(error=>{dispatch({state:'UNAVAILABLE',customer_message:error.message});}).finally(()=>{inflight=null;});return inflight;}
  try{snapshot=await readOperationsPresentation();store=snapshot?.store;if(store)paint();const latest=document.querySelector('[data-latest-news]');if(latest&&snapshot.news?.length){latest.hidden=false;latest.querySelector('[data-news-cards]').innerHTML=newsCards(snapshot.news.slice(0,3));}}
