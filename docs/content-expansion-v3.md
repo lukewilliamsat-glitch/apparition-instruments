@@ -1,0 +1,7 @@
+# Supporting Hub coverage
+
+Eight new guides extend 22 existing publications to 30: independent/dependent volumes; phase switching; push/pull and DPDT; DC resistance versus output; inductance; cable capacitance; partial splits; output-jack faults. Existing taper, capacitor choice, selector, grounding and basic split guides remain the primary references. The new guides fill narrower practical gaps, link to those references and to appropriate tools/components, and claim no competing primary intent.
+
+Original prose distinguishes circuit behaviour from listening preferences, stated manufacturer examples from universal rules, and hypothetical arithmetic from product specifications. References include manufacturer technical material from Bourns, Switchcraft, Seymour Duncan, Fralin and Mogami, plus StewMac's own instructional material. No wire colours are asserted as universal. Shields remain grounded independently from reversible signal conductors. No new tool topology/model is claimed by a link.
+
+The new guides use the accepted generic CMS article presentation. Only generic-template breadcrumb/category text and generated table-of-contents anchors are corrected; the 22 accepted source-preserving presentations remain byte-identical. All eight are CMS-managed, have stable IDs independent of slugs, imported immutable revision snapshots, Article/Breadcrumb schema, sitemap inclusion and compatible constrained DOCX bodies. The seed migration touches only eight new CMS article/revision rows and leaves prior published pointers alone.
