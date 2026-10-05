@@ -1,3 +1,4 @@
+import {addConjureNavigation} from './conjure/navigation.mjs';
 import {createAdminAuth} from './admin-auth.mjs';
 import {setComponentRepository} from './component-repository.mjs';
 import {createAdminComponentRepository} from '../backend/component-data.mjs?v=p11ef';
@@ -63,6 +64,7 @@ export async function bootAdminGate({document=globalThis.document,auth=createAdm
     setAdminOrderRepository(createAdminOrderRepository(transport));
     setOperationsRepository(createOperationsRepository(transport));
    }
+   addConjureNavigation(document);
    const navigation=document.querySelector('.admin-navigation')||document.querySelector('.admin-tabs');
    if(navigation&&!navigation.querySelector('a[href="/admin/site-operations/"]')){const group=element(document,'div'),label=element(document,'span','Operations'),link=element(document,'a','Site Operations');link.href='/admin/site-operations/';group.append(label,link);if(navigation.classList.contains('admin-navigation'))navigation.append(group);else navigation.append(link);}
    for(const entry of entryModules(document))await load(new URL(entry,document.baseURI).href);

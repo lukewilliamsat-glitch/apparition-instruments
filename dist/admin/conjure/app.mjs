@@ -8,7 +8,7 @@ export async function bootConjure({document=globalThis.document,repository=creat
  const articles=await repository.list(),pages=pageLibrary(articles),sessions=new Map();let current=null,active=null,serial=0;
  const message=value=>{status.textContent=value;};
  for(const page of pages){const option=document.createElement('option');option.value=page.path;option.textContent=page.title;picker.append(option);}
- const guard=()=>{if(!active?.pending)return true;message('Apply or cancel the text edit before navigating.');return false;};
+ const guard=()=>{if(active?.saving){message('Saving draft · wait before navigating.');return false;}if(!active?.pending)return true;message('Apply or cancel the pending edit before navigating.');return false;};
  async function navigate(value){if(!guard())return false;const path=pageRoute(value),page=pages.find(p=>p.path===path)||{path,title:path,authority:'static',editable:false};const ticket=++serial;message('Opening page…');
   const result=await renderPage(page,{request,document,articles});if(ticket!==serial)return false;
   active?.detach?.();current=page;picker.value=path;q('[data-page-title]').textContent=page.title;q('[data-support]').textContent=page.editable?'Select supported content on the page. Changes save as a private draft.':'Website preview · this page is read only. Interactive tools and commerce actions are disabled.';
@@ -19,14 +19,14 @@ export async function bootConjure({document=globalThis.document,repository=creat
   active=null;if(page.editable&&adapter){active=sessions.get(page.article.id)||await adapter.create(page,result.presentation,{document,repository,message,refresh});sessions.set(page.article.id,active);await active.attach(canvas);active.setBreakpoint(q('[data-view]').value);}
   refresh();return true;
  }
- function refresh(){const enabled=!!active&&q('[data-edit]').checked;active?.setEditing?.(enabled);frame.style.width=q('[data-view]').value==='mobile'?'390px':'100%';frame.style.maxWidth='100%';q('[data-undo]').disabled=!enabled||!active.past;q('[data-redo]').disabled=!enabled||!active.future;q('[data-save]').disabled=!active||!active.dirty||active.saving||active.pending;message(active?.status||'Website preview · no editable changes.');}
+ function refresh(){const enabled=!!active&&q('[data-edit]').checked;active?.setEditing?.(enabled);frame.style.width=q('[data-view]').value==='mobile'?'390px':'100%';frame.style.maxWidth='100%';q('[data-undo]').disabled=!enabled||active.pending||active.saving||!active.past;q('[data-redo]').disabled=!enabled||active.pending||active.saving||!active.future;q('[data-save]').disabled=!active||!active.dirty||active.saving||active.pending;picker.disabled=!!active?.saving;message(active?.status||'Website preview · no editable changes.');}
  picker.addEventListener('change',()=>navigate(picker.value).catch(e=>message(e.message)));
  q('[data-edit]').addEventListener('change',refresh);q('[data-view]').addEventListener('change',()=>{try{active?.setBreakpoint?.(q('[data-view]').value);refresh();}catch(e){message(e.message);}});
  q('[data-undo]').addEventListener('click',()=>{active?.undo();refresh();});q('[data-redo]').addEventListener('click',()=>{active?.redo();refresh();});
  q('[data-save]').addEventListener('click',async()=>{try{await active?.save();}catch(e){message(e.message);}refresh();});
  const dirty=()=>[...sessions.values()].some(s=>s.dirty||s.pending);
  document.defaultView.addEventListener('beforeunload',event=>{if(dirty()){event.preventDefault();event.returnValue='';}});
- q('[data-conjure-exit]').addEventListener('click',event=>{if(dirty()&&!document.defaultView.confirm('Leave Conjure with unsaved drafts?'))event.preventDefault();});
+ document.addEventListener('click',event=>{if(!event.target.closest?.('[data-conjure-exit],[data-inspector] nav a'))return;if(dirty()&&!document.defaultView.confirm('Leave Conjure with unsaved drafts?'))event.preventDefault();});
  await navigate(new URL(document.defaultView.location.href).searchParams.get('page')||'/');
  return {navigate,refresh,get current(){return current;},get active(){return active;},sessions};
 }
