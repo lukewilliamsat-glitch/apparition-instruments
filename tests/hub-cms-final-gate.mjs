@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';import {execFileSync} from 'node:child_process';import {readFileSync} from 'node:fs';
+const base='8068081deda3f1a1451898b9d96fbf3e23491766',git=(...a)=>execFileSync('git',a,{encoding:'utf8'}),paths=[...git('diff','--name-only',base).trim().split('\n'),...git('ls-files','--others','--exclude-standard').trim().split('\n')].filter(Boolean);
+const allowed=/^(dist\/(admin\/hub-cms\/|hub-cms\/)|scripts\/(hub-cms\/|build-hub-cms-(editor|seed)\.mjs$|generate-hub-cms\.mjs$)|tests\/hub-cms-[a-z-]+\.mjs$|docs\/luthier-hub-cms-v2\.md$|supabase\/migrations\/20261005090651_luthier_hub_cms_v2\.sql$|package(-lock)?\.json$|\.github\/workflows\/static\.yml$|dist\/admin\/index\.html$|scripts\/generate-luthier-hub\.mjs$)/;
+for(const p of paths)assert(allowed.test(p),'Outside CMS writable boundary: '+p);
+const nav=readFileSync('dist/admin/index.html','utf8').replace(/<div data-cms-addition="navigation">[\s\S]*?<\/div>/,'');assert.equal(nav,git('show',base+':dist/admin/index.html'));
+for(const p of paths.filter(p=>p.endsWith('.mjs')))execFileSync(process.execPath,['--check',p]);
+const css=readFileSync('dist/admin/hub-cms/cms.css','utf8');assert(!/(^|})\s*(body|html|:root|\.article-copy|\.hub-reference)\b/.test(css));assert(css.includes('[data-hub-cms]'));
+const seed=JSON.parse(readFileSync('scripts/hub-cms/seed.json'));assert.equal(seed.length,22);assert.equal(new Set(seed.map(a=>a.id)).size,22);assert.equal(new Set(seed.map(a=>a.content.slug)).size,22);
+const workflow=readFileSync('.github/workflows/static.yml','utf8');assert(workflow.includes('node scripts/generate-hub-cms.mjs'));assert(workflow.indexOf('node scripts/generate-hub-cms.mjs')<workflow.indexOf('actions/upload-pages-artifact'));assert(workflow.includes('[cms-only]'));
+assert.equal(git('diff','--name-only',base,'--','dist',':(exclude)dist/admin/index.html').trim(),'','Protected tracked customer source changed');
+console.log('CMS final gate PASS: '+paths.length+' scoped files; all existing customer sources unchanged, additive Admin navigation, module syntax, 22 identities, scoped editor CSS and fail-closed Pages ordering.');

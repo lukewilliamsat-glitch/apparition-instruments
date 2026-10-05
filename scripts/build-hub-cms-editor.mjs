@@ -1,0 +1,1 @@
+import {build} from 'esbuild';await build({entryPoints:['dist/admin/hub-cms/schema.mjs'],bundle:true,format:'esm',platform:'browser',target:'es2022',minify:true,outfile:'dist/admin/hub-cms/editor-vendor.mjs'});
