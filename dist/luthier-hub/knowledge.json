@@ -1,0 +1,640 @@
+{
+  "version": 3,
+  "source": "published-cms",
+  "guides": [
+    {
+      "id": "pots",
+      "title": "Potentiometers Explained",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/potentiometers-explained/",
+      "category": "potentiometers",
+      "primary_intent": "pots",
+      "related": [
+        "values",
+        "taper",
+        "lugs",
+        "lp-controls"
+      ],
+      "tools": [
+        "signal",
+        "wiring"
+      ],
+      "components": [
+        "potentiometers"
+      ],
+      "reading_minutes": 7
+    },
+    {
+      "id": "values",
+      "title": "250K vs 500K Pots",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/250k-vs-500k-pots/",
+      "category": "potentiometers",
+      "primary_intent": "values",
+      "related": [
+        "pots",
+        "taper",
+        "tone",
+        "lugs"
+      ],
+      "tools": [
+        "signal"
+      ],
+      "components": [
+        "potentiometers"
+      ],
+      "reading_minutes": 4
+    },
+    {
+      "id": "taper",
+      "title": "Audio vs Linear Taper Pots",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/audio-vs-linear-taper-pots/",
+      "category": "potentiometers",
+      "primary_intent": "taper",
+      "related": [
+        "pots",
+        "values",
+        "bleeds"
+      ],
+      "tools": [
+        "signal",
+        "bleed"
+      ],
+      "components": [
+        "potentiometers"
+      ],
+      "reading_minutes": 4
+    },
+    {
+      "id": "tone",
+      "title": "How a Guitar Tone Control Works",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/how-a-guitar-tone-control-works/",
+      "category": "tone-controls",
+      "primary_intent": "tone",
+      "related": [
+        "capacitor-values",
+        "pots",
+        "bleeds",
+        "modern-50s"
+      ],
+      "tools": [
+        "signal",
+        "wiring"
+      ],
+      "components": [
+        "capacitors"
+      ],
+      "reading_minutes": 4
+    },
+    {
+      "id": "capacitor-values",
+      "title": "0.022µF vs 0.047µF Guitar Tone Capacitors",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/022-vs-047-tone-capacitors/",
+      "category": "tone-controls",
+      "primary_intent": "capacitor-values",
+      "related": [
+        "tone",
+        "pots",
+        "caps"
+      ],
+      "tools": [
+        "signal"
+      ],
+      "components": [
+        "capacitors"
+      ],
+      "reading_minutes": 4
+    },
+    {
+      "id": "bleeds",
+      "title": "Choosing a treble bleed in context",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/treble-bleeds/",
+      "category": "treble-bleeds",
+      "primary_intent": "bleeds",
+      "related": [
+        "taper",
+        "pots",
+        "lugs",
+        "modern-50s"
+      ],
+      "tools": [
+        "bleed",
+        "signal"
+      ],
+      "components": [
+        "treble-bleeds"
+      ],
+      "reading_minutes": 5
+    },
+    {
+      "id": "lugs",
+      "title": "Guitar Pot Lug Numbering & Wiring",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-pot-lug-numbering-wiring/",
+      "category": "wiring",
+      "primary_intent": "lugs",
+      "related": [
+        "pots",
+        "tone",
+        "ground",
+        "toggle-guide",
+        "grounding-guide"
+      ],
+      "tools": [
+        "wiring",
+        "signal"
+      ],
+      "components": [
+        "potentiometers"
+      ],
+      "reading_minutes": 4
+    },
+    {
+      "id": "modern-50s",
+      "title": "Modern vs 50s Les Paul Wiring",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/modern-vs-50s-les-paul-wiring/",
+      "category": "wiring",
+      "primary_intent": "modern-50s",
+      "related": [
+        "tone",
+        "lp-controls",
+        "bleeds",
+        "lugs",
+        "caps"
+      ],
+      "tools": [
+        "signal",
+        "wiring"
+      ],
+      "components": [
+        "potentiometers"
+      ],
+      "reading_minutes": 4
+    },
+    {
+      "id": "lp-controls",
+      "title": "How Les Paul Controls Work",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/how-les-paul-controls-work/",
+      "category": "wiring",
+      "primary_intent": "lp-controls",
+      "related": [
+        "pots",
+        "modern-50s",
+        "toggle-guide",
+        "tone"
+      ],
+      "tools": [
+        "signal",
+        "wiring"
+      ],
+      "components": [
+        "potentiometers"
+      ],
+      "reading_minutes": 4
+    },
+    {
+      "id": "toggle-guide",
+      "title": "Guitar Three-Way Toggle Switch Wiring Explained",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-three-way-toggle-switch-wiring/",
+      "category": "pickups",
+      "primary_intent": "toggle-guide",
+      "related": [
+        "switches",
+        "lp-controls",
+        "grounding-guide",
+        "lugs"
+      ],
+      "tools": [
+        "signal",
+        "wiring"
+      ],
+      "components": [
+        "potentiometers"
+      ],
+      "reading_minutes": 3
+    },
+    {
+      "id": "grounding-guide",
+      "title": "Guitar Grounding & Common Grounding Problems",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-grounding-common-problems/",
+      "category": "wiring",
+      "primary_intent": "grounding-guide",
+      "related": [
+        "ground",
+        "toggle-guide",
+        "lugs",
+        "troubleshoot"
+      ],
+      "tools": [
+        "signal",
+        "wiring"
+      ],
+      "components": [],
+      "reading_minutes": 3
+    },
+    {
+      "id": "coil-split-guide",
+      "title": "Coil Splitting Explained",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/coil-splitting-explained/",
+      "category": "pickups",
+      "primary_intent": "coil-split-guide",
+      "related": [
+        "pickups",
+        "series-parallel-guide",
+        "lp-controls",
+        "toggle-guide",
+        "lugs",
+        "switches"
+      ],
+      "tools": [
+        "signal",
+        "wiring"
+      ],
+      "components": [
+        "potentiometers"
+      ],
+      "reading_minutes": 3
+    },
+    {
+      "id": "series-parallel-guide",
+      "title": "Series vs Parallel Pickup Wiring",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/series-vs-parallel-pickup-wiring/",
+      "category": "pickups",
+      "primary_intent": "series-parallel-guide",
+      "related": [
+        "coil-split-guide",
+        "pickups",
+        "lp-controls",
+        "toggle-guide"
+      ],
+      "tools": [
+        "signal",
+        "wiring"
+      ],
+      "components": [
+        "potentiometers"
+      ],
+      "reading_minutes": 3
+    },
+    {
+      "id": "caps",
+      "title": "Capacitors and Treble Bleeds Explained",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/capacitors-treble-bleeds/",
+      "category": "tone-controls",
+      "primary_intent": null,
+      "related": [
+        "pots",
+        "lugs"
+      ],
+      "tools": [
+        "signal"
+      ],
+      "components": [
+        "capacitors"
+      ],
+      "reading_minutes": 4
+    },
+    {
+      "id": "pickups",
+      "title": "Pickup conductors and colour conventions",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/pickup-conductors/",
+      "category": "pickups",
+      "primary_intent": null,
+      "related": [
+        "pots",
+        "lugs",
+        "coil-split-guide",
+        "series-parallel-guide"
+      ],
+      "tools": [
+        "wiring"
+      ],
+      "components": [],
+      "reading_minutes": 2
+    },
+    {
+      "id": "switches",
+      "title": "Selector contacts and pickup paths",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/selectors/",
+      "category": "pickups",
+      "primary_intent": null,
+      "related": [
+        "pots",
+        "lugs",
+        "toggle-guide"
+      ],
+      "tools": [
+        "signal"
+      ],
+      "components": [],
+      "reading_minutes": 1
+    },
+    {
+      "id": "circuits",
+      "title": "Guitar Wiring Circuits Explained",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/wiring-circuits-explained/",
+      "category": "wiring",
+      "primary_intent": "circuits",
+      "related": [
+        "pots",
+        "lugs",
+        "modern-50s",
+        "lp-controls"
+      ],
+      "tools": [
+        "signal"
+      ],
+      "components": [],
+      "reading_minutes": 5
+    },
+    {
+      "id": "ground",
+      "title": "Ground, shield and the output jack",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/grounding-output/",
+      "category": "wiring",
+      "primary_intent": null,
+      "related": [
+        "pots",
+        "lugs",
+        "grounding-guide"
+      ],
+      "tools": [
+        "wiring"
+      ],
+      "components": [],
+      "reading_minutes": 2
+    },
+    {
+      "id": "install",
+      "title": "How to Wire a Les Paul Using an Apparition Kit",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/les-paul-installation/",
+      "category": "wiring",
+      "primary_intent": null,
+      "related": [
+        "pots",
+        "lugs"
+      ],
+      "tools": [
+        "wiring"
+      ],
+      "components": [],
+      "reading_minutes": 6
+    },
+    {
+      "id": "troubleshoot",
+      "title": "Passive guitar troubleshooting",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/troubleshooting/",
+      "category": "troubleshooting",
+      "primary_intent": null,
+      "related": [
+        "pots",
+        "lugs",
+        "grounding-guide"
+      ],
+      "tools": [
+        "signal"
+      ],
+      "components": [],
+      "reading_minutes": 3
+    },
+    {
+      "id": "glossary",
+      "title": "Guitar electronics glossary",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/glossary/",
+      "category": "troubleshooting",
+      "primary_intent": null,
+      "related": [
+        "pots",
+        "lugs"
+      ],
+      "tools": [
+        "signal"
+      ],
+      "components": [],
+      "reading_minutes": 1
+    },
+    {
+      "id": "tools",
+      "title": "Choose the right tool",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/tools/",
+      "category": "troubleshooting",
+      "primary_intent": null,
+      "related": [
+        "pots",
+        "lugs"
+      ],
+      "tools": [
+        "signal"
+      ],
+      "components": [],
+      "reading_minutes": 1
+    },
+    {
+      "id": "independent-dependent-volumes",
+      "title": "Independent vs Dependent Guitar Volume Controls",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/independent-dependent-volumes/",
+      "category": "potentiometers",
+      "primary_intent": null,
+      "related": [
+        "lp-controls",
+        "lugs",
+        "modern-50s",
+        "values"
+      ],
+      "tools": [
+        "wiring",
+        "signal"
+      ],
+      "components": [
+        "potentiometers"
+      ],
+      "reading_minutes": 3
+    },
+    {
+      "id": "pickup-phase-switching",
+      "title": "Pickup Phase Switching: Signal Polarity and Shield Ground",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/pickup-phase-switching/",
+      "category": "pickups",
+      "primary_intent": null,
+      "related": [
+        "pickups",
+        "coil-split-guide",
+        "series-parallel-guide",
+        "push-pull-dpdt"
+      ],
+      "tools": [
+        "wiring"
+      ],
+      "components": [
+        "potentiometers"
+      ],
+      "reading_minutes": 3
+    },
+    {
+      "id": "push-pull-dpdt",
+      "title": "Push/Pull Pots and DPDT Switching Fundamentals",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/push-pull-dpdt/",
+      "category": "pickups",
+      "primary_intent": null,
+      "related": [
+        "pots",
+        "lugs",
+        "coil-split-guide",
+        "pickup-phase-switching",
+        "partial-coil-splits"
+      ],
+      "tools": [
+        "wiring"
+      ],
+      "components": [
+        "potentiometers"
+      ],
+      "reading_minutes": 3
+    },
+    {
+      "id": "pickup-dc-resistance-output",
+      "title": "Pickup DC Resistance Is Not an Output Rating",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/pickup-dc-resistance-output/",
+      "category": "pickups",
+      "primary_intent": null,
+      "related": [
+        "pickups",
+        "pickup-inductance",
+        "series-parallel-guide",
+        "coil-split-guide"
+      ],
+      "tools": [
+        "signal"
+      ],
+      "components": [],
+      "reading_minutes": 3
+    },
+    {
+      "id": "pickup-inductance",
+      "title": "Pickup Inductance: A Useful Circuit Parameter, Not a Tone Score",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/pickup-inductance/",
+      "category": "pickups",
+      "primary_intent": null,
+      "related": [
+        "pickup-dc-resistance-output",
+        "cable-capacitance",
+        "values",
+        "tone",
+        "series-parallel-guide"
+      ],
+      "tools": [
+        "signal"
+      ],
+      "components": [],
+      "reading_minutes": 3
+    },
+    {
+      "id": "cable-capacitance",
+      "title": "Guitar Cable Capacitance and the Passive Pickup Load",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/cable-capacitance/",
+      "category": "wiring",
+      "primary_intent": null,
+      "related": [
+        "pickup-inductance",
+        "values",
+        "tone",
+        "bleeds",
+        "ground"
+      ],
+      "tools": [
+        "signal",
+        "bleed"
+      ],
+      "components": [],
+      "reading_minutes": 3
+    },
+    {
+      "id": "partial-coil-splits",
+      "title": "Partial Coil Splits: Resistor Loading at the Series Junction",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/partial-coil-splits/",
+      "category": "pickups",
+      "primary_intent": null,
+      "related": [
+        "coil-split-guide",
+        "push-pull-dpdt",
+        "pickups",
+        "series-parallel-guide",
+        "pickup-dc-resistance-output"
+      ],
+      "tools": [
+        "wiring"
+      ],
+      "components": [
+        "potentiometers"
+      ],
+      "reading_minutes": 3
+    },
+    {
+      "id": "output-jack-faults",
+      "title": "Output Jack Wiring and Common Passive Guitar Faults",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/output-jack-faults/",
+      "category": "troubleshooting",
+      "primary_intent": null,
+      "related": [
+        "ground",
+        "grounding-guide",
+        "troubleshoot",
+        "lugs"
+      ],
+      "tools": [
+        "wiring"
+      ],
+      "components": [],
+      "reading_minutes": 3
+    }
+  ],
+  "journeys": [
+    {
+      "title": "Understand pickup measurements",
+      "ids": [
+        "pickups",
+        "pickup-dc-resistance-output",
+        "pickup-inductance",
+        "cable-capacitance"
+      ],
+      "context": "Separate conductor identity, DC measurements and the frequency-dependent load."
+    },
+    {
+      "title": "Plan a switching change",
+      "ids": [
+        "lugs",
+        "push-pull-dpdt",
+        "coil-split-guide",
+        "partial-coil-splits",
+        "pickup-phase-switching"
+      ],
+      "context": "Identify terminals and coils before choosing a modification. Tool support remains configuration-specific."
+    },
+    {
+      "title": "Diagnose an interacting control or intermittent output",
+      "ids": [
+        "troubleshoot",
+        "output-jack-faults",
+        "lp-controls",
+        "independent-dependent-volumes"
+      ],
+      "context": "Start with the symptom and distinguish a wiring fault from expected circuit interaction."
+    }
+  ],
+  "toolGuides": {
+    "signal": [
+      "values",
+      "pickup-dc-resistance-output",
+      "pickup-inductance",
+      "cable-capacitance"
+    ],
+    "wiring": [
+      "lugs",
+      "push-pull-dpdt",
+      "independent-dependent-volumes",
+      "output-jack-faults"
+    ],
+    "bleed": [
+      "bleeds",
+      "taper",
+      "cable-capacitance"
+    ]
+  }
+}

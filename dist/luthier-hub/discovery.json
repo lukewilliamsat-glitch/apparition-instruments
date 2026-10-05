@@ -27,6 +27,10 @@
         {
           "id": "lp-controls",
           "canonical": "https://apparitioninstruments.co.uk/luthier-hub/how-les-paul-controls-work/"
+        },
+        {
+          "id": "push-pull-dpdt",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/push-pull-dpdt/"
         }
       ],
       "canonical": "https://apparitioninstruments.co.uk/luthier-hub/potentiometers-explained/",
@@ -76,6 +80,18 @@
         {
           "id": "tone",
           "canonical": "https://apparitioninstruments.co.uk/luthier-hub/how-a-guitar-tone-control-works/"
+        },
+        {
+          "id": "independent-dependent-volumes",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/independent-dependent-volumes/"
+        },
+        {
+          "id": "pickup-inductance",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/pickup-inductance/"
+        },
+        {
+          "id": "cable-capacitance",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/cable-capacitance/"
         }
       ],
       "canonical": "https://apparitioninstruments.co.uk/luthier-hub/250k-vs-500k-pots/",
@@ -169,6 +185,18 @@
         {
           "id": "grounding-guide",
           "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-grounding-common-problems/"
+        },
+        {
+          "id": "independent-dependent-volumes",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/independent-dependent-volumes/"
+        },
+        {
+          "id": "push-pull-dpdt",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/push-pull-dpdt/"
+        },
+        {
+          "id": "output-jack-faults",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/output-jack-faults/"
         }
       ],
       "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-pot-lug-numbering-wiring/",
@@ -219,6 +247,14 @@
         {
           "id": "modern-50s",
           "canonical": "https://apparitioninstruments.co.uk/luthier-hub/modern-vs-50s-les-paul-wiring/"
+        },
+        {
+          "id": "pickup-inductance",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/pickup-inductance/"
+        },
+        {
+          "id": "cable-capacitance",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/cable-capacitance/"
         }
       ],
       "canonical": "https://apparitioninstruments.co.uk/luthier-hub/how-a-guitar-tone-control-works/",
@@ -312,6 +348,10 @@
         {
           "id": "modern-50s",
           "canonical": "https://apparitioninstruments.co.uk/luthier-hub/modern-vs-50s-les-paul-wiring/"
+        },
+        {
+          "id": "cable-capacitance",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/cable-capacitance/"
         }
       ],
       "canonical": "https://apparitioninstruments.co.uk/luthier-hub/treble-bleeds/",
@@ -405,6 +445,10 @@
         {
           "id": "tone",
           "canonical": "https://apparitioninstruments.co.uk/luthier-hub/how-a-guitar-tone-control-works/"
+        },
+        {
+          "id": "independent-dependent-volumes",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/independent-dependent-volumes/"
         }
       ],
       "canonical": "https://apparitioninstruments.co.uk/luthier-hub/how-les-paul-controls-work/",
@@ -454,6 +498,10 @@
         {
           "id": "caps",
           "canonical": "https://apparitioninstruments.co.uk/luthier-hub/capacitors-treble-bleeds/"
+        },
+        {
+          "id": "independent-dependent-volumes",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/independent-dependent-volumes/"
         }
       ],
       "canonical": "https://apparitioninstruments.co.uk/luthier-hub/modern-vs-50s-les-paul-wiring/",
@@ -548,6 +596,10 @@
         {
           "id": "lugs",
           "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-pot-lug-numbering-wiring/"
+        },
+        {
+          "id": "output-jack-faults",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/output-jack-faults/"
         }
       ],
       "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-grounding-common-problems/",
@@ -594,6 +646,22 @@
         {
           "id": "switches",
           "canonical": "https://apparitioninstruments.co.uk/luthier-hub/selectors/"
+        },
+        {
+          "id": "pickup-phase-switching",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/pickup-phase-switching/"
+        },
+        {
+          "id": "push-pull-dpdt",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/push-pull-dpdt/"
+        },
+        {
+          "id": "pickup-dc-resistance-output",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/pickup-dc-resistance-output/"
+        },
+        {
+          "id": "partial-coil-splits",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/partial-coil-splits/"
         }
       ],
       "canonical": "https://apparitioninstruments.co.uk/luthier-hub/coil-splitting-explained/",
@@ -640,6 +708,22 @@
         {
           "id": "coil-split-guide",
           "canonical": "https://apparitioninstruments.co.uk/luthier-hub/coil-splitting-explained/"
+        },
+        {
+          "id": "pickup-phase-switching",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/pickup-phase-switching/"
+        },
+        {
+          "id": "pickup-dc-resistance-output",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/pickup-dc-resistance-output/"
+        },
+        {
+          "id": "pickup-inductance",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/pickup-inductance/"
+        },
+        {
+          "id": "partial-coil-splits",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/partial-coil-splits/"
         }
       ],
       "canonical": "https://apparitioninstruments.co.uk/luthier-hub/series-vs-parallel-pickup-wiring/",
