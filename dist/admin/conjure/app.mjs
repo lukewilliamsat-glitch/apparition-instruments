@@ -9,14 +9,14 @@ export async function bootConjure({document=globalThis.document,repository=creat
  const message=value=>{status.textContent=value;};
  for(const page of pages){const option=document.createElement('option');option.value=page.path;option.textContent=page.title;picker.append(option);}
  const guard=()=>{if(active?.saving){message('Saving draft · wait before navigating.');return false;}if(!active?.pending)return true;message('Apply or cancel the pending edit before navigating.');return false;};
- async function navigate(value){if(!guard())return false;const path=pageRoute(value),page=pages.find(p=>p.path===path)||{path,title:path,authority:'static',editable:false};const ticket=++serial;message('Opening page…');
+ async function navigate(value){if(!guard())return false;const path=pageRoute(value),page=pages.find(p=>p.path===path)||{path,title:path,authority:'static',editable:false};const view=q('[data-view]').value,ticket=++serial;message('Opening page…');
   const result=await renderPage(page,{request,document,articles});if(ticket!==serial)return false;
   active?.detach?.();current=page;picker.value=path;q('[data-page-title]').textContent=page.title;q('[data-support]').textContent=page.editable?'Select supported content on the page. Changes save as a private draft.':'Website preview · this page is read only. Interactive tools and commerce actions are disabled.';
   q('[data-actions]').hidden=true;q('[data-section-fields]').hidden=true;
   await new Promise((resolve,reject)=>{const timeout=document.defaultView.setTimeout(()=>reject(Error('Page preview did not load. Your drafts are retained.')),15000);frame.addEventListener('load',()=>{document.defaultView.clearTimeout(timeout);resolve();},{once:true});frame.srcdoc=result.html;});if(ticket!==serial)return false;
   const canvas=frame.contentDocument;canvas.addEventListener('submit',e=>e.preventDefault(),true);
   canvas.addEventListener('click',event=>{const a=event.target.closest?.('a');if(!a)return;if(a.closest('[data-block]')&&active?.isEditing)return;event.preventDefault();try{navigate(new URL(a.getAttribute('href'),canvas.baseURI).href).catch(e=>message(e.message));}catch(e){message(e.message);}},true);
-  active=null;if(page.editable&&adapter){active=sessions.get(page.article.id)||await adapter.create(page,result.presentation,{document,repository,message,refresh});sessions.set(page.article.id,active);await active.attach(canvas);active.setBreakpoint(q('[data-view]').value);}
+  active=null;if(page.editable&&adapter){active=sessions.get(page.article.id)||await adapter.create(page,result.presentation,{document,repository,message,refresh});sessions.set(page.article.id,active);await active.attach(canvas);active.setBreakpoint(view);}
   refresh();return true;
  }
  function refresh(){const enabled=!!active&&q('[data-edit]').checked;active?.setEditing?.(enabled);frame.style.width=q('[data-view]').value==='mobile'?'390px':'100%';frame.style.maxWidth='100%';q('[data-undo]').disabled=!enabled||active.pending||active.saving||!active.past;q('[data-redo]').disabled=!enabled||active.pending||active.saving||!active.future;q('[data-save]').disabled=!active||!active.dirty||active.saving||active.pending;picker.disabled=!!active?.saving;message(active?.status||'Website preview · no editable changes.');}
