@@ -21,3 +21,5 @@ Save Draft writes the semantic draft and Manifest together. Reload restores comp
 If text expansion is blocked by protected geometry, the canvas keeps the technical block fixed, reports the obstruction and permits scrolling the content. Move/widen the supported text block to make room. Existing geometry is not silently rearranged through protected content.
 
 Deferred: advanced rich-text editing directly on canvas, full mobile UI, automatic responsive generation/reset, cropping/focal controls, deletion/structural insertion UI, public Manifest rendering and site-wide editing.
+
+Production migration history records this extension as `20261005175714_manifest_composition_v1`; the repository filename matches that applied version. Existing production Manifest fields remain null until Luke explicitly saves a Conjure draft. No production fixtures or content backfill were used.
