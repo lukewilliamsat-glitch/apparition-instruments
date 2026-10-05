@@ -74,6 +74,11 @@ def public_routes(files):
         if re.search(r'<meta\b[^>]*name="robots"[^>]*content="[^"]*noindex', source):
             continue
         route = page_path(file)
+        if route in NOINDEX or route.startswith(('/admin/', '/account/', '/checkout/', '/basket/')):
+            continue
+        canonical = re.search(r'<link\b(?=[^>]*rel="canonical")[^>]*href="([^"]+)"', source)
+        if not canonical or canonical[1] != BASE + route:
+            continue
         if 'href="' + BASE + route + '"' in source and re.search(r'<link\b[^>]*rel="canonical"', source):
             routes.add(route)
     return routes
@@ -89,7 +94,7 @@ def main(routes=None):
             continue
         html = file.read_text()
         # Hub templates own Article/Breadcrumb schema and metadata; sitemap discovery remains shared.
-        if route.startswith('/luthier-hub/') and 'data-hub-reference="v1"' in html:
+        if route.startswith('/news/') or route.startswith('/luthier-hub/') and 'data-hub-reference="v1"' in html:
             continue
         if route in PAGES or route in indexable and route not in products:
             title, description = PAGES.get(route, (unescape(re.search(r'<title>(.*?)</title>', html, re.S)[1]), unescape(re.search(r'<meta name="description" content="([^"]*)"', html)[1])))
@@ -127,9 +132,7 @@ def main(routes=None):
     (ROOT / 'robots.txt').write_text('User-agent: *\nAllow: /\nSitemap: ' + BASE + '/sitemap.xml\n')
     from xml.etree.ElementTree import Element, SubElement, ElementTree
     urlset = Element('urlset', xmlns='http://www.sitemaps.org/schemas/sitemap/0.9')
-    for route in PAGES:
-        SubElement(SubElement(urlset, 'url'), 'loc').text = BASE + route
-    for route in sorted(indexable - set(PAGES)):
+    for route in sorted(public_routes(files)):
         SubElement(SubElement(urlset, 'url'), 'loc').text = BASE + route
     ElementTree(urlset).write(ROOT / 'sitemap.xml', encoding='utf-8', xml_declaration=True)
 

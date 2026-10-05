@@ -49,6 +49,10 @@ jobs:
       - name: Generate public News and Operations presentation
         if: github.event_name != 'push' || !contains(github.event.head_commit.message, '[static-only]')
         run: node scripts/generate-site-operations.mjs
+      - name: Prepare Search Console verification
+        env:
+          GOOGLE_SITE_VERIFICATION: ${{ vars.GOOGLE_SITE_VERIFICATION }}
+        run: node scripts/prepare-search-verification.mjs dist
       - name: Stamp first-party static asset URLs
         run: node scripts/stamp-static-assets.mjs dist
       - name: Setup Pages

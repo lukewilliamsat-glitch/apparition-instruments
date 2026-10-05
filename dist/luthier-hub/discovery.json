@@ -1,26 +1,150 @@
 {
-  "version": 1,
+  "version": 2,
   "intents": [
     {
       "guide": "pots",
       "queries": [
         "guitar potentiometers explained"
       ],
-      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/potentiometers-explained/"
+      "id": "pots",
+      "primary": {
+        "id": "pots",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/potentiometers-explained/"
+      },
+      "supporting": [
+        {
+          "id": "values",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/250k-vs-500k-pots/"
+        },
+        {
+          "id": "taper",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/audio-vs-linear-taper-pots/"
+        },
+        {
+          "id": "lugs",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-pot-lug-numbering-wiring/"
+        },
+        {
+          "id": "lp-controls",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/how-les-paul-controls-work/"
+        }
+      ],
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/potentiometers-explained/",
+      "category": {
+        "id": "potentiometers",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/categories/potentiometers/"
+      },
+      "tools": [
+        {
+          "id": "signal",
+          "title": "Signal Forge",
+          "path": "/circuit-forge/",
+          "text": "Inspect the supported circuit and compare electrical response within the tool’s stated modelling limits."
+        },
+        {
+          "id": "wiring",
+          "title": "Wiring Diagram Generator",
+          "path": "/wiring-generator/",
+          "text": "Turn a supported configuration into a physical connection reference for the bench."
+        }
+      ],
+      "component": {
+        "id": "potentiometers",
+        "title": "Potentiometers",
+        "path": "/components/potentiometers/"
+      }
     },
     {
       "guide": "values",
       "queries": [
         "250k vs 500k pots"
       ],
-      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/250k-vs-500k-pots/"
+      "id": "values",
+      "primary": {
+        "id": "values",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/250k-vs-500k-pots/"
+      },
+      "supporting": [
+        {
+          "id": "pots",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/potentiometers-explained/"
+        },
+        {
+          "id": "taper",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/audio-vs-linear-taper-pots/"
+        },
+        {
+          "id": "tone",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/how-a-guitar-tone-control-works/"
+        }
+      ],
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/250k-vs-500k-pots/",
+      "category": {
+        "id": "potentiometers",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/categories/potentiometers/"
+      },
+      "tools": [
+        {
+          "id": "signal",
+          "title": "Signal Forge",
+          "path": "/circuit-forge/",
+          "text": "Inspect the supported circuit and compare electrical response within the tool’s stated modelling limits."
+        }
+      ],
+      "component": {
+        "id": "potentiometers",
+        "title": "Potentiometers",
+        "path": "/components/potentiometers/"
+      }
     },
     {
       "guide": "taper",
       "queries": [
         "audio vs linear taper guitar pots"
       ],
-      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/audio-vs-linear-taper-pots/"
+      "id": "taper",
+      "primary": {
+        "id": "taper",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/audio-vs-linear-taper-pots/"
+      },
+      "supporting": [
+        {
+          "id": "pots",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/potentiometers-explained/"
+        },
+        {
+          "id": "values",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/250k-vs-500k-pots/"
+        },
+        {
+          "id": "bleeds",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/treble-bleeds/"
+        }
+      ],
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/audio-vs-linear-taper-pots/",
+      "category": {
+        "id": "potentiometers",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/categories/potentiometers/"
+      },
+      "tools": [
+        {
+          "id": "signal",
+          "title": "Signal Forge",
+          "path": "/circuit-forge/",
+          "text": "Inspect the supported circuit and compare electrical response within the tool’s stated modelling limits."
+        },
+        {
+          "id": "bleed",
+          "title": "Treble Bleed Designer",
+          "path": "/treble-bleed-designer/",
+          "text": "Experiment with network values, pickup assumptions, pot taper and cable load."
+        }
+      ],
+      "component": {
+        "id": "potentiometers",
+        "title": "Potentiometers",
+        "path": "/components/potentiometers/"
+      }
     },
     {
       "guide": "lugs",
@@ -28,7 +152,49 @@
         "guitar pot lug numbering",
         "guitar volume pot wiring"
       ],
-      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-pot-lug-numbering-wiring/"
+      "id": "lugs",
+      "primary": {
+        "id": "lugs",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-pot-lug-numbering-wiring/"
+      },
+      "supporting": [
+        {
+          "id": "pots",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/potentiometers-explained/"
+        },
+        {
+          "id": "toggle-guide",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-three-way-toggle-switch-wiring/"
+        },
+        {
+          "id": "grounding-guide",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-grounding-common-problems/"
+        }
+      ],
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-pot-lug-numbering-wiring/",
+      "category": {
+        "id": "wiring",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/categories/wiring/"
+      },
+      "tools": [
+        {
+          "id": "wiring",
+          "title": "Wiring Diagram Generator",
+          "path": "/wiring-generator/",
+          "text": "Turn a supported configuration into a physical connection reference for the bench."
+        },
+        {
+          "id": "signal",
+          "title": "Signal Forge",
+          "path": "/circuit-forge/",
+          "text": "Inspect the supported circuit and compare electrical response within the tool’s stated modelling limits."
+        }
+      ],
+      "component": {
+        "id": "potentiometers",
+        "title": "Potentiometers",
+        "path": "/components/potentiometers/"
+      }
     },
     {
       "guide": "tone",
@@ -36,7 +202,49 @@
         "how guitar tone controls work",
         "guitar tone pot wiring"
       ],
-      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/how-a-guitar-tone-control-works/"
+      "id": "tone",
+      "primary": {
+        "id": "tone",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/how-a-guitar-tone-control-works/"
+      },
+      "supporting": [
+        {
+          "id": "capacitor-values",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/022-vs-047-tone-capacitors/"
+        },
+        {
+          "id": "caps",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/capacitors-treble-bleeds/"
+        },
+        {
+          "id": "modern-50s",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/modern-vs-50s-les-paul-wiring/"
+        }
+      ],
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/how-a-guitar-tone-control-works/",
+      "category": {
+        "id": "tone-controls",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/categories/tone-controls/"
+      },
+      "tools": [
+        {
+          "id": "signal",
+          "title": "Signal Forge",
+          "path": "/circuit-forge/",
+          "text": "Inspect the supported circuit and compare electrical response within the tool’s stated modelling limits."
+        },
+        {
+          "id": "wiring",
+          "title": "Wiring Diagram Generator",
+          "path": "/wiring-generator/",
+          "text": "Turn a supported configuration into a physical connection reference for the bench."
+        }
+      ],
+      "component": {
+        "id": "capacitors",
+        "title": "Capacitors",
+        "path": "/components/capacitors/"
+      }
     },
     {
       "guide": "capacitor-values",
@@ -44,7 +252,39 @@
         "0.022 vs 0.047 guitar capacitor",
         "guitar tone capacitor values"
       ],
-      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/022-vs-047-tone-capacitors/"
+      "id": "capacitor-values",
+      "primary": {
+        "id": "capacitor-values",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/022-vs-047-tone-capacitors/"
+      },
+      "supporting": [
+        {
+          "id": "tone",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/how-a-guitar-tone-control-works/"
+        },
+        {
+          "id": "caps",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/capacitors-treble-bleeds/"
+        }
+      ],
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/022-vs-047-tone-capacitors/",
+      "category": {
+        "id": "tone-controls",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/categories/tone-controls/"
+      },
+      "tools": [
+        {
+          "id": "signal",
+          "title": "Signal Forge",
+          "path": "/circuit-forge/",
+          "text": "Inspect the supported circuit and compare electrical response within the tool’s stated modelling limits."
+        }
+      ],
+      "component": {
+        "id": "capacitors",
+        "title": "Capacitors",
+        "path": "/components/capacitors/"
+      }
     },
     {
       "guide": "bleeds",
@@ -55,14 +295,92 @@
         "treble bleed values",
         "cap only vs resistor treble bleed"
       ],
-      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/treble-bleeds/"
+      "id": "bleeds",
+      "primary": {
+        "id": "bleeds",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/treble-bleeds/"
+      },
+      "supporting": [
+        {
+          "id": "caps",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/capacitors-treble-bleeds/"
+        },
+        {
+          "id": "tone",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/how-a-guitar-tone-control-works/"
+        },
+        {
+          "id": "modern-50s",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/modern-vs-50s-les-paul-wiring/"
+        }
+      ],
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/treble-bleeds/",
+      "category": {
+        "id": "treble-bleeds",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/categories/treble-bleeds/"
+      },
+      "tools": [
+        {
+          "id": "bleed",
+          "title": "Treble Bleed Designer",
+          "path": "/treble-bleed-designer/",
+          "text": "Experiment with network values, pickup assumptions, pot taper and cable load."
+        },
+        {
+          "id": "signal",
+          "title": "Signal Forge",
+          "path": "/circuit-forge/",
+          "text": "Inspect the supported circuit and compare electrical response within the tool’s stated modelling limits."
+        }
+      ],
+      "component": {
+        "id": "treble-bleeds",
+        "title": "Treble Bleeds",
+        "path": "/components/treble-bleeds/"
+      }
     },
     {
       "guide": "circuits",
       "queries": [
         "guitar wiring explained"
       ],
-      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/wiring-circuits-explained/"
+      "id": "circuits",
+      "primary": {
+        "id": "circuits",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/wiring-circuits-explained/"
+      },
+      "supporting": [
+        {
+          "id": "lugs",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-pot-lug-numbering-wiring/"
+        },
+        {
+          "id": "install",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/les-paul-installation/"
+        },
+        {
+          "id": "lp-controls",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/how-les-paul-controls-work/"
+        },
+        {
+          "id": "modern-50s",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/modern-vs-50s-les-paul-wiring/"
+        }
+      ],
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/wiring-circuits-explained/",
+      "category": {
+        "id": "wiring",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/categories/wiring/"
+      },
+      "tools": [
+        {
+          "id": "signal",
+          "title": "Signal Forge",
+          "path": "/circuit-forge/",
+          "text": "Inspect the supported circuit and compare electrical response within the tool’s stated modelling limits."
+        }
+      ],
+      "component": null
     },
     {
       "guide": "lp-controls",
@@ -70,28 +388,188 @@
         "Les Paul wiring",
         "how Les Paul controls work"
       ],
-      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/how-les-paul-controls-work/"
+      "id": "lp-controls",
+      "primary": {
+        "id": "lp-controls",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/how-les-paul-controls-work/"
+      },
+      "supporting": [
+        {
+          "id": "circuits",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/wiring-circuits-explained/"
+        },
+        {
+          "id": "modern-50s",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/modern-vs-50s-les-paul-wiring/"
+        },
+        {
+          "id": "tone",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/how-a-guitar-tone-control-works/"
+        }
+      ],
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/how-les-paul-controls-work/",
+      "category": {
+        "id": "wiring",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/categories/wiring/"
+      },
+      "tools": [
+        {
+          "id": "signal",
+          "title": "Signal Forge",
+          "path": "/circuit-forge/",
+          "text": "Inspect the supported circuit and compare electrical response within the tool’s stated modelling limits."
+        },
+        {
+          "id": "wiring",
+          "title": "Wiring Diagram Generator",
+          "path": "/wiring-generator/",
+          "text": "Turn a supported configuration into a physical connection reference for the bench."
+        }
+      ],
+      "component": {
+        "id": "potentiometers",
+        "title": "Potentiometers",
+        "path": "/components/potentiometers/"
+      }
     },
     {
       "guide": "modern-50s",
       "queries": [
         "modern vs 50s wiring"
       ],
-      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/modern-vs-50s-les-paul-wiring/"
+      "id": "modern-50s",
+      "primary": {
+        "id": "modern-50s",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/modern-vs-50s-les-paul-wiring/"
+      },
+      "supporting": [
+        {
+          "id": "lp-controls",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/how-les-paul-controls-work/"
+        },
+        {
+          "id": "tone",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/how-a-guitar-tone-control-works/"
+        },
+        {
+          "id": "caps",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/capacitors-treble-bleeds/"
+        }
+      ],
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/modern-vs-50s-les-paul-wiring/",
+      "category": {
+        "id": "wiring",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/categories/wiring/"
+      },
+      "tools": [
+        {
+          "id": "signal",
+          "title": "Signal Forge",
+          "path": "/circuit-forge/",
+          "text": "Inspect the supported circuit and compare electrical response within the tool’s stated modelling limits."
+        },
+        {
+          "id": "wiring",
+          "title": "Wiring Diagram Generator",
+          "path": "/wiring-generator/",
+          "text": "Turn a supported configuration into a physical connection reference for the bench."
+        }
+      ],
+      "component": {
+        "id": "potentiometers",
+        "title": "Potentiometers",
+        "path": "/components/potentiometers/"
+      }
     },
     {
       "guide": "toggle-guide",
       "queries": [
         "guitar selector wiring"
       ],
-      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-three-way-toggle-switch-wiring/"
+      "id": "toggle-guide",
+      "primary": {
+        "id": "toggle-guide",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-three-way-toggle-switch-wiring/"
+      },
+      "supporting": [
+        {
+          "id": "switches",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/selectors/"
+        },
+        {
+          "id": "lugs",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-pot-lug-numbering-wiring/"
+        }
+      ],
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-three-way-toggle-switch-wiring/",
+      "category": {
+        "id": "pickups",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/categories/pickups/"
+      },
+      "tools": [
+        {
+          "id": "signal",
+          "title": "Signal Forge",
+          "path": "/circuit-forge/",
+          "text": "Inspect the supported circuit and compare electrical response within the tool’s stated modelling limits."
+        },
+        {
+          "id": "wiring",
+          "title": "Wiring Diagram Generator",
+          "path": "/wiring-generator/",
+          "text": "Turn a supported configuration into a physical connection reference for the bench."
+        }
+      ],
+      "component": {
+        "id": "potentiometers",
+        "title": "Potentiometers",
+        "path": "/components/potentiometers/"
+      }
     },
     {
       "guide": "grounding-guide",
       "queries": [
         "guitar grounding"
       ],
-      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-grounding-common-problems/"
+      "id": "grounding-guide",
+      "primary": {
+        "id": "grounding-guide",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-grounding-common-problems/"
+      },
+      "supporting": [
+        {
+          "id": "ground",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/grounding-output/"
+        },
+        {
+          "id": "troubleshoot",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/troubleshooting/"
+        },
+        {
+          "id": "lugs",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-pot-lug-numbering-wiring/"
+        }
+      ],
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-grounding-common-problems/",
+      "category": {
+        "id": "wiring",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/categories/wiring/"
+      },
+      "tools": [
+        {
+          "id": "signal",
+          "title": "Signal Forge",
+          "path": "/circuit-forge/",
+          "text": "Inspect the supported circuit and compare electrical response within the tool’s stated modelling limits."
+        },
+        {
+          "id": "wiring",
+          "title": "Wiring Diagram Generator",
+          "path": "/wiring-generator/",
+          "text": "Turn a supported configuration into a physical connection reference for the bench."
+        }
+      ],
+      "component": null
     },
     {
       "guide": "coil-split-guide",
@@ -99,7 +577,49 @@
         "coil split wiring"
       ],
       "limits": "Supported configurations only; no universal physical pinout.",
-      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/coil-splitting-explained/"
+      "id": "coil-split-guide",
+      "primary": {
+        "id": "coil-split-guide",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/coil-splitting-explained/"
+      },
+      "supporting": [
+        {
+          "id": "pickups",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/pickup-conductors/"
+        },
+        {
+          "id": "lugs",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-pot-lug-numbering-wiring/"
+        },
+        {
+          "id": "switches",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/selectors/"
+        }
+      ],
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/coil-splitting-explained/",
+      "category": {
+        "id": "pickups",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/categories/pickups/"
+      },
+      "tools": [
+        {
+          "id": "signal",
+          "title": "Signal Forge",
+          "path": "/circuit-forge/",
+          "text": "Inspect the supported circuit and compare electrical response within the tool’s stated modelling limits."
+        },
+        {
+          "id": "wiring",
+          "title": "Wiring Diagram Generator",
+          "path": "/wiring-generator/",
+          "text": "Turn a supported configuration into a physical connection reference for the bench."
+        }
+      ],
+      "component": {
+        "id": "potentiometers",
+        "title": "Potentiometers",
+        "path": "/components/potentiometers/"
+      }
     },
     {
       "guide": "series-parallel-guide",
@@ -107,7 +627,45 @@
         "series parallel guitar wiring"
       ],
       "limits": "Conceptual comparison; alternate parallel connection recipes are not added.",
-      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/series-vs-parallel-pickup-wiring/"
+      "id": "series-parallel-guide",
+      "primary": {
+        "id": "series-parallel-guide",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/series-vs-parallel-pickup-wiring/"
+      },
+      "supporting": [
+        {
+          "id": "pickups",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/pickup-conductors/"
+        },
+        {
+          "id": "coil-split-guide",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/coil-splitting-explained/"
+        }
+      ],
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/series-vs-parallel-pickup-wiring/",
+      "category": {
+        "id": "pickups",
+        "canonical": "https://apparitioninstruments.co.uk/luthier-hub/categories/pickups/"
+      },
+      "tools": [
+        {
+          "id": "signal",
+          "title": "Signal Forge",
+          "path": "/circuit-forge/",
+          "text": "Inspect the supported circuit and compare electrical response within the tool’s stated modelling limits."
+        },
+        {
+          "id": "wiring",
+          "title": "Wiring Diagram Generator",
+          "path": "/wiring-generator/",
+          "text": "Turn a supported configuration into a physical connection reference for the bench."
+        }
+      ],
+      "component": {
+        "id": "potentiometers",
+        "title": "Potentiometers",
+        "path": "/components/potentiometers/"
+      }
     }
   ]
 }

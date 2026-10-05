@@ -4,7 +4,7 @@ import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {categories,guides,tools,components,legacyCategories,sources} from './luthier-hub/content.mjs';
 import {wiringGuides} from './luthier-hub/wiring-content.mjs';
-import {searchIntents,relationAdditions} from './luthier-hub/discovery.mjs';
+import {searchIntents,relationAdditions,metadataRoles,categoryConnections,discoveryAuthority} from './luthier-hub/discovery.mjs';
 import {hubIllustrations} from './generate-component-illustrations.mjs';
 const root=new URL('../dist/',import.meta.url),base='https://apparitioninstruments.co.uk';
 const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
@@ -29,23 +29,25 @@ function document(title,description,path,main,{article,breadcrumbs=[['Home','/']
 const write=async(path,html)=>{const dir=new URL(path.slice(1),root);await mkdir(dir,{recursive:true});await writeFile(new URL('index.html',dir),html);};
 const guideList=(items,tag='h3')=>`<ol class="hub-guide-list">${items.map(a=>`<li data-topic="${a.category}" data-search="${esc(a.title+' '+a.intro+' '+(a.tags||''))}"><div><p class="hub-label">${esc(byCategory.get(a.category).title)}</p><${tag}>${link(a.title,route(a))}</${tag}><p>${esc(a.intro)}</p></div><span class="hub-reading">${a.sections.length} sections</span></li>`).join('')}</ol>`;
 function handoffs(a){return `<section id="next-steps" class="hub-next"><h2>Understand. Experiment. Build.</h2><div class="hub-next-grid"><div><h3>Continue reading</h3><ul>${a.related.map(id=>`<li>${link(byId.get(id).title,route(byId.get(id)))}</li>`).join('')}</ul>${link('All '+byCategory.get(a.category).title+' guides',categoryRoute(byCategory.get(a.category)))}</div><div><h3>Explore with a tool</h3>${a.tools.map(id=>`<p>${link(tools[id].title,tools[id].path)}<br>${esc(tools[id].text)}</p>`).join('')}</div>${components[a.component]?`<div><h3>When you are ready to build</h3><p>Check measured values, tolerance and physical fit against your intended circuit.</p>${link('Explore '+components[a.component].title,components[a.component].path)}</div>`:''}</div></section>`;}
+function categoryContext(c){const connection=categoryConnections[c.id];return `<p data-discovery-addition="category">Use ${connection.tools.map(id=>link(tools[id].title,tools[id].path)).join(' or ')} after identifying the terminals and supported configuration.${connection.component?' Check fit and specification in '+link(components[connection.component].title,components[connection.component].path)+'.':''}</p>`;}
 export async function generateHub(){
  for(const a of library){const c=byCategory.get(a.category),path=route(a),breadcrumb=[['Home','/'],['Luthier Hub','/luthier-hub/'],[c.title,categoryRoute(c)],[a.title,path]];
  const body=a.body||a.sections.map(s=>`<section id="${s.id}"><h2>${esc(s.title)}</h2>${s.html}</section>`).join('');
  const main=`<main id="main" class="hub-reference-wrap hub-reference-surface">${crumbs(breadcrumb)}<article data-hub-article="${a.id}"><header class="hub-article-head"><p class="hub-label">${link(c.title,categoryRoute(c))} / Technical reference</p><h1>${esc(a.title)}</h1><p class="hub-deck">${esc(a.intro)}</p>${a.published||a.updated?`<p class="hub-date">${a.published?`Published <time datetime="${a.published}">4 October 2026</time>`:`Updated <time datetime="${a.updated}">4 October 2026</time>`}</p>`:''}</header><div class="hub-reading-layout"><aside class="hub-contents"><details open><summary>In this guide</summary><nav aria-label="Table of contents"><ol>${a.sections.map(s=>`<li>${link(s.title,'#'+s.id)}</li>`).join('')}<li>${link('Next steps','#next-steps')}</li></ol></nav></details></aside><div class="hub-article-body article-copy">${a.illustration?`<figure class="hub-part">${illustrations[a.illustration]}<figcaption>Component reference. Identify terminals using the part drawing and circuit reference.</figcaption></figure>`:''}${body}${sources[a.id]?`<section class="hub-further"><h2>Further reading</h2><p>Manufacturer context to read alongside this circuit reference:</p><ul>${sources[a.id].map(url=>`<li>${link(new URL(url).hostname.includes('fender')?'Fender: treble-bleed context':'Seymour Duncan: component and circuit context',url)}</li>`).join('')}</ul></section>`:''}${handoffs(a)}</div></div></article></main>`;
- const generated=document(a.title,a.intro,path,main,{article:a,breadcrumbs:breadcrumb,scripts:a.scripts||[]});
+ const metadataRole=metadataRoles[a.id];
+ const generated=document(metadataRole?.title||a.title,metadataRole?.description||a.intro,path,main,{article:a,breadcrumbs:breadcrumb,scripts:a.scripts||[]});
  const existing=legacy.some(item=>item.id===a.id)||['pots','bleeds'].includes(a.id);
  if(existing){
   const original=await readFile(new URL(a.slug+'.html',baselineRoot),'utf8');
   const expanded=guides.some(g=>g.id===a.id)?`<section class="hub-reference-surface hub-reference-supplement" data-hub-addition="content"><h2>Further reference: ${esc(a.title)}</h2><p>${esc(a.intro)}</p><nav aria-label="Further reference contents"><ol>${a.sections.map(s=>`<li>${link(s.title,'#hub-v1-'+s.id)}</li>`).join('')}</ol></nav><div class="hub-article-body">${a.sections.map(s=>`<section id="hub-v1-${s.id}"><h3>${esc(s.title)}</h3>${s.html}</section>`).join('')}</div></section>`:'';
   const relations=`<section class="hub-reference-surface hub-reference-supplement" data-hub-addition="relationships">${crumbs(breadcrumb)}<div class="hub-article-body">${handoffs(a).replace('id="next-steps"','id="hub-v1-next-steps"')}</div></section>`;
   const metadata=generated.match(/<meta name="description"[\s\S]*?<script type="application\/ld\+json">[\s\S]*?<\/script>/)[0];
-  let preserved=original.replace(/<!-- SEO METADATA START -->[\s\S]*?<!-- SEO METADATA END -->/,metadata).replace(/<title>[\s\S]*?<\/title>/,`<title>${esc(a.title)} | Apparition Instruments</title>`);
+  let preserved=original.replace(/<!-- SEO METADATA START -->[\s\S]*?<!-- SEO METADATA END -->/,metadata).replace(/<title>[\s\S]*?<\/title>/,`<title>${esc(metadataRole?.title||a.title)} | Apparition Instruments</title>`);
   preserved=preserved.replace('</head>','<link rel="stylesheet" href="/luthier-hub/reference.css"></head>').replace(/<body([^>]*)>/,'<body$1 data-hub-reference="v1">').replace('<main ','<main data-hub-article="'+a.id+'" ').replace('</main>',expanded+relations+'</main>');
   await write(path,preserved);
  }else await write(path,generated);}
  for(const c of categories){const path=categoryRoute(c),breadcrumb=[['Home','/'],['Luthier Hub','/luthier-hub/'],[c.title,path]],items=library.filter(a=>a.category===c.id);
- await write(path,document(c.title+' Guides',c.intro,path,`<main id="main" class="hub-reference-wrap hub-reference-surface">${crumbs(breadcrumb)}<header class="hub-category-head"><p class="hub-label">Luthier Hub / Subject ${c.number}</p><h1>${esc(c.title)}</h1><p class="hub-deck">${esc(c.intro)}</p></header><section class="hub-category-reading"><h2>A useful reading order</h2><p>${esc(c.approach)}</p>${guideList(items)}</section><nav class="hub-subject-nav" aria-label="Other subjects"><h2>Explore the reference library</h2>${categories.filter(x=>x.id!==c.id).map(x=>link(x.title,categoryRoute(x))).join('')}</nav></main>`,{breadcrumbs:breadcrumb}));}
+ await write(path,document(c.title+' Guides',c.intro,path,`<main id="main" class="hub-reference-wrap hub-reference-surface">${crumbs(breadcrumb)}<header class="hub-category-head"><p class="hub-label">Luthier Hub / Subject ${c.number}</p><h1>${esc(c.title)}</h1><p class="hub-deck">${esc(c.intro)}</p></header><section class="hub-category-reading"><h2>A useful reading order</h2><p>${esc(c.approach)}</p>${categoryContext(c)}${guideList(items)}</section><nav class="hub-subject-nav" aria-label="Other subjects"><h2>Explore the reference library</h2>${categories.filter(x=>x.id!==c.id).map(x=>link(x.title,categoryRoute(x))).join('')}</nav></main>`,{breadcrumbs:breadcrumb}));}
  // Restore the actual interactive landing; the five new index rows and category access are additive.
  const newGuides=[...guides,...wiringGuides].filter(a=>!['pots','bleeds'].includes(a.id));
  const topic={potentiometers:'pots','tone-controls':'capacitors',wiring:'wiring',pickups:'pickups'};
@@ -60,7 +62,7 @@ export async function generateHub(){
  await write('/luthier-hub/',landing);
  // Use the existing SEO sitemap discovery without refreshing protected-page metadata.
  const result=spawnSync('python',['scripts/generate-seo.py','--route','/luthier-hub/'],{cwd:fileURLToPath(new URL('../',import.meta.url)),encoding:'utf8'});if(result.status!==0)throw Error(result.stderr);
- await writeFile(new URL('luthier-hub/discovery.json',root),JSON.stringify({version:1,intents:searchIntents.map(item=>({...item,canonical:base+route(byId.get(item.guide))}))},null,2)+'\n');
+ await writeFile(new URL('luthier-hub/discovery.json',root),JSON.stringify(discoveryAuthority(library,categories,tools,components,base),null,2)+'\n');
  console.log(`Luthier Hub: ${library.length} articles, ${categories.length} subjects, seven cornerstones; static routes and sitemap generated.`);
 }
 if(process.argv[1]===fileURLToPath(import.meta.url))await generateHub();
