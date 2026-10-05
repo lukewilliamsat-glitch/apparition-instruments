@@ -1,8 +1,9 @@
+import {createArticleAdapter} from './article-adapter.mjs';
 import {createCMSRepository} from '../hub-cms/repository.mjs';
 import {pageLibrary,pageRoute,renderPage} from './pages.mjs';
 
 // Authentication is owned by admin-gate; importing this entry does not bypass it.
-export async function bootConjure({document=globalThis.document,repository=createCMSRepository(),request=globalThis.fetch,adapter=null}={}){
+export async function bootConjure({document=globalThis.document,repository=createCMSRepository(),request=globalThis.fetch,adapter=createArticleAdapter()}={}){
  const q=s=>document.querySelector(s),frame=q('iframe'),status=q('[data-status]'),picker=q('[data-page]');
  const articles=await repository.list(),pages=pageLibrary(articles),sessions=new Map();let current=null,active=null,serial=0;
  const message=value=>{status.textContent=value;};
@@ -12,15 +13,15 @@ export async function bootConjure({document=globalThis.document,repository=creat
   const result=await renderPage(page,{request,document,articles});if(ticket!==serial)return false;
   active?.detach?.();current=page;picker.value=path;q('[data-page-title]').textContent=page.title;q('[data-support]').textContent=page.editable?'Select supported content on the page. Changes save as a private draft.':'Website preview · this page is read only. Interactive tools and commerce actions are disabled.';
   q('[data-actions]').hidden=true;q('[data-section-fields]').hidden=true;
-  await new Promise(resolve=>{frame.addEventListener('load',resolve,{once:true});frame.srcdoc=result.html;});if(ticket!==serial)return false;
+  await new Promise((resolve,reject)=>{const timeout=document.defaultView.setTimeout(()=>reject(Error('Page preview did not load. Your drafts are retained.')),15000);frame.addEventListener('load',()=>{document.defaultView.clearTimeout(timeout);resolve();},{once:true});frame.srcdoc=result.html;});if(ticket!==serial)return false;
   const canvas=frame.contentDocument;canvas.addEventListener('submit',e=>e.preventDefault(),true);
-  canvas.addEventListener('click',event=>{const a=event.target.closest?.('a');if(!a||a.closest('[data-block]'))return;event.preventDefault();try{navigate(new URL(a.getAttribute('href'),canvas.baseURI).href).catch(e=>message(e.message));}catch(e){message(e.message);}},true);
-  active=null;if(page.editable&&adapter){active=sessions.get(page.article.id)||await adapter.create(page,result.presentation,{document,repository,message,refresh});sessions.set(page.article.id,active);await active.attach(canvas);}
+  canvas.addEventListener('click',event=>{const a=event.target.closest?.('a');if(!a)return;if(a.closest('[data-block]')&&active?.isEditing)return;event.preventDefault();try{navigate(new URL(a.getAttribute('href'),canvas.baseURI).href).catch(e=>message(e.message));}catch(e){message(e.message);}},true);
+  active=null;if(page.editable&&adapter){active=sessions.get(page.article.id)||await adapter.create(page,result.presentation,{document,repository,message,refresh});sessions.set(page.article.id,active);await active.attach(canvas);active.setBreakpoint(q('[data-view]').value);}
   refresh();return true;
  }
- function refresh(){const enabled=!!active&&q('[data-edit]').checked;active?.setEditing?.(enabled);frame.style.width=q('[data-view]').value==='mobile'?'390px':'100%';frame.style.maxWidth='100%';active?.setBreakpoint?.(q('[data-view]').value);q('[data-undo]').disabled=!enabled||!active.past;q('[data-redo]').disabled=!enabled||!active.future;q('[data-save]').disabled=!active||!active.dirty||active.saving||active.pending;message(active?.status||'Website preview · no editable changes.');}
+ function refresh(){const enabled=!!active&&q('[data-edit]').checked;active?.setEditing?.(enabled);frame.style.width=q('[data-view]').value==='mobile'?'390px':'100%';frame.style.maxWidth='100%';q('[data-undo]').disabled=!enabled||!active.past;q('[data-redo]').disabled=!enabled||!active.future;q('[data-save]').disabled=!active||!active.dirty||active.saving||active.pending;message(active?.status||'Website preview · no editable changes.');}
  picker.addEventListener('change',()=>navigate(picker.value).catch(e=>message(e.message)));
- q('[data-edit]').addEventListener('change',refresh);q('[data-view]').addEventListener('change',refresh);
+ q('[data-edit]').addEventListener('change',refresh);q('[data-view]').addEventListener('change',()=>{try{active?.setBreakpoint?.(q('[data-view]').value);refresh();}catch(e){message(e.message);}});
  q('[data-undo]').addEventListener('click',()=>{active?.undo();refresh();});q('[data-redo]').addEventListener('click',()=>{active?.redo();refresh();});
  q('[data-save]').addEventListener('click',async()=>{try{await active?.save();}catch(e){message(e.message);}refresh();});
  const dirty=()=>[...sessions.values()].some(s=>s.dirty||s.pending);
