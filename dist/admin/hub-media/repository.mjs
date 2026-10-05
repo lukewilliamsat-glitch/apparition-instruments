@@ -1,0 +1,5 @@
+import {createAdminAuth} from '../admin-auth.mjs';import {publicBackendConfig} from '../../backend/public-config.mjs';
+export function createMediaRepository({token=()=>createAdminAuth().accessToken(),config=publicBackendConfig,request=globalThis.fetch}={}){
+ const send=async(path,{method='GET',body}={})=>{const value=await token();const r=await request(config.url+'/rest/v1/'+path,{method,headers:{apikey:config.publishableKey,Authorization:'Bearer '+value,'Content-Type':'application/json'},...body?{body:JSON.stringify(body)}:{}});const data=await r.json();if(!r.ok)throw Error(data.message||'Media registry unavailable.');return data;};
+ return {assets:()=>send('hub_media_assets?select=*&order=filename'),articles:()=>send('hub_article_library?select=id,guide_key,draft&order=updated_at.desc'),usage:()=>send('hub_article_media?select=*&order=updated_at.desc'),save:(u,version)=>send('rpc/save_hub_media_reference',{method:'POST',body:{p_article_id:u.article_id,p_asset_id:u.asset_id,p_block_ref:u.block_ref,p_alt_text:u.alt_text,p_caption:u.caption,p_decorative:u.decorative,p_expected_version:version}})};
+}

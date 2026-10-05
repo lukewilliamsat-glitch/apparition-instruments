@@ -2,7 +2,7 @@
 import {readFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {cmsConfig} from '../../dist/hub-cms/config.mjs';
-import {documentMetrics as textMetrics} from '../../dist/admin/hub-cms/document-state.mjs';
+import {documentMetrics as textMetrics} from '../../dist/authoring/document.mjs';
 const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const marker=(kind,html)=>`<!-- KNOWLEDGE V3 ${kind} START -->${html}<!-- KNOWLEDGE V3 ${kind} END -->`;
 export const stripKnowledge=html=>html.replace(/<!-- KNOWLEDGE V3 ([A-Z]+) START -->[\s\S]*?<!-- KNOWLEDGE V3 \1 END -->/g,'');

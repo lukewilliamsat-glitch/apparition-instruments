@@ -1,0 +1,11 @@
+/* Opt-in workspace navigation only; existing controls and global tokens remain intact. */
+.admin-page .admin-workspaces{background:#191919;color:#f5f5f5;border:1px solid #444;margin-block:18px;padding:12px 16px}
+.admin-page .admin-workspaces summary{cursor:pointer;font:14px/1.5 'Space Grotesk',sans-serif;min-height:24px}
+.admin-page .admin-workspaces nav{display:flex;flex-wrap:wrap;gap:16px 32px;margin-top:12px}
+.admin-page .admin-workspaces nav>div{display:flex;flex-wrap:wrap;gap:6px 16px;min-width:0;flex:1 1 240px}
+.admin-page .admin-workspaces p{flex-basis:100%;margin:4px 0;color:#b89b5e;font:12px/1.5 'JetBrains Mono',monospace}
+.admin-page .admin-workspaces a{color:#f5f5f5;display:inline-flex;align-items:center;min-height:44px;font-size:14px}
+.admin-page .admin-workspaces a[aria-current]{color:#d3c29c}
+.admin-page .admin-workspaces a:focus-visible,.admin-page .admin-workspaces summary:focus-visible{outline:2px solid #b89b5e;outline-offset:3px}
+@media print{.admin-page .admin-workspaces{display:none}}
+@media(max-width:640px){.admin-page .admin-workspaces nav>div{flex-basis:100%}}
