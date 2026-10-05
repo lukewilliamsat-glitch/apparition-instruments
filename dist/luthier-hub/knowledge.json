@@ -427,6 +427,26 @@
       "reading_minutes": 1
     },
     {
+      "id": "cable-capacitance",
+      "title": "Guitar Cable Capacitance and the Passive Pickup Load",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/cable-capacitance/",
+      "category": "wiring",
+      "primary_intent": null,
+      "related": [
+        "pickup-inductance",
+        "values",
+        "tone",
+        "bleeds",
+        "ground"
+      ],
+      "tools": [
+        "signal",
+        "bleed"
+      ],
+      "components": [],
+      "reading_minutes": 3
+    },
+    {
       "id": "independent-dependent-volumes",
       "title": "Independent vs Dependent Guitar Volume Controls",
       "canonical": "https://apparitioninstruments.co.uk/luthier-hub/independent-dependent-volumes/",
@@ -448,37 +468,35 @@
       "reading_minutes": 3
     },
     {
-      "id": "pickup-phase-switching",
-      "title": "Pickup Phase Switching: Signal Polarity and Shield Ground",
-      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/pickup-phase-switching/",
-      "category": "pickups",
+      "id": "output-jack-faults",
+      "title": "Output Jack Wiring and Common Passive Guitar Faults",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/output-jack-faults/",
+      "category": "troubleshooting",
       "primary_intent": null,
       "related": [
-        "pickups",
-        "coil-split-guide",
-        "series-parallel-guide",
-        "push-pull-dpdt"
+        "ground",
+        "grounding-guide",
+        "troubleshoot",
+        "lugs"
       ],
       "tools": [
         "wiring"
       ],
-      "components": [
-        "potentiometers"
-      ],
+      "components": [],
       "reading_minutes": 3
     },
     {
-      "id": "push-pull-dpdt",
-      "title": "Push/Pull Pots and DPDT Switching Fundamentals",
-      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/push-pull-dpdt/",
+      "id": "partial-coil-splits",
+      "title": "Partial Coil Splits: Resistor Loading at the Series Junction",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/partial-coil-splits/",
       "category": "pickups",
       "primary_intent": null,
       "related": [
-        "pots",
-        "lugs",
         "coil-split-guide",
-        "pickup-phase-switching",
-        "partial-coil-splits"
+        "push-pull-dpdt",
+        "pickups",
+        "series-parallel-guide",
+        "pickup-dc-resistance-output"
       ],
       "tools": [
         "wiring"
@@ -526,37 +544,16 @@
       "reading_minutes": 3
     },
     {
-      "id": "cable-capacitance",
-      "title": "Guitar Cable Capacitance and the Passive Pickup Load",
-      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/cable-capacitance/",
-      "category": "wiring",
-      "primary_intent": null,
-      "related": [
-        "pickup-inductance",
-        "values",
-        "tone",
-        "bleeds",
-        "ground"
-      ],
-      "tools": [
-        "signal",
-        "bleed"
-      ],
-      "components": [],
-      "reading_minutes": 3
-    },
-    {
-      "id": "partial-coil-splits",
-      "title": "Partial Coil Splits: Resistor Loading at the Series Junction",
-      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/partial-coil-splits/",
+      "id": "pickup-phase-switching",
+      "title": "Pickup Phase Switching: Signal Polarity and Shield Ground",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/pickup-phase-switching/",
       "category": "pickups",
       "primary_intent": null,
       "related": [
-        "coil-split-guide",
-        "push-pull-dpdt",
         "pickups",
+        "coil-split-guide",
         "series-parallel-guide",
-        "pickup-dc-resistance-output"
+        "push-pull-dpdt"
       ],
       "tools": [
         "wiring"
@@ -567,21 +564,24 @@
       "reading_minutes": 3
     },
     {
-      "id": "output-jack-faults",
-      "title": "Output Jack Wiring and Common Passive Guitar Faults",
-      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/output-jack-faults/",
-      "category": "troubleshooting",
+      "id": "push-pull-dpdt",
+      "title": "Push/Pull Pots and DPDT Switching Fundamentals",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/push-pull-dpdt/",
+      "category": "pickups",
       "primary_intent": null,
       "related": [
-        "ground",
-        "grounding-guide",
-        "troubleshoot",
-        "lugs"
+        "pots",
+        "lugs",
+        "coil-split-guide",
+        "pickup-phase-switching",
+        "partial-coil-splits"
       ],
       "tools": [
         "wiring"
       ],
-      "components": [],
+      "components": [
+        "potentiometers"
+      ],
       "reading_minutes": 3
     }
   ],
