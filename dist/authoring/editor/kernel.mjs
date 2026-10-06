@@ -5,6 +5,7 @@ export const defaultGrid=()=>({columns:24,rowHeight:28,gapX:12,gapY:12,minRows:8
 export class BlockRegistry{
  #types=new Map();
  register(definition){if(!id(definition.type)||!integer(definition.version,1,100)||!integer(definition.minCols,1,96)||!integer(definition.minRows,1)||typeof definition.validate!=='function')fail('Invalid block definition.');const key=definition.type+'@'+definition.version;if(this.#types.has(key))fail('Duplicate block definition.');this.#types.set(key,Object.freeze({...definition,capabilities:Object.freeze({...definition.capabilities})}));return this;}
+ list(){return [...this.#types.values()];}
  get(block){return this.#types.get(block.type+'@'+block.version);}
  can(block,action){return !!this.get(block)?.capabilities?.[action]&&block.capabilities?.[action]!==false;}
 }
