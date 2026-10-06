@@ -1,3 +1,4 @@
+import {bindAdminDialogs} from './interaction.mjs';
 import {prepareCatalogue} from './catalogue-presentation.mjs';
 import {prepareSalesContent} from './sales-content-presentation.mjs';
 export const adminRoutes=[
@@ -23,6 +24,8 @@ export function mountAdminShell(d,signOut){const path=d.location?.pathname||'';i
  prepareCatalogue(d);
  prepareSalesContent(d);
  const paint=()=>{const id=workspaceFor(d.location),route=adminRoutes.find(r=>r.id===id);for(const a of nav.querySelectorAll('a')){if(a.dataset.workspace===id)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');}description.textContent=workspaceDescriptions[id]||'';if(path.includes('/site-operations/')&&route)header.querySelector('h1').textContent=route.label;};paint();d.defaultView.addEventListener('hashchange',paint);
- const close=()=>{d.body.removeAttribute('data-admin-menu-open');toggle.setAttribute('aria-expanded','false');};toggle.addEventListener('click',()=>{const open=toggle.getAttribute('aria-expanded')!=='true';toggle.setAttribute('aria-expanded',String(open));d.body.toggleAttribute('data-admin-menu-open',open);});sidebar.addEventListener('click',e=>{if(e.target.closest('a'))close();});d.addEventListener('keydown',e=>{if(e.key==='Escape'&&toggle.getAttribute('aria-expanded')==='true'){close();toggle.focus();}});
+ const narrow=d.defaultView.matchMedia('(max-width:1050px)'),sync=()=>sidebar.toggleAttribute('inert',narrow.matches&&toggle.getAttribute('aria-expanded')!=='true');const close=()=>{d.body.removeAttribute('data-admin-menu-open');toggle.setAttribute('aria-expanded','false');sync();};sync();narrow.addEventListener('change',close);toggle.addEventListener('click',()=>{const open=toggle.getAttribute('aria-expanded')!=='true';toggle.setAttribute('aria-expanded',String(open));d.body.toggleAttribute('data-admin-menu-open',open);sync();if(open&&narrow.matches)(nav.querySelector('[aria-current=page]')||nav.querySelector('a'))?.focus();});sidebar.addEventListener('click',e=>{if(e.target.closest('a'))close();});d.addEventListener('keydown',e=>{if(e.key==='Escape'&&toggle.getAttribute('aria-expanded')==='true'){close();toggle.focus();}});
+ d.addEventListener('keydown',event=>{if(event.key!=='Tab'||!narrow.matches||toggle.getAttribute('aria-expanded')!=='true')return;const links=[toggle,...nav.querySelectorAll('a')],first=links[0],last=links.at(-1);if(event.shiftKey&&d.activeElement===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&d.activeElement===last){event.preventDefault();first.focus();}});
+ bindAdminDialogs(d);
  return top;
 }

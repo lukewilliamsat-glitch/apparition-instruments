@@ -1,0 +1,8 @@
+export function setAdminFeedback(node,text,state='neutral'){
+ node.textContent=text;node.dataset.feedback=state;node.setAttribute('role','status');node.setAttribute('aria-live','polite');node.setAttribute('aria-busy',String(state==='loading'));node.classList.add('admin-workspace-feedback');
+}
+// Native dialogs remain the modal authority; these hooks provide deliberate focus and return.
+export function bindAdminDialogs(d){
+ let invoker=null;d.addEventListener('click',event=>{const control=event.target.closest('button,a');if(control&&!control.closest('dialog'))invoker=control;},true);
+ for(const dialog of d.querySelectorAll('dialog')){let open=dialog.open,returnTo=null;const observer=new d.defaultView.MutationObserver(()=>{if(dialog.open===open)return;open=dialog.open;if(open){returnTo=invoker||d.activeElement;const first=[...dialog.querySelectorAll('input:not([type=hidden]),select,textarea,button')].find(n=>!n.disabled&&!n.closest('[hidden]'));first?.focus();}else if(returnTo?.isConnected&&!returnTo.disabled)returnTo.focus();});observer.observe(dialog,{attributes:true,attributeFilter:['open']});dialog.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();dialog.close();}else if(event.key==='Tab'){const controls=[...dialog.querySelectorAll('a[href],button,input:not([type=hidden]),select,textarea,[tabindex="0"]')].filter(n=>!n.disabled&&!n.closest('[hidden]'));const first=controls[0],last=controls.at(-1);if(event.shiftKey&&d.activeElement===first){event.preventDefault();last?.focus();}else if(!event.shiftKey&&d.activeElement===last){event.preventDefault();first?.focus();}}});}
+}
