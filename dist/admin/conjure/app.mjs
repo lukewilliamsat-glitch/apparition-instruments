@@ -25,6 +25,7 @@ export async function bootConjure({document=globalThis.document,repository=creat
  q('[data-edit]').addEventListener('change',refresh);q('[data-view]').addEventListener('change',()=>{try{active?.setBreakpoint?.(q('[data-view]').value);refresh();}catch(e){message(e.message);}});
  q('[data-undo]').addEventListener('click',()=>{active?.undo();refresh();});q('[data-redo]').addEventListener('click',()=>{active?.redo();refresh();});
  q('[data-save]').addEventListener('click',async()=>{try{await active?.save();}catch(e){message(e.message);}refresh();});
+ document.addEventListener('keydown',event=>{if(event.defaultPrevented||event.target.closest('input,textarea,select,[contenteditable]')||!active||active.pending||active.saving)return;if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='z'){event.preventDefault();event.shiftKey?active.redo():active.undo();refresh();}if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='y'){event.preventDefault();active.redo();refresh();}});
  const dirty=()=>[...sessions.values()].some(s=>s.dirty||s.pending);
  document.defaultView.addEventListener('beforeunload',event=>{if(dirty()){event.preventDefault();event.returnValue='';}});
  document.addEventListener('click',event=>{if(!event.target.closest?.('[data-conjure-exit],[data-inspector] nav a'))return;if(dirty()&&!document.defaultView.confirm('Leave Conjure with unsaved drafts?'))event.preventDefault();});
