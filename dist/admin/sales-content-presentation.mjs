@@ -1,0 +1,16 @@
+// Private workspace chrome only. Existing form/controller nodes remain bound.
+export function prepareSalesContent(d){
+ const path=d.location.pathname,orders=path==='/admin/orders/'||path==='/admin/orders/index.html',articles=path.startsWith('/admin/hub-cms/'),media=path.startsWith('/admin/hub-media/'),operations=path.startsWith('/admin/site-operations/');
+ if(!orders&&!articles&&!media&&!operations)return;const main=d.querySelector('main.admin-main');if(!main||main.dataset.contentPrepared)return;main.dataset.contentPrepared='true';
+ if(!operations)d.body.dataset.salesContent='true';const header=main.querySelector('.admin-page-header');
+ let actions=header.querySelector('.admin-page-actions');if(!actions){actions=d.createElement('div');actions.className='admin-page-actions';header.append(actions);}
+ if(orders){const existing=d.getElementById('order-create-actions');if(existing){existing.classList.add('admin-page-actions');actions.append(existing);}}
+ if(articles){const create=d.getElementById('cms-new');create.classList.add('admin-primary');actions.append(create);}
+ for(const id of ['order-message','cms-status','media-status','operations-status']){const n=d.getElementById(id);if(n){n.classList.add('admin-workspace-feedback');n.setAttribute('aria-live','polite');}}
+ if(!operations){const notes=[...main.querySelectorAll(':scope > p.storage-note')];if(notes.length){const help=d.createElement('details'),summary=d.createElement('summary');help.className='admin-workflow-help';summary.textContent='Workspace notes';help.append(summary,...notes);main.append(help);}}
+ for(const table of main.querySelectorAll('table'))if(!table.closest('.admin-table-scroll')){const wrap=d.createElement('div');wrap.className='admin-table-scroll';table.before(wrap);wrap.append(table);}
+ if(operations){const ids=['store-status','news','announcements','audit','commercial-destinations'],sections=ids.map(id=>d.getElementById(id)),nav=d.querySelector('.operations-local-nav'),create=d.getElementById('new-post'),home=d.createComment('News action location');create.before(home);const contentNav=d.createElement('nav');contentNav.className='admin-content-context';contentNav.setAttribute('aria-label','News and Announcements');for(const [id,label] of [['news','News'],['announcements','Announcements']]){const a=d.createElement('a');a.href='#'+id;a.textContent=label;contentNav.append(a);}nav.after(contentNav);
+  const manage=d.createElement('a');manage.href='#news';manage.textContent='Manage announcement posts in News';manage.className='button';d.getElementById('announcements').append(manage);
+  const paint=()=>{const id=d.location.hash.slice(1),content=['news','announcements'].includes(id);d.body.toggleAttribute('data-sales-content',content);d.body.toggleAttribute('data-content-route',content);nav.hidden=content;contentNav.hidden=!content;for(const section of sections)section.hidden=content&&section.id!==id;for(const a of contentNav.querySelectorAll('a')){if(a.getAttribute('href')===d.location.hash)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');}if(content&&id==='news'){create.classList.add('admin-primary');actions.append(create);}else{create.classList.remove('admin-primary');home.after(create);}actions.hidden=content&&id==='announcements';};paint();d.defaultView.addEventListener('hashchange',paint);
+ }
+}
