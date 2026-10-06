@@ -1,0 +1,12 @@
+import {validateDocument,defaultGrid} from '../../authoring/editor/kernel.mjs';
+import {occupiedRows} from '../../authoring/editor/layout.mjs';
+const copy=structuredClone;
+export function addBlankSection(doc,registry,{id,after}){const next=copy(doc),source=next.sections.find(s=>s.id===after)||next.sections.at(-1),layouts=Object.fromEntries(Object.entries(source?.layouts||{desktop:{grid:defaultGrid()}}).map(([bp,l])=>[bp,{grid:copy(l.grid),rows:l.grid.minRows,placements:{}}]));next.sections.splice(next.sections.findIndex(s=>s.id===source?.id)+1,0,{id,policy:'layer',order:[],blocks:{},layouts});return validateDocument(next,registry);}
+export function moveSection(doc,registry,id,delta){const next=copy(doc),i=next.sections.findIndex(s=>s.id===id),at=Math.max(0,Math.min(next.sections.length-1,i+delta));if(i<0)throw Error('Unknown section.');next.sections.splice(at,0,next.sections.splice(i,1)[0]);return validateDocument(next,registry);}
+export function sectionGaps(doc,registry,{id,breakpoint,gapX,gapY}){const next=copy(doc),l=next.sections.find(s=>s.id===id)?.layouts[breakpoint];if(!l)throw Error('Unknown section.');l.grid.gapX=gapX;l.grid.gapY=gapY;l.rows=Math.max(l.rows,l.grid.minRows,occupiedRows(l));return validateDocument(next,registry);}
+// Stable complete stack normalization: locked content is never assigned a new z.
+export function stackBlock(doc,registry,{sectionId,breakpoint,blockId,action}){const next=copy(doc),s=next.sections.find(s=>s.id===sectionId),l=s?.layouts[breakpoint];if(!l||!registry.can(s.blocks[blockId],'layer')||l.placements[blockId].value.locked)throw Error('Layer change denied.');const ids=[...s.order].sort((a,b)=>l.placements[a].value.z-l.placements[b].value.z||s.order.indexOf(a)-s.order.indexOf(b)),i=ids.indexOf(blockId),target=action==='front'?ids.length-1:action==='back'?0:action==='forward'?Math.min(ids.length-1,i+1):Math.max(0,i-1);if(i===target)return next;const peer=ids[target],z=l.placements[peer].value.z;
+ if(action==='front')l.placements[blockId].value.z=Math.max(...ids.map(id=>l.placements[id].value.z))+1;
+ else if(action==='back'&&Math.min(...ids.map(id=>l.placements[id].value.z))>0)l.placements[blockId].value.z=0;
+ else {if(ids.some(id=>l.placements[id].value.locked))throw Error('This stack contains protected content; use Bring to Front.');ids.splice(i,1);ids.splice(target,0,blockId);ids.forEach((id,index)=>l.placements[id].value.z=index);}
+ l.placements[blockId].source='manual';return validateDocument(next,registry);}
