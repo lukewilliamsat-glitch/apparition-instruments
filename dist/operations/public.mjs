@@ -5,12 +5,17 @@ import {readOperationsPresentation,readCurrentStore,readPublicAnnouncements} fro
 import {activeAnnouncement,effectiveStore,safeHref,ukDate} from './model.mjs';
 import {newsCards} from './news-render.mjs';
 export const purchasingSurface=path=>/\/(basket|checkout|components|products|les-paul-kits|wiring-kits|treble-bleed-designer)(\/|$)/.test(path);
+const announcementLayouts=new WeakMap();
 export function mountAnnouncement(document,item,storage=globalThis.localStorage){
- document.querySelector('[data-site-announcement]')?.remove();if(!item)return;
+ announcementLayouts.get(document)?.();document.querySelector('[data-site-announcement]')?.remove();if(!item)return;
  let dismissed=false;try{dismissed=item.dismissible&&storage?.getItem('apparition.notice.'+item.id)==='dismissed';}catch{}if(dismissed)return;
- const bar=document.createElement('aside');bar.className='site-announcement';bar.dataset.siteAnnouncement='';bar.setAttribute('aria-label','Site update');const copy=document.createElement('div'),title=document.createElement('strong'),message=document.createElement('span');title.textContent=item.title;message.textContent=item.message;copy.append(title,message);if(item.resume_at){const time=document.createElement('span');time.textContent='Orders reopen '+ukDate(item.resume_at)+' (UK time).';copy.append(time);}bar.append(copy);
- const href=safeHref(item.cta_url);if(href){const a=document.createElement('a');a.href=href;a.textContent=item.cta_label||'Read update';bar.append(a);}if(item.dismissible){const close=document.createElement('button');close.type='button';close.textContent='Dismiss';close.setAttribute('aria-label','Dismiss site update');close.addEventListener('click',()=>{try{storage?.setItem('apparition.notice.'+item.id,'dismissed');}catch{}bar.remove();});bar.append(close);}
- document.querySelector('.site-header')?.after(bar);
+ const header=document.querySelector('.site-header');if(!header)return;
+ const bar=document.createElement('aside');bar.className='site-announcement';bar.dataset.siteAnnouncement='';bar.setAttribute('aria-label','Site update');const copy=document.createElement('div'),title=document.createElement('strong'),message=document.createElement('span');title.textContent=item.title;message.textContent=item.message??item.excerpt??'';copy.append(title,message);if(item.resume_at){const time=document.createElement('span');time.textContent='Orders reopen '+ukDate(item.resume_at)+' (UK time).';copy.append(time);}bar.append(copy);
+ const view=document.defaultView,body=document.body;let observer;
+ const measure=()=>{body.style.setProperty('--site-announcement-height',bar.getBoundingClientRect().height+'px');body.style.setProperty('--site-announcement-header-height',header.getBoundingClientRect().height+'px');};
+ const clear=()=>{observer?.disconnect();view?.removeEventListener('resize',measure);bar.remove();body.classList.remove('has-site-announcement');body.style.removeProperty('--site-announcement-height');body.style.removeProperty('--site-announcement-header-height');announcementLayouts.delete(document);};
+ const href=safeHref(item.cta_url);if(href){const a=document.createElement('a');a.href=href;a.textContent=item.cta_label||'Read update';bar.append(a);}if(item.dismissible){const close=document.createElement('button');close.type='button';close.textContent='Dismiss';close.setAttribute('aria-label','Dismiss site update');close.addEventListener('click',()=>{try{storage?.setItem('apparition.notice.'+item.id,'dismissed');}catch{}clear();});bar.append(close);}
+ header.before(bar);body.classList.add('has-site-announcement');measure();if(view?.ResizeObserver){observer=new view.ResizeObserver(measure);observer.observe(bar);observer.observe(header);}view?.addEventListener('resize',measure);announcementLayouts.set(document,clear);
 }
 export async function bootOperations(document=globalThis.document,{readPresentation=readOperationsPresentation,readStore=readCurrentStore,readAnnouncements=readPublicAnnouncements}={}){
  if(!document?.querySelector('.site-header')||document.location?.pathname.includes('/admin/'))return;
