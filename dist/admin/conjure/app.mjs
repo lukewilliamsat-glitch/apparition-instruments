@@ -4,6 +4,7 @@ import {pageLibrary,pageRoute,renderPage} from './pages.mjs';
 
 // Authentication is owned by admin-gate; importing this entry does not bypass it.
 export async function bootConjure({document=globalThis.document,repository=createCMSRepository(),request=globalThis.fetch,adapter=createArticleAdapter()}={}){
+ const advanced=document.querySelector('[data-advanced]');advanced?.addEventListener('click',()=>{const panel=document.querySelector('[data-inspector]');panel.hidden=!panel.hidden;advanced.setAttribute('aria-expanded',String(!panel.hidden));});
  const q=s=>document.querySelector(s),frame=q('iframe'),status=q('[data-status]'),picker=q('[data-page]');
  const articles=await repository.list(),pages=pageLibrary(articles),sessions=new Map();let current=null,active=null,serial=0;
  const message=value=>{status.textContent=value;};
