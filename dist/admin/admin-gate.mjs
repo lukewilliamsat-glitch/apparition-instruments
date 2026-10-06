@@ -1,3 +1,4 @@
+import {mountAdminShell} from './application.mjs';
 import {addConjureNavigation} from './conjure/navigation.mjs';
 import {createAdminAuth} from './admin-auth.mjs';
 import {setComponentRepository} from './component-repository.mjs';
@@ -67,6 +68,7 @@ export async function bootAdminGate({document=globalThis.document,auth=createAdm
    addConjureNavigation(document);
    const navigation=document.querySelector('.admin-navigation')||document.querySelector('.admin-tabs');
    if(navigation&&!navigation.querySelector('a[href="/admin/site-operations/"]')){const group=element(document,'div'),label=element(document,'span','Operations'),link=element(document,'a','Site Operations');link.href='/admin/site-operations/';group.append(label,link);if(navigation.classList.contains('admin-navigation'))navigation.append(group);else navigation.append(link);}
+   mountAdminShell(document,signOutControl);
    for(const entry of entryModules(document))await load(new URL(entry,document.baseURI).href);
    main.hidden=true;body.classList.add('admin-authorized');
   }catch{setComponentRepository(null);setAdminOptionRepository(null);setAssemblyRepository(null);setAdminOrderRepository(null);setOperationsRepository(null);signOutControl.remove();render('checking');feedback.textContent='Admin could not load. Please reload and try again.';}
