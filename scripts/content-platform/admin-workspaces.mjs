@@ -1,8 +1,7 @@
 import {readFile,writeFile} from 'node:fs/promises';import {resolve} from 'node:path';import {fileURLToPath} from 'node:url';
 const pages=['dist/admin/index.html','dist/admin/orders/index.html','dist/admin/wiring-kit-master/index.html','dist/admin/catalogue-settings/index.html','dist/admin/hub-cms/index.html','dist/admin/site-operations/index.html','dist/admin/hub-media/index.html'];
-const groups=[['Catalogue',[['Inventory','/admin/'],['Products / Assemblies','/admin/?view=assemblies'],['Catalogue Settings','/admin/catalogue-settings/'],['Wiring Kit Master','/admin/wiring-kit-master/']]],['Sales',[['Orders','/admin/orders/']]],['Editorial',[['Luthier Hub Articles','/admin/hub-cms/'],['Article Media','/admin/hub-media/']]],['Operations',[['Site Operations','/admin/site-operations/'],['News','/admin/site-operations/#news'],['Announcements','/admin/site-operations/#announcements'],['Commercial / eBay destinations','/admin/site-operations/#commercial-destinations']]]];
 export const stripWorkspaces=html=>html.replace(/<!-- ADMIN WORKSPACES (HEAD|NAV) START -->[\s\S]*?<!-- ADMIN WORKSPACES \1 END -->/g,'');
-export async function buildWorkspaces(){for(const path of pages){let html=stripWorkspaces(await readFile(path,'utf8'));const current=path.slice(4,-10),nav=`<details class="admin-workspaces"><summary>Admin workspaces</summary><nav aria-label="Admin workspaces">${groups.map(([title,links])=>`<div><p>${title}</p>${links.map(([label,href])=>`<a href="${href}"${href===current?' aria-current="page"':''}>${label}</a>`).join('')}</div>`).join('')}</nav></details>`;html=html.replace('</head>','<!-- ADMIN WORKSPACES HEAD START --><link rel="stylesheet" href="/admin/workspaces.css"><!-- ADMIN WORKSPACES HEAD END --></head>');html=html.replace(/(<h1\b[^>]*>[\s\S]*?<\/h1>)/,'$1<!-- ADMIN WORKSPACES NAV START -->'+nav+'<!-- ADMIN WORKSPACES NAV END -->');await writeFile(path,html);}
-
-}
+// Compatibility entry point: the authenticated V2 shell owns primary navigation.
+// Old callers may still run this command; it must never recreate the V1 menus.
+export async function buildWorkspaces(){for(const path of pages){const before=await readFile(path,'utf8'),after=stripWorkspaces(before);if(after!==before)await writeFile(path,after);}}
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url))await buildWorkspaces();

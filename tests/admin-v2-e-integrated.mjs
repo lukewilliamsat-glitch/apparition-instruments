@@ -1,0 +1,4 @@
+import {spawnSync} from 'node:child_process';
+const cases=[['admin-v2-e'],['admin-v2-shell'],['admin-gate'],['admin-v2-overview'],['admin-v2-catalogue'],['admin-v2-catalogue','--assemblies'],['admin-v2-c-workspaces'],['hub-cms-admin'],['hub-cms-ux'],['hub-cms-docx'],['hub-cms-data'],['hub-cms-db'],['admin-v2-d'],['operations-v1-admin-dom'],['operations-v2-isolated'],['commercial-v1'],['discovery-operations-v2']];
+let failures=0;for(const [name,...args] of cases){const r=spawnSync(process.execPath,['--import','./tests/fixtures/admin-offline.mjs','tests/'+name+'.mjs',...args],{encoding:'utf8',timeout:90000});console.log('['+name+(args.length?' '+args.join(' '):'')+'] '+(r.status===0?'PASS':'FAIL'));console.log(r.stdout.trim());if(r.status!==0){failures++;console.error(r.stderr||r.error);}}
+if(failures)process.exitCode=1;else console.log('Admin V2 integrated gate PASS: 17 isolated suites; no production transport.');
