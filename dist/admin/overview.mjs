@@ -1,3 +1,34 @@
-// The command-centre read model is introduced in checkpoint B. No production writes.
-export function bootOverview({document=globalThis.document}={}){document.querySelector('#overview-status').textContent='Your Apparition workspaces are available in the application navigation.';}
-if(globalThis.document?.querySelector('#overview-status'))bootOverview();
+import {uiNode,statusBadge} from './application.mjs';
+import {componentRepository} from './component-repository.mjs';
+import {assemblyRepository} from './assembly-repository.mjs';
+import {currentAdminOrderRepository} from '../backend/order-data.mjs';
+import {currentOperationsRepository} from '../backend/operations-admin.mjs';
+import {createCMSRepository} from './hub-cms/repository.mjs';
+import {articleState} from './hub-cms/library.mjs';
+import {effectiveStore,activeAnnouncement,ukDate} from '../operations/model.mjs';
+
+export const overviewSources={
+ inventory:()=>componentRepository().list(),catalogue:()=>assemblyRepository().list(),orders:()=>currentAdminOrderRepository().list(),
+ website:async()=>{const repo=currentOperationsRepository();const [store,posts]=await Promise.all([repo.store(),repo.posts()]);return {store,posts};},
+ articles:()=>createCMSRepository().list()
+};
+export function overviewSummary(id,data,now=Date.now()){
+ if(id==='inventory'){const active=data.filter(x=>x.active),empty=active.filter(x=>x.stock<=0);return {lines:[`${active.length} active components`,`${empty.length} out of stock`],attention:empty.length?`${empty.length} active components are out of stock.`:null,detail:empty.slice(0,5).map(x=>x.name).join(' · '),healthy:'No active components are out of stock.'};}
+ if(id==='catalogue')return {lines:[`${data.filter(x=>x.active&&x.kind!=='wiring-kit').length} active product assemblies`,`${data.filter(x=>x.active&&x.kind==='wiring-kit').length} active wiring kit definitions`],healthy:data.length?'Shared catalogue available.':'No shared assemblies or kit definitions yet.'};
+ if(id==='orders'){const paid=data.filter(x=>['paid','partially_refunded'].includes(x.paymentStatus)&&!(x.paymentStatus==='partially_refunded'&&!x.partialRefundAcknowledged)),queued=paid.filter(x=>x.fulfilmentStatus==='paid').length,production=paid.filter(x=>x.fulfilmentStatus==='in_production').length,dispatch=paid.filter(x=>x.fulfilmentStatus==='ready_to_dispatch').length,reviews=data.filter(x=>x.paymentStatus==='partially_refunded'&&!x.partialRefundAcknowledged).length;return {lines:[`${queued} awaiting production`,`${production} in production`,`${dispatch} ready to dispatch`,`${reviews} refund reviews awaiting acknowledgement`],attention:queued+dispatch+reviews?`${queued+dispatch+reviews} orders require an operational action.`:null,healthy:'No orders awaiting an operational action.'};}
+ if(id==='articles'){const counts=new Map();for(const x of data){const state=articleState(x);counts.set(state,(counts.get(state)||0)+1);}return {lines:['Never published','Draft changes pending','Published'].map(x=>`${counts.get(x)||0} · ${x}`),healthy:data.length?'Article revision state available.':'No articles in the library yet.'};}
+ if(id==='website'){const state=effectiveStore(data.store,now),announcement=activeAnnouncement(data.store,data.posts,now),lines=[state.state==='OPEN'?'Store open':'Orders paused'];if(data.store.desired_state==='ORDERS_PAUSED'&&Date.parse(data.store.pause_from)>now)lines.push('Scheduled pause: '+ukDate(data.store.pause_from));if(data.store.resume_at&&Date.parse(data.store.resume_at)>now)lines.push('Scheduled resume: '+ukDate(data.store.resume_at));lines.push(announcement?'Active announcement: '+(announcement.title||'Store update'):'No active announcement');for(const status of ['DRAFT','SCHEDULED','PUBLISHED','ARCHIVED'])lines.push(`${data.posts.filter(x=>x.status===status).length} News records · ${status.toLowerCase()}`);return {lines,attention:state.state==='ORDERS_PAUSED'?'New checkout is paused; existing orders continue.':null,healthy:'Store operating normally.'};}
+ throw Error('Unsupported Overview area.');
+}
+const areas=[['orders','Orders','/admin/orders/'],['inventory','Inventory','/admin/?view=inventory'],['website','Website & News','/admin/site-operations/'],['catalogue','Catalogue','/admin/?view=assemblies'],['articles','Luthier Hub','/admin/hub-cms/']];
+export async function bootOverview({document:d=globalThis.document,sources=overviewSources,now=()=>Date.now()}={}){
+ const root=d.getElementById('overview-content'),status=d.getElementById('overview-status');if(!root||root.dataset.overviewBound)return;root.dataset.overviewBound='true';status.textContent='Loading current operational state…';root.replaceChildren();
+ const attention=uiNode(d,'section',undefined,'admin-overview-attention'),heading=uiNode(d,'h2','Needs attention'),items=uiNode(d,'div');attention.append(heading,items);root.append(attention);
+ const quick=uiNode(d,'nav',undefined,'admin-overview-actions');quick.setAttribute('aria-label','Overview quick actions');for(const [label,href] of [['Open Conjure','/admin/conjure/'],['Add Component','/admin/?view=inventory&new=component'],['Open Inventory','/admin/?view=inventory'],['Open Orders','/admin/orders/'],['Open Luthier Hub','/admin/hub-cms/']]){const a=uiNode(d,'a',label,'button');a.href=href;quick.append(a);}root.append(quick);
+ const sections=uiNode(d,'div',undefined,'admin-overview-sections');root.append(sections);const states=new Map();
+ const paintAttention=()=>{items.replaceChildren();for(const [id,title,href] of areas){const s=states.get(id);if(s?.attention||s?.error){const a=uiNode(d,'a',s.error?title+': status unavailable. Retry below.':s.attention,'admin-attention-item');a.href=href;items.append(a);}}if(!items.childElementCount)items.append(uiNode(d,'p',states.size===areas.length?'No attention items reported by the available data.':'Checking operational state…'));};
+ const loads=areas.map(([id,title,href])=>{const section=uiNode(d,'section',undefined,'admin-overview-area');section.dataset.overviewArea=id;const h=uiNode(d,'h2',title),body=uiNode(d,'div'),link=uiNode(d,'a','Open '+title);link.href=href;section.append(h,body,link);sections.append(section);
+  const load=async()=>{body.replaceChildren(uiNode(d,'p','Loading…'));section.setAttribute('aria-busy','true');try{const summary=overviewSummary(id,await sources[id](),now());states.set(id,summary);body.replaceChildren();body.append(statusBadge(d,summary.attention?'Attention':'Current',summary.attention?'warning':'neutral'));for(const text of summary.lines)body.append(uiNode(d,'p',text));if(summary.detail)body.append(uiNode(d,'p',summary.detail,'admin-overview-detail'));if(!summary.attention)body.append(uiNode(d,'p',summary.healthy,'admin-overview-detail'));}catch{states.set(id,{error:true});body.replaceChildren(uiNode(d,'p','Status unavailable. No values have been assumed.','admin-feedback'));const retry=uiNode(d,'button','Retry '+title);retry.type='button';retry.addEventListener('click',load);body.append(retry);}finally{section.setAttribute('aria-busy','false');paintAttention();}};return load();});
+ await Promise.all(loads);status.textContent='Current authorised records. Refresh to check for newer changes.';
+}
+if(globalThis.document?.getElementById('overview-content'))bootOverview();
