@@ -17,6 +17,7 @@ export function exampleState(example='default'){
  if(example==='047')s.configuration.neckCap='0.047';
  if(example==='duncan')s.configuration.bleed='duncan';
  if(example==='prs')s.configuration.bleed='prs';
+ if(example==='50s')s.configuration.wiring='50s';
  return s;
 }
 export function toolURL(id,example='default'){

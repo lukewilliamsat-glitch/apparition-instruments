@@ -1,4 +1,5 @@
 import {cmsConfig} from './config.mjs';import {escapeHTML as esc,stable,canonicalNode,validateBody,renderBody,contentURL} from './body.mjs';
+import {appendForgeJourney} from '../knowledge/forge-journey.mjs';
 const fields=['version','title','slug','category','intro','seo_title','meta_description','indexable','primary_intent','related','tools','components','published_at','content_updated_at','body'];
 export function validateArticle(content,presentation,{publishing=false,knownGuides=cmsConfig.guideKeys}={}){
  if(!content||typeof content!=='object')throw Error('Article content is required.');for(const key of Object.keys(content))if(!fields.includes(key))throw Error('Unsupported article field.');
@@ -20,7 +21,7 @@ export function renderRelationships(a,registry,id='next-steps'){
 }
 export function renderArticle(content,presentation,registry,{preview=false}={}){
  validateArticle(content,presentation,{publishing:!preview,knownGuides:registry.map(r=>r.guide_key)});
- const baseline=presentation.baseline,isGeneric=presentation.template_key==='generic';if(!isGeneric&&stable(content)===stable(baseline)&&!preview)return presentation.html;
+ const baseline=presentation.baseline,isGeneric=presentation.template_key==='generic';if(!isGeneric&&stable(content)===stable(baseline)&&!preview)return appendForgeJourney(presentation.html,registry.find(r=>r.content===content||r.content.slug===content.slug)?.guide_key);
  const replacements=[];for(const slot of presentation.slots)replacements.push({...slot,value:renderBody(content.body.slots[slot.key],presentation,slot.key)});
  for(const name of ['title','intro']){const field=presentation.fields[name];if(field&&(isGeneric||content[name]!==baseline[name]))replacements.push({...field,value:esc(content[name])});}
  if(presentation.relation&&(isGeneric||stable([content.related,content.tools,content.components,content.category])!==stable([baseline.related,baseline.tools,baseline.components,baseline.category])))replacements.push({...presentation.relation,value:renderRelationships(content,registry,presentation.relation.id)});
@@ -37,5 +38,5 @@ export function renderArticle(content,presentation,registry,{preview=false}={}){
  }
  if(preview){html=html.replace(/<meta name="robots"[^>]*>/g,'').replace(/<link rel="canonical"[^>]*>/g,'').replace('</head>','<meta name="robots" content="noindex,nofollow"><base href="'+url+'"></head>');}
  else if(!content.indexable)html=html.replace('</head>','<meta name="robots" content="noindex,follow"></head>');
- return html;
+ return appendForgeJourney(html,registry.find(r=>r.content===content||r.content.slug===content.slug)?.guide_key);
 }

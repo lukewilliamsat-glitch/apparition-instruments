@@ -7,12 +7,14 @@ import {audioTaper,frequencyResponse,responseAt,magnitudeDB} from '../electronic
 import {renderGraph,graphLimits} from './graph.mjs?v=p10a2';
 import {freezeReference} from './frozen.mjs';
 import {exactBleedMatches} from './product-match.mjs';
+import {bindPurchaseControl,assertPurchaseAllowed} from '../operations/purchase-controls.mjs';
 import {productURL} from '../products/model.mjs?v=p11ef';
 const $=s=>document.querySelector(s),form=$('#designer-inputs'),field=k=>form.elements.namedItem(k),el=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;};
 let state={...defaults},points=[],frozen=null,catalogue=[],addComponent=null;
 const money=pence=>new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'}).format(pence/100);
-let productsReady=false;
+let productsReady=false,purchaseBindings=[];
 function renderMatches(){
+ for(const binding of purchaseBindings)binding.dispose();purchaseBindings=[];
  const root=$('#matching-products');root.replaceChildren();root.hidden=true;
  if(!productsReady||!points.length||topologyOf(state)==='none')return;
  root.hidden=false;root.append(el('h2','Matching Apparition products'));
@@ -20,8 +22,9 @@ function renderMatches(){
  if(!matches.length){root.append(el('p','No exact catalogue match for this network. You can continue using the Designer.'));return;}
  for(const product of matches){const item=el('div'),heading=el('h3',product.name),availability=el('p',product.stock===0?'Out of stock':money(product.price)+' · In stock'),link=el('a','View product →'),button=el('button','Add to basket'),feedback=el('p');
   link.href=productURL(product.id);button.type='button';button.disabled=product.stock===0||!addComponent;feedback.setAttribute('role','status');
-  button.addEventListener('click',()=>{try{addComponent(product.id);feedback.textContent='Added to your basket.';}catch(error){feedback.textContent=error.message;}});
+  button.addEventListener('click',()=>{try{assertPurchaseAllowed(window);addComponent(product.id);feedback.textContent='Added to your basket.';}catch(error){feedback.textContent=error.message;}});
   item.append(heading,availability,link,button,feedback);root.append(item);
+  purchaseBindings.push(bindPurchaseControl(button,{available:()=>product.stock>0&&!!addComponent}));
  }
 }
 function showFrozen(){const active=!!frozen;$('#freeze-reference').hidden=active;$('#update-reference').hidden=!active;$('#clear-reference').hidden=!active;$('#frozen-summary').hidden=!active;$('#frozen-key').hidden=!active;$('#frozen-summary').textContent=active?'FROZEN REFERENCE · '+frozen.summary:'';}

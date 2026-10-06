@@ -16,7 +16,7 @@ export const ukDate=value=>new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Lon
 export function activeAnnouncement(store,posts=[],now=Date.now()){
  const effective=effectiveStore(store,now);
  if(effective.state==='ORDERS_PAUSED')return {id:'store-'+store.updated_at,title:store.customer_title,message:store.customer_message,category:'STORE_UPDATE',dismissible:false,cta_url:'/basket/',cta_label:'View saved basket',resume_at:store.resume_at};
- return posts.filter(p=>p.announcement&&(!p.status||['SCHEDULED','PUBLISHED'].includes(p.status))&&Date.parse(p.publication_at)<=now&&(!p.expires_at||now<Date.parse(p.expires_at))).sort((a,b)=>b.priority-a.priority||Date.parse(b.publication_at)-Date.parse(a.publication_at)||a.slug.localeCompare(b.slug)).map(p=>({...p,message:p.excerpt,cta_url:p.cta_url||'/news/'+p.slug+'/',cta_label:p.cta_label||'Read update'}))[0]||null;
+ return posts.filter(p=>p.announcement&&(!p.status||['SCHEDULED','PUBLISHED'].includes(p.status))&&Date.parse(p.publication_at)<=now&&(!p.expires_at||now<Date.parse(p.expires_at))).sort((a,b)=>b.priority-a.priority||Date.parse(b.publication_at)-Date.parse(a.publication_at)||a.slug.localeCompare(b.slug)).map(p=>({...p,message:p.excerpt,cta_url:p.cta_url||null,cta_label:p.cta_label||'Read update'}))[0]||null;
 }
 export function toUKInput(value){if(!value)return '';const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/London',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date(value)),get=k=>parts.find(p=>p.type===k).value;return `${get('year')}-${get('month')}-${get('day')}T${get('hour')}:${get('minute')}`;}
 export function ukInputToISO(value){

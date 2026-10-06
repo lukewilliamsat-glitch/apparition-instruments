@@ -2,6 +2,7 @@ import {refineProductPresentation} from './presentation.mjs';
 import {catalogue,refreshCatalogue,money} from '../components/catalogue.mjs';
 import {imageSource} from '../admin/images.mjs';
 import {addComponent} from '../commerce.mjs';
+import {bindPurchaseControl,assertPurchaseAllowed} from '../operations/purchase-controls.mjs';
 import {createPublicComponentRepository} from '../backend/component-data.mjs?v=p11ef';
 import {createPublicOptionRepository} from '../backend/catalogue-options.mjs';
 import {categoryName,categoryPath,productContext,productDetails,productURL,productSlug,resolveProduct,physicalRows,relatedProducts} from './model.mjs?v=p11ef';
@@ -17,7 +18,7 @@ export function renderProductDetail(root,product,{document:doc=root.ownerDocumen
  const stock=e('p','product-stock',product.stock===0?'Out of stock':'In stock'),price=e('p','product-price',money(product.price));
  const button=e('button','button','Add to basket');button.type='button';button.disabled=product.stock===0;button.setAttribute('aria-describedby','product-stock');stock.id='product-stock';
  const feedback=e('p','product-feedback');feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');
- button.addEventListener('click',()=>{try{add(product.id);feedback.replaceChildren(doc.createTextNode('Added to your basket. '));const basket=e('a','','View basket →');basket.href='/basket/';feedback.append(basket);}catch(error){feedback.textContent=error.message;}});
+ button.addEventListener('click',()=>{try{assertPurchaseAllowed(doc.defaultView);add(product.id);feedback.replaceChildren(doc.createTextNode('Added to your basket. '));const basket=e('a','','View basket →');basket.href='/basket/';feedback.append(basket);}catch(error){feedback.textContent=error.message;}});
  info.append(stock,price,button,feedback);
  const details=productDetails(product,options);if(details.length){const section=e('section','product-specifications'),dl=e('dl');section.append(e('h2','','Product specification'));for(const {label,value} of details){const row=e('div');row.append(e('dt','',label),e('dd','',value));dl.append(row);}section.append(dl);info.append(section);}
  const physical=physicalRows(product);if(physical.length){const section=e('section','product-specifications'),dl=e('dl');section.append(e('h2','','Physical / fitment specifications'));for(const {label,value} of physical){const row=e('div');row.append(e('dt','',label),e('dd','',value));dl.append(row);}section.append(dl);info.append(section);}
@@ -29,6 +30,7 @@ export function renderProductDetail(root,product,{document:doc=root.ownerDocumen
  const alternatives=relatedProducts(product,related);if(alternatives.length){const section=e('section','product-related');section.append(e('h2','','Related '+category));const list=e('ul');for(const item of alternatives){const li=e('li'),link=e('a','',item.name);link.href=productURL(item.id);li.append(link,e('span','',item.stock===0?' · Out of stock':' · '+money(item.price)));list.append(li);}section.append(list);root.append(section);}
  refineProductPresentation(root,product);
  root.hidden=false;
+ bindPurchaseControl(button,{available:()=>product.stock>0&&Number.isSafeInteger(product.price)&&product.price>0});
  return {button,feedback};
 }
 export async function startProductDetail({document:doc=document,location:loc=location,load=()=>refreshCatalogue(createPublicComponentRepository()),loadOptions=()=>createPublicOptionRepository().list()}={}){

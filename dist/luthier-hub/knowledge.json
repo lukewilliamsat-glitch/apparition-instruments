@@ -583,6 +583,25 @@
         "potentiometers"
       ],
       "reading_minutes": 3
+    },
+    {
+      "id": "reading-a-circuit-model",
+      "title": "Reading a Guitar Circuit Model",
+      "canonical": "https://apparitioninstruments.co.uk/luthier-hub/reading-a-circuit-model/",
+      "category": "wiring",
+      "primary_intent": null,
+      "related": [
+        "circuits",
+        "lugs",
+        "values",
+        "pickups"
+      ],
+      "tools": [
+        "signal",
+        "wiring"
+      ],
+      "components": [],
+      "reading_minutes": 3
     }
   ],
   "journeys": [
@@ -616,10 +635,21 @@
         "independent-dependent-volumes"
       ],
       "context": "Start with the symptom and distinguish a wiring fault from expected circuit interaction."
+    },
+    {
+      "title": "From a wiring question to a supported experiment",
+      "ids": [
+        "circuits",
+        "reading-a-circuit-model",
+        "values",
+        "cable-capacitance"
+      ],
+      "context": "Separate topology, conditional response and physical fit before following a tool or parts handoff."
     }
   ],
   "toolGuides": {
     "signal": [
+      "reading-a-circuit-model",
       "values",
       "pickup-dc-resistance-output",
       "pickup-inductance",

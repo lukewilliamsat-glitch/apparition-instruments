@@ -1,0 +1,8 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {forgeJourney,appendForgeJourney} from '../dist/knowledge/forge-journey.mjs';
+import {readCircuitState} from '../dist/electronics/state/circuit-state.mjs';
+import {makeCircuit} from '../dist/wiring-generator/model.mjs';
+const records=JSON.parse(await readFile('scripts/hub-cms/seed.json'));
+for(const record of records){const journey=forgeJourney(record.guide_key),html=await readFile('dist/luthier-hub/'+record.content.slug+'/index.html','utf8'),frame=JSON.parse(await readFile('dist/hub-cms/presentation/'+record.template_key+'.json'));assert.equal(html.replace(/<aside class="hub-reference-wrap hub-reference-surface" data-forge-journey[\s\S]*?<\/aside>/,''),frame.html,'Existing presentation preserved around additive journey');if(journey){const state=readCircuitState(new URL(journey.url,'https://fixture.test').search);assert(state.state);assert.match(state.notice,/imported/);const circuit=makeCircuit(state.state.configuration);assert(circuit.connections.length);assert(html.includes('data-forge-journey'));assert.equal(new URL(journey.url,'https://fixture.test').pathname,'/circuit-forge/');}}
+assert.equal(forgeJourney('coil-split-guide'),null,'No unsupported split example invented');assert.equal(forgeJourney('missing'),null);assert.equal(appendForgeJourney('<main>Existing</main>','missing'),'<main>Existing</main>');assert.equal(readCircuitState(new URL(forgeJourney('modern-50s').url,'https://fixture.test').search).state.configuration.wiring,'50s');assert.equal(readCircuitState('?sf='+encodeURIComponent('{"version":999}')).state,null);console.log('Free journeys: supported states, exact surrounding presentation, unsupported/version handling PASS');

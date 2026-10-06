@@ -15,6 +15,9 @@ import {learningLink,mountKnowledgeCards} from '../knowledge/context.mjs';
 import {readCircuitState,captureCircuitState,circuitStateURL,circuitStateSummary,wiringHandoff,designerHandoff,kitHandoff} from '../electronics/state/circuit-state.mjs';
 import {setupMobileWorkbench} from './mobile-workbench.mjs';
 import {forgeCircuit,defaultControls} from './model.mjs';
+import {createCircuitHistory} from './history.mjs';
+import {mountPartsList} from './parts.mjs';
+import {createPublicComponentRepository} from '../backend/component-data.mjs';
 import {pickupPresets,componentPresets,defaultResponseAssumptions} from '../electronics/response/assumptions.mjs';
 import {forgeResponse,responseComponent} from './response.mjs';
 import {createResponseGraph} from './response-view.mjs';
@@ -39,6 +42,17 @@ const projectImport=readProject(window.location.search);let projectContext=proje
 const initialMode=new URLSearchParams(window.location.search).get('mode');
 const importedCircuit=new URLSearchParams(window.location.search).has('ap')?{state:projectContext?.electronics||null,notice:projectImport.notice}:readCircuitState(window.location.search);
 let instrument=importedCircuit.state?.instrument||(importedCircuit.state?.configuration?.switching?instrumentFromLegacy(importedCircuit.state):null),instrumentPanel;
+const circuitHistory=createCircuitHistory();let replayingHistory=false,partsList=null;
+const workflow=el('section');workflow.id='forge-workflow';workflow.setAttribute('aria-label','Getting started and editing history');
+workflow.append(el('h2','Understand your circuit'),el('p','Choose a guitar reference in Guitar & Pickups, then configure its controls and selector. Circuit Lab shows connections; Signal Lab compares the supported electrical response. These are modelled references, not a physical fitment check.'));
+const steps=el('ol');for(const text of ['Choose and configure a supported reference.','Inspect components, connections and capability messages.','Compare a supported response, then save locally or share the circuit.','Continue to wiring, a parts list or a compatible kit when available.'])steps.append(el('li',text));workflow.append(steps);
+const modelGuide=el('a','How to read this circuit model');modelGuide.href='../luthier-hub/reading-a-circuit-model/';workflow.append(modelGuide);
+const historyActions=el('div');historyActions.className='project-actions';
+const undo=el('button','Undo circuit change'),redo=el('button','Redo circuit change');undo.id='forge-undo';redo.id='forge-redo';undo.type=redo.type='button';
+const historyStatus=el('p');historyStatus.setAttribute('role','status');
+function refreshHistory(){undo.disabled=!circuitHistory.canUndo;redo.disabled=!circuitHistory.canRedo;}
+function restoreHistory(direction){const state=circuitHistory[direction]();if(!state)return;replayingHistory=true;try{instrument=state.instrument||instrumentFromLegacy(state);selection=null;configureInstrument();if(!render())throw Error('The previous circuit could not be restored.');historyStatus.textContent=direction==='undo'?'Previous circuit restored.':'Circuit change restored.';}finally{replayingHistory=false;refreshHistory();}}
+undo.addEventListener('click',()=>restoreHistory('undo'));redo.addEventListener('click',()=>restoreHistory('redo'));historyActions.append(undo,redo);workflow.append(historyActions,historyStatus);stateRoot.before(workflow);refreshHistory();
 const selectedChannel=()=>signalReport?.supported?signalReport.channel:circuit?.state.position;
 const withProject=url=>projectContext?projectURL(url,projectContext):url;
 const frequencyLabel=f=>f>=1000?(f/1000).toFixed(2)+' kHz':f.toFixed(0)+' Hz';
@@ -129,10 +143,14 @@ function renderLab(){
  previousSignal={channel:report.channel,state:{...report.state}};
 }
 function updateContextActions(){
+ if(!replayingHistory)circuitHistory.record(captureCircuitState(circuit));refreshHistory();
+ partsList?.update();
  if(instrument||projectContext)projectContext=projectFromCircuit(circuit,projectContext||{});
  setText($('#forge-shared-summary'),circuitStateSummary(circuit,signalReport));
  const wiring=wiringHandoff(circuit);$('#forge-view-wiring').hidden=!wiring;if(wiring){$('#forge-view-wiring').href=withProject(wiring);const guided=new URL(withProject(wiring),location.origin);guided.searchParams.set('build','guided');$('#forge-guided-build').href=guided.pathname+guided.search;}$('#forge-guided-build').hidden=!wiring;
  const designer=designerHandoff(circuit,signalReport),kit=projectKitHandoff(circuit,projectContext);
+ const capability=instrumentCapabilities(instrument||instrumentFromLegacy(captureCircuitState(circuit)));
+ setText($('#forge-status'),'Model support · Wiring: '+(capability.canGenerateWiring?'supported':'unavailable')+' · Response: '+(signalReport?.supported?'supported':'unavailable')+' · Kit: '+(kit.url?'available':'unavailable')+'. '+[capability.wiringReason||capability.reason,!signalReport?.supported?signalReport?.reason:null].filter(Boolean).join(' '));
  $('#forge-design-bleed').hidden=!designer.url;if(designer.url)$('#forge-design-bleed').href=withProject(designer.url);
  setText($('#forge-designer-limit'),designer.reason);$('#forge-kit').hidden=!kit.url;if(kit.url)$('#forge-kit').href=withProject(kit.url);setText($('#forge-kit-limit'),kit.reason);
  const url=withProject(circuitStateURL('/circuit-forge/',captureCircuitState(circuit)));window.history.replaceState(null,'',url);
@@ -221,6 +239,8 @@ if(render())window.__forgeEntry?.ready();else window.__forgeEntry?.fail();
 
 const projectRoot=el('section');projectRoot.className='local-projects';projectRoot.setAttribute('aria-label','Local circuit projects');document.querySelector('.forge-main').append(projectRoot);
 mountProjectPanel(projectRoot,{getCircuit:()=>circuit,getProject:()=>projectContext,setProject:p=>{projectContext=p;updateContextActions();},reset:()=>form.reset()});
+const exportHelp=el('p','Local saves stay on this browser. Share links contain circuit settings without project names or notes. Use the Wiring Diagram Generator for its SVG/print exports when wiring is supported; cloud projects and professional documentation are not part of this free workbench.');projectRoot.append(exportHelp);
+const partsRoot=el('section');partsRoot.id='forge-logical-parts';projectRoot.after(partsRoot);partsList=mountPartsList(partsRoot,{getCircuit:()=>circuit,repository:createPublicComponentRepository()});partsList.update();
 for(const [selector,key,label] of [['#forge-lab-volumePot','pots','Why pot value matters'],['#forge-lab-cap','caps','Understanding tone capacitors'],['#forge-lab-bleed','bleeds','How treble bleeds work'],['#forge-lab-pickup','pickups','Pickup conductors and model assumptions']])$(selector).closest('label').after(learningLink(document,key,label));
 $('#forge-contacts').after(learningLink(document,'switches','How selector contacts work'));
 const learning=el('details'),learningTitle=el('summary','Learn about these components');learning.append(learningTitle);mountKnowledgeCards(learning,['potentiometers','capacitors','treble-bleeds']);projectRoot.after(learning);

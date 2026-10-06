@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {Window} from 'happy-dom';
+import {createCircuitHistory} from '../dist/circuit-forge/history.mjs';
+import {readCircuitState} from '../dist/electronics/state/circuit-state.mjs';
+const history=createCircuitHistory(3);for(let value=0;value<5;value++)history.record({value});assert.equal(history.size,3);assert.equal(history.undo().value,3);assert.equal(history.undo().value,2);assert.equal(history.undo(),null);assert.equal(history.redo().value,3);history.record({value:8});assert.equal(history.canRedo,false);assert.equal(history.record({value:8}),false);
+const win=new Window({url:'https://fixture.test/circuit-forge/',settings:{disableCSSFileLoading:true,disableJavaScriptFileLoading:true,disableJavaScriptEvaluation:true}});
+for(const key of ['window','document','localStorage','location','history','navigator','CSS','Event','MouseEvent','Node','HTMLElement','CustomEvent'])Object.defineProperty(globalThis,key,{value:key==='window'?win:win[key],configurable:true,writable:true});globalThis.matchMedia=win.matchMedia.bind(win);globalThis.fetch=async()=>{throw Error('Network forbidden');};document.write(readFileSync('dist/circuit-forge/index.html','utf8'));await import('../dist/circuit-forge/app.mjs');
+const $=s=>document.querySelector(s),state=()=>readCircuitState(location.search).state;
+assert($('#forge-workflow ol'));assert.equal($('#forge-undo').disabled,true);assert.equal($('#forge-redo').disabled,true);
+$('#forge-reference').value='tele';$('#forge-reference').dispatchEvent(new Event('change',{bubbles:true}));assert.equal(state().instrument.reference,'tele');$('#forge-undo').click();assert.equal(state().configuration.guitar,'les-paul');$('#forge-redo').click();assert.equal(state().instrument.reference,'tele');
+const before=state().instrument.controls.find(c=>c.role==='volume').position;$('#forge-response-volume').value='4';$('#forge-response-volume').dispatchEvent(new Event('input',{bubbles:true}));assert.equal(state().instrument.controls.find(c=>c.role==='volume').position,4);$('#forge-undo').click();assert.equal(state().instrument.controls.find(c=>c.role==='volume').position,before);$('#forge-redo').click();assert.equal(state().instrument.controls.find(c=>c.role==='volume').position,4);
+assert.equal($('#forge-view-wiring').hidden,false);assert.match($('.local-projects').textContent,/SVG\/print exports/);await win.happyDOM.close();console.log('Free Forge workflow: PASS');

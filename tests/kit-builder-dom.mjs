@@ -13,6 +13,7 @@ const window=new Window({url:'https://example.test/les-paul-kits/'});
 window.happyDOM.settings.disableJavaScriptEvaluation=true;
 window.happyDOM.settings.disableCSSFileLoading=true;
 window.happyDOM.settings.disableJavaScriptFileLoading=true;
+window.apparitionStoreState={state:'OPEN'}; // Explicit isolated Operations fixture.
 for(const key of ['window','document','localStorage','location','history','navigator','CSS','RadioNodeList','CustomEvent','Event','Node','HTMLElement'])Object.defineProperty(globalThis,key,{value:key==='window'?window:window[key],configurable:true,writable:true});
 document.write(readFileSync(new URL('../dist/les-paul-kits/index.html',import.meta.url),'utf8'));
 const {createComponentStore}=await import('../dist/admin/data.mjs');
@@ -88,6 +89,10 @@ assert.equal($('#kit-price').textContent,$('#builder-total').textContent);
 assert.equal($('#kit-price').textContent,scenario==='defaults'?'£92.00':scenario==='price-base'?'£73.50':'£71.00');
 const selected=name=>$('#kit-options').elements.namedItem(name).value;
 const change=(name,value)=>{const control=$(`#kit-options [name="${name}"][value="${value}"]`);assert(control,'missing customer choice '+name+'='+value);control.checked=true;control.dispatchEvent(new Event('change',{bubbles:true}));};
+if(scenario==='holiday'){
+ const saved=localStorage.getItem('apparition.basket.v1'),button=$('#add-to-basket'),update=state=>{window.apparitionStoreState=state;window.dispatchEvent(new CustomEvent('apparition:store-status',{detail:state}));};
+ assert.equal(button.disabled,false);update({state:'ORDERS_PAUSED',customer_title:'Fixture closure',customer_message:'Saved basket remains.'});assert.equal(button.disabled,true);assert.equal($('#kit-options input[name="wiring"]').disabled,false);change('wiring','50s');assert.equal(button.disabled,true);button.dispatchEvent(new Event('click'));assert.equal(localStorage.getItem('apparition.basket.v1'),saved);assert.match($('#copy-status').textContent,/Fixture closure/);update({state:'UNAVAILABLE'});assert.equal(button.disabled,true);update({state:'OPEN'});assert.equal(button.disabled,false);
+}
 if(scenario==='defaults'){
  assert.equal(selected('pots'),'Alpha');assert.equal(selected('shaft'),'long');assert.equal(selected('neckCap'),'cde-022');assert.equal(selected('bridgeCap'),'cde-022');assert.equal(selected('bleed'),'bleed-prs');assert.equal(selected('selector'),'switch-epiphone');assert.equal(selected('jack'),'jack-epiphone');
 }else if(scenario==='permissions'){

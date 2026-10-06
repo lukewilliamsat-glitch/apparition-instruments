@@ -3,6 +3,7 @@ import {categories} from '../admin/data.mjs';
 import {catalogue,productById,refreshCatalogue} from './catalogue.mjs';
 import {addComponent} from '../commerce.mjs';
 import {deploymentPath} from '../deployment.mjs';
+import {bindPurchaseControl,assertPurchaseAllowed} from '../operations/purchase-controls.mjs';
 const status=document.querySelector('#component-status');
 try{status.textContent='Loading components…';await refreshCatalogue();renderComponentCards(catalogue);}catch(error){status.textContent=error.message;throw error;}
 const filters=['shaft','brand','type'].map(key=>document.querySelector('#filter-'+key));
@@ -10,7 +11,7 @@ function filterPots(){let count=0;for(const product of catalogue.filter(p=>p.cat
 if(filters[1]){const selected=filters[1].value;filters[1].replaceChildren();for(const brand of ['all',...new Set(catalogue.filter(p=>p.category==='potentiometers').map(p=>p.manufacturer).filter(Boolean))]){const option=document.createElement('option');option.value=brand;option.textContent=brand==='all'?'All manufacturers':brand;filters[1].append(option);}filters[1].value='all';}
 if(filters.every(Boolean))filterPots();
 filters.filter(Boolean).forEach(field=>field.addEventListener('change',filterPots));
-document.querySelectorAll('[data-add]').forEach(button=>{const product=productById(button.dataset.add);button.disabled=product.stock===0||!Number.isSafeInteger(product.price)||product.price<=0;button.addEventListener('click',()=>{const feedback=button.closest('article').querySelector('.product-feedback');try{addComponent(button.dataset.add);feedback.textContent='Added to your basket.';const a=document.createElement('a');a.href=deploymentPath('/basket/');a.textContent=' View basket ↗';feedback.append(a);}catch(error){feedback.textContent=error.message;}});});
+document.querySelectorAll('[data-add]').forEach(button=>{const product=productById(button.dataset.add);bindPurchaseControl(button,{available:()=>product.stock>0&&Number.isSafeInteger(product.price)&&product.price>0});button.addEventListener('click',()=>{const feedback=button.closest('article').querySelector('.product-feedback');try{assertPurchaseAllowed(window);addComponent(button.dataset.add);feedback.textContent='Added to your basket.';const a=document.createElement('a');a.href=deploymentPath('/basket/');a.textContent=' View basket ↗';feedback.append(a);}catch(error){feedback.textContent=error.message;}});});
 function revealLinkedProduct(){const product=productById(location.hash.slice(1));if(product?.category==='potentiometers'&&filters.every(Boolean)){filters.forEach(f=>f.value='all');filterPots();document.getElementById(product.id)?.scrollIntoView();}}
 window.addEventListener('hashchange',revealLinkedProduct);revealLinkedProduct();
 // One restrained category filter on the all-components page; product data and basket logic are unchanged.

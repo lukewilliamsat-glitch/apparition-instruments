@@ -92,6 +92,10 @@
         {
           "id": "cable-capacitance",
           "canonical": "https://apparitioninstruments.co.uk/luthier-hub/cable-capacitance/"
+        },
+        {
+          "id": "reading-a-circuit-model",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/reading-a-circuit-model/"
         }
       ],
       "canonical": "https://apparitioninstruments.co.uk/luthier-hub/250k-vs-500k-pots/",
@@ -197,6 +201,10 @@
         {
           "id": "output-jack-faults",
           "canonical": "https://apparitioninstruments.co.uk/luthier-hub/output-jack-faults/"
+        },
+        {
+          "id": "reading-a-circuit-model",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/reading-a-circuit-model/"
         }
       ],
       "canonical": "https://apparitioninstruments.co.uk/luthier-hub/guitar-pot-lug-numbering-wiring/",
@@ -405,6 +413,10 @@
         {
           "id": "modern-50s",
           "canonical": "https://apparitioninstruments.co.uk/luthier-hub/modern-vs-50s-les-paul-wiring/"
+        },
+        {
+          "id": "reading-a-circuit-model",
+          "canonical": "https://apparitioninstruments.co.uk/luthier-hub/reading-a-circuit-model/"
         }
       ],
       "canonical": "https://apparitioninstruments.co.uk/luthier-hub/wiring-circuits-explained/",
