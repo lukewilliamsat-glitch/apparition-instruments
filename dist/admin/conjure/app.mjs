@@ -1,23 +1,28 @@
+import {pageMappings,protectedRoutes} from './page-mappings.mjs';
+import {createDocumentRepository} from './document-repository.mjs';
+import {createPageAdapter,loadPageDocument} from './page-adapter.mjs';
+import {DocumentRegistry,documentDescriptor,globalRegions} from './document-registry.mjs';
 import {createArticleAdapter} from './article-adapter.mjs';
 import {createCMSRepository} from '../hub-cms/repository.mjs';
 import {pageLibrary,pageRoute,renderPage} from './pages.mjs';
 
 // Authentication is owned by admin-gate; importing this entry does not bypass it.
-export async function bootConjure({document=globalThis.document,repository=createCMSRepository(),request=globalThis.fetch,adapter=createArticleAdapter()}={}){
+export async function bootConjure({document=globalThis.document,repository=createCMSRepository(),request=globalThis.fetch,adapter=createArticleAdapter(),documentRepository=createDocumentRepository()}={}){
  const advanced=document.querySelector('[data-advanced]');advanced?.addEventListener('click',()=>{const panel=document.querySelector('[data-inspector]');panel.hidden=!panel.hidden;advanced.setAttribute('aria-expanded',String(!panel.hidden));});
  const q=s=>document.querySelector(s),frame=q('iframe'),status=q('[data-status]'),picker=q('[data-page]');
- const articles=await repository.list(),pages=pageLibrary(articles),sessions=new Map();let current=null,active=null,serial=0;
+ const articles=await repository.list(),pages=pageLibrary(articles),sessions=new Map(),registry=new DocumentRegistry();registry.register({id:'hub-article',matches:(route,ctx)=>ctx.page.authority==='article',load:async(page)=>({adapter,descriptor:documentDescriptor({route:page.path,type:'article',title:page.title,record:page.article})})});registry.register({id:'protected-page',matches:route=>protectedRoutes.some(p=>p.pattern.test(route)),load:async(page)=>({adapter:null,descriptor:documentDescriptor({route:page.path,type:protectedRoutes.find(p=>p.pattern.test(page.path)).type,title:page.title,record:{id:'protected:'+page.path},editable:false,protectedRegions:[protectedRoutes.find(p=>p.pattern.test(page.path)).source]})})});registry.register({id:'native-page',matches:route=>!!pageMappings[route]&&!!documentRepository,load:async(page,result)=>{page.document=await loadPageDocument(page,pageMappings[page.path],result.html,document,documentRepository);page.editable=true;return {adapter:createPageAdapter(),descriptor:page.document.descriptor};}});let current=null,active=null,serial=0;
  const message=value=>{status.textContent=value;};
  for(const page of pages){const option=document.createElement('option');option.value=page.path;option.textContent=page.title;picker.append(option);}
  const guard=()=>{if(active?.saving){message('Saving draft · wait before navigating.');return false;}if(!active?.pending)return true;message('Apply or cancel the pending edit before navigating.');return false;};
  async function navigate(value){if(!guard())return false;const path=pageRoute(value),page=pages.find(p=>p.path===path)||{path,title:path,authority:'static',editable:false};const view=q('[data-view]').value,ticket=++serial;message('Opening page…');
-  const result=await renderPage(page,{request,document,articles});if(ticket!==serial)return false;
-  active?.detach?.();current=page;picker.value=path;q('[data-page-title]').textContent=page.title;q('[data-support]').textContent=page.editable?'Select supported content on the page. Changes save as a private draft.':'Website preview · this page is read only. Interactive tools and commerce actions are disabled.';
+  const result=await renderPage(page,{request,document,articles});if(ticket!==serial)return false;const resolver=registry.resolve(path,{page}),resolved=resolver?await resolver.load(page,result):null;page.descriptor=resolved?.descriptor||documentDescriptor({route:path,type:'protected',title:page.title,record:{id:'protected:'+path},editable:false,protectedRegions:['application']});
+  active?.detach?.();current=page;picker.value=path;q('[data-page-title]').textContent=page.title;q('[data-support]').textContent=page.editable?'Select supported content on the page. Applications and dynamic regions are protected; global header/footer are shared read-only identities. Save keeps this private.':'Website preview · this page is read only. Interactive tools and commerce actions are disabled.';
   q('[data-actions]').hidden=true;q('[data-section-fields]').hidden=true;
   await new Promise((resolve,reject)=>{const timeout=document.defaultView.setTimeout(()=>reject(Error('Page preview did not load. Your drafts are retained.')),15000);frame.addEventListener('load',()=>{document.defaultView.clearTimeout(timeout);resolve();},{once:true});frame.srcdoc=result.html;});if(ticket!==serial)return false;
   const canvas=frame.contentDocument;canvas.addEventListener('submit',e=>e.preventDefault(),true);
-  canvas.addEventListener('click',event=>{const a=event.target.closest?.('a');if(!a)return;if(a.closest('[data-block]')&&active?.isEditing)return;event.preventDefault();try{navigate(new URL(a.getAttribute('href'),canvas.baseURI).href).catch(e=>message(e.message));}catch(e){message(e.message);}},true);
-  active=null;if(page.editable&&adapter){active=sessions.get(page.article.id)||await adapter.create(page,result.presentation,{document,repository,message,refresh});sessions.set(page.article.id,active);await active.attach(canvas);active.setBreakpoint(view);}
+  for(const region of globalRegions){const element=canvas.querySelector(region.selector);if(element){element.dataset.conjureGlobal=region.id;element.setAttribute('data-protected-region','true');}}const menu=canvas.querySelector('.menu-button'),mobile=canvas.querySelector('#mobile-nav');if(menu&&mobile){menu.disabled=false;menu.addEventListener('click',()=>{mobile.hidden=!mobile.hidden;menu.setAttribute('aria-expanded',String(!mobile.hidden));});}
+  canvas.addEventListener('click',event=>{const a=event.target.closest?.('a');if(!a)return;if(a.closest('[data-block]')&&active?.isEditing)return;event.preventDefault();try{const url=new URL(a.getAttribute('href'),canvas.baseURI);if(!['https:','mailto:','tel:'].includes(url.protocol)){message('Unsafe destination blocked.');return;}if(url.origin!==new URL(canvas.baseURI).origin||/^\/(?:account|admin|basket|checkout|auth)(?:\/|$)/.test(url.pathname)){document.defaultView.open(url.href,'_blank','noopener,noreferrer');return;}if(url.pathname===current.path&&url.hash){canvas.querySelector(url.hash)?.scrollIntoView();return;}navigate(url.href).catch(e=>message(e.message));}catch(e){message(e.message);}},true);
+  active=null;if(page.editable&&resolved?.adapter){active=sessions.get(page.descriptor.id)||await resolved.adapter.create(page,result.presentation||page.document.presentation,{document,repository,documentRepository,message,refresh});sessions.set(page.descriptor.id,active);await active.attach(canvas);active.setBreakpoint(view);}
   refresh();return true;
  }
  function refresh(){const enabled=!!active&&q('[data-edit]').checked;active?.setEditing?.(enabled);frame.style.width=q('[data-view]').value==='mobile'?'390px':'100%';frame.style.maxWidth='100%';q('[data-undo]').disabled=!enabled||active.pending||active.saving||!active.past;q('[data-redo]').disabled=!enabled||active.pending||active.saving||!active.future;q('[data-save]').disabled=!active||!active.dirty||active.saving||active.pending;picker.disabled=!!active?.saving;message(active?.status||'Website preview · no editable changes.');}
@@ -30,6 +35,6 @@ export async function bootConjure({document=globalThis.document,repository=creat
  document.defaultView.addEventListener('beforeunload',event=>{if(dirty()){event.preventDefault();event.returnValue='';}});
  document.addEventListener('click',event=>{if(!event.target.closest?.('[data-conjure-exit],[data-inspector] nav a'))return;if(dirty()&&!document.defaultView.confirm('Leave Conjure with unsaved drafts?'))event.preventDefault();});
  await navigate(new URL(document.defaultView.location.href).searchParams.get('page')||'/');
- return {navigate,refresh,get current(){return current;},get active(){return active;},sessions};
+ return {navigate,refresh,get current(){return current;},get active(){return active;},sessions,registry};
 }
 if(globalThis.document?.querySelector('[data-conjure-app]'))bootConjure().catch(error=>{document.querySelector('[data-status]').textContent=error.message;});

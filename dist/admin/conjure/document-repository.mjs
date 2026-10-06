@@ -1,0 +1,5 @@
+import {createAdminAuth} from '../admin-auth.mjs';import {publicBackendConfig} from '../../backend/public-config.mjs';
+export function createDocumentRepository({token=()=>createAdminAuth().accessToken(),config=publicBackendConfig,request=globalThis.fetch}={}){
+ const send=async(path,{method='GET',body}={})=>{const value=await token();const response=await request(config.url+'/rest/v1/'+path,{method,headers:{apikey:config.publishableKey,Authorization:'Bearer '+value,'Content-Type':'application/json'},...body?{body:JSON.stringify(body)}:{}});const result=await response.json();if(!response.ok)throw Error(result.message||'Private document request failed.');return result;};
+ return {load:async key=>(await send('manifest_documents?select=*&document_key=eq.'+encodeURIComponent(key)))[0]||null,save:record=>send('rpc/save_manifest_document',{method:'POST',body:{p_key:record.document_key,p_route:record.route,p_type:record.document_type,p_source_hash:record.source_hash,p_expected_version:record.edit_version,p_content:record.draft,p_manifest:record.manifest}})};
+}
