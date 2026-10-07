@@ -1,0 +1,10 @@
+import {publicBackendConfig} from '../backend/public-config.mjs';
+export function createForgeRepository({auth,request=globalThis.fetch,config=publicBackendConfig}={}){
+ async function call(path,{method='GET',body}={}){
+  const {data,error}=await auth.getSession();if(error||!data?.session?.access_token)throw Error('Sign in to your customer account to use cloud projects.');
+  const r=await request(config.url+'/rest/v1/'+path,{method,cache:'no-store',signal:AbortSignal.timeout(20000),headers:{apikey:config.publishableKey,Authorization:'Bearer '+data.session.access_token,'Content-Type':'application/json'},...body?{body:JSON.stringify(body)}:{}});
+  const result=await r.json().catch(()=>null);if(!r.ok)throw Error(result?.code==='40001'?'This project changed in another session. Reload before saving.':result?.code==='42501'?'This project or capability is unavailable to your account.':result?.message||'Cloud request failed. Your local work has not been deleted.');return result;
+ }
+ const id=v=>{if(typeof v!=='string'||!(/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/i.test(v)))throw Error('Invalid project identity.');return v;};
+ return {capabilities:()=>call('rpc/forge_capabilities',{method:'POST',body:{}}),list:()=>call('forge_projects?select=*&order=updated_at.desc&limit=200'),project:async key=>(await call('forge_projects?id=eq.'+id(key)+'&select=*'))[0]??null,revisions:key=>call('forge_revisions?project_id=eq.'+id(key)+'&select=*&order=sequence.desc&limit=200'),templates:()=>call('forge_templates?select=*&order=created_at.desc&limit=200'),measurements:key=>call('forge_measurements?project_id=eq.'+id(key)+'&select=*&order=observed_at.desc&limit=500'),documents:key=>call('forge_documents?project_id=eq.'+id(key)+'&select=*&order=created_at.desc&limit=200'),command:(action,data)=>call('rpc/forge_command',{method:'POST',body:{p_action:action,p_data:data}})};
+}

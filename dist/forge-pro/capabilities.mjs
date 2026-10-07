@@ -1,0 +1,3 @@
+export const capabilities=Object.freeze({cloud:'forge.projects.cloud',history:'forge.projects.history',compare:'forge.projects.compare',templates:'forge.templates.personal',measurements:'forge.measurements',documents:'forge.documents.professional',metadata:'forge.workshop.metadata'});
+export function hasCapability(grants,capability){return Array.isArray(grants)&&grants.includes(capability);}
+export function requireCapability(grants,capability){if(!hasCapability(grants,capability))throw Error('This professional workflow requires '+capability+'. Free design, local save and export remain available.');}

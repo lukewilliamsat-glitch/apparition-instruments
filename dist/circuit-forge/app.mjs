@@ -11,6 +11,7 @@ import {mountInstrumentPanel} from './instrument-panel.mjs';
 import {projectKitHandoff} from '../knowledge/kit-project.mjs';
 import {readProject,projectFromCircuit,projectURL} from '../electronics/state/project.mjs';
 import {mountProjectPanel} from '../knowledge/project-panel.mjs';
+import {mountProfessionalBridge} from '../forge-pro/editor-bridge.mjs';
 import {learningLink,mountKnowledgeCards} from '../knowledge/context.mjs';
 import {readCircuitState,captureCircuitState,circuitStateURL,circuitStateSummary,wiringHandoff,designerHandoff,kitHandoff} from '../electronics/state/circuit-state.mjs';
 import {setupMobileWorkbench} from './mobile-workbench.mjs';
@@ -239,6 +240,7 @@ if(render())window.__forgeEntry?.ready();else window.__forgeEntry?.fail();
 
 const projectRoot=el('section');projectRoot.className='local-projects';projectRoot.setAttribute('aria-label','Local circuit projects');document.querySelector('.forge-main').append(projectRoot);
 mountProjectPanel(projectRoot,{getCircuit:()=>circuit,getProject:()=>projectContext,setProject:p=>{projectContext=p;updateContextActions();},reset:()=>form.reset()});
+mountProfessionalBridge(projectRoot,{getCircuit:()=>circuit,getProject:()=>projectContext});
 const exportHelp=el('p','Local saves stay on this browser. Share links contain circuit settings without project names or notes. Use the Wiring Diagram Generator for its SVG/print exports when wiring is supported; cloud projects and professional documentation are not part of this free workbench.');projectRoot.append(exportHelp);
 const partsRoot=el('section');partsRoot.id='forge-logical-parts';projectRoot.after(partsRoot);partsList=mountPartsList(partsRoot,{getCircuit:()=>circuit,repository:createPublicComponentRepository()});partsList.update();
 for(const [selector,key,label] of [['#forge-lab-volumePot','pots','Why pot value matters'],['#forge-lab-cap','caps','Understanding tone capacitors'],['#forge-lab-bleed','bleeds','How treble bleeds work'],['#forge-lab-pickup','pickups','Pickup conductors and model assumptions']])$(selector).closest('label').after(learningLink(document,key,label));

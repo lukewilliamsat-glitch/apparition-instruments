@@ -1,0 +1,18 @@
+.forge-pro-page{background:#111;color:#f1eadb}
+.forge-pro-page .forge-pro-main{max-width:1280px;margin:auto;padding:clamp(16px,4vw,48px);color:#f1eadb;background:#111}
+.forge-pro-page .forge-pro-main h1,.forge-pro-page .forge-pro-main h2,.forge-pro-page .forge-pro-main h3,.forge-pro-page .forge-pro-main strong{color:#f1eadb}
+.forge-pro-page .forge-pro-main p,.forge-pro-page .forge-pro-main small,.forge-pro-page .forge-pro-main label{color:#d4cbb7}
+.forge-pro-page .forge-pro-main a{color:#d8b775;margin-right:16px;overflow-wrap:anywhere}
+.forge-pro-page #forge-pro-root{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px}
+.forge-pro-page #forge-pro-root>section,.forge-pro-page #forge-pro-root>details{background:#1d1d1d;color:#f1eadb;padding:clamp(16px,3vw,28px);border:1px solid #4d4639;border-radius:4px;min-width:0;overflow-wrap:anywhere}
+.forge-pro-page #forge-pro-root .forge-pro-detail{grid-column:1/-1}
+.forge-pro-page .forge-pro-main label{display:grid;gap:6px;margin-block:12px}
+.forge-pro-page .forge-pro-main input,.forge-pro-page .forge-pro-main textarea,.forge-pro-page .forge-pro-main select{box-sizing:border-box;width:100%;min-width:0;min-height:44px;padding:10px;background:#faf7ee;color:#222;border:1px solid #a89c82;font:inherit}
+.forge-pro-page .forge-pro-main button{min-height:44px;max-width:100%;padding:10px 16px;margin:8px 8px 8px 0;background:#d8b775;color:#191919;border:1px solid #d8b775;font:inherit;white-space:normal;overflow-wrap:anywhere;cursor:pointer}
+.forge-pro-page .forge-pro-main button:disabled{opacity:.55;cursor:default}
+.forge-pro-page .forge-pro-main :focus-visible{outline:3px solid #ffe0a0;outline-offset:4px}
+.forge-pro-page .forge-pro-main summary{cursor:pointer;min-height:44px;color:#f1eadb}
+.forge-pro-page .forge-pro-main li{list-style:none;border-block-end:1px solid #4d4639;padding-block:16px}
+.forge-pro-page .forge-pro-main ul{padding:0}
+.forge-pro-page #forge-pro-status{padding:12px;background:#282419;color:#f1eadb;border-inline-start:3px solid #d8b775}
+@media(max-width:760px){.forge-pro-page #forge-pro-root{grid-template-columns:minmax(0,1fr)}.forge-pro-page .forge-pro-main button{width:100%}}
