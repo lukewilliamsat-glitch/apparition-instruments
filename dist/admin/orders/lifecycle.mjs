@@ -8,6 +8,6 @@ export function orderHistory(row){
  const events=[];
  if(['paid','partially_refunded','refunded'].includes(row.payment_status)&&row.paid_at)events.push({status:'pending',at:row.paid_at,source:'system'});
  if(row.latest_refund_at&&row.refunded_pence>0)events.push({status:row.payment_status,at:row.latest_refund_at,source:'system'});
- for(const event of row.status_history||[])if(event?.status&&event?.at)events.push({status:event.status,at:event.at,source:event.source==='admin'?'admin':'system'});
+ for(const event of row.status_history||[])if(event?.status&&event?.at)events.push({...event,source:event.source==='admin'?'admin':'system'});
  return events.sort((a,b)=>new Date(a.at)-new Date(b.at));
 }

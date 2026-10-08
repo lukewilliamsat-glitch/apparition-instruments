@@ -19,8 +19,8 @@ export function confirmDispatchEmail({document=globalThis.document,email,channel
   dialog.append(actions);dialog.addEventListener('cancel',event=>{event.preventDefault();finish('cancel');});document.body.append(dialog);dialog.showModal();actions.lastElementChild.focus();
  });
 }
-export async function requestExternalDispatch(order,{dispatch=false,send=false,request=globalThis.fetch,auth=createAdminAuth(),config=publicBackendConfig}={}){
- const response=await request(config.url+'/functions/v1/transactional-email/external-dispatch',{method:'POST',headers:{apikey:config.publishableKey,Authorization:'Bearer '+await auth.accessToken(),'Content-Type':'application/json'},body:JSON.stringify({orderId:order.id,dispatch,send,expectedEmail:(order.customer.email||'').trim().toLowerCase()})});
+export async function requestExternalDispatch(order,{dispatch=false,send=false,request=globalThis.fetch,auth=createAdminAuth(),config=publicBackendConfig,resend=false,operationId,previousDelivery,reason}={}){
+ const response=await request(config.url+'/functions/v1/transactional-email/external-dispatch',{method:'POST',headers:{apikey:config.publishableKey,Authorization:'Bearer '+await auth.accessToken(),'Content-Type':'application/json'},body:JSON.stringify({orderId:order.id,dispatch,send,...resend?{resend:true,operationId,previousDelivery,expectedUpdatedAt:order.updatedAt,reason}:{},expectedEmail:(order.customer.email||'').trim().toLowerCase()})});
  const result=await response.json();if(!response.ok)throw Error(result.message||'Dispatch request unavailable. Refresh and review the notification status.');return result.message;
 }
 export function mountExternalEditing(order,{root,repository,refresh,message,document=globalThis.document,requestDispatch=requestExternalDispatch,confirm=confirmDispatchEmail}={}){
@@ -44,10 +44,10 @@ export function mountExternalEditing(order,{root,repository,refresh,message,docu
  const notification=(order.emailDeliveries||[]).find(d=>d.kind==='dispatched');
  const state=notification?({pending:'Not Sent · explicitly requested',claimed:'Sending / requires review if stalled',sent:'Sent · mail server accepted; inbox delivery unconfirmed',failed:'Failed · requires review',unknown:'Unknown · requires review'})[notification.state]||'Unknown':!order.dispatchEmailDeclined&&order.statusHistory?.some(e=>['dispatched','completed'].includes(e.status))?'Unknown · no historical notification evidence':'Not Sent';
  section.append(el('p',state));if(notification?.recipient_email)section.append(el('p','Recipient used: '+notification.recipient_email));if(notification?.sent_at||notification?.attempted_at||notification?.claimed_at)section.append(el('p','Last notification activity: '+date(notification.sent_at||notification.attempted_at||notification.claimed_at)));
- section.append(el('p','Customer-detail saves never send email. Automatic external notifications, retry and resend are disabled.'));
+ section.append(el('p','Customer-detail saves never send email. Automatic external notifications and retries are disabled. Resends require a separate confirmation and reason.'));
  if(['dispatched','completed'].includes(order.fulfilmentStatus)&&externalRecipientAllowed((order.customer.email||'').trim(),order.channel)&&(!notification||notification.state==='pending')){
   const send=el('button','Send Dispatch Email','button');send.type='button';let busy=false;
-  send.addEventListener('click',async()=>{if(busy)return;busy=true;send.disabled=true;try{if(await confirm({document,email:order.customer.email,channel:order.channel,dispatch:false})!=='yes')return;message.textContent=await requestDispatch(order,{send:true});await refresh();}catch(error){message.textContent=error.message;}finally{busy=false;send.disabled=false;}});section.append(send);
+  send.addEventListener('click',async()=>{if(busy)return;busy=true;send.disabled=true;try{if(await confirm({document,email:order.customer.email,channel:order.channel,dispatch:false})!=='yes')return;const notice=await requestDispatch(order,{send:true});await refresh();message.textContent=notice;}catch(error){message.textContent=error.message;}finally{busy=false;send.disabled=false;}});section.append(send);
  }else if(!order.customer.email)section.append(el('p','No customer email saved. Dispatch is available without a notification.'));
  root.append(section);
 }

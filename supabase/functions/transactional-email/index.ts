@@ -62,7 +62,7 @@ export async function handleEmailPreview(request:Request,env:Env=Deno.env,transp
   if(!membership.ok||!(await membership.json()).some((row:any)=>row.user_id===user.id))return reply(403,'Admin membership required');
   const params=new URL(request.url).searchParams,kind=params.get('kind'),tracking=params.get('tracking')==='1';
   if(!v2Kinds.includes(kind as any))return reply(400,'Unknown preview');
-  const data=previewFixture(kind as any,tracking);
+  const data=previewFixture(kind as any,tracking,params.get('channel')==='EBAY'?'EBAY':'WEBSITE');
   return new Response(JSON.stringify({label:'PREVIEW — NOT A REAL ORDER',html:data.html,text:data.text,subject:data.subject}),{status:200,headers:{...previewHeaders,'Content-Type':'application/json'}});
  }catch{return reply(503,'Preview unavailable');}
 }

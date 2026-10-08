@@ -11,7 +11,7 @@ export async function handleExternalDispatch(request:Request,env:Env=Deno.env,tr
  if(!service||!url||!key)return reply(503,'Dispatch service unavailable');
  if(!/^Bearer [^\s]+$/.test(token)||token==='Bearer '+service)return reply(401,'Admin sign-in required');
  let body:any;try{body=await request.json();}catch{return reply(400,'Invalid request');}
- if(!body||Object.keys(body).some(k=>!['orderId','dispatch','send','expectedEmail'].includes(k))||!uuid.test(body.orderId||'')
+ if(!body||Object.keys(body).some(k=>!['orderId','dispatch','send','expectedEmail','resend','operationId','previousDelivery','expectedUpdatedAt','reason'].includes(k))||!uuid.test(body.orderId||'')
   ||typeof body.dispatch!=='boolean'||typeof body.send!=='boolean'||typeof body.expectedEmail!=='string')return reply(400,'Explicit dispatch choice required');
  const userHeaders={apikey:key,Authorization:token,'Content-Type':'application/json'},serviceHeaders={apikey:service,Authorization:'Bearer '+service,'Content-Type':'application/json'};
  try{
@@ -23,10 +23,11 @@ export async function handleExternalDispatch(request:Request,env:Env=Deno.env,tr
    const r=await transport(url+'/rest/v1/rpc/'+name,{method:'POST',headers,body:JSON.stringify(payload)});
    if(!r.ok)throw Error('Order changed or dispatch request rejected. Refresh before retrying.');return r.json();
   };
-  const id=await rpc('request_external_dispatch',{p_order_id:body.orderId,p_dispatch:body.dispatch,p_send:body.send,p_expected_email:body.expectedEmail},userHeaders);
+  if(body.resend===true&&(body.dispatch!==false||body.send!==true||!uuid.test(body.operationId||'')||!uuid.test(body.previousDelivery||'')||typeof body.expectedUpdatedAt!=='string'||typeof body.reason!=='string'))return reply(400,'Explicit resend confirmation and reason required');
+  const id=body.resend===true?await rpc('request_dispatch_resend',{p_order_id:body.orderId,p_operation_id:body.operationId,p_previous_delivery:body.previousDelivery,p_expected_updated_at:body.expectedUpdatedAt,p_expected_email:body.expectedEmail,p_reason:body.reason},userHeaders):await rpc('request_external_dispatch',{p_order_id:body.orderId,p_dispatch:body.dispatch,p_send:body.send,p_expected_email:body.expectedEmail},userHeaders);
   if(!body.send)return reply(200,'Order dispatched. No email was sent.');
   const claimed=await rpc('claim_external_dispatch',{p_delivery_id:id});
-  if(!claimed)return reply(200,'No new email attempted. Check the persisted notification status; automatic retries and resend are disabled.');
+  if(!claimed)return reply(200,'No new email attempted. Check the persisted notification status; automatic retries are disabled.');
   const order=claimed.order;order.customer={...order.customer,email:claimed.recipient};
   let message;try{message=renderEmailV2('dispatched',order);}catch{return reply(409,'Notification claimed but could not be rendered. Requires review; no automatic retry.');}
   if(await rpc('mark_order_email_attempt',{p_order_id:claimed.orderId,p_kind:'dispatched',p_claim:claimed.claim})!==true)return reply(409,'Notification requires review');

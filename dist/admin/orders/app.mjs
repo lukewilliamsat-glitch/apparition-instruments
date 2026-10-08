@@ -1,3 +1,4 @@
+import {mountFulfilmentCorrections} from './fulfilment-corrections.mjs';
 import {mountExternalEditing,confirmDispatchEmail,requestExternalDispatch,externalRecipientAllowed} from './external-edit.mjs';
 import {presentOrderDetail} from './detail-presentation.mjs';
 import {statusBadge} from '../application.mjs';
@@ -59,7 +60,7 @@ function render(){
     catch(error){$('#order-message').textContent=error.message;await refresh();}
    });$('#detail-content').prepend(button);
   }
-  appendEmailStatus(order);appendDispatchEditor(order);presentOrderDetail(document,order);
+  appendEmailStatus(order);appendDispatchEditor(order);mountFulfilmentCorrections(order,{repository:currentAdminOrderRepository(),refresh,message:$('#order-message')});presentOrderDetail(document,order);
   const next=nextFulfilment(order),form=$('#order-status-form');form.hidden=!next;
   const select=$('#detail-status');select.replaceChildren();if(next){const choice=el('option',fulfilmentLabels[next]);choice.value=next;select.append(choice);}
   if(next){const button=form.querySelector('button');button.textContent='Advance to '+fulfilmentLabels[next];const note=form.querySelector('p');note.textContent=order.channel!=='WEBSITE'?'External order fulfilment. Dispatch emails require your explicit confirmation; saving details never sends email.':next==='completed'?'Completed has no customer email. Payment state is unchanged.':'After customer emails are activated, this transition will create a customer '+fulfilmentLabels[next]+' update. Email delivery is currently inactive.';form.querySelector('label').firstChild.textContent=next==='dispatched'?'Step 2 · Advance fulfilment':'Advance fulfilment';}

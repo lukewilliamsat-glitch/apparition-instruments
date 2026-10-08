@@ -5,23 +5,24 @@ const orderId='10000000-0000-4000-8000-000000000001',deliveryId='20000000-0000-4
 const env={get:k=>({SUPABASE_URL:'https://fixture.invalid',SUPABASE_SERVICE_ROLE_KEY:'service',SUPABASE_ANON_KEY:'public'}[k])};
 const order={id:orderId,reference:'AI-123456',sales_channel:'EBAY',external_reference:'12-TEST',payment_status:'paid',customer:{name:'Buyer',email:'buyer@members.ebay.com'},items:[{name:'Fixture part',quantity:1,unitPrice:100,lineTotal:100}],subtotal_pence:100,delivery_pence:0,total_pence:100,dispatch_details:{carrier:'Royal Mail'}};
 const request=(body={},token='admin')=>new Request('https://fixture.invalid/external-dispatch',{method:'POST',headers:{Authorization:'Bearer '+token},body:JSON.stringify({orderId,dispatch:false,send:true,expectedEmail:'buyer@members.ebay.com',...body})});
-for(const outcome of ['sent','failed','unknown']){
+for(const resend of [false,true])for(const outcome of ['sent','failed','unknown']){
  let state='pending',sends=0,attempts=0,recipient,finish=[];
  const transport=async(url,init)=>{
   const path=new URL(url).pathname;
   if(path==='/auth/v1/user')return Response.json({id:orderId});
   if(path.includes('/admin_members'))return Response.json([{user_id:orderId}]);
   const data=JSON.parse(init.body||'{}');
-  if(path.endsWith('/request_external_dispatch')){assert.equal(init.headers.Authorization,'Bearer admin');assert.equal(data.p_expected_email,'buyer@members.ebay.com');return Response.json(deliveryId);}
+  if(path.endsWith(resend?'/request_dispatch_resend':'/request_external_dispatch')){if(resend){assert.equal(data.p_operation_id,claimId);assert.equal(data.p_previous_delivery,deliveryId);assert.equal(data.p_reason,'Explicit resend reason');assert.equal(data.p_expected_updated_at,'2026-10-08T00:00:00Z');}assert.equal(init.headers.Authorization,'Bearer admin');assert.equal(data.p_expected_email,'buyer@members.ebay.com');return Response.json(deliveryId);}
   if(path.endsWith('/claim_external_dispatch')){assert.equal(init.headers.Authorization,'Bearer service');if(state!=='pending')return Response.json(null);state='claimed';return Response.json({claim:claimId,order,recipient:'buyer@members.ebay.com',orderId});}
   if(path.endsWith('/mark_order_email_attempt')){attempts++;return Response.json(true);}
   if(path.endsWith('/finish_order_email_delivery')){finish.push(data);state=data.p_state;return Response.json(true);}
   throw Error('Unexpected request '+path);
  };
- const send=async(_env,mail)=>{sends++;recipient=mail.to;assert.match(mail.text,/External eBay order · 12-TEST/);assert.match(mail.html,/Fixture part/);assert.doesNotMatch(mail.html,/href=|src=|https?:|discount|promotion/i);assert.doesNotMatch(mail.text,/https?:|discount|promotion/i);assert.match(mail.text,/eBay order messages/);if(outcome!=='sent')throw Object.assign(Error('mock failure'),{outcome});};
- const responses=await Promise.all([handleExternalDispatch(request(),env,transport,send),handleExternalDispatch(request(),env,transport,send)]);
+ const send=async(_env,mail)=>{sends++;recipient=mail.to;assert.match(mail.text,/External eBay order · 12-TEST/);assert.match(mail.html,/Fixture part/);assert.doesNotMatch(mail.html,/href=|discount|promotion/i);assert.match(mail.html,/apparition-logo-email.png/);assert.match(mail.html,/dispatched-email.png/);assert.doesNotMatch(mail.text,/https?:|discount|promotion/i);assert.match(mail.text,/eBay order messages/);if(outcome!=='sent')throw Object.assign(Error('mock failure'),{outcome});};
+ const attempt=()=>request(resend?{resend:true,operationId:claimId,previousDelivery:deliveryId,expectedUpdatedAt:'2026-10-08T00:00:00Z',reason:'Explicit resend reason'}:{});
+ const responses=await Promise.all([handleExternalDispatch(attempt(),env,transport,send),handleExternalDispatch(attempt(),env,transport,send)]);
  assert(responses.every(r=>r.status===200));assert.equal(sends,1);assert.equal(attempts,1);assert.equal(recipient,'buyer@members.ebay.com');assert.equal(finish[0].p_state,outcome);
- await handleExternalDispatch(request(),env,transport,send);assert.equal(sends,1);
+ await handleExternalDispatch(attempt(),env,transport,send);assert.equal(sends,1);
 }
 let smtp=0,rpcs=0;
 const deny=async(url)=>url.includes('/auth/v1/user')?Response.json({id:orderId}):Response.json([]);
