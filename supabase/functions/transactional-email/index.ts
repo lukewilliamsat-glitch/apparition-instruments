@@ -1,7 +1,9 @@
+import {publishedTemplate} from './templates.ts';
+import {handleTemplatePreview} from './studio.ts';
 import {handleExternalDispatch} from './external.ts';
 import {handlePreparedEmail} from './prepared.ts';
 import {sendOrderMail} from './smtp.ts';
-import {previewFixture,renderEmailV2,v2Kinds} from './v2.ts';
+import {previewFixture,previewOrderFixture,renderEmailV2,v2Kinds} from './v2.ts';
 
 type Env={get:(key:string)=>string|undefined};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -36,7 +38,7 @@ export async function handleTransactionalEmail(request:Request,env:Env=Deno.env,
   if(!order||!uuid.test(claim)||!order.customer?.email||
     (row.kind==='full_refund'&&order.payment_status!=='refunded')||
     (row.kind!=='full_refund'&&!['paid','partially_refunded'].includes(order.payment_status)))return reply(409,'Claim requires review');
-  let message;try{message=renderEmailV2(row.kind,order);}catch{return reply(409,'Claim requires review');}
+  let message;try{message=renderEmailV2(row.kind,order,{published:await publishedTemplate(row.kind,order.sales_channel,env,transport)});}catch{return reply(409,'Claim requires review');}
   const marked=await rpc('mark_order_email_attempt',{p_order_id:row.order_id,p_kind:row.kind,p_claim:claim});
   if(marked!==true)return reply(409,'Claim requires review');
   let outcome:'sent'|'failed'|'unknown'='sent',reason:null|string=null;
@@ -63,7 +65,8 @@ export async function handleEmailPreview(request:Request,env:Env=Deno.env,transp
   if(!membership.ok||!(await membership.json()).some((row:any)=>row.user_id===user.id))return reply(403,'Admin membership required');
   const params=new URL(request.url).searchParams,kind=params.get('kind'),tracking=params.get('tracking')==='1';
   if(!v2Kinds.includes(kind as any))return reply(400,'Unknown preview');
-  const data=previewFixture(kind as any,tracking,params.get('channel')==='EBAY'?'EBAY':'WEBSITE');
+  const channel=params.get('channel')==='EBAY'?'EBAY':'WEBSITE';
+  const data=renderEmailV2(kind as any,previewOrderFixture(kind as any,tracking,channel),{preview:true,published:await publishedTemplate(kind!,channel,env,transport)});
   return new Response(JSON.stringify({label:'PREVIEW — NOT A REAL ORDER',html:data.html,text:data.text,subject:data.subject}),{status:200,headers:{...previewHeaders,'Content-Type':'application/json'}});
  }catch{return reply(503,'Preview unavailable');}
 }
@@ -95,6 +98,7 @@ export async function dispatchPending(request:Request,env:Env=Deno.env,transport
 export function routeEmailRequest(request:Request,env:Env=Deno.env,transport:typeof fetch=fetch,send=sendOrderMail){
  const path=new URL(request.url).pathname;
  if(path.endsWith('/prepare-aftercare')||path.endsWith('/confirm-aftercare')||path.endsWith('/prepare-dispatch')||path.endsWith('/confirm-dispatch'))return handlePreparedEmail(request,env,transport,send);
+ if(path.endsWith('/template-preview'))return handleTemplatePreview(request,env,transport);
  if(path.endsWith('/external-dispatch'))return handleExternalDispatch(request,env,transport,send);
  if(path.endsWith('/preview'))return handleEmailPreview(request,env,transport);
  if(path.endsWith('/canary'))return reply(404,'Canary retired');

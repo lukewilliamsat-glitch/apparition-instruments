@@ -1,3 +1,4 @@
+import {publishedTemplate} from './templates.ts';
 import {renderEmailV2,aftercareTemplateIdentity} from './v2.ts';
 import {sendOrderMail} from './smtp.ts';
 
@@ -21,12 +22,12 @@ export async function verifyPreview(token:string,secret:string){
  if(!await crypto.subtle.verify('HMAC',await signingKey(secret),sig,bytes(parts[0])))throw Error('Invalid preview');
  return JSON.parse(new TextDecoder().decode(decode(parts[0])));
 }
-export function prepareContent(context:any,env:Env,kind='dispatched'){
+export function prepareContent(context:any,env:Env,kind='dispatched',published:any=null){
  const order=context.order,recipient=String(order.customer?.email||'').trim().toLowerCase();
  const from={email:env.get('SMTP_FROM_EMAIL'),name:env.get('SMTP_FROM_NAME')};
  if(!from.email||!from.name||/[\r\n]/.test(from.email+from.name))throw Error('Sender unavailable');
- const message=renderEmailV2(kind as any,{...order,customer:{...order.customer,email:recipient}},{manualAftercare:kind==='aftercare'&&context.route!=='email'});
- return {message,from,template:kind==='aftercare'?aftercareTemplateIdentity:templateIdentity,renderer:renderEmailV2.toString()};
+ const message=renderEmailV2(kind as any,{...order,customer:{...order.customer,email:recipient}},{manualAftercare:kind==='aftercare'&&context.route!=='email',published});
+ return {message,from,template:published?'studio:'+published.id:kind==='aftercare'?aftercareTemplateIdentity:templateIdentity,renderer:renderEmailV2.toString()};
 }
 export async function handlePreparedEmail(request:Request,env:Env=Deno.env,transport:typeof fetch=fetch,send=sendOrderMail,now=()=>Date.now()){
  const reply=(status:number,data:any)=>new Response(JSON.stringify(data),{status,headers:{...cors,'Content-Type':'application/json'}});
@@ -44,7 +45,7 @@ export async function handlePreparedEmail(request:Request,env:Env=Deno.env,trans
   const members=await transport(url+'/rest/v1/admin_members?select=user_id&user_id=eq.'+user.id,{headers:userHeaders});
   if(!members.ok||!(await members.json()).some((m:any)=>m.user_id===user.id))return reply(403,{message:'Admin membership required'});
   let body:any;try{body=await request.json();}catch{return reply(400,{message:'Invalid request'});}
-  const path=new URL(request.url).pathname,kind=path.endsWith('-aftercare')?'aftercare':'dispatched',aftercare=kind==='aftercare',template=aftercare?aftercareTemplateIdentity:templateIdentity;
+  const path=new URL(request.url).pathname,kind=path.endsWith('-aftercare')?'aftercare':'dispatched',aftercare=kind==='aftercare';
   const confirm=path.endsWith('/confirm-dispatch')||path.endsWith('/confirm-aftercare');
   const allowed=confirm?['orderId','previewIdentity','recipientConfirmed','reason']:['orderId','mode'];
   if(!body||Object.keys(body).some(k=>!allowed.includes(k))||!uuid.test(body.orderId||''))return reply(400,{message:'Order identity required; email overrides are unavailable'});
@@ -63,16 +64,17 @@ export async function handlePreparedEmail(request:Request,env:Env=Deno.env,trans
   };
   let context:any;try{context=await rpc(aftercare?'get_aftercare_preview_context':'get_dispatch_preview_context',aftercare?{p_order_id:body.orderId}:{p_order_id:body.orderId,p_resend:mode==='resend'});}catch{return reply(409,{code:confirm?'PREVIEW_STALE':'INELIGIBLE',message:confirm?stale:'This order is not eligible for this notification. Refresh the order and review its communication history.'});}
   if(context?.order?.id!==body.orderId)return reply(409,{code:'PREVIEW_STALE',message:stale});
-  let content:any;try{content=prepareContent(context,env,kind);}catch{return reply(409,{code:confirm?'PREVIEW_STALE':'INELIGIBLE',message:confirm?stale:'The saved order cannot be rendered safely. Review its customer and item information.'});}
+  let content:any,published:any;try{published=await publishedTemplate(kind,context.order.sales_channel,env,transport);content=prepareContent(context,env,kind,published);}catch{return reply(409,{code:confirm?'PREVIEW_STALE':'INELIGIBLE',message:confirm?stale:'The saved order cannot be rendered safely. Review its customer and item information.'});}
+  const template=content.template;
   const stateHash=await digest(context),contentHash=await digest(content);
   if(!confirm){
    const expires=now()+600000;
    const previewIdentity=await signPreview({actor:user.id,orderId:body.orderId,mode,kind,operationId:crypto.randomUUID(),stateHash,contentHash,expires,template},service);
-   return reply(200,{...content.message,from:content.from,orderReference:context.order.reference,channel:context.order.sales_channel,kind,mode,previewIdentity,expires,template,route:aftercare?context.route:'email',notice:aftercare?context.notice:null});
+   return reply(200,{...content.message,from:content.from,orderReference:context.order.reference,channel:context.order.sales_channel,kind,mode,previewIdentity,expires,template,templateVersion:published.version,route:aftercare?context.route:'email',notice:aftercare?context.notice:null});
   }
   if(binding.stateHash!==stateHash||binding.contentHash!==contentHash||binding.template!==template)return reply(409,{code:'PREVIEW_STALE',message:stale});
   if(aftercare&&context.route!=='email')return reply(409,{code:'INELIGIBLE',message:'Use the original order conversation. Aftercare email transport is unavailable for this channel.'});
-  let claim:any;try{claim=await rpc(aftercare?'confirm_aftercare_preview':'confirm_dispatch_preview',aftercare?{p_order_id:body.orderId,p_actor:user.id,p_context:context,p_operation_id:binding.operationId,p_template:template}:{p_order_id:body.orderId,p_actor:user.id,p_resend:mode==='resend',p_context:context,p_operation_id:binding.operationId,p_reason:mode==='resend'?body.reason.trim():null},serviceHeaders);}catch(error){
+  let claim:any;try{claim=await rpc('claim_email_template_preview',{p_key:published.key,p_version:published.id,p_kind:kind,p_order_id:body.orderId,p_actor:user.id,p_context:context,p_operation_id:binding.operationId,p_resend:mode==='resend',p_reason:mode==='resend'?body.reason.trim():null},serviceHeaders);}catch(error){
    if([400,409].includes((error as {status?:number})?.status||0))return reply(409,{code:'PREVIEW_STALE',message:stale});
    return reply(503,{code:'REVIEW_REQUIRED',message:'Confirmation outcome requires review. Refresh the notification audit; do not resend.'});
   }

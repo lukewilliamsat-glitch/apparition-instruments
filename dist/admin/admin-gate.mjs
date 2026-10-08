@@ -1,3 +1,4 @@
+import {createEmailTemplateRepository,setEmailTemplateRepository} from '../backend/email-templates.mjs';
 import {mountAdminShell} from './application.mjs';
 import {addConjureNavigation} from './conjure/navigation.mjs';
 import {createAdminAuth} from './admin-auth.mjs';
@@ -29,7 +30,7 @@ export async function bootAdminGate({document=globalThis.document,auth=createAdm
   setAdminOptionRepository(null);
   setAssemblyRepository(null);
   setAdminOrderRepository(null);
-  setOperationsRepository(null);
+  setOperationsRepository(null);setEmailTemplateRepository(null);
   body.classList.remove('admin-authorized');main.hidden=false;panel.replaceChildren(eyebrow,title,note,feedback);
   note.textContent='Signing out…';feedback.textContent='';
   try{await auth.signOut();document.querySelector('.admin-lock')?.remove();render('signed-out');}catch{render('sign-out-error');}
@@ -64,6 +65,7 @@ export async function bootAdminGate({document=globalThis.document,auth=createAdm
     setAssemblyRepository(createAdminAssemblyRepository(transport));
     setAdminOrderRepository(createAdminOrderRepository(transport));
     setOperationsRepository(createOperationsRepository(transport));
+    setEmailTemplateRepository(createEmailTemplateRepository(transport));
    }
    addConjureNavigation(document);
    const navigation=document.querySelector('.admin-navigation')||document.querySelector('.admin-tabs');
@@ -71,7 +73,7 @@ export async function bootAdminGate({document=globalThis.document,auth=createAdm
    mountAdminShell(document,signOutControl);
    for(const entry of entryModules(document))await load(new URL(entry,document.baseURI).href);
    main.hidden=true;body.classList.add('admin-authorized');
-  }catch{setComponentRepository(null);setAdminOptionRepository(null);setAssemblyRepository(null);setAdminOrderRepository(null);setOperationsRepository(null);signOutControl.remove();render('checking');feedback.textContent='Admin could not load. Please reload and try again.';}
+  }catch{setComponentRepository(null);setAdminOptionRepository(null);setAssemblyRepository(null);setAdminOrderRepository(null);setOperationsRepository(null);setEmailTemplateRepository(null);signOutControl.remove();render('checking');feedback.textContent='Admin could not load. Please reload and try again.';}
  };
  render('checking');
  try{const result=await auth.restore();if(result.status==='authorized')await reveal();else render(result.status==='denied'?'denied':'signed-out');}

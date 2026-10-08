@@ -18,7 +18,7 @@ export function reviewDispatchEmail(order,{document=globalThis.document,mode='fi
   const heading=el('h2',previewTitle);heading.id='email-review-heading';dialog.setAttribute('aria-labelledby',heading.id);
   const subtitle=el('p'),status=el('p','Preparing order-specific preview…','email-review-status');status.setAttribute('role','status');status.setAttribute('aria-live','polite');
   const context=el('p',transitionNotice||'Previewing does not send an email or change the order.');
-  const details=el('dl',undefined,'email-review-details');const values={};for(const label of ['From','Recipient','Subject']){const value=el('dd');details.append(el('dt',label),value);values[label]=value;}
+  const details=el('dl',undefined,'email-review-details');const values={};for(const label of ['From','Recipient','Subject','Template']){const value=el('dd');details.append(el('dt',label),value);values[label]=value;}
   const switcher=el('div',undefined,'email-review-switch');switcher.setAttribute('role','group');switcher.setAttribute('aria-label','Email preview format');
   const htmlButton=el('button','HTML','button'),textButton=el('button','Plain text','button');htmlButton.type=textButton.type='button';htmlButton.setAttribute('aria-pressed','true');textButton.setAttribute('aria-pressed','false');
   const frame=el('iframe');frame.title=aftercare?'Order-specific aftercare preview':'Order-specific dispatch email preview';frame.setAttribute('sandbox','');frame.setAttribute('referrerpolicy','no-referrer');frame.id='email-review-html';frame.loading='eager';
@@ -43,7 +43,8 @@ export function reviewDispatchEmail(order,{document=globalThis.document,mode='fi
     prepared=p;heading.textContent=previewTitle;subtitle.textContent=`${aftercare?'Customer aftercare':'Dispatch notification'} · ${mode==='resend'?'Resend':'First send'} · ${p.orderReference} · ${p.channel}`;
     const manual=aftercare&&p.route!=='email';confirm.hidden=recipientLabel.hidden=manual;copy.hidden=!manual;copy.disabled=false;
     values.From.textContent=manual?p.from.name+' (manual draft)':p.from.name+' <'+p.from.email+'>';values.Recipient.textContent=p.to;values.Subject.textContent=p.subject;
-    frame.srcdoc=isolatedPreview(p.html);plain.textContent=p.text;
+    values.Template.textContent=p.template?(p.templateVersion?'Published version '+p.templateVersion+' · ':'')+p.template:'Authoritative order preview';
+    frame.srcdoc=isolatedPreview(p.html);plain.textContent=p.text;plain.scrollTop=0;dialog.scrollTop=0;
     status.textContent='Review the message below. Preview expires at '+new Date(p.expires).toLocaleTimeString('en-GB')+'.'+(p.channel==='EBAY'?' eBay forwarding remains subject to marketplace filtering.':'');if(manual)status.textContent=(p.notice||'Send manually through the original order conversation.')+' Copying does not send or complete aftercare.';refresh.hidden=true;
    }catch(e){if(!closed){status.textContent=e.message;refresh.hidden=false;}}
    finally{if(!closed){busy=false;dialog.removeAttribute('aria-busy');refresh.disabled=false;enableConfirm();}}

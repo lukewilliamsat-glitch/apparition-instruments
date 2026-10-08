@@ -1,9 +1,11 @@
+import {readFileSync} from 'node:fs';
 import assert from 'node:assert/strict';
-import {emailPreviewDatabase} from './fixtures/email-preview-database.mjs';
+import {aftercareDatabase as emailPreviewDatabase} from './fixtures/aftercare-database.mjs';
 import {handlePreparedEmail,signPreview,verifyPreview,digest} from '../supabase/functions/transactional-email/prepared.ts';
 import {renderEmailV2} from '../supabase/functions/transactional-email/v2.ts';
 import {routeEmailRequest} from '../supabase/functions/transactional-email/index.ts';
 const {db,actor,create,one,query,stock}=await emailPreviewDatabase();
+await db.exec(readFileSync('supabase/migrations/20261008152227_email_template_studio_giga_v1.sql','utf8'));
 const env={get:k=>({SUPABASE_URL:'https://backend.invalid',SUPABASE_SERVICE_ROLE_KEY:'server-secret',SUPABASE_ANON_KEY:'public',SMTP_FROM_EMAIL:'orders@example.test',SMTP_FROM_NAME:'Apparition Instruments'})[k]};
 let time=Date.now(),sent=[],rpcCalls=[],failAt='',isAdmin=true,unauthorized=false;
 const send=async(e,m)=>{sent.push(structuredClone(m));if(failAt==='provider')throw Object.assign(Error('mock'),{outcome:'failed'});if(failAt==='uncertain')throw Object.assign(Error('mock'),{outcome:'unknown'});};
@@ -31,7 +33,7 @@ async function fixture(channel='EBAY'){
  return o.id;
 }
 const snapshot=()=>query('select (select jsonb_agg(to_jsonb(o)) from public.orders o) orders,(select jsonb_agg(to_jsonb(d)) from public.order_email_deliveries d) ledger,(select jsonb_agg(to_jsonb(i)) from public.inventory i) inventory');
-async function preview(id,mode='first'){const before=await snapshot(),n=sent.length,c=rpcCalls.length;const r=await call('prepare-dispatch',{orderId:id,mode});assert.equal(r.status,200,await r.clone().text());const p=await r.json();assert.deepEqual(await snapshot(),before);assert.equal(sent.length,n);assert.deepEqual(rpcCalls.slice(c),['get_dispatch_preview_context']);return p;}
+async function preview(id,mode='first'){const before=await snapshot(),n=sent.length,c=rpcCalls.length;const r=await call('prepare-dispatch',{orderId:id,mode});assert.equal(r.status,200,await r.clone().text());const p=await r.json();assert.deepEqual(await snapshot(),before);assert.equal(sent.length,n);assert.deepEqual(rpcCalls.slice(c),['get_dispatch_preview_context','get_published_email_template']);return p;}
 const confirm=(id,p,extra={})=>call('confirm-dispatch',{orderId:id,previewIdentity:p.previewIdentity,recipientConfirmed:true,...extra});
 let assertions=0;
 for(const channel of ['EBAY','WEBSITE','DIRECT']){
@@ -74,7 +76,7 @@ const concurrent=await fixture(),cp=await preview(concurrent);const current=awai
 const burst=await fixture(),bp=await preview(burst),bc=(await verifyPreview(bp.previewIdentity,'server-secret')),ctx=(await one('select public.get_dispatch_preview_context($1,false) as c',[burst])).c;
 const races=await Promise.allSettled(Array.from({length:6},()=>db.query('select public.confirm_dispatch_preview($1,$2,false,$3,$4,null)',[burst,actor,JSON.stringify(ctx),bc.operationId])));assert.equal(races.filter(r=>r.status==='fulfilled').length,1);
 // Lost claim or provider-result transports never advertise a safe retry.
-for(const stage of ['confirm_dispatch_preview','finish_order_email_delivery','mark_order_email_attempt']){const fresh=await fixture(),p=await preview(fresh);failAt=stage;const r=await confirm(fresh,p);assert.equal(r.status,503);assert.equal((await r.json()).code,'REVIEW_REQUIRED');failAt='';}
+for(const stage of ['claim_email_template_preview','finish_order_email_delivery','mark_order_email_attempt']){const fresh=await fixture(),p=await preview(fresh);failAt=stage;const r=await confirm(fresh,p);assert.equal(r.status,503);assert.equal((await r.json()).code,'REVIEW_REQUIRED');failAt='';}
 // Legacy direct-send endpoint now fails without requesting or claiming delivery.
 const before=await snapshot();const old=await routeEmailRequest(req('external-dispatch',{orderId:id,dispatch:false,send:true,expectedEmail:'buyer@members.ebay.com'}),env,transport,send);assert.equal(old.status,409);assert.deepEqual(await snapshot(),before);
 for(const role of ['anon','authenticated'])assert.equal((await one("select has_function_privilege($1,'public.confirm_dispatch_preview(uuid,uuid,boolean,jsonb,uuid,text)','execute') as ok",[role])).ok,false);
