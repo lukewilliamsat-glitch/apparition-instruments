@@ -1,6 +1,7 @@
 import {el,date} from './view.mjs?v=external-v1';
 import {fulfilmentLabels} from './lifecycle.mjs';
-import {externalRecipientAllowed,requestExternalDispatch} from './external-edit.mjs';
+import {externalRecipientAllowed} from './external-edit.mjs';
+import {reviewDispatchEmail} from './email-review.mjs';
 const stages=['pending','in_production','ready_to_dispatch','dispatched'];
 export function reasonDialog({document=globalThis.document,title,description,choices=[],confirmLabel='Confirm correction'}={}){
  return new Promise(resolve=>{
@@ -11,7 +12,7 @@ export function reasonDialog({document=globalThis.document,title,description,cho
   const confirm=el('button',confirmLabel,'button'),cancel=el('button','Cancel','button');confirm.type='submit';cancel.type='button';cancel.addEventListener('click',()=>finish(null));form.append(confirm,cancel);form.addEventListener('submit',e=>{e.preventDefault();if(!form.reportValidity()||reason.value.trim().length<5)return;finish({reason:reason.value.trim(),target:select?.value});});dialog.addEventListener('cancel',e=>{e.preventDefault();finish(null);});dialog.append(form);document.body.append(dialog);dialog.showModal();reason.focus();
  });
 }
-export function mountFulfilmentCorrections(order,{document=globalThis.document,repository,refresh,message,confirm=reasonDialog,send=requestExternalDispatch,uuid=()=>crypto.randomUUID()}={}){
+export function mountFulfilmentCorrections(order,{document=globalThis.document,repository,refresh,message,confirm=reasonDialog,review=reviewDispatchEmail}={}){
  document.querySelector('.fulfilment-correction-action')?.remove();
  const eligible=order.paymentStatus==='paid'||order.paymentStatus==='partially_refunded'&&order.partialRefundAcknowledged;
  const index=stages.indexOf(order.fulfilmentStatus),dispatch=document.querySelector('.dispatch-details')||document.querySelector('#order-status-form');
@@ -23,6 +24,6 @@ export function mountFulfilmentCorrections(order,{document=globalThis.document,r
  for(const d of notifications)history?.append(el('p',`${d.resend_of?'Dispatch email resend':'Dispatch notification'} · ${d.state==='sent'?'Mail server accepted; buyer delivery unconfirmed':d.state} · ${d.recipient_email||'Historical recipient unavailable'} · ${date(d.created_at)}${d.resend_reason?' · Reason: '+d.resend_reason+' · Admin: '+d.external_requested_by:''}`));
  const latest=notifications[0];
  if(!eligible||order.fulfilmentStatus!=='dispatched'||latest?.state!=='sent'||!latest.id||!externalRecipientAllowed((order.customer.email||'').trim(),order.channel))return;
- const button=el('button','Resend Dispatch Email','button');button.type='button';communications.append(button);let busy=false,operationId=null;
- button.addEventListener('click',async()=>{if(busy)return;busy=true;button.disabled=true;try{const result=await confirm({document,title:'Resend dispatch confirmation?',description:`A dispatch confirmation has already been sent for ${order.reference}. Send the current approved template to ${order.customer.email}? The order remains Dispatched; inventory and original email history remain unchanged.`,confirmLabel:'Yes, resend email'});if(!result)return;operationId||=uuid();const notice=await send(order,{send:true,resend:true,operationId,previousDelivery:latest.id,reason:result.reason});await refresh();message.textContent=notice;}catch(e){message.textContent=e.message+' Refresh and review the notification audit before another attempt.';}finally{busy=false;button.disabled=false;}});
+ const button=el('button','Preview Resend Email','button');button.type='button';communications.append(button);let busy=false;
+ button.addEventListener('click',async()=>{if(busy)return;busy=true;button.disabled=true;try{const notice=await review(order,{document,mode:'resend'});if(notice){await refresh();message.textContent=notice;}}catch(e){message.textContent=e.message+' Refresh and review the notification audit before another attempt.';}finally{busy=false;button.disabled=false;}});
 }

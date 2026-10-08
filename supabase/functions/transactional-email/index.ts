@@ -1,4 +1,5 @@
 import {handleExternalDispatch} from './external.ts';
+import {handlePreparedEmail} from './prepared.ts';
 import {sendOrderMail} from './smtp.ts';
 import {previewFixture,renderEmailV2,v2Kinds} from './v2.ts';
 
@@ -93,6 +94,7 @@ export async function dispatchPending(request:Request,env:Env=Deno.env,transport
 }
 export function routeEmailRequest(request:Request,env:Env=Deno.env,transport:typeof fetch=fetch,send=sendOrderMail){
  const path=new URL(request.url).pathname;
+ if(path.endsWith('/prepare-dispatch')||path.endsWith('/confirm-dispatch'))return handlePreparedEmail(request,env,transport,send);
  if(path.endsWith('/external-dispatch'))return handleExternalDispatch(request,env,transport,send);
  if(path.endsWith('/preview'))return handleEmailPreview(request,env,transport);
  if(path.endsWith('/canary'))return reply(404,'Canary retired');

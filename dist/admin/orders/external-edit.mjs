@@ -1,6 +1,7 @@
 import {el,date} from './view.mjs?v=external-v1';
 import {createAdminAuth} from '../admin-auth.mjs';
 import {publicBackendConfig} from '../../backend/public-config.mjs';
+import {mountFirstDispatchPreview,reviewDispatchEmail} from './email-review.mjs';
 export const validExternalEmail=email=>email.length<=254&&/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(email);
 export const isEbayRelay=email=>validExternalEmail(email)&&email.split('@')[1].toLowerCase()==='members.ebay.com';
 export function externalRecipientAllowed(email,channel){
@@ -11,11 +12,11 @@ export function externalRecipientAllowed(email,channel){
 export function confirmDispatchEmail({document=globalThis.document,email,channel,dispatch=true}={}){
  return new Promise(resolve=>{
   const previous=document.activeElement,dialog=document.createElement('dialog');dialog.className='external-dispatch-dialog';
-  const title=el('h2','Send dispatch email?');title.id='external-dispatch-title';dialog.setAttribute('aria-labelledby',title.id);
-  dialog.append(title,el('p','Would you like to send the Apparition dispatch confirmation to:'),el('p',email),el('p',isEbayRelay(email)&&channel==='EBAY'?'eBay relay addresses forward permitted order-related communications through eBay’s messaging system. Delivery remains subject to eBay’s filtering.':'Use the customer address saved for this order and permitted for order-related communication.'));
+  const title=el('h2','Dispatch this order?');title.id='external-dispatch-title';dialog.setAttribute('aria-labelledby',title.id);
+  dialog.append(title,el('p','Dispatching changes the fulfilment stage first. You can then review the email to the saved recipient. No email is sent until you confirm the preview.'),el('p',email),el('p',isEbayRelay(email)&&channel==='EBAY'?'eBay relay addresses forward permitted order-related communications through eBay’s messaging system. Delivery remains subject to eBay’s filtering.':'Use the customer address saved for this order and permitted for order-related communication.'));
   const finish=value=>{dialog.close();dialog.remove();previous?.focus();resolve(value);};
   const actions=el('div',undefined,'dialog-actions');
-  for(const [label,value] of [['Yes, send email','yes'],...(dispatch?[['No, update only','no']]:[]),['Cancel','cancel']]){const button=el('button',label,'button');button.type='button';button.addEventListener('click',()=>finish(value));actions.append(button);}
+  for(const [label,value] of [['Dispatch & Preview Email','yes'],...(dispatch?[['Dispatch without Email','no']]:[]),['Cancel','cancel']]){const button=el('button',label,'button');button.type='button';button.addEventListener('click',()=>finish(value));actions.append(button);}
   dialog.append(actions);dialog.addEventListener('cancel',event=>{event.preventDefault();finish('cancel');});document.body.append(dialog);dialog.showModal();actions.lastElementChild.focus();
  });
 }
@@ -23,7 +24,7 @@ export async function requestExternalDispatch(order,{dispatch=false,send=false,r
  const response=await request(config.url+'/functions/v1/transactional-email/external-dispatch',{method:'POST',headers:{apikey:config.publishableKey,Authorization:'Bearer '+await auth.accessToken(),'Content-Type':'application/json'},body:JSON.stringify({orderId:order.id,dispatch,send,...resend?{resend:true,operationId,previousDelivery,expectedUpdatedAt:order.updatedAt,reason}:{},expectedEmail:(order.customer.email||'').trim().toLowerCase()})});
  const result=await response.json();if(!response.ok)throw Error(result.message||'Dispatch request unavailable. Refresh and review the notification status.');return result.message;
 }
-export function mountExternalEditing(order,{root,repository,refresh,message,document=globalThis.document,requestDispatch=requestExternalDispatch,confirm=confirmDispatchEmail}={}){
+export function mountExternalEditing(order,{root,repository,refresh,message,document=globalThis.document,review=reviewDispatchEmail}={}){
  if(order.channel==='WEBSITE')return;
  const edit=el('button','Edit Order','button');edit.type='button';root.prepend(edit);
  edit.addEventListener('click',()=>{
@@ -45,9 +46,7 @@ export function mountExternalEditing(order,{root,repository,refresh,message,docu
  const state=notification?({pending:'Not Sent · explicitly requested',claimed:'Sending / requires review if stalled',sent:'Sent · mail server accepted; inbox delivery unconfirmed',failed:'Failed · requires review',unknown:'Unknown · requires review'})[notification.state]||'Unknown':!order.dispatchEmailDeclined&&order.statusHistory?.some(e=>['dispatched','completed'].includes(e.status))?'Unknown · no historical notification evidence':'Not Sent';
  section.append(el('p',state));if(notification?.recipient_email)section.append(el('p','Recipient used: '+notification.recipient_email));if(notification?.sent_at||notification?.attempted_at||notification?.claimed_at)section.append(el('p','Last notification activity: '+date(notification.sent_at||notification.attempted_at||notification.claimed_at)));
  section.append(el('p','Customer-detail saves never send email. Automatic external notifications and retries are disabled. Resends require a separate confirmation and reason.'));
- if(['dispatched','completed'].includes(order.fulfilmentStatus)&&externalRecipientAllowed((order.customer.email||'').trim(),order.channel)&&(!notification||notification.state==='pending')){
-  const send=el('button','Send Dispatch Email','button');send.type='button';let busy=false;
-  send.addEventListener('click',async()=>{if(busy)return;busy=true;send.disabled=true;try{if(await confirm({document,email:order.customer.email,channel:order.channel,dispatch:false})!=='yes')return;const notice=await requestDispatch(order,{send:true});await refresh();message.textContent=notice;}catch(error){message.textContent=error.message;}finally{busy=false;send.disabled=false;}});section.append(send);
- }else if(!order.customer.email)section.append(el('p','No customer email saved. Dispatch is available without a notification.'));
+ mountFirstDispatchPreview(order,{document,root:section,refresh,message,recipientAllowed:externalRecipientAllowed,review});
+ if(!order.customer.email)section.append(el('p','No customer email saved. Dispatch is available without a notification.'));
  root.append(section);
 }

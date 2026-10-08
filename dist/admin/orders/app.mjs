@@ -1,4 +1,5 @@
 import {mountFulfilmentCorrections} from './fulfilment-corrections.mjs';
+import {mountFirstDispatchPreview,reviewDispatchEmail} from './email-review.mjs';
 import {mountExternalEditing,confirmDispatchEmail,requestExternalDispatch,externalRecipientAllowed} from './external-edit.mjs';
 import {presentOrderDetail} from './detail-presentation.mjs';
 import {statusBadge} from '../application.mjs';
@@ -28,7 +29,8 @@ function appendEmailStatus(order){
   const state=row?({pending:'Eligible / Pending',claimed:'Claimed / Requires Review',sent:'Sent',failed:'Failed / Requires Review',unknown:'Unknown / Requires Review'})[row.state]||'Requires Review':'Not yet eligible';
   section.append(el('p',label+': '+state+(row?.sent_at?' · '+date(row.sent_at):row?.attempted_at?' · Last attempt '+date(row.attempted_at):'')));
  }
- section.append(el('p','Failed and uncertain outcomes require controlled review. Automatic retry and resend are disabled.','storage-note'));
+ section.append(el('p','Failed and uncertain outcomes require controlled review. Manual dispatch emails require a reviewed preview; resends require a successful prior notification and a reason.','storage-note'));
+ mountFirstDispatchPreview(order,{root:section,refresh,message:$('#order-message'),recipientAllowed:externalRecipientAllowed});
  $('#detail-content').append(section);
 }
 function appendDispatchEditor(order){
@@ -92,7 +94,21 @@ $('#order-status-form').addEventListener('submit',async event=>{event.preventDef
  if(!order||!next||$('#detail-status').value!==next)return;
  if(next==='dispatched'&&document.querySelector('.dispatch-details')?.dataset.dirty==='true'){$('#order-message').textContent='Save your dispatch details before marking this Order Dispatched.';document.querySelector('.dispatch-details button')?.focus();return;}
  const button=$('#order-status-form button');button.disabled=true;
- try{let notice='';if(order.channel!=='WEBSITE'&&next==='dispatched'){let choice='no';if(externalRecipientAllowed((order.customer.email||'').trim(),order.channel))choice=await confirmDispatchEmail({email:order.customer.email,channel:order.channel});if(choice==='cancel')return;notice=await requestExternalDispatch(order,{dispatch:true,send:choice==='yes'});}else await currentAdminOrderRepository().advanceFulfilment(order.id,next);await refresh();if(notice)$('#order-message').textContent=notice;}
+ try{
+  let notice='',choice='no';
+  if(next==='dispatched'){
+   if(externalRecipientAllowed((order.customer.email||'').trim(),order.channel))choice=await confirmDispatchEmail({email:order.customer.email,channel:order.channel});
+   if(choice==='cancel')return;
+   if(order.channel!=='WEBSITE')await requestExternalDispatch(order,{dispatch:true,send:false});else await currentAdminOrderRepository().advanceFulfilment(order.id,next);
+   notice='Order changed to Dispatched. No email has been sent.';await refresh();$('#order-message').textContent=notice;
+   if(choice==='yes'){
+    const current=records.find(o=>o.id===id);if(!current||current.fulfilmentStatus!=='dispatched')throw Error('Dispatch saved. Refresh the order before previewing the email.');
+    const result=await reviewDispatchEmail(current,{transitionNotice:notice+' Cancelling this preview keeps the order Dispatched.'});
+    await refresh();notice='Order changed to Dispatched. '+(result||'No email was sent.');
+   }
+  }else {await currentAdminOrderRepository().advanceFulfilment(order.id,next);await refresh();}
+  if(notice)$('#order-message').textContent=notice;
+ }
  catch(error){$('#order-message').textContent=error.message;}
  finally{button.disabled=false;}
 });
