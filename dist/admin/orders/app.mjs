@@ -1,3 +1,4 @@
+import {renderAftercareQueue,mountAftercarePanel} from './customer-aftercare.mjs';
 import {mountFulfilmentCorrections} from './fulfilment-corrections.mjs';
 import {mountFirstDispatchPreview,reviewDispatchEmail} from './email-review.mjs';
 import {mountExternalEditing,confirmDispatchEmail,requestExternalDispatch,externalRecipientAllowed} from './external-edit.mjs';
@@ -12,7 +13,8 @@ import {deploymentPath} from '../../deployment.mjs';
 import {createAdminAuth} from '../admin-auth.mjs';
 import {publicBackendConfig} from '../../backend/public-config.mjs';
 const $=selector=>document.querySelector(selector);
-let records=[];
+let records=[],aftercare=[],aftercareUnavailable=false;
+const aftercareView=new URLSearchParams(location.search).get('view')==='aftercare';
 $('#order-create-actions').hidden=false;
 $('#order-editor').hidden=true;
 const creating=new URLSearchParams(location.search).get('new')==='external';
@@ -49,7 +51,8 @@ function appendDispatchEditor(order){
 function render(){
  document.querySelector('.dispatch-details')?.remove();
  const id=new URLSearchParams(location.search).get('id'),order=records.find(item=>item.id===id);
- $('#order-detail').hidden=!id;$('#order-list').hidden=!!id;
+ $('#order-detail').hidden=!id;$('#order-list').hidden=!!id||aftercareView;
+ const aftercareRoot=$('#aftercare-queue');if(aftercareRoot)aftercareRoot.hidden=!!id||!aftercareView||creating;
  if(creating){$('#order-list').hidden=true;$('#order-detail').hidden=true;return;}
  if(id){if(!order){$('#order-message').textContent='Order not found in shared Orders. Return to the list and refresh.';return;}$('#detail-title').textContent=order.reference;showOrder(order,$('#detail-content'));if(isPaidOrder(order)&&order.channel==='WEBSITE'){const invoice=el('a','Print / Save Invoice','button');invoice.href=deploymentPath('/admin/orders/invoice/?id='+encodeURIComponent(order.id));$('#detail-content').prepend(invoice);}
   if(order.channel==='WEBSITE'&&order.reference==='AI-010010'&&order.paymentStatus==='paid'&&order.confirmationEmailStatus==='legacy'){
@@ -62,7 +65,7 @@ function render(){
     catch(error){$('#order-message').textContent=error.message;await refresh();}
    });$('#detail-content').prepend(button);
   }
-  appendEmailStatus(order);appendDispatchEditor(order);mountFulfilmentCorrections(order,{repository:currentAdminOrderRepository(),refresh,message:$('#order-message')});presentOrderDetail(document,order);
+  appendEmailStatus(order);if(aftercareUnavailable){const notice=el('section',undefined,'order-aftercare');notice.append(el('h3','Customer Aftercare'),el('p','Customer Aftercare is unavailable. Refresh before taking a follow-up action.','storage-note'));$('#detail-content').append(notice);}else mountAftercarePanel(order,aftercare.find(r=>r.orderId===order.id),{root:$('#detail-content'),repository:currentAdminOrderRepository(),refresh,message:$('#order-message')});appendDispatchEditor(order);mountFulfilmentCorrections(order,{repository:currentAdminOrderRepository(),refresh,message:$('#order-message')});presentOrderDetail(document,order);
   const next=nextFulfilment(order),form=$('#order-status-form');form.hidden=!next;
   const select=$('#detail-status');select.replaceChildren();if(next){const choice=el('option',fulfilmentLabels[next]);choice.value=next;select.append(choice);}
   if(next){const button=form.querySelector('button');button.textContent='Advance to '+fulfilmentLabels[next];const note=form.querySelector('p');note.textContent=order.channel!=='WEBSITE'?'External order fulfilment. Dispatch emails require your explicit confirmation; saving details never sends email.':next==='completed'?'Completed has no customer email. Payment state is unchanged.':'After customer emails are activated, this transition will create a customer '+fulfilmentLabels[next]+' update. Email delivery is currently inactive.';form.querySelector('label').firstChild.textContent=next==='dispatched'?'Step 2 · Advance fulfilment':'Advance fulfilment';}
@@ -83,12 +86,13 @@ function render(){
    $('#detail-content').append(notice,button);
   }else if(order.paymentStatus==='refunded')$('#detail-content').append(el('p','This Order has been fully refunded. Fulfilment progression is unavailable; the existing fulfilment history is unchanged.','storage-note'));
   return;}
+ if(aftercareView){if(aftercareUnavailable)$('#aftercare-queue').replaceChildren(el('h2','Customer Aftercare'),el('p','Customer Aftercare is unavailable. Refresh before taking a follow-up action.','storage-note'));else renderAftercareQueue(aftercare,{root:$('#aftercare-queue')});return;}
  const q=$('#order-search').value.toLowerCase().trim(),filter=$('#order-filter').value;
  const rows=records.filter(item=>(attempts?isCheckoutAttempt(item):isPaidOrder(item))&&(!filter||item.fulfilmentStatus===filter)&&[item.reference,item.externalReference,channels[item.channel],item.customer.name,item.customer.email].join(' ').toLowerCase().includes(q));
  $('#order-rows').replaceChildren();$('#orders-empty').hidden=!!rows.length;
  for(const order of rows){const row=el('tr'),cell=el('td'),link=el('a',order.reference);link.href=deploymentPath('/admin/orders/?id='+encodeURIComponent(order.id));cell.append(link);if(order.externalReference)cell.append(el('small',' · '+order.externalReference));row.append(cell,el('td',channels[order.channel]||order.channel),...[order.orderDate||date(order.createdAt),order.customer.name||'Not supplied',money(order.pricing.total),paymentLabels[order.paymentStatus]||order.paymentStatus,isPaidOrder(order)?fulfilmentLabels[order.fulfilmentStatus]||order.fulfilmentStatus:'Checkout attempt'].map((value,index)=>{const cell=el('td',index===3||index===4?undefined:value,index===3||index===4?'order-state':'');if(index===3||index===4)cell.append(statusBadge(document,value,index===3&&['unpaid','partially_refunded'].includes(order.paymentStatus)||index===4&&['pending','ready_to_dispatch'].includes(order.fulfilmentStatus)?'warning':'neutral'));if(index===4&&order.paymentStatus==='partially_refunded'&&!order.partialRefundAcknowledged)cell.append(statusBadge(document,'Refund review required','warning'));return cell;}));$('#order-rows').append(row);}
 }
-async function refresh(){if(document.querySelector('.external-order-edit,.external-dispatch-dialog'))return;try{records=await currentAdminOrderRepository().list();$('#order-message').textContent='';render();}catch(error){$('#order-message').textContent=error.message;}}
+async function refresh(){if(document.querySelector('.external-order-edit,.external-dispatch-dialog'))return;try{const repository=currentAdminOrderRepository();aftercareUnavailable=false;[records,aftercare]=await Promise.all([repository.list(),repository.aftercare?repository.aftercare().catch(()=>{aftercareUnavailable=true;return [];}):[]]);$('#order-message').textContent='';render();}catch(error){$('#order-message').textContent=error.message;}}
 $('#order-search').addEventListener('input',render);$('#order-filter').addEventListener('change',render);
 $('#order-status-form').addEventListener('submit',async event=>{event.preventDefault();const id=new URLSearchParams(location.search).get('id'),order=records.find(item=>item.id===id),next=nextFulfilment(order);
  if(!order||!next||$('#detail-status').value!==next)return;

@@ -1,7 +1,7 @@
 // SMTP over implicit TLS. No caller-controlled server, sender or credentials.
 export async function sendOrderMail(env:{get:(key:string)=>string|undefined},mail:{to:string;subject:string;text:string;html:string},connect:(options:{hostname:string;port:number})=>Promise<any>=Deno.connectTls){
  const host=env.get('SMTP_HOST'),port=Number(env.get('SMTP_PORT')),user=env.get('SMTP_USER'),password=env.get('SMTP_PASSWORD'),from=env.get('SMTP_FROM_EMAIL'),name=env.get('SMTP_FROM_NAME');
- if(!host||port!==465||!user||!password||!from||!name||/[\r\n]/.test(from+name)||!/^\S+@\S+\.\S+$/.test(from)||!/^\S+@\S+\.\S+$/.test(mail.to)||!/^Apparition Instruments order AI-\d+ (?:confirmed|in production|ready to dispatch|dispatched|refunded)$/.test(mail.subject))throw new Error('SMTP configuration or recipient invalid');
+ if(!host||port!==465||!user||!password||!from||!name||/[\r\n]/.test(from+name)||!/^\S+@\S+\.\S+$/.test(from)||!/^\S+@\S+\.\S+$/.test(mail.to)||!(/^(?:Apparition Instruments order AI-\d+ (?:confirmed|in production|ready to dispatch|dispatched|refunded)|A little thank you from Apparition Instruments)$/.test(mail.subject)))throw new Error('SMTP configuration or recipient invalid');
  const encoder=new TextEncoder(),decoder=new TextDecoder();let conn:any,buffer='',dataStarted=false;
  const base64=(value:string)=>btoa(String.fromCharCode(...encoder.encode(value)));
  const safe=(value:string)=>value.replace(/\r\n?/g,'\n').split('\n').map(line=>line.startsWith('.')?'.'+line:line).join('\r\n');

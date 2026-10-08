@@ -1,4 +1,4 @@
-import {renderEmailV2} from './v2.ts';
+import {renderEmailV2,aftercareTemplateIdentity} from './v2.ts';
 import {sendOrderMail} from './smtp.ts';
 
 type Env={get:(key:string)=>string|undefined};
@@ -21,12 +21,12 @@ export async function verifyPreview(token:string,secret:string){
  if(!await crypto.subtle.verify('HMAC',await signingKey(secret),sig,bytes(parts[0])))throw Error('Invalid preview');
  return JSON.parse(new TextDecoder().decode(decode(parts[0])));
 }
-export function prepareContent(context:any,env:Env){
+export function prepareContent(context:any,env:Env,kind='dispatched'){
  const order=context.order,recipient=String(order.customer?.email||'').trim().toLowerCase();
  const from={email:env.get('SMTP_FROM_EMAIL'),name:env.get('SMTP_FROM_NAME')};
  if(!from.email||!from.name||/[\r\n]/.test(from.email+from.name))throw Error('Sender unavailable');
- const message=renderEmailV2('dispatched',{...order,customer:{...order.customer,email:recipient}});
- return {message,from,template:templateIdentity,renderer:renderEmailV2.toString()};
+ const message=renderEmailV2(kind as any,{...order,customer:{...order.customer,email:recipient}},{manualAftercare:kind==='aftercare'&&context.route!=='email'});
+ return {message,from,template:kind==='aftercare'?aftercareTemplateIdentity:templateIdentity,renderer:renderEmailV2.toString()};
 }
 export async function handlePreparedEmail(request:Request,env:Env=Deno.env,transport:typeof fetch=fetch,send=sendOrderMail,now=()=>Date.now()){
  const reply=(status:number,data:any)=>new Response(JSON.stringify(data),{status,headers:{...cors,'Content-Type':'application/json'}});
@@ -44,42 +44,45 @@ export async function handlePreparedEmail(request:Request,env:Env=Deno.env,trans
   const members=await transport(url+'/rest/v1/admin_members?select=user_id&user_id=eq.'+user.id,{headers:userHeaders});
   if(!members.ok||!(await members.json()).some((m:any)=>m.user_id===user.id))return reply(403,{message:'Admin membership required'});
   let body:any;try{body=await request.json();}catch{return reply(400,{message:'Invalid request'});}
-  const confirm=new URL(request.url).pathname.endsWith('/confirm-dispatch');
+  const path=new URL(request.url).pathname,kind=path.endsWith('-aftercare')?'aftercare':'dispatched',aftercare=kind==='aftercare',template=aftercare?aftercareTemplateIdentity:templateIdentity;
+  const confirm=path.endsWith('/confirm-dispatch')||path.endsWith('/confirm-aftercare');
   const allowed=confirm?['orderId','previewIdentity','recipientConfirmed','reason']:['orderId','mode'];
   if(!body||Object.keys(body).some(k=>!allowed.includes(k))||!uuid.test(body.orderId||''))return reply(400,{message:'Order identity required; email overrides are unavailable'});
   let binding:any;
   if(confirm){
    if(body.recipientConfirmed!==true)return reply(400,{message:'Explicit recipient confirmation required'});
    try{binding=await verifyPreview(body.previewIdentity,service);}catch{return reply(409,{code:'PREVIEW_STALE',message:stale});}
-   if(binding.actor!==user.id||binding.orderId!==body.orderId||!['first','resend'].includes(binding.mode)||!uuid.test(binding.operationId||'')||!Number.isSafeInteger(binding.expires)||binding.expires<=now()||binding.expires>now()+600000)return reply(409,{code:'PREVIEW_STALE',message:stale});
+   if(binding.kind!==kind||binding.actor!==user.id||binding.orderId!==body.orderId||!['first','resend'].includes(binding.mode)||!uuid.test(binding.operationId||'')||!Number.isSafeInteger(binding.expires)||binding.expires<=now()||binding.expires>now()+600000)return reply(409,{code:'PREVIEW_STALE',message:stale});
    if(binding.mode==='resend'&&(typeof body.reason!=='string'||body.reason.trim().length<5||body.reason.trim().length>1000||/[\x00-\x1f\x7f]/.test(body.reason)))return reply(400,{message:'Resend reason must contain 5–1000 characters'});
   }else if(!['first','resend'].includes(body.mode))return reply(400,{message:'Unsupported notification action'});
   const mode=confirm?binding.mode:body.mode;
+  if(aftercare&&mode!=='first')return reply(400,{message:'Aftercare has no repeat-send action'});
   const rpc=async(name:string,payload:any,headers=userHeaders)=>{
    const r=await transport(url+'/rest/v1/rpc/'+name,{method:'POST',headers,body:JSON.stringify(payload)});
    if(!r.ok){const error=Object.assign(Error('Preview unavailable'),{status:r.status});throw error;}return r.json();
   };
-  let context:any;try{context=await rpc('get_dispatch_preview_context',{p_order_id:body.orderId,p_resend:mode==='resend'});}catch{return reply(409,{code:confirm?'PREVIEW_STALE':'INELIGIBLE',message:confirm?stale:'This order is not eligible for this notification. Refresh the order and review its communication history.'});}
+  let context:any;try{context=await rpc(aftercare?'get_aftercare_preview_context':'get_dispatch_preview_context',aftercare?{p_order_id:body.orderId}:{p_order_id:body.orderId,p_resend:mode==='resend'});}catch{return reply(409,{code:confirm?'PREVIEW_STALE':'INELIGIBLE',message:confirm?stale:'This order is not eligible for this notification. Refresh the order and review its communication history.'});}
   if(context?.order?.id!==body.orderId)return reply(409,{code:'PREVIEW_STALE',message:stale});
-  let content:any;try{content=prepareContent(context,env);}catch{return reply(409,{code:confirm?'PREVIEW_STALE':'INELIGIBLE',message:confirm?stale:'The saved order cannot be rendered safely. Review its customer and item information.'});}
+  let content:any;try{content=prepareContent(context,env,kind);}catch{return reply(409,{code:confirm?'PREVIEW_STALE':'INELIGIBLE',message:confirm?stale:'The saved order cannot be rendered safely. Review its customer and item information.'});}
   const stateHash=await digest(context),contentHash=await digest(content);
   if(!confirm){
    const expires=now()+600000;
-   const previewIdentity=await signPreview({actor:user.id,orderId:body.orderId,mode,operationId:crypto.randomUUID(),stateHash,contentHash,expires,template:templateIdentity},service);
-   return reply(200,{...content.message,from:content.from,orderReference:context.order.reference,channel:context.order.sales_channel,kind:'dispatched',mode,previewIdentity,expires,template:templateIdentity});
+   const previewIdentity=await signPreview({actor:user.id,orderId:body.orderId,mode,kind,operationId:crypto.randomUUID(),stateHash,contentHash,expires,template},service);
+   return reply(200,{...content.message,from:content.from,orderReference:context.order.reference,channel:context.order.sales_channel,kind,mode,previewIdentity,expires,template,route:aftercare?context.route:'email',notice:aftercare?context.notice:null});
   }
-  if(binding.stateHash!==stateHash||binding.contentHash!==contentHash||binding.template!==templateIdentity)return reply(409,{code:'PREVIEW_STALE',message:stale});
-  let claim:any;try{claim=await rpc('confirm_dispatch_preview',{p_order_id:body.orderId,p_actor:user.id,p_resend:mode==='resend',p_context:context,p_operation_id:binding.operationId,p_reason:mode==='resend'?body.reason.trim():null},serviceHeaders);}catch(error){
+  if(binding.stateHash!==stateHash||binding.contentHash!==contentHash||binding.template!==template)return reply(409,{code:'PREVIEW_STALE',message:stale});
+  if(aftercare&&context.route!=='email')return reply(409,{code:'INELIGIBLE',message:'Use the original order conversation. Aftercare email transport is unavailable for this channel.'});
+  let claim:any;try{claim=await rpc(aftercare?'confirm_aftercare_preview':'confirm_dispatch_preview',aftercare?{p_order_id:body.orderId,p_actor:user.id,p_context:context,p_operation_id:binding.operationId,p_template:template}:{p_order_id:body.orderId,p_actor:user.id,p_resend:mode==='resend',p_context:context,p_operation_id:binding.operationId,p_reason:mode==='resend'?body.reason.trim():null},serviceHeaders);}catch(error){
    if([400,409].includes((error as {status?:number})?.status||0))return reply(409,{code:'PREVIEW_STALE',message:stale});
    return reply(503,{code:'REVIEW_REQUIRED',message:'Confirmation outcome requires review. Refresh the notification audit; do not resend.'});
   }
   if(!claim||!uuid.test(claim.claim||''))return reply(409,{code:'PREVIEW_STALE',message:stale});
   claimed=true;
-  if(await rpc('mark_order_email_attempt',{p_order_id:body.orderId,p_kind:'dispatched',p_claim:claim.claim},serviceHeaders)!==true)return reply(503,{code:'REVIEW_REQUIRED',message:'Notification claimed but not attempted. Review its audit before another action.'});
+  if(await rpc('mark_order_email_attempt',{p_order_id:body.orderId,p_kind:kind,p_claim:claim.claim},serviceHeaders)!==true)return reply(503,{code:'REVIEW_REQUIRED',message:'Notification claimed but not attempted. Review its audit before another action.'});
   let state='sent',reason=null;
   // This is the already-reviewed payload, never client HTML or a post-claim regeneration.
   try{await send(env,content.message);}catch(error){state=(error as {outcome?:string})?.outcome==='unknown'?'unknown':'failed';reason='SMTP acceptance could not be confirmed';}
-  if(await rpc('finish_order_email_delivery',{p_order_id:body.orderId,p_kind:'dispatched',p_claim:claim.claim,p_state:state,p_reason:reason},serviceHeaders)!==true)return reply(503,{code:'REVIEW_REQUIRED',message:'Email outcome could not be recorded. Review the notification audit; do not resend.'});
+  if(await rpc(aftercare?'finish_aftercare_delivery':'finish_order_email_delivery',aftercare?{p_order_id:body.orderId,p_claim:claim.claim,p_state:state,p_reason:reason}:{p_order_id:body.orderId,p_kind:kind,p_claim:claim.claim,p_state:state,p_reason:reason},serviceHeaders)!==true)return reply(503,{code:'REVIEW_REQUIRED',message:'Email outcome could not be recorded. Review the notification audit; do not resend.'});
   return reply(200,{state,message:state==='sent'?'Provider accepted. Inbox delivery is not confirmed.':state==='unknown'?'Email outcome uncertain. Review the notification audit; do not resend.':'Email failed. Review the notification audit. Automatic retry is disabled.'});
  }catch{return reply(503,{code:claimed?'REVIEW_REQUIRED':'UNAVAILABLE',message:claimed?'Email outcome requires review. Refresh the notification audit; do not resend.':'Email preview unavailable. No automatic retry will occur.'});}
 }
