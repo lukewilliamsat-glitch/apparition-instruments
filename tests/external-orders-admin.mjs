@@ -39,6 +39,6 @@ await import('../dist/admin/orders/app.mjs?test=external-list');await new Promis
 assert.match(w.document.querySelector('#order-rows').textContent,/eBay/);assert.match(w.document.querySelector('#order-rows').textContent,/22-ABC/);
 w.document.querySelector('#order-search').value='22-ABC';w.document.querySelector('#order-search').dispatchEvent(new w.Event('input'));assert.equal(w.document.querySelectorAll('#order-rows tr').length,1);
 w.location.href='https://apparitioninstruments.co.uk/admin/orders/?id=saved';w.document.querySelector('#order-search').dispatchEvent(new w.Event('input'));
-assert.match(w.document.querySelector('#detail-content').textContent,/No Apparition customer emails/);assert.doesNotMatch(w.document.querySelector('#detail-content').textContent,/Retrieve verified Stripe|Print \/ Save Invoice/);
+assert.match(w.document.querySelector('#detail-content').textContent,/Customer-detail saves never send email/);assert.doesNotMatch(w.document.querySelector('#detail-content').textContent,/Retrieve verified Stripe|Print \/ Save Invoice/);
 await w.happyDOM.close();
 console.log('External Orders Admin: authenticated catalogue/availability, form arithmetic, double-click suppression, RPC payload, channel/reference/assembly rendering and email/Stripe controls PASS');

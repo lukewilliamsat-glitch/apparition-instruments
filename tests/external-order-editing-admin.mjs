@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {Window} from 'happy-dom';
+import {mountExternalEditing,confirmDispatchEmail,requestExternalDispatch} from '../dist/admin/orders/external-edit.mjs';
+const w=new Window({url:'https://apparitioninstruments.co.uk/admin/orders/'});globalThis.document=w.document;
+const root=w.document.createElement('div'),message=w.document.createElement('p');w.document.body.append(root,message);
+const order={id:'saved',updatedAt:'2026-10-08T00:00:00Z',channel:'EBAY',externalReference:'REF',customer:{name:'Buyer'},delivery:{},dispatchDetails:{},notes:'',fulfilmentStatus:'dispatched',statusHistory:[],emailDeliveries:[]};
+let changes=[],sends=0,refreshes=0;
+const repository={editExternal:async(...args)=>changes.push(args)};
+const mount=o=>{root.replaceChildren();mountExternalEditing(o,{root,repository,message,refresh:async()=>refreshes++,requestDispatch:async()=>{sends++;return 'Sent';},confirm:async()=> 'yes'});};
+mount(order);root.querySelector('button').click();const form=root.querySelector('form');form.reportValidity=()=>true;form.elements.email.value=' LATER@EXAMPLE.TEST ';form.dispatchEvent(new w.Event('submit',{cancelable:true}));form.dispatchEvent(new w.Event('submit',{cancelable:true}));await new Promise(r=>setTimeout(r,0));assert.equal(changes.length,1);assert.equal(changes[0][2].email,'later@example.test');assert.equal(sends,0);assert.equal(refreshes,1);assert.match(message.textContent,/No email was sent/);
+mount({...order,customer:{name:'Buyer',email:'later@example.test'}});const send=[...root.querySelectorAll('button')].find(b=>b.textContent==='Send Dispatch Email');send.click();send.click();await new Promise(r=>setTimeout(r,0));assert.equal(sends,1);
+mount({...order,customer:{email:'new@example.test'},emailDeliveries:[{kind:'dispatched',state:'sent',recipient_email:'old@example.test'}]});assert.match(root.textContent,/old@example.test/);assert.equal([...root.querySelectorAll('button')].some(b=>b.textContent==='Send Dispatch Email'),false);
+for(const [label,result] of [['Yes, send email','yes'],['No, update only','no'],['Cancel','cancel']]){const promise=confirmDispatchEmail({document:w.document,email:'fixture@example.test'});const dialog=w.document.querySelector('dialog');assert.equal(dialog.open,true);assert.equal(dialog.getAttribute('aria-labelledby'),'external-dispatch-title');[...dialog.querySelectorAll('button')].find(b=>b.textContent===label).click();assert.equal(await promise,result);assert.equal(w.document.querySelector('dialog'),null);}
+const escape=confirmDispatchEmail({document:w.document,email:'fixture@example.test'});w.document.querySelector('dialog').dispatchEvent(new w.Event('cancel',{cancelable:true}));assert.equal(await escape,'cancel');
+let posted;await requestExternalDispatch({...order,customer:{email:'later@example.test'}},{send:true,auth:{accessToken:async()=> 'admin'},request:async(url,options)=>{posted=JSON.parse(options.body);assert.match(url,/external-dispatch$/);assert.equal(options.headers.Authorization,'Bearer admin');return Response.json({message:'Sent'});}});assert.equal(posted.dispatch,false);assert.equal(posted.send,true);
+await w.happyDOM.close();console.log('External Admin PASS: Edit Order/save/email/no send, postdispatch manual send, double clicks, recipient history, native dialog Yes/No/Cancel/Escape, authenticated request');

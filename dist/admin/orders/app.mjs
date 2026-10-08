@@ -1,3 +1,4 @@
+import {mountExternalEditing,confirmDispatchEmail,requestExternalDispatch,validExternalEmail} from './external-edit.mjs';
 import {presentOrderDetail} from './detail-presentation.mjs';
 import {statusBadge} from '../application.mjs';
 import {currentAdminOrderRepository} from '../../backend/order-data.mjs?v=external-v1';
@@ -19,7 +20,7 @@ for(const [key,label] of Object.entries(fulfilmentLabels)){const option=el('opti
 const deliveryLabels={in_production:'In Production',ready_to_dispatch:'Ready to Dispatch',dispatched:'Dispatched',full_refund:'Refund Processed'};
 function appendEmailStatus(order){
  const section=el('section',undefined,'order-email-status');section.append(el('h3','Customer communications'));
- if(order.channel!=='WEBSITE'){section.append(el('p','External sale: customer communications remain with the sales channel. No Apparition customer emails are sent.'));$('#detail-content').append(section);return;}
+ if(order.channel!=='WEBSITE'){mountExternalEditing(order,{root:$('#detail-content'),repository:currentAdminOrderRepository(),refresh,message:$('#order-message')});return;}
  section.append(el('p','Lifecycle and refund email delivery is not yet active. Existing order confirmations remain on the approved production path.','storage-note'));
  for(const [kind,label] of Object.entries(deliveryLabels)){
   const row=(order.emailDeliveries||[]).find(item=>item.kind===kind);
@@ -61,7 +62,7 @@ function render(){
   appendEmailStatus(order);appendDispatchEditor(order);presentOrderDetail(document,order);
   const next=nextFulfilment(order),form=$('#order-status-form');form.hidden=!next;
   const select=$('#detail-status');select.replaceChildren();if(next){const choice=el('option',fulfilmentLabels[next]);choice.value=next;select.append(choice);}
-  if(next){const button=form.querySelector('button');button.textContent='Advance to '+fulfilmentLabels[next];const note=form.querySelector('p');note.textContent=order.channel!=='WEBSITE'?'External order fulfilment only. No customer email will be sent.':next==='completed'?'Completed has no customer email. Payment state is unchanged.':'After customer emails are activated, this transition will create a customer '+fulfilmentLabels[next]+' update. Email delivery is currently inactive.';form.querySelector('label').firstChild.textContent=next==='dispatched'?'Step 2 · Advance fulfilment':'Advance fulfilment';}
+  if(next){const button=form.querySelector('button');button.textContent='Advance to '+fulfilmentLabels[next];const note=form.querySelector('p');note.textContent=order.channel!=='WEBSITE'?'External order fulfilment. Dispatch emails require your explicit confirmation; saving details never sends email.':next==='completed'?'Completed has no customer email. Payment state is unchanged.':'After customer emails are activated, this transition will create a customer '+fulfilmentLabels[next]+' update. Email delivery is currently inactive.';form.querySelector('label').firstChild.textContent=next==='dispatched'?'Step 2 · Advance fulfilment':'Advance fulfilment';}
   if(order.channel==='WEBSITE'&&order.paymentStatus==='paid'&&(!order.customer.name||!order.delivery.line1)){
    const button=el('button','Retrieve verified Stripe delivery details','button');button.type='button';
    button.addEventListener('click',async()=>{button.disabled=true;$('#order-message').textContent='Retrieving verified delivery details…';
@@ -84,13 +85,13 @@ function render(){
  $('#order-rows').replaceChildren();$('#orders-empty').hidden=!!rows.length;
  for(const order of rows){const row=el('tr'),cell=el('td'),link=el('a',order.reference);link.href=deploymentPath('/admin/orders/?id='+encodeURIComponent(order.id));cell.append(link);if(order.externalReference)cell.append(el('small',' · '+order.externalReference));row.append(cell,el('td',channels[order.channel]||order.channel),...[order.orderDate||date(order.createdAt),order.customer.name||'Not supplied',money(order.pricing.total),paymentLabels[order.paymentStatus]||order.paymentStatus,isPaidOrder(order)?fulfilmentLabels[order.fulfilmentStatus]||order.fulfilmentStatus:'Checkout attempt'].map((value,index)=>{const cell=el('td',index===3||index===4?undefined:value,index===3||index===4?'order-state':'');if(index===3||index===4)cell.append(statusBadge(document,value,index===3&&['unpaid','partially_refunded'].includes(order.paymentStatus)||index===4&&['pending','ready_to_dispatch'].includes(order.fulfilmentStatus)?'warning':'neutral'));if(index===4&&order.paymentStatus==='partially_refunded'&&!order.partialRefundAcknowledged)cell.append(statusBadge(document,'Refund review required','warning'));return cell;}));$('#order-rows').append(row);}
 }
-async function refresh(){try{records=await currentAdminOrderRepository().list();$('#order-message').textContent='';render();}catch(error){$('#order-message').textContent=error.message;}}
+async function refresh(){if(document.querySelector('.external-order-edit,.external-dispatch-dialog'))return;try{records=await currentAdminOrderRepository().list();$('#order-message').textContent='';render();}catch(error){$('#order-message').textContent=error.message;}}
 $('#order-search').addEventListener('input',render);$('#order-filter').addEventListener('change',render);
 $('#order-status-form').addEventListener('submit',async event=>{event.preventDefault();const id=new URLSearchParams(location.search).get('id'),order=records.find(item=>item.id===id),next=nextFulfilment(order);
  if(!order||!next||$('#detail-status').value!==next)return;
  if(next==='dispatched'&&document.querySelector('.dispatch-details')?.dataset.dirty==='true'){$('#order-message').textContent='Save your dispatch details before marking this Order Dispatched.';document.querySelector('.dispatch-details button')?.focus();return;}
  const button=$('#order-status-form button');button.disabled=true;
- try{await currentAdminOrderRepository().advanceFulfilment(order.id,next);await refresh();}
+ try{let notice='';if(order.channel!=='WEBSITE'&&next==='dispatched'){let choice='no';if(validExternalEmail((order.customer.email||'').trim()))choice=await confirmDispatchEmail({email:order.customer.email});if(choice==='cancel')return;notice=await requestExternalDispatch(order,{dispatch:true,send:choice==='yes'});}else await currentAdminOrderRepository().advanceFulfilment(order.id,next);await refresh();if(notice)$('#order-message').textContent=notice;}
  catch(error){$('#order-message').textContent=error.message;}
  finally{button.disabled=false;}
 });

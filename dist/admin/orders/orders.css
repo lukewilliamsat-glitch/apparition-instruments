@@ -3,3 +3,5 @@
 
 .order-state{font-weight:600;color:#c7ced7}.order-state.paid{color:#9ac9ab}.order-state.unpaid{color:#bfa58b}
 .order-email-status,.dispatch-details{border-top:1px solid #555;margin-top:24px;padding:18px 0}.order-email-status p{margin:7px 0}.dispatch-details label{display:block;max-width:540px;margin:12px 0}.dispatch-details input{display:block;width:100%;margin-top:5px}.dispatch-details button{margin-top:10px}
+
+.external-order-edit{border:1px solid #555;padding:20px;margin:18px 0}.external-order-edit label{display:block;max-width:540px;margin:12px 0}.external-order-edit input,.external-order-edit textarea,.external-order-edit select{display:block;width:100%;margin-top:5px}.external-order-edit button{margin:8px 8px 0 0}.external-dispatch-dialog{background:#202124;color:#e7e5df;border:1px solid #b89b5e;padding:24px;max-width:min(540px,calc(100vw - 32px));overflow-wrap:anywhere}.external-dispatch-dialog::backdrop{background:#000b}.external-dispatch-dialog .dialog-actions{display:flex;gap:12px;flex-wrap:wrap}.external-dispatch-dialog h2{font-size:24px}.external-dispatch-dialog p{line-height:1.6}
