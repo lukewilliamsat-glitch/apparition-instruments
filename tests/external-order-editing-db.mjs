@@ -39,6 +39,7 @@ await db.exec(read('20260927112000_p08b5b_delivery_boundary.sql').split('alter t
 await db.exec(read('20260927112000_p08b5b_delivery_boundary.sql').slice(read('20260927112000_p08b5b_delivery_boundary.sql').indexOf('create function public.set_automatic_email_eligibility')).split('-- The claim remains atomic')[0]);
 await db.exec("alter table public.orders add column dispatch_details jsonb not null default '{}'::jsonb");
 await db.exec(read('20261008075917_external_order_editing_v1.sql'));
+await db.exec(read('20261008081744_ebay_relay_dispatch_v1.sql'));
 const request={requestId:crypto.randomUUID(),channel:'EBAY',externalReference:'EDIT-1',orderDate:'2026-10-08',customerName:'Buyer',postagePence:91,items:[{type:'component',productId:'a',quantity:2,unitPricePence:100}]};
 const created=await create(request),initialStock=await stock();
 const row=()=>one('select * from public.orders where id=$1',[created.id]);
@@ -74,6 +75,15 @@ for(const outcome of ['sent','failed']){
  await db.query("select public.mark_order_email_attempt($1,'dispatched',$2)",[fresh.id,cl.claim]);await db.query("select public.finish_order_email_delivery($1,'dispatched',$2,$3,null)",[fresh.id,cl.claim,outcome]);
  assert.equal((await one('select public.claim_external_dispatch($1) as c',[id])).c,null);const d=await one('select * from public.order_email_deliveries where id=$1',[id]);assert.equal(d.state,outcome);assert.equal(!!d.sent_at,outcome==='sent');
 }
+// Exact relay policy and order association, local fixtures only.
+const policyCases=[['buyer@members.ebay.com','EBAY',true],['buyer@MeMbErS.EbAy.CoM','EBAY',true],['invalid','EBAY',false],['buyer@members.ebay.com.evil.test','EBAY',false],['buyer@sub.members.ebay.com','EBAY',false],['buyer@members-ebay.com','EBAY',false],['buyer@members.ebay.co.uk','EBAY',false],['buyer@ebay.com','EBAY',false],['buyer@members.ebay.com','DIRECT',false],['buyer@members.ebay.com','OTHER',false],['buyer@example.test','DIRECT',true]];
+const {externalRecipientAllowed}=await import('../dist/admin/orders/external-edit.mjs');
+for(const [email,channel,expected] of policyCases){assert.equal((await one('select public.external_dispatch_recipient_allowed($1,$2) as ok',[email,channel])).ok,expected);assert.equal(externalRecipientAllowed(email,channel),expected);}
+const relay=await create({...request,requestId:crypto.randomUUID(),externalReference:'RELAY'});await db.query("update public.orders set customer=customer||'{\"email\":\"BUYER@MeMbErS.EbAy.CoM\"}',status='ready_to_dispatch' where id=$1",[relay.id]);
+const relayStock=await stock();await assert.rejects(db.query('select public.request_external_dispatch($1,true,true,$2)',[relay.id,'unrelated@members.ebay.com']));assert.equal((await one('select status from public.orders where id=$1',[relay.id])).status,'ready_to_dispatch');
+const relayId=(await one('select public.request_external_dispatch($1,true,true,$2) as id',[relay.id,'buyer@members.ebay.com'])).id;
+const relayClaim=(await one('select public.claim_external_dispatch($1) as c',[relayId])).c;assert.equal(relayClaim.recipient,'buyer@members.ebay.com');assert.equal(relayClaim.order.sales_channel,'EBAY');assert.equal((await one('select public.claim_external_dispatch($1) as c',[relayId])).c,null);assert.deepEqual(await stock(),relayStock);
+const otherRelay=await create({...request,requestId:crypto.randomUUID(),channel:'DIRECT',externalReference:'WRONG-CHANNEL'});await db.query("update public.orders set customer=customer||'{\"email\":\"buyer@members.ebay.com\"}',status='ready_to_dispatch' where id=$1",[otherRelay.id]);await assert.rejects(db.query('select public.request_external_dispatch($1,true,true,$2)',[otherRelay.id,'buyer@members.ebay.com']));
 // Admin auth and RLS, no business-row tests on production.
 await db.exec("select set_config('request.jwt.claim.sub','20000000-0000-4000-8000-000000000002',false)");
 await assert.rejects(edit(),e=>e.code==='42501');await assert.rejects(dispatch(true,'new@example.test',false),e=>e.code==='42501');

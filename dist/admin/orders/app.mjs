@@ -1,4 +1,4 @@
-import {mountExternalEditing,confirmDispatchEmail,requestExternalDispatch,validExternalEmail} from './external-edit.mjs';
+import {mountExternalEditing,confirmDispatchEmail,requestExternalDispatch,externalRecipientAllowed} from './external-edit.mjs';
 import {presentOrderDetail} from './detail-presentation.mjs';
 import {statusBadge} from '../application.mjs';
 import {currentAdminOrderRepository} from '../../backend/order-data.mjs?v=external-v1';
@@ -91,7 +91,7 @@ $('#order-status-form').addEventListener('submit',async event=>{event.preventDef
  if(!order||!next||$('#detail-status').value!==next)return;
  if(next==='dispatched'&&document.querySelector('.dispatch-details')?.dataset.dirty==='true'){$('#order-message').textContent='Save your dispatch details before marking this Order Dispatched.';document.querySelector('.dispatch-details button')?.focus();return;}
  const button=$('#order-status-form button');button.disabled=true;
- try{let notice='';if(order.channel!=='WEBSITE'&&next==='dispatched'){let choice='no';if(validExternalEmail((order.customer.email||'').trim()))choice=await confirmDispatchEmail({email:order.customer.email});if(choice==='cancel')return;notice=await requestExternalDispatch(order,{dispatch:true,send:choice==='yes'});}else await currentAdminOrderRepository().advanceFulfilment(order.id,next);await refresh();if(notice)$('#order-message').textContent=notice;}
+ try{let notice='';if(order.channel!=='WEBSITE'&&next==='dispatched'){let choice='no';if(externalRecipientAllowed((order.customer.email||'').trim(),order.channel))choice=await confirmDispatchEmail({email:order.customer.email,channel:order.channel});if(choice==='cancel')return;notice=await requestExternalDispatch(order,{dispatch:true,send:choice==='yes'});}else await currentAdminOrderRepository().advanceFulfilment(order.id,next);await refresh();if(notice)$('#order-message').textContent=notice;}
  catch(error){$('#order-message').textContent=error.message;}
  finally{button.disabled=false;}
 });
