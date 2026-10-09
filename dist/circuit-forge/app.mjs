@@ -106,6 +106,7 @@ function updateSelection(){
   }
  }
  if(selection?.kind==='component'&&presentationMode!=='build'){const map=switchContactMap(circuit,selection.id);if(map){const visual=el('div');visual.innerHTML=map;box.append(visual);}}
+ shell?.showInspection(selection);
  for(const button of document.querySelectorAll('#forge-parts button'))button.setAttribute('aria-pressed',String(selection?.kind==='component'&&button.dataset.part===selection.id));
  for(const button of document.querySelectorAll('[data-trace]'))button.setAttribute('aria-pressed',String(selection?.kind==='terminal'&&button.dataset.trace===selection.ref));
  paint();
@@ -216,7 +217,7 @@ for(const name of ['volume','tone'])$('#forge-response-'+name).addEventListener(
 });
 mount.addEventListener('click',event=>{const target=event.target.closest('[data-terminal],[data-wire],[data-component]');if(!target)return;if(target.dataset.terminal)choose('terminal',target.dataset.terminal);else if(target.dataset.wire)choose('wire',target.dataset.wire);else choose('component',target.dataset.component);});
 mount.addEventListener('keydown',event=>{if(!['Enter',' '].includes(event.key))return;const target=event.target.closest('[data-terminal],[data-wire],[data-component]');if(target){event.preventDefault();target.dispatchEvent(new MouseEvent('click',{bubbles:true}));}});
-$('#forge-clear').addEventListener('click',()=>{selection=null;updateSelection();});
+$('#forge-clear').addEventListener('click',()=>{selection=null;updateSelection();shell?.showInspection(null);});
 for(const button of document.querySelectorAll('[data-role-view]'))button.addEventListener('click',()=>{
  roleView=button.dataset.roleView;
  for(const option of document.querySelectorAll('[data-role-view]'))option.setAttribute('aria-pressed',String(option===button));
@@ -249,7 +250,7 @@ for(const [selector,key,label] of [['#forge-lab-volumePot','pots','Why pot value
 $('#forge-contacts').after(learningLink(document,'switches','How selector contacts work'));
 const learning=el('details'),learningTitle=el('summary','Learn about these components');learning.append(learningTitle);mountKnowledgeCards(learning,['potentiometers','capacitors','treble-bleeds']);projectRoot.after(learning);
 shell=mountForgeShell({doc:document,root:document.querySelector('.forge-main'),onMode:setWorkspaceMode,getCircuit:()=>circuit,getProject:()=>projectContext,bridge:professionalBridge});
-mobile=setupMobileWorkbench({mount,viewport,onChoose:choose,panelController:shell,onLayoutChange:()=>{if(circuit)renderLab();}});
+mobile=setupMobileWorkbench({mount,viewport,onChoose:choose,panelController:shell,onLayoutChange:()=>{}});
 if(initialMode==='signal')setWorkspaceMode('signal');
 
 function configureInstrument(){

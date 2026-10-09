@@ -128,5 +128,5 @@ export function setupMobileWorkbench({mount,viewport,onChoose,onLayoutChange,pan
  media.addEventListener('change',layout);
  if(window.ResizeObserver)new window.ResizeObserver(()=>{if(frame)return;frame=window.requestAnimationFrame(()=>{frame=0;if(mount.querySelector('svg')?.dataset.desktopViewBox)applyZoom();else diagramChanged();});}).observe(viewport);
  layout();
- return {get isMobile(){return mobile;},diagramChanged,selectionChanged,selectionLabel(info){const title=info?.heading||'Inspect & explain';$('#forge-mobile-selection').textContent=title;$('#forge-inspector-sheet-title').textContent=title;},modeChanged(mode){close('inspector',false);if(mode==='physical')window.requestAnimationFrame(diagramChanged);}};
+ return {get isMobile(){return mobile;},diagramChanged,selectionChanged,selectionLabel(info){const title=info?.heading||'Inspect & explain';$('#forge-mobile-selection').textContent=title;$('#forge-inspector-sheet-title').textContent=title;},modeChanged(mode){if(!panelController)close('inspector',false);if(mode==='physical')window.requestAnimationFrame(diagramChanged);}};
 }
