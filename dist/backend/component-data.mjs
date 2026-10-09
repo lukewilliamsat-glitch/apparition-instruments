@@ -1,5 +1,6 @@
 import {publicBackendConfig} from './public-config.mjs';
 import {normaliseComponentInput} from '../admin/data.mjs?v=p10hi';
+import {readCatalogueComponents} from './catalogue-image-delivery.mjs';
 import {readPublicRows,componentColumns,technicalColumns} from './public-read.mjs';
 
 // P05B: Supabase is the sole production Component and Inventory authority.
@@ -26,7 +27,7 @@ export function createPublicComponentRepository({config=publicBackendConfig,requ
  return Object.freeze({
   async list(id=null){
    const filter=id===null?'':'&id=eq.'+encodeURIComponent(id);
-   return (await readPublicRows({config,request},'catalogue_components','?select='+(includeImages?componentColumns:technicalColumns)+filter,'Public Component catalogue')).map(row=>{
+   return (await (includeImages?readCatalogueComponents({config,request},componentColumns,filter):readPublicRows({config,request},'catalogue_components','?select='+technicalColumns+filter,'Public Component catalogue'))).map(row=>{
     if(!Number.isSafeInteger(row.stock)||row.stock<0)throw new Error('Public availability data is invalid.');
     return componentFromRow({...row,active:true},{quantity:row.stock});
    });

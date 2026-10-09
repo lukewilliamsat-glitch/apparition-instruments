@@ -3,6 +3,7 @@ import {createLocalAssemblyRepository} from '../admin/assembly-repository.mjs';
 import {publicBackendConfig} from './public-config.mjs';
 import {createPublicComponentRepository} from './component-data.mjs';
 import {createPublicAssemblyRepository} from './assembly-data.mjs';
+import {readCatalogueComponents} from './catalogue-image-delivery.mjs';
 import {readPublicRows,componentColumns,kitColumns,invalidatePublicReads} from './public-read.mjs';
 
 // The local provider remains available for isolated tests and migration diagnostics.
@@ -21,7 +22,7 @@ export function createRepositoryProviders({source='local',storage,config=publicB
 export function createPublicCatalogueClient(config=publicBackendConfig,request=globalThis.fetch){
  const {url,publishableKey}=config||{};
  if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(url||'')||!/^sb_publishable_[A-Za-z0-9_-]+$/.test(publishableKey||'')||typeof request!=='function')throw new Error('Invalid public Supabase configuration.');
- const read=view=>readPublicRows({config,request},view,'?select='+(view==='catalogue_components'?componentColumns:kitColumns));
+ const read=view=>view==='catalogue_components'?readCatalogueComponents({config,request}):readPublicRows({config,request},view,'?select='+kitColumns);
  return Object.freeze({listComponents:()=>read('catalogue_components'),listWiringKits:()=>read('catalogue_wiring_kits')});
 }
 

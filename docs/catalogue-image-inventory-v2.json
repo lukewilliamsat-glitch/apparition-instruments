@@ -1,0 +1,88 @@
+{
+  "project": "acdxpxvksvdwfajntzfx",
+  "observed_date": "2026-10-09",
+  "canonical_head": "e7b68b885dc201ef99707fe1e458a18eba2ee3e7",
+  "component_rows": 36,
+  "embedded_images": 6,
+  "null_images": 30,
+  "decoded_total_bytes": 8953356,
+  "aggregate_fingerprint": {
+    "algorithm": "MD5",
+    "expression": "string_agg(id||':'||coalesce(image::text,'null'),'|' order by id)",
+    "value": "836fedeaf4c2faf7bd9ade59d31910f4"
+  },
+  "items": [
+    {
+      "id": "AI-Pot-SS-AlphaMini-A500K",
+      "name": "Alpha Mini A500k · Short shaft",
+      "image_json_bytes": 2136192,
+      "decoded_bytes": 1602126,
+      "stored_image_md5": "17ae268d5452675f52012d7be24f7562",
+      "source_sha256": "71a778dd96977f41f6e19c591dd2e09a68446a22e6d6cc0f50ecbcdf536f524c",
+      "asset_sha256": "c722a39fd2f7d48b3ac32f34422a91980028f7a9a281f9e31cd63c8c13a756c8",
+      "mime": "image/png",
+      "legacy_generated_url": "https://apparitioninstruments.co.uk/products/ai-pot-ss-alphamini-a500k/image.png",
+      "proposed_path": "/assets/catalogue-images/c722a39fd2f7d48b3ac32f34422a91980028f7a9a281f9e31cd63c8c13a756c8.png"
+    },
+    {
+      "id": "bleed-cap",
+      "name": "Capacitor-only treble bleed",
+      "image_json_bytes": 2695552,
+      "decoded_bytes": 2021646,
+      "stored_image_md5": "1eea58c778660307ee7e41e9498dfd48",
+      "source_sha256": "4ee87f8664f2e4a67b7e34e35ce0770791478077579dc34d3f9b02f118c65cbd",
+      "asset_sha256": "70e19fa835d6da870e73a85a209dc20ead47f9687c26fafe277ecab366a1278e",
+      "mime": "image/png",
+      "legacy_generated_url": "https://apparitioninstruments.co.uk/products/bleed-cap/image.png",
+      "proposed_path": "/assets/catalogue-images/70e19fa835d6da870e73a85a209dc20ead47f9687c26fafe277ecab366a1278e.png"
+    },
+    {
+      "id": "bleed-duncan",
+      "name": "Duncan-style treble bleed",
+      "image_json_bytes": 3023280,
+      "decoded_bytes": 2267440,
+      "stored_image_md5": "711bfb8e8d982a00485377e9318be6b6",
+      "source_sha256": "ab7676219bfbdcee99c9b1259ffaecaa64daa0930b7ec769c64015fb9fff3b87",
+      "asset_sha256": "48cf60527b2103bbd9a53707f2d62795d2d977fc3769ed3f6e3d69e45e77c909",
+      "mime": "image/png",
+      "legacy_generated_url": "https://apparitioninstruments.co.uk/products/bleed-duncan/image.png",
+      "proposed_path": "/assets/catalogue-images/48cf60527b2103bbd9a53707f2d62795d2d977fc3769ed3f6e3d69e45e77c909.png"
+    },
+    {
+      "id": "bleed-premium",
+      "name": "Sprague Duncan Style",
+      "image_json_bytes": 1298704,
+      "decoded_bytes": 974008,
+      "stored_image_md5": "e38e126ee39b74ebb91c1f5a423c79ea",
+      "source_sha256": "da399e180be545c91de2c55d5a5e7cb27c7d274d893dc24831869cc0e40fc9db",
+      "asset_sha256": "a7fc2809e8cffd951469e6aef944985e88ae1fefd60f0dacda41ba161ca189cb",
+      "mime": "image/png",
+      "legacy_generated_url": "https://apparitioninstruments.co.uk/products/bleed-premium/image.png",
+      "proposed_path": "/assets/catalogue-images/a7fc2809e8cffd951469e6aef944985e88ae1fefd60f0dacda41ba161ca189cb.png"
+    },
+    {
+      "id": "cde-022",
+      "name": "CDE 225P · 0.022µF",
+      "image_json_bytes": 1513748,
+      "decoded_bytes": 1135292,
+      "stored_image_md5": "0adc1773a6fdc26304b9bd7daef7098b",
+      "source_sha256": "75b36a9b9a4dd542904860d12b24c795bd208c436f22faaa0e0468c7a50f72c4",
+      "asset_sha256": "c1ff962c4dafa2287b537abff9254819be02f3db00ab2095e7f78de9f33e93c0",
+      "mime": "image/png",
+      "legacy_generated_url": "https://apparitioninstruments.co.uk/products/cde-022/image.png",
+      "proposed_path": "/assets/catalogue-images/c1ff962c4dafa2287b537abff9254819be02f3db00ab2095e7f78de9f33e93c0.png"
+    },
+    {
+      "id": "cde-715p-600",
+      "name": "CDE 715P 600V 223J",
+      "image_json_bytes": 1270484,
+      "decoded_bytes": 952844,
+      "stored_image_md5": "db55385230f3ffdfcd704b4067672066",
+      "source_sha256": "f42a56e196ab28f3b022cd72f2a629502b2bbf5658620d4dfb9d5d1418f04673",
+      "asset_sha256": "30d8a19d1abe4528866abc3d91b484da557a7ec4d4451dad891b4f5886a79027",
+      "mime": "image/png",
+      "legacy_generated_url": "https://apparitioninstruments.co.uk/products/cde-715p-600/image.png",
+      "proposed_path": "/assets/catalogue-images/30d8a19d1abe4528866abc3d91b484da557a7ec4d4451dad891b4f5886a79027.png"
+    }
+  ]
+}
