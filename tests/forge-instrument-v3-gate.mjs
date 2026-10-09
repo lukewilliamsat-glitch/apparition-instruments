@@ -1,0 +1,3 @@
+import {spawnSync} from 'node:child_process';
+for(const suite of ['forge-instrument-v3-domain','forge-instrument-v3-db','forge-instrument-v3-integration','forge-instrument-v3-preservation','forge-shell-gate','forge-workspace-v2']){const r=spawnSync(process.execPath,['--import','./tests/fixtures/admin-offline.mjs','tests/'+suite+'.mjs'],{encoding:'utf8',timeout:180000,maxBuffer:1000000});if(r.status!==0){console.error(suite+' FAILED\n'+r.stdout+r.stderr);process.exit(1);}console.log(r.stdout.trim());}
+console.log('Forge V3 focused and existing Forge/V2 integrated gate PASS. Isolated fixtures only, no production emails or database changes.');
