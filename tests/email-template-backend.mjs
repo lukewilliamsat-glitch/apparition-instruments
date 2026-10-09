@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';import {emailTemplateDatabase,templateMigration} from './fixtures/email-template-database.mjs';
 import {initialTemplate,templateKeys} from '../supabase/functions/transactional-email/templates.ts';
-import {handlePreparedEmail} from '../supabase/functions/transactional-email/prepared.ts';import {handleTemplatePreview} from '../supabase/functions/transactional-email/studio.ts';
+import {handlePreparedEmail,prepareContent,digest,verifyPreview,signPreview} from '../supabase/functions/transactional-email/prepared.ts';import {handleTemplatePreview} from '../supabase/functions/transactional-email/studio.ts';
 const {db,actor,create,one,query}=await emailTemplateDatabase();const scalar=async(sql,args=[])=>(await one(sql,args)).r;
 const list=()=>scalar('select public.get_admin_email_templates() r');const mutate=(key,revision,action,content=null,version=null)=>scalar('select public.mutate_email_template($1,$2,$3,$4,$5) r',[key,revision,action,content&&JSON.stringify(content),version]);
 const business=()=>query('select (select jsonb_agg(to_jsonb(o)) from public.orders o) orders,(select jsonb_agg(to_jsonb(i)) from public.inventory i) inventory,(select jsonb_agg(to_jsonb(d)) from public.order_email_deliveries d) ledger');
@@ -23,6 +23,18 @@ const request=(path,body,token='admin-token')=>new Request('https://fixture.inva
 const call=(path,body)=>handlePreparedEmail(request(path,body),env,transport,async(e,m)=>sent.push(m));
 const fixture=async channel=>{const o=await create({requestId:crypto.randomUUID(),channel:channel==='WEBSITE'?'DIRECT':channel,externalReference:crypto.randomUUID(),orderDate:'2026-03-01',customerName:'Luke Fixture',postagePence:0,items:[{type:'component',productId:'a',quantity:1,unitPricePence:100}]});await db.query("update public.orders set sales_channel=$2,external_reference=case when $2='WEBSITE' then null else external_reference end,order_date=case when $2='WEBSITE' then null else order_date end,status='dispatched',customer=customer||jsonb_build_object('email',$3::text),status_history=jsonb_build_array(jsonb_build_object('status','dispatched','event_id',gen_random_uuid(),'at','2026-03-01T12:00:00Z')) where id=$1",[o.id,channel,channel==='EBAY'?'buyer@members.ebay.com':'buyer@example.test']);return o.id;};
 const id=await fixture('WEBSITE'),prepared=await (await call('prepare-aftercare',{orderId:id,mode:'first'})).json();assert.equal(prepared.subject,initialTemplate(key).subject);assert.match(prepared.template,/^studio:/);
+// A legitimately signed preview from the previous renderer must become stale, even
+// while its template UUID, recipient, order state and publication version stay unchanged.
+const binding=await verifyPreview(prepared.previewIdentity,'service-secret');
+const previewContext=await scalar('select public.get_aftercare_preview_context($1) r',[id]);
+const currentVersion=await scalar('select public.get_published_email_template($1) r',[key]);
+const oldContent=prepareContent(previewContext,env,'aftercare',currentVersion),textLines=oldContent.message.text.split('\n');
+oldContent.message={...oldContent.message,text:[textLines[0],textLines[1],textLines[4],textLines[6],textLines[2],...textLines.slice(7)].join('\n')};
+const currentAssembly="...(aftercare?[...sections,'',greeting,'',label.intro]:[greeting,label.intro,...(external?[origin,...lines,`Recorded order total ${money(order.total_pence)}`]:[]),...sections])";
+const oldAssembly="greeting,label.intro,...(external?[origin,...lines,`Recorded order total ${money(order.total_pence)}`]:[]),...sections";
+assert(oldContent.renderer.includes(currentAssembly));oldContent.renderer=oldContent.renderer.replace(currentAssembly,oldAssembly);
+const oldIdentity=await signPreview({...binding,contentHash:await digest(oldContent)},'service-secret');
+const oldResult=await call('confirm-aftercare',{orderId:id,previewIdentity:oldIdentity,recipientConfirmed:true});assert.equal(oldResult.status,409);assert.equal((await oldResult.json()).code,'PREVIEW_STALE');assert.equal(sent.length,0);
 row=(await list()).find(t=>t.template_key===key);await mutate(key,row.revision,'save',{...row.published.content,heading:'DRAFT ONLY'});const live=await (await call('prepare-aftercare',{orderId:id,mode:'first'})).json();assert.equal(live.html,prepared.html,'Saved draft never affects order preview');
 await mutate(key,row.revision+1,'publish');assert.equal((await call('confirm-aftercare',{orderId:id,previewIdentity:prepared.previewIdentity,recipientConfirmed:true})).status,409);assert.equal(sent.length,0);
 const fresh=await (await call('prepare-aftercare',{orderId:id,mode:'first'})).json();assert.equal((await call('confirm-aftercare',{orderId:id,previewIdentity:fresh.previewIdentity,recipientConfirmed:false})).status,400);race=true;assert.equal((await call('confirm-aftercare',{orderId:id,previewIdentity:fresh.previewIdentity,recipientConfirmed:true})).status,409,'Atomic claim catches republish between render and claim');assert.equal(sent.length,0);

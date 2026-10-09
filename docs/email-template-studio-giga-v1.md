@@ -1,5 +1,17 @@
 # Email Template Studio GIGA V1
 
+## UX polish, 9 October 2026
+
+Starting published main f6d02159dfcd0ee74a7587d35b4f77a07d375ce2, tree ae0e36eff48c49864126e952730e7ffdce28845c. The approved migration is already recorded as 20261008161807_email_template_studio_giga_v1; do not reapply it. This pass changes only the Studio UI, a bounded Aftercare plain-text formatting branch and focused regression coverage.
+
+Grouped compact Aftercare/Dispatch navigation accompanies balanced editor/authoritative-preview panels. Navigation moves above the panels on tablet and panels stack below 900px. The preview and text editor scroll independently; history is collapsible. Subject/heading counts, descriptive placeholders, local validation errors and explicit saved-draft validation make the action state clearer. Publication still revalidates on the backend and requires confirmation. Initial selection, template selection and historical previews use the existing fixture-only backend, never customer lookups or sending.
+
+Every preview regeneration or format change creates a fresh sandboxed iframe, resetting its browsing context without cross-origin reads, relaxed sandbox attributes, scripts or page scrolling. Plain-text scroll resets independently. Editor selection/focus use preventScroll; inserting a placeholder replaces the current selection and keeps the cursor immediately after it. Unsaved edits warn on navigation, while clean editors do not warn.
+
+Aftercare plain text now groups its protected order reference before the greeting and keeps the approved body paragraphs contiguous. Aftercare HTML stays byte-identical to v13. Website/eBay dispatch retains exact full-payload parity, including conditional tracking and support/footer differences. The existing signed renderer/content hash makes previously prepared identities stale after backend rollout; regenerate order previews before confirming. No published template version, migration, Admin transport allowlist or database permission changes are required.
+
+Focused UI tests exercise the actual shared transport, isolated SQL and authoritative preview handler. Computed responsive CSS is checked at 1440/1024/768/390/320px; scroll-context replacement, cursor/selection, invalid-draft publication gates, history/restore/discard, optimistic conflicts, recipient confirmation and a legitimately signed pre-polish renderer identity are covered. SMTP remains mocked. Owner visual/mobile and authenticated browser acceptance remain separate from asset and database-role verification.
+
 Starting canonical main: cd951cfe70d344637c6aa59d3ea7b991c358aca1, tree f9d5f9acc550c5cca36efcbbf37262bdb7ba13e7.
 
 ## Architecture and operations
