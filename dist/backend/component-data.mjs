@@ -1,6 +1,6 @@
 import {publicBackendConfig} from './public-config.mjs';
 import {normaliseComponentInput} from '../admin/data.mjs?v=p10hi';
-import {readPublicRows,componentColumns} from './public-read.mjs';
+import {readPublicRows,componentColumns,technicalColumns} from './public-read.mjs';
 
 // P05B: Supabase is the sole production Component and Inventory authority.
 const idQuery=id=>'?component_id=eq.'+encodeURIComponent(id);
@@ -21,11 +21,12 @@ export function componentFromRow(row,inventory={},internal={}){
   kitPrice:row.kit_price,kitPriceQuantity:row.kit_price_quantity,image:row.image,
   stock:inventory.quantity,stockUnit:inventory.stock_unit??'item',internalUnitCost:internal.internal_unit_cost??null};
 }
-export function createPublicComponentRepository({config=publicBackendConfig,request=globalThis.fetch}={}){
+export function createPublicComponentRepository({config=publicBackendConfig,request=globalThis.fetch,includeImages=true}={}){
  const blocked=async()=>{throw new Error('Shared Admin writes require authorised backend access.');};
  return Object.freeze({
-  async list(){
-   return (await readPublicRows({config,request},'catalogue_components','?select='+componentColumns,'Public Component catalogue')).map(row=>{
+  async list(id=null){
+   const filter=id===null?'':'&id=eq.'+encodeURIComponent(id);
+   return (await readPublicRows({config,request},'catalogue_components','?select='+(includeImages?componentColumns:technicalColumns)+filter,'Public Component catalogue')).map(row=>{
     if(!Number.isSafeInteger(row.stock)||row.stock<0)throw new Error('Public availability data is invalid.');
     return componentFromRow({...row,active:true},{quantity:row.stock});
    });

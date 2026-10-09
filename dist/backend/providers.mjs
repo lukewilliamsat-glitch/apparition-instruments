@@ -3,7 +3,7 @@ import {createLocalAssemblyRepository} from '../admin/assembly-repository.mjs';
 import {publicBackendConfig} from './public-config.mjs';
 import {createPublicComponentRepository} from './component-data.mjs';
 import {createPublicAssemblyRepository} from './assembly-data.mjs';
-import {readPublicRows,componentColumns,kitColumns} from './public-read.mjs';
+import {readPublicRows,componentColumns,kitColumns,invalidatePublicReads} from './public-read.mjs';
 
 // The local provider remains available for isolated tests and migration diagnostics.
 export function createRepositoryProviders({source='local',storage,config=publicBackendConfig,request=globalThis.fetch}={}){
@@ -32,6 +32,8 @@ export function createAuthenticatedRepositoryTransport(auth,{config=publicBacken
  return Object.freeze({async send(table,{method='GET',query='',body,prefer}={}){
   if(!['commercial_destinations','components','component_internal','inventory','assemblies','assembly_bom','kit_definitions','kit_definition_internal','kit_permitted_components','catalogue_options','orders','partial_refund_reviews','order_email_deliveries','site_operations','news_posts','site_operations_audit','rpc/set_store_operations','rpc/save_news_post','rpc/create_external_order','rpc/edit_external_order','rpc/correct_order_fulfilment','rpc/delete_unused_component','rpc/delete_unused_catalogue_option','rpc/advance_order_fulfilment','rpc/acknowledge_partial_refund','rpc/record_order_dispatch_details','rpc/get_customer_aftercare','rpc/update_customer_aftercare','rpc/get_admin_email_templates','rpc/mutate_email_template'].includes(table))throw new Error('Unsupported Admin repository resource.');
   const token=await auth.accessToken();
-  return request(config.url+'/rest/v1/'+table+query,{method,headers:{apikey:config.publishableKey,Authorization:'Bearer '+token,'Content-Type':'application/json',...prefer?{Prefer:prefer}:{}},...body===undefined?{}:{body:JSON.stringify(body)}});
+  const response=await request(config.url+'/rest/v1/'+table+query,{method,headers:{apikey:config.publishableKey,Authorization:'Bearer '+token,'Content-Type':'application/json',...prefer?{Prefer:prefer}:{}},...body===undefined?{}:{body:JSON.stringify(body)}});
+  if(response.ok&&method!=='GET'&&['components','inventory','assemblies','assembly_bom','kit_definitions','kit_permitted_components','catalogue_options','rpc/delete_unused_component','rpc/delete_unused_catalogue_option'].includes(table))invalidatePublicReads();
+  return response;
  }});
 }

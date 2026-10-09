@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {invalidatePublicReads} from '../dist/backend/public-read.mjs';
 import {createPublicAssemblyRepository,createAdminAssemblyRepository} from '../dist/backend/assembly-data.mjs';
 import {lesPaulKitAssembly} from '../dist/admin/assemblies.mjs';
 import {configuredKitDefinitions} from '../dist/wiring-kits/kit-data.mjs';
@@ -19,7 +20,7 @@ const tables={
 };
 const view=()=>tables.assemblies.filter(a=>a.active).map(a=>({id:a.id,sku:a.sku,name:a.name,category:a.category,slug:definition.family,base_price:tables.kit_definitions[0].base_price,show_on_wiring_kits:tables.kit_definitions[0].show_on_wiring_kits,builder_enabled:tables.kit_definitions[0].builder_enabled,default_wiring_style:definition.defaults.wiring,defaults:tables.kit_definitions[0].defaults,builder_options:tables.kit_definitions[0].builder_options,component_resolvers:tables.kit_definitions[0].component_resolvers}));
 const response=(rows,ok=true)=>({ok,status:ok?200:403,json:async()=>structuredClone(rows)});
-const publicCalls=[],publicRepository=createPublicAssemblyRepository({config:{url:'https://test.supabase.co',publishableKey:'sb_publishable_test'},request:async(url,options)=>{publicCalls.push({url,options});return response(url.includes('catalogue_wiring_kits')?view():tables.kit_permitted_components);}});
+const publicCalls=[],publicRequest=async(url,options)=>{publicCalls.push({url,options});return response(url.includes('catalogue_wiring_kits')?view():tables.kit_permitted_components);},publicRepository=createPublicAssemblyRepository({config:{url:'https://test.supabase.co',publishableKey:'sb_publishable_test'},request:publicRequest});
 const publicKit=await publicRepository.get(id);
 assert.equal(publicKit.kitDefinition.basePrice,3999);
 assert.equal(publicKit.kitDefinition.defaults.componentIds.potentiometers,'pot-short-alpha-a');
@@ -43,6 +44,7 @@ const modified=structuredClone(before);modified.kitDefinition.basePrice=4123;mod
 const saved=await admin.save(modified,id);
 assert.equal(saved.active,true);assert.equal(saved.kitDefinition.basePrice,4123);assert.equal(saved.kitDefinition.showOnWiringKits,false);
 assert.deepEqual(saved.bom,source.bom);assert.deepEqual(saved.kitDefinition.permittedComponentIds,definition.permittedComponentIds);
+invalidatePublicReads(publicRequest); // Simulate shared transport invalidation after mocked Admin writes.
 assert.equal((await publicRepository.get(id)).kitDefinition.basePrice,4123);
 assert.equal((await publicRepository.get(id)).kitDefinition.showOnWiringKits,false);
 await assert.rejects(admin.save({...modified,id:'other'},'other'),/Creating or changing/);
@@ -50,5 +52,6 @@ await assert.rejects(createPublicAssemblyRepository({request:async()=>response([
 const rejected=createAdminAssemblyRepository({send:async(table,options)=>table==='kit_definitions'&&options.method==='PATCH'?response([],false):transport.send(table,options)});
 await assert.rejects(rejected.save(saved,id),/stays inactive/);
 assert.equal(tables.assemblies[0].active,false,'failed shared writes cannot leave a public partial kit');
+invalidatePublicReads(publicRequest);
 assert.deepEqual(await publicRepository.list(),[],'failed shared writes never use browser-local fallback');
 console.log('P05C public Builder, authenticated Admin Assembly/BOM edits, visibility, no local fallback passed.');

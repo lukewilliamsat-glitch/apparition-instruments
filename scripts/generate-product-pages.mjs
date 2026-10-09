@@ -108,7 +108,7 @@ export async function generate({rows,options=[],root=dist}){
  return products;
 }
 async function fetchPublic(table){
- return readPublicRows({config:publicBackendConfig},table,'?select='+(table==='catalogue_components'?productColumns:optionColumns)+(table==='catalogue_components'?'&individually=eq.true&category=in.(potentiometers,capacitors,treble-bleeds)&sale_price=gt.0':''));
+ return readPublicRows({config:publicBackendConfig,maxAgeMs:0},table,'?select='+(table==='catalogue_components'?productColumns:optionColumns)+(table==='catalogue_components'?'&individually=eq.true&category=in.(potentiometers,capacitors,treble-bleeds)&sale_price=gt.0':''));
 }
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
  try{const [rows,options]=await Promise.all([fetchPublic('catalogue_components'),fetchPublic('catalogue_options')]);const products=await generate({rows,options});console.log('Generated '+products.length+' authoritative public product pages.');}

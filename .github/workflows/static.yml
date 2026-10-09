@@ -8,9 +8,10 @@ on:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-  # Rebuild SEO snapshots from public Supabase records after Admin changes and sales.
+  # Public SEO snapshots refresh every 15 minutes. Browser stock/store checks
+  # and authoritative checkout remain live; scheduled notices refresh in-browser.
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '*/15 * * * *'
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:

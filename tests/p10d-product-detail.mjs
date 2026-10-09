@@ -26,13 +26,14 @@ for(const [item,fields,reading] of [[pot,['Resistance','Taper','Shaft','Referenc
  assert(root.querySelector('.product-image')||root.querySelector('.product-image-fallback'));
  w.close();
 }
-const w=doc();globalThis.document=w.document;globalThis.window=w;globalThis.location=new URL('https://apparitioninstruments.co.uk/components/');globalThis.localStorage=w.localStorage;globalThis.CustomEvent=w.CustomEvent;
+const w=doc();w.apparitionStoreState={state:'OPEN'}; // Explicit isolated Operations fixture, never a production override.
+globalThis.document=w.document;globalThis.window=w;globalThis.location=new URL('https://apparitioninstruments.co.uk/components/');globalThis.localStorage=w.localStorage;globalThis.CustomEvent=w.CustomEvent;
 const section=w.document.createElement('section');section.className='component-section';section.id='potentiometers';const grid=w.document.createElement('div');grid.className='component-grid';section.append(grid);w.document.body.append(section);
 renderComponentCards(fixtures);const card=grid.querySelector('article');assert.equal(card.querySelector('.component-detail-link').getAttribute('href'),productURL(pot.id));
 assert(card.querySelector('button[data-add]'));assert.equal(card.querySelector('.component-details-action').getAttribute('href'),productURL(pot.id));
 const categoryId=addComponent(pot.id),categoryBasket=readBasket();assert.equal(categoryBasket.length,1);
-w.localStorage.clear();const detail=w.document.getElementById('product-detail');renderProductDetail(detail,pot,{document:w.document,add:addComponent});detail.querySelector('button').click();
-const detailBasket=readBasket();assert.equal(detailBasket.length,1);assert.equal(detailBasket[0].product,categoryBasket[0].product);assert.equal(detailBasket[0].sku,categoryBasket[0].sku);assert.equal(detailBasket[0].quantity,categoryBasket[0].quantity);assert(categoryId);assert(detail.querySelector('[role="status"]').textContent.includes('Added'));
+w.localStorage.clear();const detail=w.document.getElementById('product-detail');const renderedDetail=renderProductDetail(detail,pot,{document:w.document,add:addComponent});renderedDetail.button.click();
+const detailBasket=readBasket();assert.equal(detailBasket.length,1);assert.equal(detailBasket[0].product,categoryBasket[0].product);assert.equal(detailBasket[0].sku,categoryBasket[0].sku);assert.equal(detailBasket[0].quantity,categoryBasket[0].quantity);assert(categoryId);assert(renderedDetail.feedback.textContent.includes('Added'));
 const out={...pot,stock:0};renderProductDetail(detail,out,{document:w.document,add:()=>assert.fail('Out of stock was added')});assert.equal(detail.querySelector('button').disabled,true);
 const photo={...pot,image:{kind:'object',key:'example',url:'https://example.org/image.png'}};renderProductDetail(detail,photo,{document:w.document,add:()=>{}});detail.querySelector('img.product-image').dispatchEvent(new w.Event('error'));assert(detail.querySelector('.product-image-fallback'));
 await startProductDetail({document:w.document,location:new URL('https://apparitioninstruments.co.uk/products/?id=pot-short-cts-a'),load:async()=>{}});assert.equal(w.document.title,pot.name+' | Apparition Instruments');assert(w.document.querySelector('link[rel="canonical"]').href.endsWith('/products/pot-short-cts-a/'));assert.equal(w.document.querySelector('meta[name="robots"]').content,'noindex,follow');
