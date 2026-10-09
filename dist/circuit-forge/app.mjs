@@ -11,6 +11,7 @@ import {mountInstrumentPanel} from './instrument-panel.mjs';
 import {projectKitHandoff} from '../knowledge/kit-project.mjs';
 import {readProject,projectFromCircuit,projectURL} from '../electronics/state/project.mjs';
 import {mountProjectPanel} from '../knowledge/project-panel.mjs';
+import {mountForgeShell} from './application-shell.mjs';
 import {mountProfessionalBridge} from '../forge-pro/editor-bridge.mjs';
 import {learningLink,mountKnowledgeCards} from '../knowledge/context.mjs';
 import {readCircuitState,captureCircuitState,circuitStateURL,circuitStateSummary,wiringHandoff,designerHandoff,kitHandoff} from '../electronics/state/circuit-state.mjs';
@@ -36,7 +37,7 @@ compactWorkbench(document,'forge');
 // Legacy form controls retain analysis integrations but are not a second visible console.
 for(const node of [...form.children])if(node.id!=='forge-instrument-root'&&node.tagName!=='BUTTON'){node.hidden=true;node.dataset.consoleLegacy='true';}
 
-let circuit,selection=null,roleView='all',mobile,presentationMode=normalisePresentation(new URLSearchParams(location.search).get('view')||'trace');
+let shell;let circuit,selection=null,roleView='all',mobile,presentationMode=normalisePresentation(new URLSearchParams(location.search).get('view')||'trace');
 let comparisonMode='ab',frozenReference=null,signalReport=null,previousSignal=null,graphView=null,inspectionFrequency=1000,lastCause='',assumptionIdentity='';
 const setText=(node,value)=>{if(node.textContent!==value)node.textContent=value;};
 const projectImport=readProject(window.location.search);let projectContext=projectImport.project;
@@ -62,14 +63,15 @@ function inspectionReadout(sample){
  setText($('#forge-inspect-frequency-value'),frequency);const input=$('#forge-inspect-frequency');input.value=Math.round(fractionFromFrequency(sample.frequency)*1000);input.setAttribute('aria-valuetext',frequency);
  setText($('#forge-inspection-readout'),frequency+' · Current '+format(sample.current)+(sample.reference===null?'':' · Reference '+format(sample.reference)+' · Δ '+(sample.clipped?'clipped':(sample.delta>=0?'+':'')+sample.delta.toFixed(2)+' dB')));
 }
-function setWorkspaceMode(mode){
+function setWorkspaceMode(mode,fromShell=false){
+ if(shell&&!fromShell){shell.selectView(mode==='signal'?'signal':'circuit');return;}
  const physical=mode==='physical';
  mobile?.modeChanged(mode);
  $('#forge-mode-physical').hidden=!physical;$('#forge-response-lab').hidden=physical;
  $('#forge-diagram-title').textContent=physical?'Circuit Lab':'Signal Lab';
  for(const button of document.querySelectorAll('[data-forge-mode]'))button.setAttribute('aria-pressed',String(button.dataset.forgeMode===mode));
 }
-const choose=(kind,value)=>{selection=kind==='component'?{kind,id:value}:kind==='wire'?{kind,id:value}:{kind:'terminal',ref:value};updateSelection();mobile?.selectionChanged(selection);};
+const choose=(kind,value)=>{selection=kind==='component'?{kind,id:value}:kind==='wire'?{kind,id:value}:{kind:'terminal',ref:value};updateSelection();shell?.showInspection(selection,{open:!mobile?.isMobile});mobile?.selectionChanged(selection);};
 let paintedCircuit=null,paintedMode=null;
 function paint(){
  if(presentationMode==='build'&&paintedMode==='build'&&paintedCircuit===circuit)return;
@@ -145,7 +147,7 @@ function renderLab(){
 }
 function updateContextActions(){
  if(!replayingHistory)circuitHistory.record(captureCircuitState(circuit));refreshHistory();
- partsList?.update();
+ partsList?.update();shell?.update();
  if(instrument||projectContext)projectContext=projectFromCircuit(circuit,projectContext||{});
  setText($('#forge-shared-summary'),circuitStateSummary(circuit,signalReport));
  const wiring=wiringHandoff(circuit);$('#forge-view-wiring').hidden=!wiring;if(wiring){$('#forge-view-wiring').href=withProject(wiring);const guided=new URL(withProject(wiring),location.origin);guided.searchParams.set('build','guided');$('#forge-guided-build').href=guided.pathname+guided.search;}$('#forge-guided-build').hidden=!wiring;
@@ -231,7 +233,7 @@ for(const button of document.querySelectorAll('[data-forge-mode]'))button.addEve
 for(const button of document.querySelectorAll('[data-analyse],[data-lab-pickup]'))button.addEventListener('click',()=>{
  const wanted=button.dataset.analyse||button.dataset.labPickup,value=instrument&&instrument.reference!=='les-paul'?wanted==='neck'?(instrument.selector.family==='5-way-blade'?'5':'3'):wanted==='bridge'?'1':wanted:wanted;form.querySelector(`input[name="position"][value="${value}"]`)?.click();
 });
-mobile=setupMobileWorkbench({mount,viewport,onChoose:choose,onLayoutChange:()=>{if(circuit)renderLab();}});
+
 if(importedCircuit.state?.configuration){const c=importedCircuit.state.configuration;for(const key of ['wiring','bleed','neckCap','bridgeCap','position']){const radios=form.querySelectorAll('input[type=radio][name='+key+']');if(radios.length)for(const radio of radios)radio.checked=radio.value===c[key];else form.elements.namedItem(key).value=c[key];}for(const channel of ['neck','bridge'])form.elements.namedItem(channel+'Profile').value=c.pickupProfiles?.[channel]||'generic';}
 $('#forge-import-note').textContent=importedCircuit.notice;
 instrumentPanel=mountInstrumentPanel($('#forge-instrument-root'),{getKitAvailability:()=>!$('#forge-kit').hidden,getInstrument:()=>instrument||instrumentFromLegacy(captureCircuitState(circuit||forgeCircuit().circuit)),onChange:i=>{instrument=i;configureInstrument();render();},onReference:i=>{instrument=i;selection=null;frozenReference=null;previousSignal=null;comparisonMode='ab';if(projectContext)projectContext={...projectContext,kitReference:undefined,extensions:{...projectContext.extensions,kitSelection:null}};configureInstrument();render();}});
@@ -240,12 +242,14 @@ if(render())window.__forgeEntry?.ready();else window.__forgeEntry?.fail();
 
 const projectRoot=el('section');projectRoot.className='local-projects';projectRoot.setAttribute('aria-label','Local circuit projects');document.querySelector('.forge-main').append(projectRoot);
 mountProjectPanel(projectRoot,{getCircuit:()=>circuit,getProject:()=>projectContext,setProject:p=>{projectContext=p;updateContextActions();},reset:()=>form.reset()});
-mountProfessionalBridge(projectRoot,{getCircuit:()=>circuit,getProject:()=>projectContext});
-const exportHelp=el('p','Local saves stay on this browser. Share links contain circuit settings without project names or notes. Use the Wiring Diagram Generator for its SVG/print exports when wiring is supported; cloud projects and professional documentation are not part of this free workbench.');projectRoot.append(exportHelp);
+const professionalBridge=mountProfessionalBridge(projectRoot,{getCircuit:()=>circuit,getProject:()=>projectContext});
+const exportHelp=el('p','Local saves stay on this browser. Share links contain circuit settings without project names or notes. Use the Wiring Diagram Generator for its SVG/print exports when wiring is supported; cloud saves are explicit durable revisions in Projects. Free work can still be saved locally without an account.');projectRoot.append(exportHelp);
 const partsRoot=el('section');partsRoot.id='forge-logical-parts';projectRoot.after(partsRoot);partsList=mountPartsList(partsRoot,{getCircuit:()=>circuit,repository:createPublicComponentRepository()});partsList.update();
 for(const [selector,key,label] of [['#forge-lab-volumePot','pots','Why pot value matters'],['#forge-lab-cap','caps','Understanding tone capacitors'],['#forge-lab-bleed','bleeds','How treble bleeds work'],['#forge-lab-pickup','pickups','Pickup conductors and model assumptions']])$(selector).closest('label').after(learningLink(document,key,label));
 $('#forge-contacts').after(learningLink(document,'switches','How selector contacts work'));
 const learning=el('details'),learningTitle=el('summary','Learn about these components');learning.append(learningTitle);mountKnowledgeCards(learning,['potentiometers','capacitors','treble-bleeds']);projectRoot.after(learning);
+shell=mountForgeShell({doc:document,root:document.querySelector('.forge-main'),onMode:setWorkspaceMode,getCircuit:()=>circuit,getProject:()=>projectContext,bridge:professionalBridge});
+mobile=setupMobileWorkbench({mount,viewport,onChoose:choose,panelController:shell,onLayoutChange:()=>{if(circuit)renderLab();}});
 if(initialMode==='signal')setWorkspaceMode('signal');
 
 function configureInstrument(){

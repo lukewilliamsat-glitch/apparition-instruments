@@ -1,0 +1,4 @@
+import {spawnSync} from 'node:child_process';
+const suites=[['forge-shell'],['forge-shell-free'],['forge-pro-ui'],['forge-pro-preview-db'],['forge-pro-domain'],['forge-shell-preservation'],['free-forge-workflow'],['forge-entry'],['signal-forge-integration'],['signal-forge-integration-dom','forge'],['signal-forge-integration-dom','forge-invalid'],['free-parts'],['free-journeys'],['p09b-account']];
+for(const [suite,...args] of suites){const r=spawnSync(process.execPath,['--import','./tests/fixtures/admin-offline.mjs','tests/'+suite+'.mjs',...args],{encoding:'utf8',timeout:120000,maxBuffer:1000000});if(r.status!==0){console.error(suite+' FAILED\n'+r.stdout+r.stderr);process.exit(1);}console.log(r.stdout.trim());}
+console.log('Forge Application Shell V1 final integrated gate: '+suites.length+' targeted checks PASS. No browser, production fixtures, broad electrical matrix or unrelated platform suites.');

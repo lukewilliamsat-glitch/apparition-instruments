@@ -1,20 +1,22 @@
 import {sizeDiagram} from '../wiring-generator/diagram-navigation.mjs';
 // Responsive presentation only: these surfaces keep the original controls and SVG.
 // No circuit, selector or response state is owned here.
-export function setupMobileWorkbench({mount,viewport,onChoose,onLayoutChange}){
+export function setupMobileWorkbench({mount,viewport,onChoose,onLayoutChange,panelController}){
  const $=selector=>document.querySelector(selector),media=window.matchMedia('(max-width: 850px)');
  const panels={configure:$('.forge-controls'),inspector:$('.forge-inspector')},homes={},dialogs={configure:$('#forge-configure-sheet'),inspector:$('#forge-inspector-sheet')};
  const explore=$('#forge-explore'),key=$('#forge-diagram-key'),zoomValue=$('#forge-zoom-value'),pointers=new Map();
  let mobile=false,zoom=1,fitWidth=0,opener=null,gesture=null,pinch=null,suppressClick=false,frame=0;
- for(const [name,panel] of Object.entries(panels)){homes[name]=document.createComment(name+' desktop position');panel.before(homes[name]);}
+ for(const [name,panel] of Object.entries(panelController?{}:panels)){homes[name]=document.createComment(name+' desktop position');panel.before(homes[name]);}
  const dialogBody=name=>dialogs[name].querySelector('.forge-sheet-body');
  function close(name,restore=true){
+  if(panelController){panelController.closePanel(name==='configure'?'browser':'properties',restore);return;}
   if(dialogs[name].open)dialogs[name].close();
   document.body.classList.remove('forge-'+name+'-open');
   $(`[data-mobile-open="${name}"]`).setAttribute('aria-expanded','false');
   if(restore)(opener?.isConnected?opener:$(`[data-mobile-open="${name}"]`)).focus({preventScroll:true});
  }
  function open(name,fromSelection=false){
+  if(panelController){panelController.openPanel(name==='configure'?'browser':'properties');return;}
   if(!mobile)return;
   close(name==='configure'?'inspector':'configure',false);
   const active=document.activeElement;opener=active!==document.body?active:$(`[data-mobile-open="${name}"]`);
@@ -23,7 +25,7 @@ export function setupMobileWorkbench({mount,viewport,onChoose,onLayoutChange}){
   $(`[data-mobile-open="${name}"]`).setAttribute('aria-expanded','true');
   dialogs[name].querySelector('[data-mobile-close]').focus({preventScroll:true});
  }
- for(const name of Object.keys(dialogs)){
+ for(const name of Object.keys(panelController?{}:dialogs)){
   $(`[data-mobile-open="${name}"]`).addEventListener('click',()=>dialogs[name].open?close(name):open(name));
   dialogs[name].querySelector('[data-mobile-close]').addEventListener('click',()=>close(name));
   dialogs[name].addEventListener('cancel',event=>{event.preventDefault();close(name);});
@@ -118,13 +120,13 @@ export function setupMobileWorkbench({mount,viewport,onChoose,onLayoutChange}){
  viewport.addEventListener('click',event=>{if(mobile&&suppressClick){suppressClick=false;event.preventDefault();event.stopPropagation();}},true);
  function layout(){
   const next=media.matches;if(next===mobile)return;mobile=next;
-  for(const name of Object.keys(panels)){close(name,false);if(mobile)dialogBody(name).append(panels[name]);else homes[name].after(panels[name]);}
+  for(const name of Object.keys(panelController?{}:panels)){close(name,false);if(mobile)dialogBody(name).append(panels[name]);else homes[name].after(panels[name]);}
   document.body.classList.toggle('forge-mobile',mobile);if(mobile){explore.open=false;key.open=false;}
   if(mobile){diagramChanged();fit();}else{mount.style.width='';for(const svg of mount.querySelectorAll('svg')){svg.style.width='';svg.style.height='';if(svg.dataset.desktopViewBox){svg.setAttribute('viewBox',svg.dataset.desktopViewBox);delete svg.dataset.desktopViewBox;}}for(const wire of mount.querySelectorAll('[data-desktop-label]')){wire.setAttribute('aria-label',wire.dataset.desktopLabel);delete wire.dataset.desktopLabel;}$('#forge-touch-choices').replaceChildren();applyZoom();}
   onLayoutChange();
  }
  media.addEventListener('change',layout);
- if(window.ResizeObserver)new window.ResizeObserver(()=>{if(frame)return;frame=requestAnimationFrame(()=>{frame=0;if(mount.querySelector('svg')?.dataset.desktopViewBox)applyZoom();else diagramChanged();});}).observe(viewport);
+ if(window.ResizeObserver)new window.ResizeObserver(()=>{if(frame)return;frame=window.requestAnimationFrame(()=>{frame=0;if(mount.querySelector('svg')?.dataset.desktopViewBox)applyZoom();else diagramChanged();});}).observe(viewport);
  layout();
- return {get isMobile(){return mobile;},diagramChanged,selectionChanged,selectionLabel(info){const title=info?.heading||'Inspect & explain';$('#forge-mobile-selection').textContent=title;$('#forge-inspector-sheet-title').textContent=title;},modeChanged(mode){close('inspector',false);if(mode==='physical')requestAnimationFrame(diagramChanged);}};
+ return {get isMobile(){return mobile;},diagramChanged,selectionChanged,selectionLabel(info){const title=info?.heading||'Inspect & explain';$('#forge-mobile-selection').textContent=title;$('#forge-inspector-sheet-title').textContent=title;},modeChanged(mode){close('inspector',false);if(mode==='physical')window.requestAnimationFrame(diagramChanged);}};
 }
