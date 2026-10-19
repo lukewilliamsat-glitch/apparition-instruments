@@ -11,7 +11,7 @@ node=pathlib.Path(a.node).resolve();launcher=out/'atlas-network-deny';src=root/'
 env={'PATH':'/usr/local/bin:/usr/bin:/bin','LANG':'C.UTF-8','TZ':'UTC','NODE_OPTIONS':'--import='+str(root/'tests/atlas/network-guard.mjs')}
 subprocess.run(['gcc','-std=c11','-Wall','-Wextra','-Werror','-O2',str(src),'-o',str(launcher)],check=True,env=env)
 version=subprocess.check_output([str(node),'--version'],text=True,env=env).strip()
-commands=[('network-probes',[str(node),str(root/'tests/atlas/network-probe.mjs')]),('atlas-tests',[str(node),'--test','--test-concurrency=1','--test-reporter=tap',str(root/'tests/atlas/safety.test.mjs'),str(root/'tests/atlas/release.test.mjs'),str(root/'tests/atlas/recovery.test.mjs')])]
+commands=[('network-probes',[str(node),str(root/'tests/atlas/network-probe.mjs')]),('atlas-tests',[str(node),'--test','--test-concurrency=1','--test-reporter=tap',str(root/'tests/atlas/safety.test.mjs'),str(root/'tests/atlas/release.test.mjs'),str(root/'tests/atlas/recovery.test.mjs'),str(root/'tests/atlas/certification.test.mjs')])]
 if (root/'tests/atlas/demo.mjs').exists():commands.append(('synthetic-demo',[str(node),str(root/'tests/atlas/demo.mjs'),str(out/'demo')]))
 results=[]
 for name,cmd in commands:

@@ -41,12 +41,12 @@ for(const [name,mutate,code] of [
 ])test('release: blocks '+name+' before output',()=>withFixture(async x=>{await mutate(x);await assert.rejects(prepareRelease(x.config),{code});assert.ok(await absent(x.config.output));}));
 test('release: audit only verifies baseline and creates no candidate',()=>withFixture(async x=>{x.config.context={event:'schedule',ref:'refs/heads/main',mode:'audit-only',commitMessage:''};const r=await prepareRelease(x.config);assert.equal(r.status,'audit-passed');assert.equal(r.candidateCreated,false);assert.ok(await absent(x.config.output));}));
 test('release: failed validation can recover without touching pinned rollback input',()=>withFixture(async x=>{const original=await fs.readFile(path.join(x.f.baselineRoot,'robots.txt'));await fs.writeFile(path.join(x.f.baselineRoot,'robots.txt'),'bad');await assert.rejects(prepareRelease(x.config));await fs.writeFile(path.join(x.f.baselineRoot,'robots.txt'),original);const r=await prepareRelease(x.config);assert.equal(r.verified.valid,true);assert.equal(r.rollback.baselineManifestSHA256,x.input.baseline.sha256);}));
-test('release: simulated complete artifact review supports preflight but never deployment authority',()=>withFixture(async x=>{
+test('release: simulated complete review alone cannot substitute independent certification',()=>withFixture(async x=>{
  // Mock review only. Test bytes remain synthetic; this is not an actual attestation.
  x.f.baselineManifest.provenance={type:'supplied-artifact',description:'Mock artifact provenance for isolated contract test'};
  const protection=makeProtection(x.f.baselineManifest),policy=makePolicy(x.f.baselineManifest,x.f.overlayManifest,protection);
  for(const [name,value,key] of [['baseline-manifest.json',x.f.baselineManifest,'baseline'],['protection.json',protection,'protection'],['policy.json',policy,'policy']]){await fs.writeFile(path.join(x.f.root,name),stable(value));x.input[key].sha256=sha256(stable(value));}
  x.evidence.classification='authenticated-complete-production-artifact';x.evidence.baselineManifestSHA256=x.input.baseline.sha256;await x.save();x.config.purpose='production-preflight';
- const result=await prepareRelease(x.config);assert.equal(result.status,'candidate-verified');assert.equal(result.modeDecision.mode,'static-only');assert.equal(result.publicationAllowed,false);assert.equal(result.productionPublicationAuthorised,false);assert.equal(result.deploymentEnabled,false);
+ await assert.rejects(prepareRelease(x.config),{code:'CERTIFICATION_REQUIRED'});assert.ok(await absent(x.config.output));
 }));
 test('release: CLI blocked output is machine readable; no default dist fallback',()=>{const p=spawnSync(process.execPath,[fileURLToPath(new URL('../../scripts/atlas/prepare-release.mjs',import.meta.url))],{encoding:'utf8',env:process.env});assert.equal(p.status,1);assert.equal(JSON.parse(p.stdout).status,'blocked');});

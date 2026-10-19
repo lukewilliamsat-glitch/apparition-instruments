@@ -1,0 +1,5 @@
+--- a/.github/workflows/static.yml
++++ b/.github/workflows/static.yml
+@@ -14 +14 @@
+-    - cron: '*/15 * * * *'
++    - cron: '0 3 * * *'

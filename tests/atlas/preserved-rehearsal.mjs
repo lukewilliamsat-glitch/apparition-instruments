@@ -1,0 +1,59 @@
+// Offline evaluation of preserved evidence. NOT production certification or publication.
+// Usage: node preserved-rehearsal.mjs EXTRACTED_PHASE2C SOURCE_REPOSITORY SPECTRE_DIST NEW_OUTPUT
+import * as fs from 'node:fs/promises';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import {makeManifest,sha256,stable,readRegular,sameFiles,inventory,loadJSON} from '../../scripts/atlas/core.mjs';
+import {certifyBaseline,requireCertifiedBaseline,CATEGORIES} from '../../scripts/atlas/certify-baseline.mjs';
+import {makeProtection,makePolicy,footerInsertion} from '../../scripts/atlas/assemble-static-overlay.mjs';
+import {validateSnapshot} from '../../scripts/atlas/validate-snapshot.mjs';
+import {runRelease} from '../../scripts/atlas/run-release.mjs';
+const [phase2c,repository,spectre,output,captureRoot,captureLedgerSHA256]=process.argv.slice(2);
+if(!phase2c||!repository||!spectre||!output)throw Error('Four explicit local paths required; no fallback');
+await fs.mkdir(output);
+const evidence=path.join(phase2c,'evidence'),origin=path.join(evidence,'reconstructed');
+let manifestBytes=await readRegular(path.join(origin,'manifest.json')),manifest=JSON.parse(manifestBytes),baselinePin=sha256(manifestBytes);
+const originalCandidatePin=baselinePin;assert.equal(baselinePin,'f5744201eefa765c94994ace0dfca55f83abde734b96828a5b5db377c3e15738');
+for(const [name,src]of [['baseline',path.join(origin,'site')],['rollback',path.join(origin,'site')],['repository',path.join(repository,'dist')],['observations',path.join(evidence,'original-partial-capture/site')]])await fs.cp(src,path.join(output,name),{recursive:true});
+let recoveredImages=[];
+if(captureRoot){
+ const inventoryBytes=await readRegular(path.join(repository,'docs/catalogue-image-inventory-v2.json'));assert.equal(sha256(inventoryBytes),'40cc90001031aad68806225058175b4aedf1868910a15041452c987c5c40bef5');const expected=JSON.parse(inventoryBytes).items;
+ const ledger=(await loadJSON(path.join(captureRoot,'LEDGER.json'),captureLedgerSHA256)).value;assert.equal(ledger.records.length,6);assert.equal(expected.length,6);assert.equal(ledger.responseBodyBytesRead,8953356);
+ for(const item of expected){
+  const url=item.legacy_generated_url,p=url.slice('https://apparitioninstruments.co.uk/'.length),rows=ledger.records.filter(r=>r.url===url);assert.equal(rows.length,1);const row=rows[0];assert.equal(row.status,200);assert.equal(row.method,'GET');assert.equal(row.path,p);assert.equal(row.sha256,item.asset_sha256);assert.equal(row.bytes,item.decoded_bytes);assert.equal(row.redirects,0);assert.equal(row.retries,0);
+  const bytes=await readRegular(path.join(captureRoot,'site',p));assert.equal(sha256(bytes),item.asset_sha256);assert.equal(bytes.length,item.decoded_bytes);assert.equal(bytes.subarray(0,8).toString('hex'),'89504e470d0a1a0a');
+  for(const dest of ['baseline','rollback','observations']){const file=path.join(output,dest,p);await fs.mkdir(path.dirname(file),{recursive:true});await fs.writeFile(file,bytes,{flag:'wx'});}
+  recoveredImages.push({path:p,sha256:item.asset_sha256,sourceType:'publicly-observed-live-bytes',sourceId:url,revision:'bounded-public-image-capture-2026-10-19'});
+ }
+ manifest=await makeManifest(path.join(output,'baseline'),{criticalRoutes:manifest.criticalRoutes,criticalAssets:[...manifest.criticalAssets,...recoveredImages.map(x=>x.path)],provenance:{type:'public-reconstruction',description:'Preserved 417-file candidate plus six observed public PNGs; incomplete production version coverage'}});manifestBytes=Buffer.from(stable(manifest));baselinePin=sha256(manifestBytes);
+}
+async function save(name,value){const bytes=stable(value);await fs.writeFile(path.join(output,name),bytes);return {path:name,sha256:sha256(bytes)};}
+await fs.writeFile(path.join(output,'baseline-manifest.json'),manifestBytes);await fs.writeFile(path.join(output,'rollback-manifest.json'),manifestBytes);
+const repoManifest=JSON.parse(await fs.readFile(path.join(evidence,'historical-source-manifest.json'))),observedManifest=recoveredImages.length?await makeManifest(path.join(output,'observations'),{provenance:{type:'public-reconstruction',description:'Preserved 27 HTTP bodies plus six separately captured PNGs; NOT a complete inventory'}}):JSON.parse(await fs.readFile(path.join(evidence,'original-partial-capture/manifest.json')));
+await save('repository-manifest.json',repoManifest);await save('observations-manifest.json',observedManifest);
+const categories=Object.fromEntries(CATEGORIES.map(c=>[c,[]]));
+for(const f of manifest.files){const p=f.path;categories[/\.html?$/.test(p)?'routes':'staticAssets'].push(p);if(p==='index.html')categories.homepage.push(p);if(/^(privacy|terms)\//.test(p))categories.legal.push(p);if(/^(checkout|basket)\//.test(p))categories.checkout.push(p);if(/^products\/.+\.html?$/.test(p))categories.productContent.push(p);if(/^products\/.*\.(png|jpe?g|webp|svg|gif)$/.test(p))categories.productImages.push(p);if(/^news\//.test(p))categories.news.push(p);if(/^luthier-hub\//.test(p))categories.cms.push(p);}
+const req=await save('requirements.json',{schemaVersion:1,kind:'atlas-certification-requirements',categories,emptyCategoryReasons:{},unknownDynamicDependencies:['Complete deployed runtime/module version inventory unavailable',recoveredImages.length?'Six public image fingerprints verified; remaining full-deployment version inventory is unknown':'Product image files referenced by absolute first-party URLs are absent from the reconstructed inventory; fourteen known image paths are general branding/illustration assets, not product photographs','Authenticated and checkout compatibility not safely live-tested; no live transactions permitted']});
+const matrix=JSON.parse(await fs.readFile(path.join(repository,'docs/atlas/evidence/phase2d-version-matrix.json'))),matrixRef=await save('matrix.json',matrix);
+const request={schemaVersion:1,kind:'atlas-baseline-certification',baselineId:'preserved-observed-plus-historical-candidate-2026-10-19',sourceRevision:'bb4ba2a932239a3ef397272b27143f0cd3adcccf',baseline:{root:'baseline',manifest:'baseline-manifest.json',sha256:baselinePin},repository:{root:'repository',manifest:'repository-manifest.json',sha256:sha256(stable(repoManifest))},observations:{root:'observations',manifest:'observations-manifest.json',sha256:sha256(stable(observedManifest))},reference:null,rollback:{root:'rollback',manifest:'rollback-manifest.json',sha256:baselinePin},requirements:req,matrix:matrixRef,inventoryWitness:null,functionalWitness:null};
+const certRef=await save('certification.json',request),verdict=await certifyBaseline({requestFile:path.join(output,certRef.path),requestSHA256:certRef.sha256});
+assert.equal(verdict.technicalStatus,'blocked');assert.equal(verdict.counts.differences,20);assert.equal(verdict.counts.sourceMatchedFiles,manifest.files.length);assert.throws(()=>requireCertifiedBaseline(verdict,baselinePin),{code:'CERTIFICATION_REQUIRED'});await save('VERDICT.json',verdict);
+
+const spec=JSON.parse(await fs.readFile(path.join(repository,'docs/atlas/spectre-source.json'))),overlay=path.join(output,'overlay');await fs.mkdir(path.join(overlay,'landing-v02'),{recursive:true});
+for(const f of spec.files){const bytes=await readRegular(path.join(spectre,f.path));assert.equal(bytes.length,f.size);assert.equal(sha256(bytes),f.sha256);await fs.writeFile(path.join(overlay,f.path),bytes);}
+const home=await readRegular(path.join(output,'baseline/index.html'));await fs.writeFile(path.join(overlay,'index.html'),footerInsertion(home));
+const overlayManifest=await makeManifest(overlay,{criticalRoutes:['index.html','landing-v02/index.html'],provenance:{type:'supplied-artifact',description:'Frozen Spectre bytes; footer-only modification; non-production evaluation'}}),protection=makeProtection(manifest),policy=makePolicy(manifest,overlayManifest,protection);
+const overlayRef=await save('overlay-manifest.json',overlayManifest),protectionRef=await save('protection.json',protection),policyRef=await save('policy.json',policy);
+const inputRef=await save('release-input.json',{schemaVersion:1,kind:'atlas-release-input',sourceRevision:spec.commit,baseline:request.baseline,overlay:{root:'overlay',manifest:overlayRef.path,sha256:overlayRef.sha256},protection:protectionRef,policy:policyRef});
+const evidenceRef=await save('review.json',{schemaVersion:1,kind:'atlas-baseline-evidence',classification:'candidate-reconstruction',baselineManifestSHA256:baselinePin,sourceRevision:spec.commit,approvalReference:'Explicit non-production candidate rehearsal only. NOT complete, certified or approved.'});
+const scope=JSON.parse(await fs.readFile(path.join(origin,'scope.json'))),provenance=JSON.parse(await fs.readFile(path.join(origin,'provenance.json')));if(recoveredImages.length){scope.categories.productImages=recoveredImages.map(x=>x.path);scope.categories.protectedContent.push(...recoveredImages.map(x=>x.path));scope.categories.staticAssets.push(...recoveredImages.map(x=>x.path));provenance.files.push(...recoveredImages);}const scopeRef=await save('scope.json',scope),provenanceRef=await save('provenance.json',provenance);
+const plan={schemaVersion:1,kind:'atlas-release-run',sourceRevision:spec.commit,mode:'validation-only',context:{event:'workflow_dispatch',ref:'refs/heads/main',mode:'static-only',commitMessage:''},preparation:inputRef,evidence:evidenceRef,scope:scopeRef,provenance:provenanceRef};
+const planRef=await save('run-plan.json',plan),opts={planFile:path.join(output,planRef.path),planSHA256:planRef.sha256,sourceRevision:spec.commit,output:path.join(output,'assembled-a')};
+const first=await runRelease(opts),second=await runRelease({...opts,output:path.join(output,'assembled-b')});assert.equal(stable(first),stable(second));
+assert.equal(first.staging.assembled.protectedUnchanged,manifest.files.length-1);assert.equal(first.deployable,false);
+assert.deepEqual(await readRegular(path.join(opts.output,'site/index.html')),footerInsertion(home));
+for(const f of spec.files)assert.equal(sha256(await readRegular(path.join(opts.output,'site',f.path))),f.sha256);
+const baseFiles=await inventory(path.join(output,'baseline')),rolledBack=await inventory(path.join(output,'rollback'));assert.equal(sameFiles(baseFiles,rolledBack),true);assert.equal((await validateSnapshot(path.join(output,'rollback'),manifest)).valid,true);
+for(const f of manifest.files.filter(f=>categories.productImages.includes(f.path)))assert.equal(sha256(await readRegular(path.join(opts.output,'site',f.path))),f.sha256);
+plan.mode='static-only';const forbidden=await save('production-plan.json',plan);await assert.rejects(runRelease({...opts,planFile:path.join(output,forbidden.path),planSHA256:forbidden.sha256,output:path.join(output,'forbidden')}),{code:'RELEASE_INCOMPLETE'});await assert.rejects(fs.stat(path.join(output,'forbidden')),{code:'ENOENT'});
+const report={schemaVersion:1,classification:'NON-PRODUCTION candidate-baseline integrity rehearsal',baselineManifestSHA256:baselinePin,originalCandidatePin,baselineFiles:manifest.files.length,protectedUnchanged:manifest.files.length-1,homepageFooterOnly:true,frozenSpectreAssets:4,spectreCommit:spec.commit,spectreTree:spec.tree,deterministicEvidence:true,releaseId:first.releaseId,receiptSHA256:first.staging.assembled.receiptSHA256,rollbackManifestSHA256:baselinePin,rollbackExact:true,productImageFilesPreserved:categories.productImages.length,publicImageCaptureLedgerSHA256:captureRoot?captureLedgerSHA256:null,certificationStatus:verdict.technicalStatus,productionPreflightRejected:true,productionRequests:0,browserAcceptance:false,designAcceptance:false,deploymentEnabled:false};await save('REHEARSAL.json',report);console.log(stable(report));

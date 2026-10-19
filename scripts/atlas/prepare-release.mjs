@@ -6,11 +6,12 @@ import {record,fail,isHash,portablePath,loadJSON,stable,inventory} from './core.
 import {validateSnapshot} from './validate-snapshot.mjs';
 import {assembleStaticOverlay,verifyArtifact} from './assemble-static-overlay.mjs';
 import {resolvePublicationMode} from './resolve-publication-mode.mjs';
+import {requireCertifiedBaseline} from './certify-baseline.mjs';
 
 const classifications=['synthetic','partial-capture','candidate-reconstruction','authenticated-complete-production-artifact','owner-attested-reconstruction'];
 const complete=classifications.slice(3);
 const extensions=/\.(?:html?|css|m?js|json|svg|png|jpe?g|webp|gif|ico|woff2?|ttf|txt|xml|pdf|wasm)$/i;
-export async function prepareRelease({inputFile,inputSHA256,evidenceFile,evidenceSHA256,sourceRevision,context,purpose,output}){
+export async function prepareRelease({inputFile,inputSHA256,evidenceFile,evidenceSHA256,sourceRevision,context,purpose,output,certificate}){
  if(!isHash(inputSHA256)||!isHash(evidenceSHA256))fail('PIN_REQUIRED','Independent input and review SHA-256 pins required');
  if(!['validation-only','production-preflight'].includes(purpose))fail('PURPOSE_REQUIRED','Explicit validation-only or production-preflight purpose required');
  if(!/^[a-f0-9]{40}$/.test(sourceRevision||''))fail('SOURCE_REQUIRED','Trusted runner source revision required');
@@ -39,6 +40,7 @@ export async function prepareRelease({inputFile,inputSHA256,evidenceFile,evidenc
  if(baselineComplete&&baselineManifest.provenance.type==='synthetic')fail('SYNTHETIC_ATTESTATION','Synthetic content cannot become production evidence');
  if(evidence.classification==='authenticated-complete-production-artifact'&&baselineManifest.provenance.type!=='supplied-artifact')fail('PROVENANCE_MISMATCH','An authenticated artifact needs artifact provenance');
  if(evidence.classification==='owner-attested-reconstruction'&&baselineManifest.provenance.type!=='public-reconstruction')fail('PROVENANCE_MISMATCH','A reconstruction needs reconstruction provenance');
+ if(purpose==='production-preflight')requireCertifiedBaseline(certificate,input.baseline.sha256);
  async function rejectExecutables(dir){
   const inv=await inventory(dir);
   for(const f of inv.files){

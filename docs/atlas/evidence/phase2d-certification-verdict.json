@@ -1,0 +1,45 @@
+{
+  "baselineId": "preserved-observed-plus-historical-candidate-2026-10-19",
+  "baselineManifestSHA256": "a71d06e33856cec215b43888c05af9f0bfa5de660bcbfee06a0d81434230c6cf",
+  "counts": {
+    "differences": 20,
+    "files": 423,
+    "missingFirstPartyAssets": 0,
+    "sourceMatchedFiles": 423
+  },
+  "deployable": false,
+  "deploymentEnabled": false,
+  "issues": [
+    {
+      "code": "DYNAMIC_DEPENDENCIES_UNKNOWN",
+      "detail": "Runtime dependency review incomplete"
+    },
+    {
+      "code": "REFERENCE_MISSING",
+      "detail": "No independently preserved complete deployment/reference snapshot"
+    },
+    {
+      "code": "UNRESOLVED_DIFFERENCE",
+      "detail": "operations/snapshot.json"
+    },
+    {
+      "code": "WITNESS_MISSING",
+      "detail": "functional witness"
+    },
+    {
+      "code": "WITNESS_MISSING",
+      "detail": "inventory witness"
+    }
+  ],
+  "kind": "atlas-certification-verdict",
+  "properties": {
+    "authenticity": "unknown",
+    "functionalReadiness": "unknown",
+    "publicationAuthorisation": "not-granted",
+    "referenceCompleteness": "passed",
+    "versionConsistency": "blocked"
+  },
+  "requestSHA256": "5776d7ea8c4870ea7e5c94424240c6dde83f9b013d4baf721d907da57729e5b4",
+  "schemaVersion": 1,
+  "technicalStatus": "blocked"
+}

@@ -1,0 +1,260 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "kind",
+    "baselineId",
+    "sourceRevision",
+    "baseline",
+    "repository",
+    "observations",
+    "reference",
+    "rollback",
+    "requirements",
+    "matrix",
+    "inventoryWitness",
+    "functionalWitness"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "kind": {
+      "const": "atlas-baseline-certification"
+    },
+    "baselineId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000
+    },
+    "sourceRevision": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "baseline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "root",
+        "manifest",
+        "sha256"
+      ],
+      "properties": {
+        "root": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "manifest": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "root",
+        "manifest",
+        "sha256"
+      ],
+      "properties": {
+        "root": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "manifest": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "observations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "root",
+        "manifest",
+        "sha256"
+      ],
+      "properties": {
+        "root": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "manifest": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "reference": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "root",
+            "manifest",
+            "sha256"
+          ],
+          "properties": {
+            "root": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "manifest": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "rollback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "root",
+        "manifest",
+        "sha256"
+      ],
+      "properties": {
+        "root": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "manifest": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "requirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "matrix": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "inventoryWitness": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "functionalWitness": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "description": "Executable semantic validation in certify-baseline.mjs also rejects unsafe paths, duplicate keys, unresolved evidence and untrusted signatures. Trust anchors supplied separately by operator."
+}

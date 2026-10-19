@@ -1,7 +1,7 @@
 name: Atlas release validation (no deployment)
 on:
   push:
-    branches: [atlas/phase2c-workflow-recovery]
+    branches: [atlas/phase2d-certification-release]
     paths-ignore:
       - '.github/workflows/**'
   workflow_dispatch:
@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   offline-validation:
-    if: github.ref == 'refs/heads/atlas/phase2c-workflow-recovery'
+    if: github.ref == 'refs/heads/atlas/phase2d-certification-release'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
