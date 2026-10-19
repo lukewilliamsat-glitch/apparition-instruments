@@ -1,0 +1,28 @@
+name: Atlas Node 22 compatibility
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  atlas-node22:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/atlas/phase2a-deployment-safety'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Assert Node 22
+        run: node -e "if (process.versions.node.split('.')[0] !== '22') process.exit(1); console.log(process.version)"
+      - name: Run only Atlas under inherited kernel network denial
+        run: python3 tests/atlas/run-offline.py --node "$(command -v node)" --evidence "$RUNNER_TEMP/atlas-node22"
+      - name: Show focused test results
+        if: always()
+        run: |
+          if [ -f "$RUNNER_TEMP/atlas-node22/atlas-tests.stdout.txt" ]; then
+            cat "$RUNNER_TEMP/atlas-node22/atlas-tests.stdout.txt"
+          fi
