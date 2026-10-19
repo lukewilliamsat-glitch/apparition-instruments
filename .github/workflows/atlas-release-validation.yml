@@ -1,0 +1,39 @@
+name: Atlas release validation (no deployment)
+on:
+  push:
+    branches: [atlas/phase2b-production-recovery]
+    paths:
+      - 'scripts/atlas/**'
+      - 'tests/atlas/**'
+      - '.github/workflows/atlas-release-validation.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: atlas-validation-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  offline-validation:
+    if: github.ref == 'refs/heads/atlas/phase2b-production-recovery'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Assert Node 22
+        run: node -e "if (process.versions.node.split('.')[0] !== '22') process.exit(1); console.log(process.version)"
+      - name: Validate only offline Atlas fixtures under inherited kernel network denial
+        run: python3 tests/atlas/run-offline.py --node "$(command -v node)" --evidence "$RUNNER_TEMP/atlas-validation"
+      - name: Show focused results
+        if: always()
+        run: |
+          for name in network-probes atlas-tests synthetic-demo; do
+            if [ -f "$RUNNER_TEMP/atlas-validation/$name.stdout.txt" ]; then
+              cat "$RUNNER_TEMP/atlas-validation/$name.stdout.txt"
+            fi
+          done

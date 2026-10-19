@@ -1,5 +1,7 @@
 # Atlas Phase 2A — offline publication safety tools
 
+Phase 2B continuation is documented in `PHASE2B.md`: a pinned local release-input adapter and an isolated engineering-branch validation workflow are implemented. Production publication remains blocked. The historical Phase 2A scope/status below is retained for provenance.
+
 Authorisation 19. Build-time tooling only; no source of customer-facing JavaScript is changed. No existing application, workflow, schema, adapter, image publisher or frozen candidate is modified.
 
 The three components are `scripts/atlas/validate-snapshot.mjs`, `resolve-publication-mode.mjs` and `assemble-static-overlay.mjs`; common path/contract/hash utilities are in `core.mjs`, static reference analysis in `references.mjs`, and the unified command interface in `cli.mjs`. All imports are Node standard library or these local modules. No package or lockfile change is needed.

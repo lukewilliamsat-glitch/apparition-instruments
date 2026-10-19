@@ -1,5 +1,7 @@
 # GitHub Actions integration — review only, unapproved
 
+Phase 2B adds the non-deploying `atlas-release-validation.yml` engineering-branch workflow and `prepare-release.mjs` pinned local-input preflight. See `PHASE2B.md`. The production workflow and live schedule remain unchanged; the historical production-integration proposal below is not activated.
+
 No workflow is installed or changed. The only diff is `cms-guard.REVIEW-ONLY.diff`, against canonical static.yml. It adds one conditional to CMS generation and is explicitly insufficient for safe publication. A complete production workflow diff must wait for an approved baseline-input supply mechanism, source/coverage attestation and publication policy; this document specifies the integration boundary without inventing those inputs.
 
 ## Current verified source behaviour

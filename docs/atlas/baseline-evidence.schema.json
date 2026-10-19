@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "kind",
+    "classification",
+    "baselineManifestSHA256",
+    "sourceRevision",
+    "approvalReference"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "kind": {
+      "const": "atlas-baseline-evidence"
+    },
+    "classification": {
+      "enum": [
+        "synthetic",
+        "partial-capture",
+        "candidate-reconstruction",
+        "authenticated-complete-production-artifact",
+        "owner-attested-reconstruction"
+      ]
+    },
+    "baselineManifestSHA256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "sourceRevision": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "approvalReference": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000
+    }
+  }
+}

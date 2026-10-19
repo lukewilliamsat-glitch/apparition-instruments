@@ -1,0 +1,28 @@
+{
+  "commit": "2c85049b8583fc225d79406ba36e56b01bec9ad4",
+  "files": [
+    {
+      "path": "landing-v02/index.html",
+      "sha256": "6ef16c9e4cde718bcfe277c2d9dbd4ab6d62fd90b1c6246683367b624e38a7d5",
+      "size": 21933
+    },
+    {
+      "path": "landing-v02/spectre.css",
+      "sha256": "cbb56be87214a6436dab0c46652cb1b8da1ae0e24bd94b323cf7548ff0aedea7",
+      "size": 20533
+    },
+    {
+      "path": "landing-v02/spectre.mjs",
+      "sha256": "be1fa09b07e75ad9c03ef75822da7cf3f0a5db9e62ae45f70402b68b45b49521",
+      "size": 5627
+    },
+    {
+      "path": "landing-v02/state.mjs",
+      "sha256": "3e7d262209f7933f754e90bd45129c85554ed8061cb7a0441bc627c1a61b135e",
+      "size": 679
+    }
+  ],
+  "kind": "atlas-spectre-source",
+  "schemaVersion": 1,
+  "tree": "e1136da6ba9b3b8312dfbce0f73113dd2f2a7a19"
+}
