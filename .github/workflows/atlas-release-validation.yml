@@ -1,11 +1,9 @@
 name: Atlas release validation (no deployment)
 on:
   push:
-    branches: [atlas/phase2b-production-recovery]
-    paths:
-      - 'scripts/atlas/**'
-      - 'tests/atlas/**'
-      - '.github/workflows/atlas-release-validation.yml'
+    branches: [atlas/phase2c-workflow-recovery]
+    paths-ignore:
+      - '.github/workflows/**'
   workflow_dispatch:
 permissions:
   contents: read
@@ -14,15 +12,15 @@ concurrency:
   cancel-in-progress: false
 jobs:
   offline-validation:
-    if: github.ref == 'refs/heads/atlas/phase2b-production-recovery'
+    if: github.ref == 'refs/heads/atlas/phase2c-workflow-recovery'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # verified v4
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # verified v4
         with:
           node-version: '22'
       - name: Assert Node 22
