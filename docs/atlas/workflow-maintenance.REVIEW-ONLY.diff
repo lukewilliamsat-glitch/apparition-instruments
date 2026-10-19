@@ -1,0 +1,8 @@
+--- a/.github/workflows/static.yml
++++ b/.github/workflows/static.yml
+@@ -7,0 +8,2 @@
++    paths-ignore:
++      - '.github/workflows/**'
+@@ -14 +16 @@
+-    - cron: '*/15 * * * *'
++    - cron: '0 3 * * *'

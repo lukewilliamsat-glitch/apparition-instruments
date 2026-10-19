@@ -1,5 +1,7 @@
 # Atlas Phase 2A — offline publication safety tools
 
+Phase 2C recovery and end-to-end validation are documented in `PHASE2C.md`. Capture/reconstruction/assessment tools never confer deployment authority. The isolated engineering CI is separate from production.
+
 Phase 2B continuation is documented in `PHASE2B.md`: a pinned local release-input adapter and an isolated engineering-branch validation workflow are implemented. Production publication remains blocked. The historical Phase 2A scope/status below is retained for provenance.
 
 Authorisation 19. Build-time tooling only; no source of customer-facing JavaScript is changed. No existing application, workflow, schema, adapter, image publisher or frozen candidate is modified.
