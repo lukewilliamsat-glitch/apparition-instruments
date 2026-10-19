@@ -254,6 +254,32 @@
           "type": "null"
         }
       ]
+    },
+    "ownerDispositions": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
     }
   },
   "description": "Executable semantic validation in certify-baseline.mjs also rejects unsafe paths, duplicate keys, unresolved evidence and untrusted signatures. Trust anchors supplied separately by operator."

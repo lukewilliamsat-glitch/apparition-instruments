@@ -1,0 +1,17 @@
+{
+  "decisionId": "atlas-authorisation-24-operations-preservation-2026-10-19",
+  "items": [
+    {
+      "candidateSHA256": "0f8320dcc2a65cb1ec467ae1c70a3960b26dfd852bbd4c2853d9c8a5501837a3",
+      "decision": "preserve-observed-bytes",
+      "differenceSHA256": "732d1e146984874e6247fb0d746d95f5f00950a370c4fef613d2478e80eb366f",
+      "observedLiveSHA256": "0f8320dcc2a65cb1ec467ae1c70a3960b26dfd852bbd4c2853d9c8a5501837a3",
+      "path": "operations/snapshot.json",
+      "repositorySHA256": "42c4e841d91f459a58e941ae54f428bea7c1d9d43273668a632f5c0892647ec7"
+    }
+  ],
+  "kind": "atlas-owner-dispositions",
+  "ownerReference": "Project Atlas Authorisation 24, Stage B; received 2026-10-19T19:16:25+01:00",
+  "schemaVersion": 1,
+  "scope": "content-preservation-only"
+}

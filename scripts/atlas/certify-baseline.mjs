@@ -7,6 +7,7 @@ import {verify,createPublicKey} from 'node:crypto';
 import {record,fail,isHash,portablePath,pathsUnique,loadJSON,readRegular,sha256,stable,manifestContract,inventory,sameFiles,safeRoot} from './core.mjs';
 import {validateSnapshot} from './validate-snapshot.mjs';
 import {stampSource} from '../stamp-static-assets.mjs';
+import {verifyOwnerDispositions} from './owner-dispositions.mjs';
 
 export const CATEGORIES=['routes','staticAssets','productImages','productContent','news','cms','homepage','legal','checkout'];
 export const CHECKS=['static-preservation','checkout-compatibility','runtime-dependencies','product-image-availability','news-cms-consistency','rollback-recovery'];
@@ -25,10 +26,10 @@ export function requireCertifiedBaseline(certificate,manifestSHA256){
  return certificate;
 }
 
-export async function certifyBaseline({requestFile,requestSHA256,trustedSigners={}}){
+export async function certifyBaseline({requestFile,requestSHA256,trustedSigners={},trustedOwnerDispositions=[]}){
  if(!isHash(requestSHA256))fail('CERT_PIN','An independently supplied certification request pin is required');
  const request=(await loadJSON(requestFile,requestSHA256)).value;
- exact(request,['schemaVersion','kind','baselineId','sourceRevision','baseline','repository','observations','reference','rollback','requirements','matrix','inventoryWitness','functionalWitness'],'certification request');
+ const required=['schemaVersion','kind','baselineId','sourceRevision','baseline','repository','observations','reference','rollback','requirements','matrix','inventoryWitness','functionalWitness'];record(request,[...required,'ownerDispositions'],'certification request');if(required.some(k=>!Object.hasOwn(request,k)))fail('CERT_SCHEMA','Missing certification request field');
  if(request.schemaVersion!==1||request.kind!=='atlas-baseline-certification'||!text(request.baselineId)||!/^[a-f0-9]{40}$/.test(request.sourceRevision))fail('CERT_SCHEMA','Unknown certification contract/identity');
  const base=path.dirname(path.resolve(requestFile)),pins=[],issues=[];
  const issue=(code,detail)=>issues.push({code,detail});
@@ -97,6 +98,8 @@ export async function certifyBaseline({requestFile,requestSHA256,trustedSigners=
  exact(matrix,['schemaVersion','kind','sourceCommit','observation','rows'],'version matrix');
  if(matrix.schemaVersion!==1||matrix.kind!=='atlas-version-matrix'||matrix.sourceCommit!==request.sourceRevision||!text(matrix.observation)||!Array.isArray(matrix.rows))fail('CERT_SCHEMA','Invalid matrix');
  const rowKeys=['path','repositorySHA256','candidateSHA256','observedLiveSHA256','canonicalStampedSHA256','exactCanonicalStampMatch','repositoryBytes','observedBytes','sourceCommit','observedRevision','classification','authoritativeVersion','proposedDisposition','ownerDecisionRequired','renderedContentImpact','productImageImpact','newsCMSImpact','javascriptImpact','checkoutImpact','seoImpact','evidence','authorityLimitation'];
+ let ownerReview={resolved:[],issues:[]};
+ if(request.ownerDispositions!==undefined&&request.ownerDispositions!==null){const value=await jsonRef(request.ownerDispositions,'owner dispositions');ownerReview=verifyOwnerDispositions({value,digest:request.ownerDispositions.sha256,trustedDigests:trustedOwnerDispositions,rows:matrix.rows});for(const x of ownerReview.issues)issue(x.code,x.detail);}
  pathsUnique(matrix.rows.map(x=>x.path),'matrix paths');
  const differences=[...observed.values()].filter(f=>repo.has(f.path)&&repo.get(f.path).sha256!==f.sha256).map(f=>f.path).sort();
  if(!same([...matrix.rows.map(r=>r.path)].sort(),differences))issue('MATRIX_COVERAGE','Every actual repository/observed difference must be present exactly once');
@@ -110,7 +113,8 @@ export async function certifyBaseline({requestFile,requestSHA256,trustedSigners=
   if(row.canonicalStampedSHA256!==stampHash||row.exactCanonicalStampMatch!==exactStamp)issue('STAMP_EVIDENCE',row.path);
   if(!['expected-generated-difference','verified-live-version','verified-historical-source-version','recoverable-version-mismatch','requires-owner-review','unresolved-unsafe'].includes(row.classification))fail('CERT_SCHEMA','Unknown difference classification');
   if(row.classification==='expected-generated-difference'&&!exactStamp)issue('FALSE_GENERATED_CLAIM',row.path);
-  if(row.ownerDecisionRequired||!['expected-generated-difference','verified-live-version'].includes(row.classification))issue('UNRESOLVED_DIFFERENCE',row.path);
+  const ownerResolved=ownerReview.resolved.includes(row.path);
+  if(row.ownerDecisionRequired&&!ownerResolved||!['expected-generated-difference','verified-live-version'].includes(row.classification)&&!(row.classification==='requires-owner-review'&&ownerResolved))issue('UNRESOLVED_DIFFERENCE',row.path);
  }
 
  // Ed25519 public keys come only from the operator's separately pinned trust file.
@@ -143,6 +147,7 @@ export async function certifyBaseline({requestFile,requestSHA256,trustedSigners=
  const unique=[...new Map(issues.map(x=>[x.code+':'+x.detail,x])).values()].sort((a,b)=>(a.code+':'+a.detail).localeCompare(b.code+':'+b.detail,'en'));
  const failed=code=>unique.some(x=>code.includes(x.code));
  const verdict={schemaVersion:1,kind:'atlas-certification-verdict',baselineId:request.baselineId,requestSHA256,baselineManifestSHA256:baseline.pin,technicalStatus:unique.length?'blocked':'certified',properties:{referenceCompleteness:validation.valid&&!firstPartyMissing.size?'passed':'failed',authenticity:inventoryWitness&&reference&&!failed(['SNAPSHOT_INTEGRITY','PROVENANCE_MISSING','DEPENDENT_SOURCE','WITNESS_BINDING','WITNESS_SIGNATURE','UNTRUSTED_WITNESS'])?'witness-verified':'unknown',versionConsistency:reference&&!failed(['VERSION_SET_MISMATCH','MATRIX_COVERAGE','MATRIX_BINDING','UNRESOLVED_DIFFERENCE','STAMP_EVIDENCE','FALSE_GENERATED_CLAIM','OBSERVED_VERSION_REPLACED'])?'passed':'blocked',functionalReadiness:functionalWitness&&!failed(['FUNCTIONAL_COVERAGE','FUNCTIONAL_NOT_PASSED','DYNAMIC_DEPENDENCIES_UNKNOWN'])?'witness-verified':'unknown',publicationAuthorisation:'not-granted'},counts:{files:candidate.size,sourceMatchedFiles:matchedSources,differences:differences.length,missingFirstPartyAssets:firstPartyMissing.size},issues:unique,deployable:false,deploymentEnabled:false};
+ verdict.properties.ownerContentDisposition=matrix.rows.some(r=>r.ownerDecisionRequired&&!ownerReview.resolved.includes(r.path))?'blocked':ownerReview.resolved.length?'verified-preservation':'not-required';verdict.counts.ownerDispositionsVerified=ownerReview.resolved.length;
  if(!unique.length)issued.add(verdict);return verdict;
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){
