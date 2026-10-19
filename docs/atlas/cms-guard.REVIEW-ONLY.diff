@@ -1,0 +1,10 @@
+--- a/.github/workflows/static.yml
++++ b/.github/workflows/static.yml
+@@ -51,6 +51,7 @@
+         if: github.event_name != 'push' || (!contains(github.event.head_commit.message, '[static-only]') && !contains(github.event.head_commit.message, '[cms-only]'))
+         run: node scripts/generate-site-operations.mjs
+       - name: Generate CMS published articles
++        if: github.event_name != 'push' || !contains(github.event.head_commit.message, '[static-only]')
+         run: node scripts/generate-hub-cms.mjs
+       - name: Prepare Search Console verification
+         env:

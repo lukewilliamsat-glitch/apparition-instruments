@@ -1,0 +1,20 @@
+# REVIEW ONLY: not installed under .github/workflows.
+# No production deployment, npm installation, secrets or Supabase access.
+name: Atlas Node 22 compatibility
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  atlas-node22:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run only Atlas under inherited kernel network denial
+        run: python3 tests/atlas/run-offline.py --node "$(command -v node)" --evidence "$RUNNER_TEMP/atlas-node22"

@@ -1,0 +1,304 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:apparition:atlas:phase2a:contracts:1",
+  "$comment": "Portable path, collision, cross-file digest, resource and complete protection constraints additionally enforced by executable validators. This schema is documentation, not an approval mechanism.",
+  "$defs": {
+    "snapshotManifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "kind": {
+          "const": "atlas-static-snapshot"
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "enum": [
+                "synthetic",
+                "supplied-artifact",
+                "public-reconstruction"
+              ]
+            },
+            "description": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            }
+          },
+          "required": [
+            "type",
+            "description"
+          ]
+        },
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 20000,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 240,
+                "description": "Portable ASCII relative path, no traversal/backslashes/percent encodings/reserved names. Runtime enforces full policy."
+              },
+              "size": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 33554432
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "contentType": {
+                "type": "string",
+                "description": "Must equal extension-inferred MIME"
+              }
+            },
+            "required": [
+              "path",
+              "size",
+              "sha256",
+              "contentType"
+            ]
+          }
+        },
+        "protectedPaths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 240,
+            "description": "Portable ASCII relative path, no traversal/backslashes/percent encodings/reserved names. Runtime enforces full policy."
+          },
+          "uniqueItems": true
+        },
+        "criticalRoutes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 240,
+            "description": "Portable ASCII relative path, no traversal/backslashes/percent encodings/reserved names. Runtime enforces full policy."
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "criticalAssets": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 240,
+            "description": "Portable ASCII relative path, no traversal/backslashes/percent encodings/reserved names. Runtime enforces full policy."
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "kind",
+        "provenance",
+        "files",
+        "protectedPaths",
+        "criticalRoutes",
+        "criticalAssets"
+      ]
+    },
+    "protectedManifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "kind": {
+          "const": "atlas-protected-baseline"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 240,
+                "description": "Portable ASCII relative path, no traversal/backslashes/percent encodings/reserved names. Runtime enforces full policy."
+              },
+              "size": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 33554432
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "path",
+              "size",
+              "sha256"
+            ]
+          }
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "kind",
+        "files"
+      ]
+    },
+    "overlayPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "kind": {
+          "const": "spectre-v02-footer-v1"
+        },
+        "allowlist": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "index.html",
+              "landing-v02/index.html",
+              "landing-v02/spectre.css",
+              "landing-v02/spectre.mjs",
+              "landing-v02/state.mjs"
+            ]
+          }
+        },
+        "baselineManifestSHA256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "overlayManifestSHA256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "protectedManifestSHA256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "homepageBaselineSHA256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "kind",
+        "allowlist",
+        "baselineManifestSHA256",
+        "overlayManifestSHA256",
+        "protectedManifestSHA256",
+        "homepageBaselineSHA256"
+      ]
+    },
+    "modeInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "event": {
+          "enum": [
+            "push",
+            "workflow_dispatch",
+            "schedule",
+            "pull_request"
+          ]
+        },
+        "ref": {
+          "const": "refs/heads/main"
+        },
+        "commitMessage": {
+          "type": "string",
+          "maxLength": 65536
+        },
+        "dispatch": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "mode": {
+              "enum": [
+                "full-build",
+                "static-only",
+                "cms-only",
+                "audit-only"
+              ]
+            }
+          },
+          "required": []
+        },
+        "gates": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "sourceRevisionVerified": {
+              "type": "boolean"
+            },
+            "baselineComplete": {
+              "type": "boolean"
+            },
+            "overlayAllowlisted": {
+              "type": "boolean"
+            },
+            "validationPassed": {
+              "type": "boolean"
+            },
+            "protectedFilesPreserved": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "sourceRevisionVerified",
+            "baselineComplete",
+            "overlayAllowlisted",
+            "validationPassed",
+            "protectedFilesPreserved"
+          ]
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "event",
+        "ref",
+        "commitMessage",
+        "dispatch",
+        "gates"
+      ]
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/snapshotManifest"
+    },
+    {
+      "$ref": "#/$defs/protectedManifest"
+    },
+    {
+      "$ref": "#/$defs/overlayPolicy"
+    },
+    {
+      "$ref": "#/$defs/modeInput"
+    }
+  ]
+}
