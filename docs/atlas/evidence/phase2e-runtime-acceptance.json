@@ -1,0 +1,109 @@
+{
+  "baselineManifestSHA256": "f09b597bf4d6fc0fd0e5f2cab6d64162eefb3652b1f3721d2c93b0173e0c0dc9",
+  "browserAccepted": false,
+  "checks": [
+    {
+      "detail": {
+        "errors": [],
+        "execution": "No browser entry module evaluated",
+        "parsed": 238
+      },
+      "id": "javascript-syntax",
+      "status": "passed"
+    },
+    {
+      "detail": "Static title/heading only; browser rendering pending",
+      "id": "homepage-markup",
+      "status": "passed"
+    },
+    {
+      "detail": "Static title/heading only; browser rendering pending",
+      "id": "checkout-shell-markup",
+      "status": "passed"
+    },
+    {
+      "detail": "Static title/heading only; browser rendering pending",
+      "id": "news-markup",
+      "status": "passed"
+    },
+    {
+      "detail": {
+        "pages": 9
+      },
+      "id": "product-markup",
+      "status": "passed"
+    },
+    {
+      "detail": {
+        "files": 6,
+        "validation": "Exact manifest SHA-256 plus PNG signature; no quality conversion"
+      },
+      "id": "product-image-integrity",
+      "status": "passed"
+    },
+    {
+      "detail": "No activation performed",
+      "id": "public-adapter-disabled",
+      "status": "passed"
+    },
+    {
+      "detail": "Real pure model; synthetic state; no checkout authority",
+      "id": "operations-fixture",
+      "status": "passed"
+    },
+    {
+      "detail": "Real renderer with synthetic News only",
+      "id": "news-fixture",
+      "status": "passed"
+    },
+    {
+      "detail": {
+        "mockedGETs": 1,
+        "productionRequests": 0
+      },
+      "id": "catalogue-cache-fixture",
+      "status": "passed"
+    },
+    {
+      "detail": {
+        "mockedGETs": 2
+      },
+      "id": "catalogue-invalidation-fixture",
+      "status": "passed"
+    },
+    {
+      "detail": "Failure rejected; no stale or browser-local substitution",
+      "id": "catalogue-failure-fixture",
+      "status": "passed"
+    },
+    {
+      "detail": "Real repository rejects writes before transport",
+      "id": "public-write-denial-fixture",
+      "status": "passed"
+    },
+    {
+      "detail": "Connected Chrome is available for read-only repository settings, but offers no documented disposable-profile/process-level network isolation or verified fixture-origin reachability",
+      "id": "browser-rendering",
+      "status": "pending"
+    },
+    {
+      "detail": "No candidate application page opened; no browser console or visual pass claimed",
+      "id": "browser-console-and-layout",
+      "status": "pending"
+    }
+  ],
+  "counts": {
+    "failed": 0,
+    "parsedModules": 238,
+    "passed": 13,
+    "pending": 2
+  },
+  "kind": "atlas-runtime-acceptance",
+  "mode": "offline-node-fixtures-and-static-analysis",
+  "networkIsolation": "reviewed-inherited-seccomp; fixture transports; no production credentials",
+  "nodeVersion": "v22.20.0",
+  "ordersCreated": 0,
+  "paymentsCreated": 0,
+  "productionRequests": 0,
+  "schemaVersion": 1
+}

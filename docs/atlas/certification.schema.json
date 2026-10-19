@@ -1,116 +1,42 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "type": "object",
-  "additionalProperties": false,
-  "required": [
-    "schemaVersion",
-    "kind",
-    "baselineId",
-    "sourceRevision",
-    "baseline",
-    "repository",
-    "observations",
-    "reference",
-    "rollback",
-    "requirements",
-    "matrix",
-    "inventoryWitness",
-    "functionalWitness"
-  ],
-  "properties": {
-    "schemaVersion": {
-      "const": 1
-    },
-    "kind": {
-      "const": "atlas-baseline-certification"
-    },
-    "baselineId": {
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 2000
-    },
-    "sourceRevision": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{40}$"
-    },
-    "baseline": {
+  "description": "Version 2 is mandatory for production release readiness. Legacy version 1 remains inspectable, not a production-preflight capability. All evidence and trust pins verified by the executable validator.",
+  "oneOf": [
+    {
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "root",
-        "manifest",
-        "sha256"
+        "schemaVersion",
+        "kind",
+        "baselineId",
+        "sourceRevision",
+        "baseline",
+        "repository",
+        "observations",
+        "reference",
+        "rollback",
+        "requirements",
+        "matrix",
+        "inventoryWitness",
+        "functionalWitness"
       ],
       "properties": {
-        "root": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "kind": {
+          "const": "atlas-baseline-certification"
+        },
+        "baselineId": {
           "type": "string",
           "minLength": 1,
-          "maxLength": 240
+          "maxLength": 2000
         },
-        "manifest": {
+        "sourceRevision": {
           "type": "string",
-          "minLength": 1,
-          "maxLength": 240
+          "pattern": "^[a-f0-9]{40}$"
         },
-        "sha256": {
-          "type": "string",
-          "pattern": "^[a-f0-9]{64}$"
-        }
-      }
-    },
-    "repository": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "root",
-        "manifest",
-        "sha256"
-      ],
-      "properties": {
-        "root": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 240
-        },
-        "manifest": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 240
-        },
-        "sha256": {
-          "type": "string",
-          "pattern": "^[a-f0-9]{64}$"
-        }
-      }
-    },
-    "observations": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "root",
-        "manifest",
-        "sha256"
-      ],
-      "properties": {
-        "root": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 240
-        },
-        "manifest": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 240
-        },
-        "sha256": {
-          "type": "string",
-          "pattern": "^[a-f0-9]{64}$"
-        }
-      }
-    },
-    "reference": {
-      "anyOf": [
-        {
+        "baseline": {
           "type": "object",
           "additionalProperties": false,
           "required": [
@@ -135,77 +61,114 @@
             }
           }
         },
-        {
-          "type": "null"
-        }
-      ]
-    },
-    "rollback": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "root",
-        "manifest",
-        "sha256"
-      ],
-      "properties": {
-        "root": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 240
+        "repository": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "root",
+            "manifest",
+            "sha256"
+          ],
+          "properties": {
+            "root": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "manifest": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
         },
-        "manifest": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 240
+        "observations": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "root",
+            "manifest",
+            "sha256"
+          ],
+          "properties": {
+            "root": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "manifest": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
         },
-        "sha256": {
-          "type": "string",
-          "pattern": "^[a-f0-9]{64}$"
-        }
-      }
-    },
-    "requirements": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "path",
-        "sha256"
-      ],
-      "properties": {
-        "path": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 240
+        "reference": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "root",
+                "manifest",
+                "sha256"
+              ],
+              "properties": {
+                "root": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 240
+                },
+                "manifest": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 240
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
-        "sha256": {
-          "type": "string",
-          "pattern": "^[a-f0-9]{64}$"
-        }
-      }
-    },
-    "matrix": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "path",
-        "sha256"
-      ],
-      "properties": {
-        "path": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 240
+        "rollback": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "root",
+            "manifest",
+            "sha256"
+          ],
+          "properties": {
+            "root": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "manifest": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
         },
-        "sha256": {
-          "type": "string",
-          "pattern": "^[a-f0-9]{64}$"
-        }
-      }
-    },
-    "inventoryWitness": {
-      "anyOf": [
-        {
+        "requirements": {
           "type": "object",
           "additionalProperties": false,
           "required": [
@@ -224,14 +187,7 @@
             }
           }
         },
-        {
-          "type": "null"
-        }
-      ]
-    },
-    "functionalWitness": {
-      "anyOf": [
-        {
+        "matrix": {
           "type": "object",
           "additionalProperties": false,
           "required": [
@@ -250,14 +206,85 @@
             }
           }
         },
-        {
-          "type": "null"
-        }
-      ]
-    },
-    "ownerDispositions": {
-      "anyOf": [
-        {
+        "inventoryWitness": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "path",
+                "sha256"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 240
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "functionalWitness": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "path",
+                "sha256"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 240
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ownerDispositions": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "path",
+                "sha256"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 240
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "deploymentInventory": {
           "type": "object",
           "additionalProperties": false,
           "required": [
@@ -276,11 +303,352 @@
             }
           }
         },
-        {
-          "type": "null"
+        "runtimeAcceptance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
         }
-      ]
+      },
+      "description": "Executable semantic validation in certify-baseline.mjs also rejects unsafe paths, duplicate keys, unresolved evidence and untrusted signatures. Trust anchors supplied separately by operator."
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "kind",
+        "baselineId",
+        "sourceRevision",
+        "baseline",
+        "repository",
+        "observations",
+        "reference",
+        "rollback",
+        "requirements",
+        "matrix",
+        "inventoryWitness",
+        "functionalWitness",
+        "deploymentInventory",
+        "runtimeAcceptance"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": 2
+        },
+        "kind": {
+          "const": "atlas-baseline-certification"
+        },
+        "baselineId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "sourceRevision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        },
+        "baseline": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "root",
+            "manifest",
+            "sha256"
+          ],
+          "properties": {
+            "root": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "manifest": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        "repository": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "root",
+            "manifest",
+            "sha256"
+          ],
+          "properties": {
+            "root": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "manifest": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        "observations": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "root",
+            "manifest",
+            "sha256"
+          ],
+          "properties": {
+            "root": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "manifest": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "root",
+                "manifest",
+                "sha256"
+              ],
+              "properties": {
+                "root": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 240
+                },
+                "manifest": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 240
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rollback": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "root",
+            "manifest",
+            "sha256"
+          ],
+          "properties": {
+            "root": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "manifest": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        "requirements": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        "matrix": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        "inventoryWitness": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "path",
+                "sha256"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 240
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "functionalWitness": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "path",
+                "sha256"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 240
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ownerDispositions": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "path",
+                "sha256"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 240
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "deploymentInventory": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        "runtimeAcceptance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        }
+      },
+      "description": "Executable semantic validation in certify-baseline.mjs also rejects unsafe paths, duplicate keys, unresolved evidence and untrusted signatures. Trust anchors supplied separately by operator."
     }
-  },
-  "description": "Executable semantic validation in certify-baseline.mjs also rejects unsafe paths, duplicate keys, unresolved evidence and untrusted signatures. Trust anchors supplied separately by operator."
+  ]
 }

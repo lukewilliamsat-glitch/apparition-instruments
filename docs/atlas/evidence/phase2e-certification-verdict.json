@@ -1,0 +1,50 @@
+{
+  "baselineId": "atlas-phase2e-canonical-reconstruction",
+  "baselineManifestSHA256": "f09b597bf4d6fc0fd0e5f2cab6d64162eefb3652b1f3721d2c93b0173e0c0dc9",
+  "counts": {
+    "differences": 30,
+    "files": 423,
+    "missingFirstPartyAssets": 0,
+    "ownerDispositionsVerified": 1,
+    "sourceMatchedFiles": 423
+  },
+  "deployable": false,
+  "deploymentEnabled": false,
+  "evidenceVersion": 2,
+  "issues": [
+    {
+      "code": "DYNAMIC_DEPENDENCIES_UNKNOWN",
+      "detail": "Runtime dependency review incomplete"
+    },
+    {
+      "code": "REFERENCE_MISSING",
+      "detail": "No independently preserved complete deployment/reference snapshot"
+    },
+    {
+      "code": "RUNTIME_BROWSER_PENDING",
+      "detail": "Isolated real-browser evidence is incomplete"
+    },
+    {
+      "code": "WITNESS_MISSING",
+      "detail": "functional witness"
+    },
+    {
+      "code": "WITNESS_MISSING",
+      "detail": "inventory witness"
+    }
+  ],
+  "kind": "atlas-certification-verdict",
+  "properties": {
+    "authenticity": "unknown",
+    "deploymentCompleteness": "unknown",
+    "functionalReadiness": "unknown",
+    "ownerContentDisposition": "verified-preservation",
+    "publicationAuthorisation": "not-granted",
+    "referenceCompleteness": "passed",
+    "runtimeCompatibility": "pending",
+    "versionConsistency": "blocked"
+  },
+  "requestSHA256": "f00a6537dc5599e5f7838decb3e893466503e8470a816a454a8a93de5b88f1a0",
+  "schemaVersion": 1,
+  "technicalStatus": "blocked"
+}

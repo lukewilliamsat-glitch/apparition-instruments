@@ -1,0 +1,13 @@
+// Pure maintenance preflight, not a deployment or a substitute for current settings evidence.
+import {record,fail,isHash,sha256} from './core.mjs';
+export function scheduleMaintenance({sourceRevision,workflow,workflowSHA256,settings,commitMessage}){
+ if(!/^[a-f0-9]{40}$/.test(sourceRevision||'')||!isHash(workflowSHA256)||sha256(workflow)!==workflowSHA256)fail('MAINTENANCE_SOURCE','Exact current main and workflow pin required');
+ const keys=['repository','repositoryId','pagesSource','classicProtection','rulesets','defaultTokenPermission','environmentBranches','environmentReviewers','environmentTimer','visibleWebhooks','workflowPaths','independentlyObserved','nativeSkipDocumentationVerified'];record(settings,keys,'maintenance settings');
+ if(keys.some(k=>!Object.hasOwn(settings,k))||settings.repository!=='lukewilliamsat-glitch/apparition-instruments'||settings.repositoryId!==1383011149||settings.independentlyObserved!==true||settings.nativeSkipDocumentationVerified!==true||settings.pagesSource!=='GitHub Actions'||settings.classicProtection!=='none'||settings.rulesets!=='none'||settings.defaultTokenPermission!=='read'||settings.environmentReviewers!==false||settings.environmentTimer!==false||settings.visibleWebhooks!==0||JSON.stringify(settings.environmentBranches)!=='["main"]'||JSON.stringify(settings.workflowPaths)!=='[".github/workflows/static.yml"]')fail('MAINTENANCE_CONFIGURATION','Missing, changed or unverified effective settings block main maintenance');
+ if(typeof commitMessage!=='string'||!commitMessage.includes('[skip ci]'))fail('MAINTENANCE_SKIP','Verified native push skip instruction is required');
+ if(!/^\s*branches: \["main"\]$/m.test(workflow)||!workflow.includes('workflow_dispatch:')||!workflow.includes('actions/deploy-pages@v5')||/pull_request|workflow_run|repository_dispatch|workflow_call/.test(workflow))fail('MAINTENANCE_TRIGGER','Unsupported trigger/deployment configuration');
+ const old="    - cron: '*/15 * * * *'",replacement="    - cron: '0 3 * * *'";
+ if(workflow.split(old).length!==2||workflow.includes(replacement))fail('MAINTENANCE_CRON','Expected one exact existing cron; no fallback');
+ const after=workflow.replace(old,replacement);
+ return {schemaVersion:1,kind:'atlas-schedule-maintenance',sourceRevision,path:'.github/workflows/static.yml',beforeSHA256:workflowSHA256,afterSHA256:sha256(after),after,commitMessage,oldCron:'*/15 * * * *',newCron:'0 3 * * *',strategy:'GitHub documented native push skip; current settings and sole default-branch workflow independently verified',mainContentChange:false,productionDeploymentAuthorised:false,force:false};
+}

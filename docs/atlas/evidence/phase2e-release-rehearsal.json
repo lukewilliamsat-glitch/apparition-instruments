@@ -1,0 +1,31 @@
+{
+  "baselineManifestSHA256": "f09b597bf4d6fc0fd0e5f2cab6d64162eefb3652b1f3721d2c93b0173e0c0dc9",
+  "browserAccepted": false,
+  "classification": "NON-PRODUCTION canonical reconstruction; NOT a certified live deployment",
+  "deterministic": true,
+  "files": 423,
+  "homepageFooterOnly": true,
+  "inventoryCounts": {
+    "currentResponses": 19,
+    "directlyObserved": 46,
+    "files": 423,
+    "unobserved": 377,
+    "versionMismatches": 0
+  },
+  "kind": "atlas-release-readiness-rehearsal",
+  "originalBaselineManifestSHA256": "a71d06e33856cec215b43888c05af9f0bfa5de660bcbfee06a0d81434230c6cf",
+  "ownerDisposition": "verified-preservation",
+  "productionRequests": 0,
+  "protectedUnchanged": 422,
+  "publicationAuthorised": false,
+  "releaseId": "5155b18485fe382fbcd43c96a27f290c14acbc3937a9991c379eea5b72f5c79d",
+  "rollbackExact": true,
+  "runtimeCounts": {
+    "failed": 0,
+    "parsedModules": 238,
+    "passed": 13,
+    "pending": 2
+  },
+  "schemaVersion": 1,
+  "technicalCertification": "blocked"
+}

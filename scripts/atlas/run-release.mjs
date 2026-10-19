@@ -6,8 +6,8 @@ import {record,fail,isHash,portablePath,loadJSON,sha256,stable} from './core.mjs
 import {assessRecovery} from './assess-recovery.mjs';
 import {prepareRelease} from './prepare-release.mjs';
 import {verifyArtifact} from './assemble-static-overlay.mjs';
-import {certifyBaseline,requireCertifiedBaseline} from './certify-baseline.mjs';
-export async function runRelease({planFile,planSHA256,sourceRevision,output,approvalFile,approvalSHA256,certificationRequestFile,certificationRequestSHA256,trustedSigners={}}){
+import {certifyBaseline,requireReleaseReadiness} from './certify-baseline.mjs';
+export async function runRelease({planFile,planSHA256,sourceRevision,output,approvalFile,approvalSHA256,certificationRequestFile,certificationRequestSHA256,trustedSigners={},trustedOwnerDispositions=[]}){
  if(!isHash(planSHA256)||!/^[a-f0-9]{40}$/.test(sourceRevision||''))fail('RELEASE_PIN','Independent plan pin and trusted source revision required');
  const plan=(await loadJSON(planFile,planSHA256)).value;
  record(plan,['schemaVersion','kind','sourceRevision','mode','context','preparation','evidence','scope','provenance'],'release run');
@@ -30,7 +30,7 @@ export async function runRelease({planFile,planSHA256,sourceRevision,output,appr
   const a=(await loadJSON(approvalFile,approvalSHA256)).value;record(a,['schemaVersion','kind','assessmentSHA256','manifestSHA256','sourceRevision','approvalReference'],'completeness approval');
   if(a.schemaVersion!==1||a.kind!=='atlas-completeness-approval'||a.assessmentSHA256!==assessmentSHA256||a.manifestSHA256!==assessment.manifestSHA256||a.sourceRevision!==sourceRevision||typeof a.approvalReference!=='string'||!a.approvalReference.trim())fail('RELEASE_APPROVAL_BINDING','Owner review does not bind exact assessment, baseline and source');
   if(!certificationRequestFile||!isHash(certificationRequestSHA256))fail('CERTIFICATION_REQUIRED','Production preflight requires independent technical evidence in addition to approval');
-  certificate=await certifyBaseline({requestFile:certificationRequestFile,requestSHA256:certificationRequestSHA256,trustedSigners});requireCertifiedBaseline(certificate,assessment.manifestSHA256);
+  certificate=await certifyBaseline({requestFile:certificationRequestFile,requestSHA256:certificationRequestSHA256,trustedSigners,trustedOwnerDispositions});requireReleaseReadiness(certificate,assessment.manifestSHA256);
  }
  const staging=await prepareRelease({inputFile:prep.file,inputSHA256:prep.pin,evidenceFile:evidence.file,evidenceSHA256:evidence.pin,sourceRevision,context:plan.context,purpose:plan.mode==='static-only'?'production-preflight':'validation-only',output,certificate});
  if(staging.candidateCreated)await verifyArtifact(output,{expectedReceiptSHA256:staging.assembled.receiptSHA256});
@@ -38,11 +38,11 @@ export async function runRelease({planFile,planSHA256,sourceRevision,output,appr
  await loadJSON(planFile,planSHA256);for(const i of [prep,evidence,scope,provenance])await loadJSON(i.file,i.pin);
  if(plan.mode==='static-only')await loadJSON(approvalFile,approvalSHA256);
  const after=await assessRecovery({root,manifestFile,manifestSHA256:prep.value.baseline.sha256,scopeFile:scope.file,scopeSHA256:scope.pin,provenanceFile:provenance.file,provenanceSHA256:provenance.pin});if(sha256(stable(after))!==assessmentSHA256)fail('RELEASE_INPUT_CHANGED','Baseline/evidence changed during rehearsal');
- if(certificate){const rechecked=await certifyBaseline({requestFile:certificationRequestFile,requestSHA256:certificationRequestSHA256,trustedSigners});requireCertifiedBaseline(rechecked,assessment.manifestSHA256);if(stable(certificate)!==stable(rechecked))fail('RELEASE_INPUT_CHANGED','Certification evidence changed during staging');}
+ if(certificate){const rechecked=await certifyBaseline({requestFile:certificationRequestFile,requestSHA256:certificationRequestSHA256,trustedSigners,trustedOwnerDispositions});requireReleaseReadiness(rechecked,assessment.manifestSHA256);if(stable(certificate)!==stable(rechecked))fail('RELEASE_INPUT_CHANGED','Certification evidence changed during staging');}
  const releaseId=sha256(stable({planSHA256,sourceRevision,baselineManifestSHA256:assessment.manifestSHA256,receiptSHA256:staging.assembled?.receiptSHA256??null,certificationRequestSHA256:certificate?.requestSHA256??null}));
  return {schemaVersion:1,status:staging.candidateCreated?'rehearsal-verified':'audit-verified',releaseId,planSHA256,assessmentSHA256,assessment,certificate,staging,deployable:false,deploymentEnabled:false,productionPublicationAuthorised:false,rollback:{baselineId:assessment.manifestSHA256,baselineManifestSHA256:assessment.manifestSHA256,retainOriginalBaseline:true,automaticRollback:false},summary:'Integrity rehearsal only. No publication action is implemented.'};
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){
- try{const [planFile,planSHA256,sourceRevision,output,approvalFile,approvalSHA256,certificationRequestFile,certificationRequestSHA256,trustFile,trustSHA256]=process.argv.slice(2);if(trustFile&&!isHash(trustSHA256))fail('CERT_PIN','Separate trust pin required');const trustedSigners=trustFile?(await loadJSON(trustFile,trustSHA256)).value:{};const r=await runRelease({planFile,planSHA256,sourceRevision,output,approvalFile,approvalSHA256,certificationRequestFile,certificationRequestSHA256,trustedSigners});process.stdout.write(stable(r));}
+ try{const [planFile,planSHA256,sourceRevision,output,approvalFile,approvalSHA256,certificationRequestFile,certificationRequestSHA256,trustFile,trustSHA256,ownerTrustFile,ownerTrustSHA256]=process.argv.slice(2);if(trustFile&&!isHash(trustSHA256))fail('CERT_PIN','Separate trust pin required');const trustedSigners=trustFile?(await loadJSON(trustFile,trustSHA256)).value:{};if(ownerTrustFile&&!isHash(ownerTrustSHA256))fail('CERT_PIN','Separate owner trust pin required');const trustedOwnerDispositions=ownerTrustFile?(await loadJSON(ownerTrustFile,ownerTrustSHA256)).value:[];const r=await runRelease({planFile,planSHA256,sourceRevision,output,approvalFile,approvalSHA256,certificationRequestFile,certificationRequestSHA256,trustedSigners,trustedOwnerDispositions});process.stdout.write(stable(r));}
  catch(e){process.stdout.write(stable({status:'blocked',deployable:false,deploymentEnabled:false,errorCode:e.code||'RELEASE_IO'}));process.exitCode=1;}
 }

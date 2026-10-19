@@ -8,7 +8,7 @@ import {certifyBaseline,requireCertifiedBaseline,CATEGORIES} from '../../scripts
 import {makeProtection,makePolicy,footerInsertion} from '../../scripts/atlas/assemble-static-overlay.mjs';
 import {validateSnapshot} from '../../scripts/atlas/validate-snapshot.mjs';
 import {runRelease} from '../../scripts/atlas/run-release.mjs';
-const [phase2c,repository,spectre,output,captureRoot,captureLedgerSHA256]=process.argv.slice(2);
+const [phase2c,repository,spectre,output,captureRoot,captureLedgerSHA256,ownerDispositionSHA256]=process.argv.slice(2);
 if(!phase2c||!repository||!spectre||!output)throw Error('Four explicit local paths required; no fallback');
 await fs.mkdir(output);
 const evidence=path.join(phase2c,'evidence'),origin=path.join(evidence,'reconstructed');
@@ -36,7 +36,7 @@ for(const f of manifest.files){const p=f.path;categories[/\.html?$/.test(p)?'rou
 const req=await save('requirements.json',{schemaVersion:1,kind:'atlas-certification-requirements',categories,emptyCategoryReasons:{},unknownDynamicDependencies:['Complete deployed runtime/module version inventory unavailable',recoveredImages.length?'Six public image fingerprints verified; remaining full-deployment version inventory is unknown':'Product image files referenced by absolute first-party URLs are absent from the reconstructed inventory; fourteen known image paths are general branding/illustration assets, not product photographs','Authenticated and checkout compatibility not safely live-tested; no live transactions permitted']});
 const matrix=JSON.parse(await fs.readFile(path.join(repository,'docs/atlas/evidence/phase2d-version-matrix.json'))),matrixRef=await save('matrix.json',matrix);
 const request={schemaVersion:1,kind:'atlas-baseline-certification',baselineId:'preserved-observed-plus-historical-candidate-2026-10-19',sourceRevision:'bb4ba2a932239a3ef397272b27143f0cd3adcccf',baseline:{root:'baseline',manifest:'baseline-manifest.json',sha256:baselinePin},repository:{root:'repository',manifest:'repository-manifest.json',sha256:sha256(stable(repoManifest))},observations:{root:'observations',manifest:'observations-manifest.json',sha256:sha256(stable(observedManifest))},reference:null,rollback:{root:'rollback',manifest:'rollback-manifest.json',sha256:baselinePin},requirements:req,matrix:matrixRef,inventoryWitness:null,functionalWitness:null};
-const certRef=await save('certification.json',request),verdict=await certifyBaseline({requestFile:path.join(output,certRef.path),requestSHA256:certRef.sha256});
+if(ownerDispositionSHA256){const ownerFile=path.join(repository,'docs/atlas/evidence/phase2e-owner-dispositions.json');const owner=(await loadJSON(ownerFile,ownerDispositionSHA256)).value;request.ownerDispositions=await save('owner-dispositions.json',owner);}const certRef=await save('certification.json',request),verdict=await certifyBaseline({requestFile:path.join(output,certRef.path),requestSHA256:certRef.sha256,trustedOwnerDispositions:ownerDispositionSHA256?[ownerDispositionSHA256]:[]});
 assert.equal(verdict.technicalStatus,'blocked');assert.equal(verdict.counts.differences,20);assert.equal(verdict.counts.sourceMatchedFiles,manifest.files.length);assert.throws(()=>requireCertifiedBaseline(verdict,baselinePin),{code:'CERTIFICATION_REQUIRED'});await save('VERDICT.json',verdict);
 
 const spec=JSON.parse(await fs.readFile(path.join(repository,'docs/atlas/spectre-source.json'))),overlay=path.join(output,'overlay');await fs.mkdir(path.join(overlay,'landing-v02'),{recursive:true});

@@ -1,0 +1,15 @@
+{
+  "commit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+  "tree": "eb2c9f1824602d19ed27f010cf080190a06c713e",
+  "files": [
+    {
+      "path": ".github/workflows/static.yml",
+      "patch": "@@ -11,7 +11,7 @@ on:\n   # Public SEO snapshots refresh every 15 minutes. Browser stock/store checks\n   # and authoritative checkout remain live; scheduled notices refresh in-browser.\n   schedule:\n-    - cron: '*/15 * * * *'\n+    - cron: '0 3 * * *'\n \n # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages\n permissions:",
+      "additions": 1,
+      "deletions": 1
+    }
+  ],
+  "actionsRuns": 0,
+  "runIds": [],
+  "observedUTC": "2026-10-19T18:27:17.392Z"
+}

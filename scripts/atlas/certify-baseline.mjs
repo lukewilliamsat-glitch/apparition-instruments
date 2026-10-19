@@ -8,6 +8,7 @@ import {record,fail,isHash,portablePath,pathsUnique,loadJSON,readRegular,sha256,
 import {validateSnapshot} from './validate-snapshot.mjs';
 import {stampSource} from '../stamp-static-assets.mjs';
 import {verifyOwnerDispositions} from './owner-dispositions.mjs';
+import {checkDeploymentInventory,checkRuntimeAcceptance} from './readiness-evidence.mjs';
 
 export const CATEGORIES=['routes','staticAssets','productImages','productContent','news','cms','homepage','legal','checkout'];
 export const CHECKS=['static-preservation','checkout-compatibility','runtime-dependencies','product-image-availability','news-cms-consistency','rollback-recovery'];
@@ -25,12 +26,14 @@ export function requireCertifiedBaseline(certificate,manifestSHA256){
  if(!issued.has(certificate)||certificate.technicalStatus!=='certified'||certificate.baselineManifestSHA256!==manifestSHA256)fail('CERTIFICATION_REQUIRED','Independent technical certification required; owner approval cannot replace it');
  return certificate;
 }
+export function requireReleaseReadiness(certificate,manifestSHA256){requireCertifiedBaseline(certificate,manifestSHA256);if(certificate.evidenceVersion!==2)fail('READINESS_REQUIRED','Production preflight requires version 2 deployment and runtime evidence');return certificate;}
 
 export async function certifyBaseline({requestFile,requestSHA256,trustedSigners={},trustedOwnerDispositions=[]}){
  if(!isHash(requestSHA256))fail('CERT_PIN','An independently supplied certification request pin is required');
  const request=(await loadJSON(requestFile,requestSHA256)).value;
- const required=['schemaVersion','kind','baselineId','sourceRevision','baseline','repository','observations','reference','rollback','requirements','matrix','inventoryWitness','functionalWitness'];record(request,[...required,'ownerDispositions'],'certification request');if(required.some(k=>!Object.hasOwn(request,k)))fail('CERT_SCHEMA','Missing certification request field');
- if(request.schemaVersion!==1||request.kind!=='atlas-baseline-certification'||!text(request.baselineId)||!/^[a-f0-9]{40}$/.test(request.sourceRevision))fail('CERT_SCHEMA','Unknown certification contract/identity');
+ const required=['schemaVersion','kind','baselineId','sourceRevision','baseline','repository','observations','reference','rollback','requirements','matrix','inventoryWitness','functionalWitness'];record(request,[...required,'ownerDispositions','deploymentInventory','runtimeAcceptance'],'certification request');if(required.some(k=>!Object.hasOwn(request,k)))fail('CERT_SCHEMA','Missing certification request field');
+ if(![1,2].includes(request.schemaVersion)||request.kind!=='atlas-baseline-certification'||!text(request.baselineId)||!/^[a-f0-9]{40}$/.test(request.sourceRevision))fail('CERT_SCHEMA','Unknown certification contract/identity');
+ if(request.schemaVersion===2&&(!request.deploymentInventory||!request.runtimeAcceptance))fail('READINESS_REQUIRED','Deployment inventory and runtime acceptance are mandatory in version 2');
  const base=path.dirname(path.resolve(requestFile)),pins=[],issues=[];
  const issue=(code,detail)=>issues.push({code,detail});
  const local=p=>path.join(base,portablePath(p));
@@ -90,7 +93,7 @@ export async function certifyBaseline({requestFile,requestSHA256,trustedSigners=
  let matchedSources=0;
  for(const f of candidate.values()){
   const o=observed.get(f.path),r=repo.get(f.path);
-  if(f.sha256!==o?.sha256&&f.sha256!==r?.sha256)issue('PROVENANCE_MISSING',f.path);else matchedSources++;
+  let canonicalSourceMatch=false;if(r&&/\.(?:html?|m?js)$/.test(f.path)){const bytes=await readRegular(path.join(repository.root,f.path));canonicalSourceMatch=f.sha256===sha256(stampSource(bytes.toString(),path.extname(f.path).slice(1),request.sourceRevision));}if(f.sha256!==o?.sha256&&f.sha256!==r?.sha256&&!canonicalSourceMatch)issue('PROVENANCE_MISSING',f.path);else matchedSources++;
   // An observed version cannot be silently replaced with a historical version.
   if(o&&o.sha256!==f.sha256)issue('OBSERVED_VERSION_REPLACED',f.path);
  }
@@ -128,10 +131,14 @@ export async function certifyBaseline({requestFile,requestSHA256,trustedSigners=
   try{const key=createPublicKey(pem);if(key.asymmetricKeyType!=='ed25519'||!verify(null,Buffer.from(stable(envelope.payload)),key,Buffer.from(envelope.signature,'base64'))){issue('WITNESS_SIGNATURE',kind);return null;}}catch{issue('WITNESS_SIGNATURE',kind);return null;}
   return envelope.payload;
  }
+ let deploymentReview=null,runtimeReview=null;
+ if(request.deploymentInventory){deploymentReview=checkDeploymentInventory(await jsonRef(request.deploymentInventory,'deployment inventory'),baseline.pin,baseline.manifest.files);if(deploymentReview.versionMismatches.length)issue('DEPLOYMENT_VERSION_MISMATCH','Observed runtime/static bytes differ: '+deploymentReview.versionMismatches.join(','));}
+ if(request.runtimeAcceptance){runtimeReview=checkRuntimeAcceptance(await jsonRef(request.runtimeAcceptance,'runtime acceptance'),baseline.pin);if(runtimeReview.fixtureFailures.length)issue('RUNTIME_FIXTURE_FAILURE',runtimeReview.fixtureFailures.join(','));if(!runtimeReview.browserAccepted)issue('RUNTIME_BROWSER_PENDING','Isolated real-browser evidence is incomplete');}
  const inventoryWitness=await witness(request.inventoryWitness,'inventory witness');
  if(inventoryWitness){
-  exact(inventoryWitness,['schemaVersion','kind','baselineId','deploymentId','baselineManifestSHA256','referenceManifestSHA256','repositoryManifestSHA256','observationsManifestSHA256','requirementsSHA256','matrixSHA256'],'inventory witness payload');
+  exact(inventoryWitness,['schemaVersion','kind','baselineId','deploymentId','baselineManifestSHA256','referenceManifestSHA256','repositoryManifestSHA256','observationsManifestSHA256','requirementsSHA256','matrixSHA256',...(request.schemaVersion===2?['deploymentInventorySHA256','runtimeAcceptanceSHA256']:[])],'inventory witness payload');
   if(inventoryWitness.schemaVersion!==1||inventoryWitness.kind!=='atlas-inventory-witness'||!text(inventoryWitness.deploymentId)||inventoryWitness.baselineId!==request.baselineId||inventoryWitness.baselineManifestSHA256!==baseline.pin||inventoryWitness.referenceManifestSHA256!==reference?.pin||inventoryWitness.repositoryManifestSHA256!==repository.pin||inventoryWitness.observationsManifestSHA256!==observations.pin||inventoryWitness.requirementsSHA256!==request.requirements.sha256||inventoryWitness.matrixSHA256!==request.matrix.sha256)issue('WITNESS_BINDING','Inventory witness does not bind exact independent evidence');
+  if(request.schemaVersion===2&&(inventoryWitness.deploymentInventorySHA256!==request.deploymentInventory.sha256||inventoryWitness.runtimeAcceptanceSHA256!==request.runtimeAcceptance.sha256))issue('WITNESS_BINDING','Version 2 witness does not bind exact deployment and runtime reports');
  }
  const functionalWitness=await witness(request.functionalWitness,'functional witness');
  if(functionalWitness){
@@ -148,8 +155,9 @@ export async function certifyBaseline({requestFile,requestSHA256,trustedSigners=
  const failed=code=>unique.some(x=>code.includes(x.code));
  const verdict={schemaVersion:1,kind:'atlas-certification-verdict',baselineId:request.baselineId,requestSHA256,baselineManifestSHA256:baseline.pin,technicalStatus:unique.length?'blocked':'certified',properties:{referenceCompleteness:validation.valid&&!firstPartyMissing.size?'passed':'failed',authenticity:inventoryWitness&&reference&&!failed(['SNAPSHOT_INTEGRITY','PROVENANCE_MISSING','DEPENDENT_SOURCE','WITNESS_BINDING','WITNESS_SIGNATURE','UNTRUSTED_WITNESS'])?'witness-verified':'unknown',versionConsistency:reference&&!failed(['VERSION_SET_MISMATCH','MATRIX_COVERAGE','MATRIX_BINDING','UNRESOLVED_DIFFERENCE','STAMP_EVIDENCE','FALSE_GENERATED_CLAIM','OBSERVED_VERSION_REPLACED'])?'passed':'blocked',functionalReadiness:functionalWitness&&!failed(['FUNCTIONAL_COVERAGE','FUNCTIONAL_NOT_PASSED','DYNAMIC_DEPENDENCIES_UNKNOWN'])?'witness-verified':'unknown',publicationAuthorisation:'not-granted'},counts:{files:candidate.size,sourceMatchedFiles:matchedSources,differences:differences.length,missingFirstPartyAssets:firstPartyMissing.size},issues:unique,deployable:false,deploymentEnabled:false};
  verdict.properties.ownerContentDisposition=matrix.rows.some(r=>r.ownerDecisionRequired&&!ownerReview.resolved.includes(r.path))?'blocked':ownerReview.resolved.length?'verified-preservation':'not-required';verdict.counts.ownerDispositionsVerified=ownerReview.resolved.length;
+ verdict.evidenceVersion=request.schemaVersion;verdict.properties.deploymentCompleteness=reference&&inventoryWitness&&!failed(['VERSION_SET_MISMATCH','WITNESS_BINDING','WITNESS_SIGNATURE','SNAPSHOT_INTEGRITY'])?'witness-verified':'unknown';verdict.properties.runtimeCompatibility=runtimeReview?.browserAccepted&&functionalWitness&&!failed(['WITNESS_BINDING','WITNESS_SIGNATURE','FUNCTIONAL_NOT_PASSED','RUNTIME_FIXTURE_FAILURE'])?'witness-verified':'pending';
  if(!unique.length)issued.add(verdict);return verdict;
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){
- try{const [requestFile,requestSHA256,trustFile,trustSHA256]=process.argv.slice(2);const trustedSigners=trustFile?(await loadJSON(trustFile,trustSHA256)).value:{};if(trustFile&&!isHash(trustSHA256))fail('CERT_PIN','Separate operator trust pin required');const verdict=await certifyBaseline({requestFile,requestSHA256,trustedSigners});process.stdout.write(stable(verdict));if(verdict.technicalStatus!=='certified')process.exitCode=2;}catch(e){process.stdout.write(stable({technicalStatus:'blocked',deployable:false,errorCode:e.code||'CERT_IO'}));process.exitCode=1;}
+ try{const [requestFile,requestSHA256,trustFile,trustSHA256,ownerTrustFile,ownerTrustSHA256]=process.argv.slice(2);const trustedSigners=trustFile?(await loadJSON(trustFile,trustSHA256)).value:{};if(trustFile&&!isHash(trustSHA256))fail('CERT_PIN','Separate operator trust pin required');if(ownerTrustFile&&!isHash(ownerTrustSHA256))fail('CERT_PIN','Separate owner trust pin required');const trustedOwnerDispositions=ownerTrustFile?(await loadJSON(ownerTrustFile,ownerTrustSHA256)).value:[];const verdict=await certifyBaseline({requestFile,requestSHA256,trustedSigners,trustedOwnerDispositions});process.stdout.write(stable(verdict));if(verdict.technicalStatus!=='certified')process.exitCode=2;}catch(e){process.stdout.write(stable({technicalStatus:'blocked',deployable:false,errorCode:e.code||'CERT_IO'}));process.exitCode=1;}
 }
