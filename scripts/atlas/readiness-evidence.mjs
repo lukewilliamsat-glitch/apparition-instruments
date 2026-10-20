@@ -1,6 +1,13 @@
 // Strict data-only evidence verification. No backend imports or execution.
 import {record,isHash,fail,pathsUnique} from './core.mjs';
+import {checkIndependentAttestation} from './deployment-attestation.mjs';
 export function checkDeploymentInventory(value,baselineSHA256,files){
+ if(value.schemaVersion===2){
+  record(value,['schemaVersion','kind','baselineManifestSHA256','legacyInventory','independentAttestation'],'deployment inventory v2');
+  if(value.kind!=='atlas-deployment-inventory'||value.baselineManifestSHA256!==baselineSHA256)fail('DEPLOYMENT_INVENTORY_BINDING','Wrong v2 inventory identity');
+  const old=checkDeploymentInventory(value.legacyInventory,baselineSHA256,files),review=checkIndependentAttestation(value.independentAttestation,baselineSHA256,files);
+  return {...old,versionMismatches:[...new Set([...old.versionMismatches,...review.mismatches])],independentlyObserved:review.observed,historicalPathSetExact:review.pathSetExact,unobservedDeployedBytes:review.missingBytePaths};
+ }
  record(value,['schemaVersion','kind','baselineManifestSHA256','observationManifestSHA256','freshLedgerSHA256','deployment','entries','counts','complete','limitation'],'deployment inventory');
  if(value.schemaVersion!==1||value.kind!=='atlas-deployment-inventory'||value.baselineManifestSHA256!==baselineSHA256||!Array.isArray(value.entries)||value.entries.length!==files.length)fail('DEPLOYMENT_INVENTORY_BINDING','Inventory does not bind exact baseline');
  const rows=new Map();for(const r of value.entries){if(rows.has(r.path)||!isHash(r.sha256))fail('DEPLOYMENT_INVENTORY_BINDING','Duplicate/invalid inventory entry');rows.set(r.path,r);}

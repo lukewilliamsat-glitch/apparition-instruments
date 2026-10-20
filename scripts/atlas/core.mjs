@@ -90,7 +90,7 @@ export async function inventory(root,{protectedPaths=[],manifestPaths=[]}={}){
   }
  }
  await walk(abs);
- for(const d of dirs){const now=await fs.lstat(d.dir,{bigint:true});if(signature(now)!==d.signature)fail('DIRECTORY_CHANGED','Directory changed during inventory');}
+ for(const d of dirs){const now=await fs.lstat(d.dir,{bigint:true});if(signature(now)!==d.signature)fail('DIRECTORY_CHANGED','Directory changed during inventory: '+path.relative(abs,d.dir));}
  return {schemaVersion:VERSION,files:files.sort((a,b)=>order(a.path,b.path)),totalBytes:total};
 }
 export function manifestContract(m){
