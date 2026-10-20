@@ -1,0 +1,33 @@
+# BLACKBOX — interaction inventory
+
+Authorisation 29A · 20 October 2026 · documentation-only research.
+
+Derived from the preserved [original assessment](BLACKBOX_GITHUB_ASSESSMENT_2026-10-20.md) and [unchanged research evidence](RESEARCH_EVIDENCE.json). Findings distinguish VERIFIED source, SYNTHETIC tests, HISTORICAL measurements, DERIVED models and UNKNOWN production usage. No new production measurements or test reruns were performed for publication.
+
+## 2. System-wide consumers and cache boundaries
+| Consumer / source | Read pattern and image involvement | Transfer sharing / limits |
+|---|---|---|
+| Public component/category cards, homepage commerce: components/catalogue.mjs, components/components.mjs | Top-level catalogue load; default component repository includes images. Filtering/search after loading is local. | Same exact URL and fetch object can share public cache. More imports do not necessarily mean more requests. |
+| Product details: products/app.mjs | Imports the full catalogue and commerce; default detail load refreshes the catalogue, rather than fetching only selected product. Public options read adds order=option_set,sort_order,label. | Full catalogue reads can coalesce; ordered options differs from generator options key. |
+| Basket and checkout: commerce.mjs, basket-ui.mjs, checkout/checkout.mjs | Commerce imports catalogue plus kit snapshot/configuration. Kit configuration starts component and kit metadata reads. Shipping is a separate commerce_shipping GET. Checkout authority remains server-side. | Catalogue often shares one identical cached read within a context. Shipping/checkout are independent operations. |
+| Les Paul kit builder / choice panels: wiring-kits/kit-data.mjs | Top-level loadConfiguredKitDefinitions reads full components, catalogue_wiring_kits and kit_permitted_components. Choice panels use productRecords including images. | Three resources; component read can share with storefront catalogue. |
+| Forge matching: circuit-forge/app.mjs and parts.mjs | Dedicated matching repository uses includeImages:false. | Technical projection is already image-free; do not “optimise” it a second time. |
+| Forge and tool startup: knowledge/kit-project.mjs, electronics/state/project.mjs | Static imports reach Les Paul config and kit-data, which eagerly loads image-bearing catalogue and kit metadata. This affects Forge/project UI and other tools using the shared project model. | An image-free matching request does not make the complete application startup image-free. |
+| Shared basket count: basket-count.mjs | Empty baskets avoid commerce. Non-empty baskets dynamically import commerce and its catalogue/kit dependencies. | Conditional; do not count a heavy catalogue read for every empty-basket informational visit. |
+| Product commercial support: operations/public.mjs | When configured destinations exist, exact product-ID technical projection, without image. | Separate small ID-filtered URL; do not attribute the full catalogue body to this call. |
+| Admin catalogue / inventory: backend/component-data.mjs | list() independently GETs components?select=*, inventory?select=* and component_internal?select=*, then joins them. No public cache. | Each list is three reads. Main does not contain the frozen FORGE V4 summary/detail correction. |
+| Admin saves / stock | Save validates against a fresh full list. Stock update reads one inventory row, conditionally PATCHes, then lists all three tables; Admin UI lists again after successful stock update. | Write-side validation is intentional; image-heavy rereads are an optimisation opportunity, not permission to remove stock conditions. |
+| Admin overview, catalogue settings, order-create, kit master and build-sheet picking | Several call componentRepository().list(), including workflows whose immediate display needs no photograph. | Separate authenticated transfers. Settings additionally reads options. Assemblies and exports must retain required full-data contracts. |
+| Admin external-order picker | Explicit image-free components, inventory, assemblies and BOM projections in backend/order-data.mjs. | Already scoped; preserve this path. |
+| Admin Orders and delivery history | Orders select=* with descending creation order, plus delivery audit/status rows and conditional refund-review rows. No client pagination in this path. | Potential growth risk; server-side row caps and live sizes unknown. Private, never put into public catalogue caching. |
+| Shared Operations: operations/public.mjs | On public pages with a site header, initial two uncached RPCs, then visible-page polling at 60 seconds, plus known time boundaries and visibility/BFCache events. | In-flight requests coalesce within a controller. Errors schedule another cycle; no exponential backoff in main. Hidden timer ticks skip network. |
+| Forge cloud: forge-pro/repository.mjs | Private project/template lists, full revision snapshots up to 200, measurements up to 500, documents up to 200; instrument-version list already metadata-only and detail lazy. | Bounded but potentially large; history is not an unbounded table download. Actual sizes/usage unknown. |
+| Auth | Admin token refresh near expiry plus user/membership checks. Customer SDK auto refresh and auth-state callbacks. | No measured storm. Admin refresh lacks an explicit shared refresh promise; possible simultaneous-expiry fan-out requires observation before changes. |
+| Studio and email | Studio list/preview on initialisation or explicit actions; order delivery status loads with Orders. No catalogue-image polling identified in these interfaces. | HTML/text previews have bytes, but no volume evidence implicates them as a primary source. |
+| Email background automation | Committed migration defines a minute cron job, but net.http_post occurs only if eligible pending deliveries exist; dispatcher reads at most 10 pending IDs. Canary is retired in that migration. | Do not claim 1,440 Edge calls/day from the cron interval. Actual installed job/function state and invocation counts were not queried. |
+
+**VERIFIED source coupling:** circuit-forge/app.mjs → knowledge/kit-project.mjs → les-paul-kits/config.mjs → wiring-kits/kit-data.mjs. Also forge-pro/app.mjs / treble-bleed-designer/app.mjs → electronics/state/project.mjs → the same kit configuration.
+
+A source import graph found 28 tracked HTML files with static paths to top-level catalogue/kit read modules. This is not 28 independent requests, proof of live routes or browser acceptance. Conditional dynamic paths were recorded separately. A direct import of the actual shared project model, with fetch entirely mocked, initiated three GETs including image before rejecting intentionally empty synthetic kit definitions.
+
+
