@@ -1,6 +1,7 @@
 // Receipt validation is not proof of execution. Independent witness trust remains mandatory.
 import path from 'node:path';
 import {record,portablePath,pathsUnique,sha256,stable,readRegular,isHash,fail} from './core.mjs';
+import {checkScreenshotPNG} from './png-evidence.mjs';
 export const BROWSER_CHECKS=['rendered-heading','navigation','styles-loaded','scripts-executed','no-fatal-console-errors','no-broken-images','offline-content','no-mutation','responsive-layout'];
 export function browserAcceptancePlan(manifest,manifestSHA256){
  const files=new Set(manifest.files.map(f=>f.path)),selected=['index.html','components/index.html','products/bleed-duncan/index.html','products/ai-pot-ss-alphamini-a500k/index.html','products/bleed-premium/index.html','news/index.html','news/workshop-closure/index.html','privacy/index.html','terms/index.html','basket/index.html','checkout/index.html','luthier-hub/index.html'];
@@ -27,7 +28,7 @@ export async function checkBrowserEvidence({report,plan,planSHA256,artifactsRoot
   for(const n of r.network.allowed){record(n,['url','method','status'],'allowed request');let u;try{u=new URL(n.url);}catch{fail('BROWSER_NETWORK','Invalid request URL');}if(u.origin!==origin.origin||n.method!=='GET'||!Number.isInteger(n.status)||u.username||u.password||u.hash)fail('BROWSER_NETWORK','External request or mutation reported as allowed');}
   if(r.status==='passed'&&(r.checks.some(c=>c.status!=='passed')||r.console.errors.length||r.console.unhandledRejections.length||!r.network.allowed.length||r.network.allowed.some(n=>n.status>=400)))fail('BROWSER_FALSE_PASS','Failure/pending state cannot be labelled passed');
   if(r.status==='passed'&&expect.route.screenshotRequired&&!r.screenshot)fail('BROWSER_SCREENSHOT','Required responsive screenshot missing');
-  if(r.screenshot){record(r.screenshot,['path','sha256'],'browser screenshot');portablePath(r.screenshot.path);const b=await readRegular(path.join(artifactsRoot,r.screenshot.path));if(sha256(b)!==r.screenshot.sha256||b.subarray(0,8).toString('hex')!=='89504e470d0a1a0a'||b.length<24||b.readUInt32BE(16)!==expect.viewport.width||b.readUInt32BE(20)<expect.viewport.height)fail('BROWSER_SCREENSHOT','Screenshot hash/PNG/viewport mismatch');}
+  if(r.screenshot){record(r.screenshot,['path','sha256'],'browser screenshot');portablePath(r.screenshot.path);const b=await readRegular(path.join(artifactsRoot,r.screenshot.path));if(sha256(b)!==r.screenshot.sha256)fail('BROWSER_SCREENSHOT','Screenshot hash mismatch');checkScreenshotPNG(b,expect.viewport.width,expect.viewport.height);}
   if(r.status==='failed')failed.push(key);else if(r.status!=='passed')pending.push(key);
  }
  for(const key of required.keys())if(!seen.has(key))pending.push(key);

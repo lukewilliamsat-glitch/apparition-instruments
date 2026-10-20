@@ -1,0 +1,13 @@
+**
+!scripts/
+!scripts/atlas/
+!scripts/atlas/**
+!tests/
+!tests/atlas/
+!tests/atlas/browser-network-deny.c
+!tests/atlas/isolated-browser.mjs
+!tools/
+!tools/atlas-browser/
+!tools/atlas-browser/package.json
+!tools/atlas-browser/package-lock.json
+!tools/atlas-browser/entrypoint.sh

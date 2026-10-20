@@ -1,0 +1,118 @@
+{
+  "baselineManifestSHA256": "f69ee4fa0b73b46a53eb6f3a575fb6e43eb46b37b94ebb41fc99a67fe1438450",
+  "cmsSeedExact": [
+    "circuit-forge/index.html",
+    "luthier-hub/022-vs-047-tone-capacitors/index.html",
+    "luthier-hub/250k-vs-500k-pots/index.html",
+    "luthier-hub/audio-vs-linear-taper-pots/index.html",
+    "luthier-hub/cable-capacitance/index.html",
+    "luthier-hub/capacitors-treble-bleeds/index.html",
+    "luthier-hub/categories/pickups/index.html",
+    "luthier-hub/categories/potentiometers/index.html",
+    "luthier-hub/categories/tone-controls/index.html",
+    "luthier-hub/categories/treble-bleeds/index.html",
+    "luthier-hub/categories/troubleshooting/index.html",
+    "luthier-hub/categories/wiring/index.html",
+    "luthier-hub/coil-splitting-explained/index.html",
+    "luthier-hub/discovery.json",
+    "luthier-hub/glossary/index.html",
+    "luthier-hub/grounding-output/index.html",
+    "luthier-hub/guitar-grounding-common-problems/index.html",
+    "luthier-hub/guitar-pot-lug-numbering-wiring/index.html",
+    "luthier-hub/guitar-three-way-toggle-switch-wiring/index.html",
+    "luthier-hub/how-a-guitar-tone-control-works/index.html",
+    "luthier-hub/how-les-paul-controls-work/index.html",
+    "luthier-hub/independent-dependent-volumes/index.html",
+    "luthier-hub/index.html",
+    "luthier-hub/knowledge.json",
+    "luthier-hub/les-paul-installation/index.html",
+    "luthier-hub/modern-vs-50s-les-paul-wiring/index.html",
+    "luthier-hub/output-jack-faults/index.html",
+    "luthier-hub/partial-coil-splits/index.html",
+    "luthier-hub/pickup-conductors/index.html",
+    "luthier-hub/pickup-dc-resistance-output/index.html",
+    "luthier-hub/pickup-inductance/index.html",
+    "luthier-hub/pickup-phase-switching/index.html",
+    "luthier-hub/potentiometers-explained/index.html",
+    "luthier-hub/push-pull-dpdt/index.html",
+    "luthier-hub/reading-a-circuit-model/index.html",
+    "luthier-hub/selectors/index.html",
+    "luthier-hub/series-vs-parallel-pickup-wiring/index.html",
+    "luthier-hub/tools/index.html",
+    "luthier-hub/treble-bleeds/index.html",
+    "luthier-hub/troubleshooting/index.html",
+    "luthier-hub/wiring-circuits-explained/index.html",
+    "treble-bleed-designer/index.html",
+    "wiring-generator/index.html"
+  ],
+  "cmsSeedMismatches": [
+    "sitemap.xml"
+  ],
+  "counts": {
+    "cmsIdempotenceMismatches": [],
+    "cmsRecords": 31,
+    "operationsReplayMatches": [
+      "news/index.html",
+      "news/workshop-closure/index.html",
+      "operations/snapshot.json"
+    ],
+    "syntheticCleanBuildsExact": true,
+    "syntheticProducts": 2,
+    "syntheticRepeatedBuildExact": false,
+    "syntheticRepeatedDifferences": [
+      "components/capacitors/index.html",
+      "components/index.html",
+      "components/potentiometers/index.html",
+      "components/treble-bleeds/index.html",
+      "news/index.html",
+      "news/workshop-closure/index.html",
+      "products/atlas-fixture-cap/index.html",
+      "products/atlas-fixture-pot/index.html"
+    ]
+  },
+  "exactObserved": 54,
+  "exactSourceTransformations": 357,
+  "generatedHistoricalInputsRetained": 0,
+  "generator44Summary": {
+    "readOnlyTemplateSourceExact": 1,
+    "repositorySeedExact": 39,
+    "unavailableHistoricalCatalogueInput": 4
+  },
+  "historicalEnvironment": {
+    "actualReplayNode": "v22.20.0",
+    "dependencyAcquisition": "Five exact lockfile-pinned runtime packages; SHA-512 checked; no lifecycle scripts; type-only/build-unrelated packages omitted; not a full historical npm ci",
+    "historicalDatabaseResponsesRetained": false,
+    "historicalRuntimeExactlyRecreated": false,
+    "node": "22.23.3",
+    "npm": "10.9.9",
+    "order": [
+      "npm ci",
+      "generate-product-pages",
+      "generate-site-operations",
+      "generate-hub-cms",
+      "prepare-search-verification",
+      "stamp-static-assets",
+      "upload-pages-artifact",
+      "deploy-pages"
+    ],
+    "originalArtifactPayloadAuthenticated": false,
+    "searchVerification": "empty in preserved authenticated log"
+  },
+  "inputProof": "Phase2F archive verified against owner SHA-256; fixed preserved GitHub proof pins rechecked by executable rehearsal",
+  "kind": "atlas-deterministic-reconstruction",
+  "pathMembership": 423,
+  "schemaVersion": 1,
+  "sitemapDifference": {
+    "extraInSeedReplay": [
+      "https://apparitioninstruments.co.uk/products/sbe-600/"
+    ],
+    "missingFromSeedReplay": [
+      "https://apparitioninstruments.co.uk/news/workshop-closure/",
+      "https://apparitioninstruments.co.uk/products/cde-715p-600/"
+    ]
+  },
+  "source325Reproduced": 325,
+  "sourceAssociated": 415,
+  "sourceRevision": "bb4ba2a932239a3ef397272b27143f0cd3adcccf",
+  "sourceTreeSHA1": "0f6ac37987b07050f6d457ff42861943813389e7"
+}

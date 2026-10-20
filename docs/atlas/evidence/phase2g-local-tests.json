@@ -1,0 +1,20 @@
+{
+  "node": "v22.20.0",
+  "tests": {
+    "passed": 370,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "networkProbes": 9,
+  "allPassed": true,
+  "isolation": "Compiled source-controlled seccomp filter + no_new_privs, inherited by test/CLI children; fetch/WebSocket stub defence in depth",
+  "environment": "Explicit PATH/LANG/TZ/NODE_OPTIONS only; no credentials inherited",
+  "productionAccess": false,
+  "diagnosticsSHA256": {
+    "atlas-tests.stdout.txt": "c24c43792c0f81742f5449f93e4326a8a3608c8437dd3af4baf6dd3ea1a9aa55",
+    "atlas-tests.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "network-probes.stdout.txt": "a2b67fa7890f4a66c859df7835e0f213a737fcd32993f88ac989bd4aab9568bf",
+    "synthetic-demo.stdout.txt": "e6c5086019b22c9bcd88fc0ed9bd2d0fe77a1bc7e0445cfc992777fcc7fc6693"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "browserAccepted": false,
+  "candidateManifestSHA256": "f69ee4fa0b73b46a53eb6f3a575fb6e43eb46b37b94ebb41fc99a67fe1438450",
+  "deployments": 0,
+  "deterministicAssembly": true,
+  "exactCandidateRollback": true,
+  "mode": "validation-only",
+  "originalCandidatePreserved": true,
+  "productionPreflightBlocked": true,
+  "productionRequests": 0,
+  "protectedFilesUnchanged": 422,
+  "runtimeNetwork": "inherited seccomp + injected fixtures",
+  "spectreFixture": "Frozen source reused; no publication",
+  "staticOnly": true,
+  "stripeRequests": 0
+}

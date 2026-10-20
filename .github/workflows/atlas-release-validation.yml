@@ -1,7 +1,7 @@
 name: Atlas release validation (no deployment)
 on:
   push:
-    branches: [atlas/phase2f-independent-attestation]
+    branches: [atlas/phase2g-certification-closure]
     paths-ignore:
       - '.github/workflows/**'
   workflow_dispatch:
@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   offline-validation:
-    if: github.ref == 'refs/heads/atlas/phase2f-independent-attestation'
+    if: github.ref == 'refs/heads/atlas/phase2g-certification-closure'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

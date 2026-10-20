@@ -1,0 +1,58 @@
+[
+  {
+    "package": "happy-dom",
+    "version": "20.14.5",
+    "resolved": "https://registry.npmjs.org/happy-dom/-/happy-dom-20.14.5.tgz",
+    "integrity": "sha512-x/RzkpWO40bTjIoT30iQtt64FLLmH/iRcUCN2X//bLx7H3ifkdfPXyqsro/OYtqzIAhiLMMA7mmiOR9C3NOKjQ==",
+    "sha256": "1619c709ec5ecdbfd7bccbd254c67eac68791ea914c3bea5f45132918679f34b",
+    "bytes": 1272335,
+    "scriptsExecuted": false,
+    "typeOnlyDependenciesOmitted": [
+      "@types/node",
+      "@types/whatwg-mimetype",
+      "@types/ws"
+    ]
+  },
+  {
+    "package": "buffer-image-size",
+    "version": "0.6.4",
+    "resolved": "https://registry.npmjs.org/buffer-image-size/-/buffer-image-size-0.6.4.tgz",
+    "integrity": "sha512-nEh+kZOPY1w+gcCMobZ6ETUp9WfibndnosbpwB1iJk/8Gt5ZF2bhS6+B6bPYz424KtwsR6Rflc3tCz1/ghX2dQ==",
+    "sha256": "f73cfcb821a2cede2090673c1b533ec18fc8f82afd4e6006ffe538086abb4a2e",
+    "bytes": 6238,
+    "scriptsExecuted": false,
+    "typeOnlyDependenciesOmitted": [
+      "@types/node"
+    ]
+  },
+  {
+    "package": "entities",
+    "version": "7.0.1",
+    "resolved": "https://registry.npmjs.org/entities/-/entities-7.0.1.tgz",
+    "integrity": "sha512-TWrgLOFUQTH994YUyl1yT4uyavY5nNB5muff+RtWaqNVCAK408b5ZnnbNAUEWLTCpum9w6arT70i1XdQ4UeOPA==",
+    "sha256": "554b7e2a79fa9eda0439714011fa42d77c6829842faa91e022070015bfd483a0",
+    "bytes": 113587,
+    "scriptsExecuted": false,
+    "typeOnlyDependenciesOmitted": []
+  },
+  {
+    "package": "whatwg-mimetype",
+    "version": "3.0.0",
+    "resolved": "https://registry.npmjs.org/whatwg-mimetype/-/whatwg-mimetype-3.0.0.tgz",
+    "integrity": "sha512-nt+N2dzIutVRxARx1nghPKGv1xHikU7HKdfafKkLNLindmPU/ch3U31NOCGGA/dmPcmb1VlofO0vnKAcsm0o/Q==",
+    "sha256": "20a19c2f06097c0dfb55be422996fdc3fb2ff20bb39628621700a39a7f7b17eb",
+    "bytes": 5309,
+    "scriptsExecuted": false,
+    "typeOnlyDependenciesOmitted": []
+  },
+  {
+    "package": "ws",
+    "version": "8.21.3",
+    "resolved": "https://registry.npmjs.org/ws/-/ws-8.21.3.tgz",
+    "integrity": "sha512-201TZ/kPWxoPr/OKWjquZR1SWKXcvxdH+e1xrx89b3YbmzLMFCLfnaG1HFIgWzJOEWZ7MvpK++odZufgYR50Rw==",
+    "sha256": "df3454ef205791ce50b5b9241762dcf9bfe1aa9f7f01d3057229be7dac0c2dc3",
+    "bytes": 35016,
+    "scriptsExecuted": false,
+    "typeOnlyDependenciesOmitted": []
+  }
+]

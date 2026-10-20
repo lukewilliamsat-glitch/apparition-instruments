@@ -1,0 +1,13 @@
+{
+  "status": "not-executed",
+  "candidatePagesOpened": 0,
+  "browser": "Chrome for Testing 155.0.8059.84",
+  "playwright": "1.62.1",
+  "networkNamespaceProbe": "unshare: write failed /proc/self/uid_map: Operation not permitted",
+  "parentUnixSocketProbe": "Python socket.socket(AF_UNIX): PermissionError [Errno 1] Operation not permitted",
+  "chromeStartup": "FATAL chrome/browser/process_singleton_posix.cc:297 socket() failed: Operation not permitted (1)",
+  "provenance": "Official Google HTTPS metadata and archive; locally SHA-256 pinned; no independently verified vendor archive checksum/signature",
+  "localFixtureAccess": "Not tested in browser: startup failed before candidate opened",
+  "dockerAvailable": false,
+  "decision": "No further local Chrome retry. Owner Docker package prepared; execution remains pending."
+}

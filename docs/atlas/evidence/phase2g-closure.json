@@ -1,0 +1,47 @@
+{
+  "baselineManifestSHA256": "f69ee4fa0b73b46a53eb6f3a575fb6e43eb46b37b94ebb41fc99a67fe1438450",
+  "blockers": [
+    "BROWSER_ACCEPTANCE_INCOMPLETE",
+    "CURRENT_PRODUCTION_BYTES_NOT_COMPLETELY_ATTESTED",
+    "DYNAMIC_DEPENDENCIES_UNKNOWN",
+    "GENERATED_HISTORICAL_RPC_INPUTS_UNAVAILABLE",
+    "REFERENCE_MISSING",
+    "RUNTIME_BROWSER_PENDING",
+    "WITNESS_MISSING"
+  ],
+  "currentProductionBaseline": {
+    "completeCurrentObservation": false,
+    "evaluationDate": "2026-10-20",
+    "exactPreviouslyObserved": 54,
+    "limitation": "Prior public observations are individual historical HTTP bodies, not a fresh complete current-production inventory",
+    "observationDate": "Preserved individual Phase2D–2F observations; no new production GET",
+    "verdict": "Unknown"
+  },
+  "deployable": false,
+  "dimensions": {
+    "currentProductionIdentity": "unknown",
+    "generatedOutputAuthenticity": "repository-seed reproduction only; historical RPC response missing",
+    "historicalPathMembership": "log-verified",
+    "historicalSourceAssociation": 415,
+    "operationsOwnerDisposition": "verified-preservation",
+    "ownerPublicationAuthorisation": "not-granted",
+    "rollbackReadiness": "exact local-candidate rollback only",
+    "runtimeCompatibility": "pending",
+    "staticReferenceClosure": "passed",
+    "versionCompatibility": "blocked"
+  },
+  "historicalReconstruction": {
+    "authenticatedPayloadFiles": 0,
+    "exactSourceTransformations": 357,
+    "generatedHistoricalInputsRetained": 0,
+    "limitation": "Reproduced source/seeds do not establish the exact historical Supabase responses or original artifact payload",
+    "pathMembership": 423,
+    "sourceAssociated": 415,
+    "verdict": "Partially attested, publication blocked"
+  },
+  "kind": "atlas-certification-closure",
+  "publicationAuthorised": false,
+  "recommendation": "Separately authorise a reviewed baseline-adoption decision if historical RPC/payload evidence is irrecoverable; do not relabel reconstructed bytes as historical or current-live proof",
+  "schemaVersion": 1,
+  "technicalCertification": "blocked"
+}
