@@ -41,15 +41,20 @@ async function manifest(request,delivery){
 export async function verifyStaticImageBytes(response,entry){
  if(response.status!==200||response.redirected||response.headers.get('content-type')?.split(';')[0]!==entry.mime)throw Error('Static image response mismatch');
  const bytes=await boundedResponseBytes(response,Math.min(entry.bytes,8*1024*1024));if(bytes.length!==entry.bytes)throw Error('Static image byte count mismatch');const digest=await globalThis.crypto.subtle.digest('SHA-256',bytes);const hash=[...new Uint8Array(digest)].map(b=>b.toString(16).padStart(2,'0')).join('');if(hash!==entry.assetHash)throw Error('Static image hash mismatch');
+ // Bind the decoded asset to the authoritative embedded-source identity too.
+ // A valid manifest revision alone cannot prove that its source label describes
+ // these bytes. The publisher accepts canonical data URLs with this exact form.
+ const chunks=[];for(let i=0;i<bytes.length;i+=32768)chunks.push(String.fromCharCode(...bytes.subarray(i,i+32768)));
+ if(await sha256Text('data:'+entry.mime+';base64,'+btoa(chunks.join('')))!==entry.sourceHash)throw Error('Static image source identity mismatch');
 }
 async function availableAsset(request,delivery,entry){
- const url=new URL(entry.path,delivery.assetOrigin).href,s=state(request),old=s.assets.get(url);
+ const url=new URL(entry.path,delivery.assetOrigin).href,key=url+' '+entry.sourceHash+' '+entry.mime+' '+entry.bytes,s=state(request),old=s.assets.get(key);
  if(old?.expires>Date.now())return old.promise;
  // Validate the complete bytes, even when Content-Length matches. The immutable
  // URL is reusable by the normal browser HTTP cache; no HEAD proof is assumed.
  const promise=assetSlot(s,request,async()=>{await verifyStaticImageBytes(await request(url,{cache:'force-cache',credentials:'omit',redirect:'error',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(15000)}),entry);return {kind:'object',key:entry.assetHash,url,mimeType:entry.mime};});
- const item={promise,expires:Date.now()+30000};s.assets.set(url,item);while(s.assets.size>64)s.assets.delete(s.assets.keys().next().value);
- try{return await promise;}catch(e){if(s.assets.get(url)===item)item.expires=Date.now()+2000;throw e;}
+ const item={promise,expires:Date.now()+30000};s.assets.set(key,item);while(s.assets.size>64)s.assets.delete(s.assets.keys().next().value);
+ try{return await promise;}catch(e){if(s.assets.get(key)===item)item.expires=Date.now()+2000;throw e;}
 }
 export async function readCatalogueComponents({config,request=globalThis.fetch,delivery=imageDeliveryConfig},columns=componentColumns,filter=''){
  if(!delivery.enabled)return readPublicRows({config,request},'catalogue_components','?select='+columns+filter);
