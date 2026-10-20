@@ -1,0 +1,119 @@
+{
+  "sourceMain": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+  "runtime": "v24.19.0",
+  "network": {
+    "passed": 6,
+    "probes": [
+      "socket denied 2/1",
+      "socket denied 2/2",
+      "socket denied 10/1",
+      "socket denied 10/2",
+      "synthetic DNS denied",
+      "child inherits denial"
+    ],
+    "NoNewPrivs": 1,
+    "Seccomp": 2
+  },
+  "focused": {
+    "suite": "blackbox31-static-images",
+    "runtime": "v24.19.0",
+    "passed": 25,
+    "cases": [
+      "valid static image and complete authoritative metadata",
+      "no image needs metadata only",
+      "bounded cache reuse, dedup and HTTP cache directive",
+      "stale manifest produces placeholder, not an old photograph",
+      "missing asset never causes an embedded image read",
+      "equal-length corrupted static bytes are rejected",
+      "bad manifest reference and digest rejected",
+      "unsafe asset origin/path and malformed metadata fail closed",
+      "unapproved image_reference URL never used as a fallback",
+      "metadata and manifest outage handling",
+      "generation invalidation rejects pending stale resolution",
+      "publisher replacement archives new identity and retains old bytes",
+      "concurrent replacement capture fails before publication",
+      "unchanged capture downloads zero source images",
+      "rollback pins retained immutable manifest and previous image",
+      "image removal preserves old retained URL",
+      "raw and mapped public clients integrate static path and share cache",
+      "static byte verification is limited to four concurrent assets",
+      "default disabled path is unchanged and never requests static resources",
+      "Admin upload replacement deletion and metadata stay authoritative",
+      "catalogue search/filter, cards/details and component basket preserve behaviour",
+      "generator verifies retained assets before reading lightweight metadata",
+      "fresh local Git recovery and ordinary assembly retain every version",
+      "read-only assembly blocks uncommitted historical repairs",
+      "publisher/assembly corruption is detected"
+    ],
+    "measurements": {
+      "synthetic14": {
+        "legacy": {
+          "raw": 530471,
+          "gzip": 397508
+        },
+        "lightweight": {
+          "raw": 6339,
+          "gzip": 711
+        },
+        "imageBytesSeparate": 393624
+      },
+      "validBrowserRead": {
+        "metadataGET": 1,
+        "manifestGET": 1,
+        "staticAssetGET": 1,
+        "supabaseImageBearingGET": 0
+      },
+      "repeatedCachedRead": {
+        "additionalRequests": 0
+      },
+      "generator": {
+        "lightweightGET": 1,
+        "supabaseImageBearingGET": 0
+      }
+    },
+    "unintendedFetchAttempts": 0,
+    "productionRequests": 0,
+    "browserAcceptance": false
+  },
+  "regressionSuites": [
+    {
+      "suite": "egress-static-assets-v2.mjs",
+      "exit": 0,
+      "stdout": "{\"fixtureRawBefore\":301,\"fixtureRawAfter\":228,\"fixtureGzipBefore\":164,\"fixtureGzipAfter\":125,\"uniqueImageAssetBytes\":68}\nStatic assets V2 PASS: disabled legacy default, deterministic/hash/MIME/byte parity, dedup, replacement/removal, Admin upload adapter, old-asset retention, manifest rollback, publication failure, lightweight activated reads, full-byte readiness, strict placeholder fallback, malformed manifest, outage and expiry. Fixtures only; no production asset extraction/upload.\n",
+      "stderr": ""
+    },
+    {
+      "suite": "egress-static-assets-v2-dom.mjs",
+      "exit": 0,
+      "stdout": "V2 DOM/integration PASS: static references accepted by actual card/detail renderers, lazy/alt/error fallbacks, stock/prices retained; 390/1440 fixture widths; actual repository and raw client retain inactive legacy transport/cache. No physical browser visual acceptance claimed.\n",
+      "stderr": ""
+    },
+    {
+      "suite": "component-repository.mjs",
+      "exit": 0,
+      "stdout": "Async component repository: legacy load, edits, inventory, flags, pricing, images, storefront refresh, kit eligibility and corrupt-data preservation passed.\n",
+      "stderr": ""
+    },
+    {
+      "suite": "component-export.mjs",
+      "exit": 0,
+      "stdout": "P05B export bridge: no seeding or writes, exact data preservation, inventory and images, invalid-record rejection, explicit Admin preview/download and stale-preview guard passed.\n",
+      "stderr": ""
+    },
+    {
+      "suite": "kit-snapshot.mjs",
+      "exit": 0,
+      "stdout": "Saved kit names, quantities, specifications, prices and diagram persist independently of catalogue changes; legacy snapshots preserved; no internal costing.\n",
+      "stderr": ""
+    },
+    {
+      "suite": "p07b-checkout.mjs",
+      "exit": 0,
+      "stdout": "P07B.2 live Checkout: live restricted key, authoritative pricing/delivery, GB/name collection, configured/component/mixed baskets PASS\n",
+      "stderr": ""
+    }
+  ],
+  "suiteInvocationsPassed": 7,
+  "productionRequests": 0,
+  "browserAcceptance": false
+}

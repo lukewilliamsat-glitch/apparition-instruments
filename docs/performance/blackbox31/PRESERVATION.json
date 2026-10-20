@@ -1,0 +1,22 @@
+{
+  "baselineCommit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+  "baselineTree": "eb2c9f1824602d19ed27f010cf080190a06c713e",
+  "verifiedBaselineBlobs": 899,
+  "modifiedBaselineFiles": [
+    "dist/backend/catalogue-image-delivery.mjs",
+    "dist/backend/component-data.mjs",
+    "dist/backend/providers.mjs",
+    "dist/backend/public-read.mjs",
+    "scripts/generate-product-pages.mjs",
+    "tests/egress-static-assets-v2.mjs"
+  ],
+  "unchangedBaselineFiles": 893,
+  "deletedBaselineFiles": 0,
+  "adminRepositoryAndTransport": "byte-identical protected implementations",
+  "workflowChanges": 0,
+  "SQLChanges": 0,
+  "edgeFunctionChanges": 0,
+  "activationConfigChanged": false,
+  "frozenRC07": "55e5fba390f7cf648490f7e7b5e0114a4d0d510c",
+  "productionRequests": 0
+}

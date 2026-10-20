@@ -1,0 +1,20 @@
+[
+  {
+    "path": "scripts/trusted-image-publisher.mjs",
+    "source_commit": "55e5fba390f7cf648490f7e7b5e0114a4d0d510c",
+    "source_tree": "8bd71a5e69dcdaf77add68afcbec5f65a11ece4c",
+    "source_sha256": "746cf027b00bc37998cfdae7868ebf02f82e2a5326cd13d6e78b173dd7f81499"
+  },
+  {
+    "path": "scripts/durable-image-store.mjs",
+    "source_commit": "55e5fba390f7cf648490f7e7b5e0114a4d0d510c",
+    "source_tree": "8bd71a5e69dcdaf77add68afcbec5f65a11ece4c",
+    "source_sha256": "d76925319e65bdc532635963492cf799f38bd1988ff0dfcfcc08fe84bacb3342"
+  },
+  {
+    "path": "scripts/retained-catalogue-snapshot.mjs",
+    "source_commit": "55e5fba390f7cf648490f7e7b5e0114a4d0d510c",
+    "source_tree": "8bd71a5e69dcdaf77add68afcbec5f65a11ece4c",
+    "source_sha256": "e4888acc32f50f7efdb774030daa63aa20ff68a26ec6cb171914c72c86aaf9e0"
+  }
+]

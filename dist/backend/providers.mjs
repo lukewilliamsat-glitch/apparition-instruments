@@ -19,10 +19,10 @@ export function createRepositoryProviders({source='local',storage,config=publicB
  });
 }
 
-export function createPublicCatalogueClient(config=publicBackendConfig,request=globalThis.fetch){
+export function createPublicCatalogueClient(config=publicBackendConfig,request=globalThis.fetch,{delivery}={}){
  const {url,publishableKey}=config||{};
  if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(url||'')||!/^sb_publishable_[A-Za-z0-9_-]+$/.test(publishableKey||'')||typeof request!=='function')throw new Error('Invalid public Supabase configuration.');
- const read=view=>view==='catalogue_components'?readCatalogueComponents({config,request}):readPublicRows({config,request},view,'?select='+kitColumns);
+ const read=view=>view==='catalogue_components'?readCatalogueComponents({config,request,delivery}):readPublicRows({config,request},view,'?select='+kitColumns);
  return Object.freeze({listComponents:()=>read('catalogue_components'),listWiringKits:()=>read('catalogue_wiring_kits')});
 }
 

@@ -1,3 +1,6 @@
+import {verifyArchive} from './trusted-image-publisher.mjs';
+import {retainedCatalogueSnapshot} from './retained-catalogue-snapshot.mjs';
+import {imageDeliveryConfig} from '../dist/backend/image-delivery-config.mjs';
 import {refineProductPresentation,refineCatalogueCard} from '../dist/products/presentation.mjs';
 // Production SEO is an output of the public Supabase catalogue, never a hand-maintained product database.
 import {readFile,writeFile,mkdir,readdir,rm} from 'node:fs/promises';
@@ -82,9 +85,13 @@ export function injectCategoryLinks(html,products,category){
  }
  return '<!doctype html>\n'+d.documentElement.outerHTML;
 }
-export async function generate({rows,options=[],root=dist}){
+export async function generate({rows,options=[],root=dist,preserveProductAssets=imageDeliveryConfig.enabled}){
  const products=prepareProducts(rows),shell=await readFile(join(root,'products/index.html'),'utf8');
- const folder=join(root,'products');for(const entry of await readdir(folder,{withFileTypes:true}))if(entry.isDirectory())await rm(join(folder,entry.name),{recursive:true,force:true});
+ const folder=join(root,'products');for(const entry of await readdir(folder,{withFileTypes:true}))if(entry.isDirectory()){
+  // Static cutover cannot remove older per-product image URLs. Regenerate only
+  // the owned page output; retain all companion assets, including removed items.
+  await rm(join(folder,entry.name,...(preserveProductAssets?['index.html']:[])),{recursive:!preserveProductAssets,force:true});
+ }
  for(const p of products){
   const dir=join(folder,productSlug(p.id));await mkdir(dir,{recursive:true});let publish=p;
   if(typeof p.image==='string'){
@@ -107,8 +114,18 @@ export async function generate({rows,options=[],root=dist}){
  await writeFile(join(root,'sitemap.xml'),sitemap.replace('</urlset>',products.map(p=>`<url><loc>${esc(origin+productURL(p.id))}</loc></url>`).join('')+'</urlset>'));
  return products;
 }
+// The production default remains legacy until a separately approved activation.
+// Tests inject the static mode, request transport and disposable verified archive.
+export async function readGeneratorCatalogue({config=publicBackendConfig,request=globalThis.fetch,root=dist,staticImages=imageDeliveryConfig.enabled,revision}={}){
+ const filter='&individually=eq.true&category=in.(potentiometers,capacitors,treble-bleeds)&sale_price=gt.0';
+ if(!staticImages)return readPublicRows({config,request,maxAgeMs:0},'catalogue_components','?select='+productColumns+filter);
+ await verifyArchive(root); // Fail before any backend request if retention is unavailable.
+ const columns=productColumns.split(',').filter(c=>c!=='image').join(',');
+ const rows=await readPublicRows({config,request,maxAgeMs:0},'catalogue_delivery_v2','?select='+columns+',image_identity,image_reference'+filter);
+ return retainedCatalogueSnapshot(rows,root,{revision});
+}
 async function fetchPublic(table){
- return readPublicRows({config:publicBackendConfig,maxAgeMs:0},table,'?select='+(table==='catalogue_components'?productColumns:optionColumns)+(table==='catalogue_components'?'&individually=eq.true&category=in.(potentiometers,capacitors,treble-bleeds)&sale_price=gt.0':''));
+ return table==='catalogue_components'?readGeneratorCatalogue():readPublicRows({config:publicBackendConfig,maxAgeMs:0},table,'?select='+optionColumns);
 }
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
  try{const [rows,options]=await Promise.all([fetchPublic('catalogue_components'),fetchPublic('catalogue_options')]);const products=await generate({rows,options});console.log('Generated '+products.length+' authoritative public product pages.');}
