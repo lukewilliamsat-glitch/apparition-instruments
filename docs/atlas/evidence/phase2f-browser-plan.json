@@ -1,0 +1,213 @@
+{
+  "authority": "Offline presentation acceptance only; no production integration or publication authority",
+  "baselineManifestSHA256": "f69ee4fa0b73b46a53eb6f3a575fb6e43eb46b37b94ebb41fc99a67fe1438450",
+  "kind": "atlas-browser-plan",
+  "network": "exact loopback fixture origin only; no backend, Stripe, forms, authentication or external navigation",
+  "routes": [
+    {
+      "checks": [
+        "rendered-heading",
+        "navigation",
+        "styles-loaded",
+        "scripts-executed",
+        "no-fatal-console-errors",
+        "no-broken-images",
+        "offline-content",
+        "no-mutation",
+        "responsive-layout"
+      ],
+      "documentSHA256": "5e878cd9f0862a04662ec2a721de9b6e8cad39aa6fb6fafb6c47e5c94ff63daf",
+      "path": "index.html",
+      "screenshotRequired": true
+    },
+    {
+      "checks": [
+        "rendered-heading",
+        "navigation",
+        "styles-loaded",
+        "scripts-executed",
+        "no-fatal-console-errors",
+        "no-broken-images",
+        "offline-content",
+        "no-mutation",
+        "responsive-layout"
+      ],
+      "documentSHA256": "8fb94903a93f69b0ba2b393a44c8705fe21fa90dfdcebfa8fa4edf28f65e51b4",
+      "path": "components/index.html",
+      "screenshotRequired": true
+    },
+    {
+      "checks": [
+        "rendered-heading",
+        "navigation",
+        "styles-loaded",
+        "scripts-executed",
+        "no-fatal-console-errors",
+        "no-broken-images",
+        "offline-content",
+        "no-mutation",
+        "responsive-layout"
+      ],
+      "documentSHA256": "6cd34a96a69b0cdbe7676616ab793e8fb4fd005f34f2e61091d04c95d2035cea",
+      "path": "products/bleed-duncan/index.html",
+      "screenshotRequired": true
+    },
+    {
+      "checks": [
+        "rendered-heading",
+        "navigation",
+        "styles-loaded",
+        "scripts-executed",
+        "no-fatal-console-errors",
+        "no-broken-images",
+        "offline-content",
+        "no-mutation",
+        "responsive-layout"
+      ],
+      "documentSHA256": "fb2a957c009488e901e4bbcb47b7d3477586fdd1f41a1044e369815aa43e5090",
+      "path": "products/ai-pot-ss-alphamini-a500k/index.html",
+      "screenshotRequired": true
+    },
+    {
+      "checks": [
+        "rendered-heading",
+        "navigation",
+        "styles-loaded",
+        "scripts-executed",
+        "no-fatal-console-errors",
+        "no-broken-images",
+        "offline-content",
+        "no-mutation",
+        "responsive-layout"
+      ],
+      "documentSHA256": "54df8bd9fbc63345bdac8cac642bab4d930d833cf96f9575ef15a36569de3505",
+      "path": "products/bleed-premium/index.html",
+      "screenshotRequired": true
+    },
+    {
+      "checks": [
+        "rendered-heading",
+        "navigation",
+        "styles-loaded",
+        "scripts-executed",
+        "no-fatal-console-errors",
+        "no-broken-images",
+        "offline-content",
+        "no-mutation",
+        "responsive-layout"
+      ],
+      "documentSHA256": "e0e48430b29482b7cf1d034f6b368cf4cd0fb9375258db6b89c88771574824a7",
+      "path": "news/index.html",
+      "screenshotRequired": true
+    },
+    {
+      "checks": [
+        "rendered-heading",
+        "navigation",
+        "styles-loaded",
+        "scripts-executed",
+        "no-fatal-console-errors",
+        "no-broken-images",
+        "offline-content",
+        "no-mutation",
+        "responsive-layout"
+      ],
+      "documentSHA256": "01e83f14c9ab8cfdcf470af10b525cda6165ed864d98c2f6b4f1bf6d4b0f2469",
+      "path": "news/workshop-closure/index.html",
+      "screenshotRequired": true
+    },
+    {
+      "checks": [
+        "rendered-heading",
+        "navigation",
+        "styles-loaded",
+        "scripts-executed",
+        "no-fatal-console-errors",
+        "no-broken-images",
+        "offline-content",
+        "no-mutation",
+        "responsive-layout"
+      ],
+      "documentSHA256": "2daff598cda6f5bd95f91ab58b8a62f8bf32efcf62c36b07ec38c1eae499c21e",
+      "path": "privacy/index.html",
+      "screenshotRequired": true
+    },
+    {
+      "checks": [
+        "rendered-heading",
+        "navigation",
+        "styles-loaded",
+        "scripts-executed",
+        "no-fatal-console-errors",
+        "no-broken-images",
+        "offline-content",
+        "no-mutation",
+        "responsive-layout"
+      ],
+      "documentSHA256": "c78d40d9343cdc32fa81aead6ca1e411c93734c67ef468760d10f2a4f5c607e6",
+      "path": "terms/index.html",
+      "screenshotRequired": true
+    },
+    {
+      "checks": [
+        "rendered-heading",
+        "navigation",
+        "styles-loaded",
+        "scripts-executed",
+        "no-fatal-console-errors",
+        "no-broken-images",
+        "offline-content",
+        "no-mutation",
+        "responsive-layout"
+      ],
+      "documentSHA256": "b521e8fe1fbda46d33742d63ea523a75cb5222f592d2cc6209b72a242a13b057",
+      "path": "basket/index.html",
+      "screenshotRequired": true
+    },
+    {
+      "checks": [
+        "rendered-heading",
+        "navigation",
+        "styles-loaded",
+        "scripts-executed",
+        "no-fatal-console-errors",
+        "no-broken-images",
+        "offline-content",
+        "no-mutation",
+        "responsive-layout"
+      ],
+      "documentSHA256": "078bbac24556626823d1eba803ee9a602f4f1d42d4b6dd60957b26030d641217",
+      "path": "checkout/index.html",
+      "screenshotRequired": true
+    },
+    {
+      "checks": [
+        "rendered-heading",
+        "navigation",
+        "styles-loaded",
+        "scripts-executed",
+        "no-fatal-console-errors",
+        "no-broken-images",
+        "offline-content",
+        "no-mutation",
+        "responsive-layout"
+      ],
+      "documentSHA256": "9b298bc2bf9bf82318b243891f8df9478333e12029a54aa9d4f1631124023ad2",
+      "path": "luthier-hub/index.html",
+      "screenshotRequired": true
+    }
+  ],
+  "schemaVersion": 1,
+  "viewports": [
+    {
+      "height": 900,
+      "id": "desktop",
+      "width": 1440
+    },
+    {
+      "height": 844,
+      "id": "mobile",
+      "width": 390
+    }
+  ]
+}

@@ -1,0 +1,1129 @@
+{
+  "baselineManifestSHA256": "f69ee4fa0b73b46a53eb6f3a575fb6e43eb46b37b94ebb41fc99a67fe1438450",
+  "browserExecution": "pending",
+  "classification": "source-level signals, not a complete dynamic request graph",
+  "kind": "atlas-runtime-dependencies",
+  "networkPrimitiveFiles": 8,
+  "productionRequests": 0,
+  "rows": [
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "account/bootstrap.mjs",
+      "productionRequests": 0,
+      "scope": "authenticated-controller-not-executed",
+      "sha256": "e66c93e4c2b4a05d395988e41f2a524067eb9ed14a355a1a9134f783daedf29b",
+      "signals": [
+        "fetch"
+      ],
+      "urlLiteralOrigins": []
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "account/supabase-client.mjs",
+      "productionRequests": 0,
+      "scope": "authenticated-controller-not-executed",
+      "sha256": "c2cca96c251ee79d071f0d13153fa08e634fcd0c0ad4d923b800cd98a43ead6e",
+      "signals": [
+        "fetch",
+        "xhr"
+      ],
+      "urlLiteralOrigins": [
+        "http://localhost:9999",
+        "https://github.com"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "admin/application.mjs",
+      "productionRequests": 0,
+      "scope": "authenticated-controller-not-executed",
+      "sha256": "025e0004b935fe9cc31e9acd01c704d5dd924f62e9a425ffa47b4402150ddb5f",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://site.test"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "admin/email-preview/app.mjs",
+      "productionRequests": 0,
+      "scope": "authenticated-controller-not-executed",
+      "sha256": "c48225a2aaa8f1878105274ccb5e4963e187bf375744727be91c2ba10e468c31",
+      "signals": [
+        "fetch"
+      ],
+      "urlLiteralOrigins": []
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "admin/hub-cms/docx-vendor.mjs",
+      "productionRequests": 0,
+      "scope": "authenticated-controller-not-executed",
+      "sha256": "895dec71c63b82135ed212b026f06d0f299575a6bf4b66623d3bc34219d01912",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "http://schemas.openxmlformats.org",
+        "https://apparitioninstruments.co.uk"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "admin/hub-cms/docx.mjs",
+      "productionRequests": 0,
+      "scope": "authenticated-controller-not-executed",
+      "sha256": "1bad80408597a7f9334fc3d51e46704f03ea50c6a077271c7ea049f01ce614c8",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "http://schemas.openxmlformats.org",
+        "https://apparitioninstruments.co.uk"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "admin/hub-cms/editor-vendor.mjs",
+      "productionRequests": 0,
+      "scope": "authenticated-controller-not-executed",
+      "sha256": "f23ca13f335a460342c5ba8d0bd8816084490d6600e9ce5f7c97ba17bbe63642",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://prosemirror.net"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "admin/orders/app.mjs",
+      "productionRequests": 0,
+      "scope": "authenticated-controller-not-executed",
+      "sha256": "0efa748d1e04aff33bc58345d90ab96ef35cdbec295ece083c8f4c2ff9491c12",
+      "signals": [
+        "fetch"
+      ],
+      "urlLiteralOrigins": []
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "admin/orders/email-review.mjs",
+      "productionRequests": 0,
+      "scope": "authenticated-controller-not-executed",
+      "sha256": "a981f7187dfb13c657045a42be6b7c67f6d1186b7aeb0e6fab39802d20f04af0",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk;"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "admin/site-operations/index.html",
+      "productionRequests": 0,
+      "scope": "authenticated-controller-not-executed",
+      "sha256": "d82b150760a92fa173b943180b54db05e0a9c1b1fb6668d836e86519feff5edd",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://address"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "backend/order-data.mjs",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "c056852cfcfd902389fe02da955784f5dbe0194168ab0f8b5d43c7f11d592cd4",
+      "signals": [
+        "checkout-authority"
+      ],
+      "urlLiteralOrigins": []
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "backend/public-config.mjs",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "725ad31203309532397adef75cf67abe182420cefb0de99bc8a45aa4277bb019",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://acdxpxvksvdwfajntzfx.supabase.co"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "checkout/checkout.mjs",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "5b8110f744b67bdc531f8e75dd6f22b534ce38dc366556b9ea9a6d20f8c65933",
+      "signals": [
+        "fetch",
+        "checkout-authority"
+      ],
+      "urlLiteralOrigins": []
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "checkout/success/success.mjs",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "45d14774ab432aa46d6c4c4197509471525fc6421ffe19587e5591f8e9bb30f7",
+      "signals": [
+        "fetch"
+      ],
+      "urlLiteralOrigins": []
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "circuit-forge/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "ad8886fb475368c9de0624d265e72ed11ddb30f3860368c74d8bf22fbe9275e2",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "circuit-forge/response-view.mjs",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "1d443bef92b5d6a6956c31072bb97c4019e54f240b743afd0182181a72de3bc6",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "http://www.w3.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "components/capacitors/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "dfb975b58b530e87323b342934128c666356ae70f2f97bcc822ec4fa97fb1727",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "components/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "8fb94903a93f69b0ba2b393a44c8705fe21fa90dfdcebfa8fa4edf28f65e51b4",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "components/potentiometers/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "7409973df7a9399c4c6fc694b8616559076f8bb9105caba7da1e9bc7b5354cf0",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "components/treble-bleeds/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "2afa093401857fd1e07f3d3cd54b386ac5a2791f0162c5ecb5922cd48ce42a5a",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "contact/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "356945553a7ca12824e79bc0b83cb08fdaf0916dab22b5cb0bdf64b6fc804a81",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "electronics/state/circuit-state.mjs",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "6038c8fd338d17ffdf0e7f1081e047c0c0124b5d9d9709cd3abf28602344fe4f",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://example.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "electronics/state/project.mjs",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "af8b3ec8c19c936b359249548453d8c01e29a65dfadc565bb96d5e0c98402d6e",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://example.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "faq/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "f31b82b2c04c06ff74646a5cdece13d42362fba217d7c5154d1aa78c3f9e3b13",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "forge-reveal.mjs",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "5b422ca649bff212fc33d679e7110f2ed34f13464125563fecf3bc989b9a02e9",
+      "signals": [
+        "fetch"
+      ],
+      "urlLiteralOrigins": []
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "guitar-project/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "a178c76653bacf57818132c80228ece780708bfdb208c4edc3f79ce64c85615d",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "5e878cd9f0862a04662ec2a721de9b6e8cad39aa6fb6fafb6c47e5c94ff63daf",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "interactive-tools/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "bb3a0cc81f33c20f62e32e4064e8af3845396f973dde3e0de1aa4b28a414637a",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "les-paul-kits/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "cfc4d9bd4af6f14644c2b7473b972cc1aa75c4f03f22078fe32f057a10353089",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/022-vs-047-tone-capacitors/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "e5621bae96724697bf1a61460b66f04074516dce4e112b936fabbe32a839740a",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org",
+        "https://www.seymourduncan.com"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/250k-vs-500k-pots/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "88982be0c5418a73d8ff13147a934afcd0f27fea5a70f93e3c823d8f53d27440",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org",
+        "https://www.seymourduncan.com"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/audio-vs-linear-taper-pots/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "af5becf4cf13cd51487d6e61c5eeea64abdcae91903d30c8dd2e87209ce348bb",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/cable-capacitance/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "0873a4edfabfc7735977e8f35e9f45f4d2b90385b0e71576da63473b0b61d6e3",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://mogamicable.com",
+        "https://schema.org",
+        "https://www.seymourduncan.com"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/capacitors-treble-bleeds/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "2c78051db30a1c182b5e9aa20e55bc097bf9664c7493913f266a7fc1485b4932",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org",
+        "https://www.fender.com",
+        "https://www.seymourduncan.com"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/categories/pickups/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "bc6e493c999ee2194f60e67025bcca965daa440d6a0c44e149141524b76c26f8",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/categories/potentiometers/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "f60318e1db5dde62143d3b4193058a4d4ff665da3f963b6945355b4ff16b9682",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/categories/tone-controls/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "36a04fb27c1d98e7214a250ff33b57020b4982867e3a24768b2c051f80b1bdd4",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/categories/treble-bleeds/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "dc81a23c0865aeb0fdd4322ecac7638812f8ec287605b99b8a1cb6e02f33c05e",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/categories/troubleshooting/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "1291f6e57a7570a0362608d7af6df24a3b53e3645f809a32f906eb8d3a84baf3",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/categories/wiring/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "70e4971e2c3205d1d188b7c85c6c961e12eb9ce2cb87d9c8bebb0bee040ef5fd",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/coil-splitting-explained/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "3bb792c379e10b582bb5a43f4fcf95b3bf74100da4abe7743741aa04ce70bdc1",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/glossary/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "6f416e8071394c16e0def1f7092a6eab6daf245734238ca1b0d7097b2c07b468",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/grounding-output/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "118f21a1be49144c0b55dd223dbdb1a6214c024ad1cfbe637e04be2b4ffb484e",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/guitar-grounding-common-problems/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "76ab6853f6ca7df1f0bb210ea3fadb3d657c0f475e97eb52a5a2c7ad190b01b0",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/guitar-pot-lug-numbering-wiring/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "089d684665e38b7d922e7d51b8103299c87843458a1c478a579835d221796df0",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/guitar-three-way-toggle-switch-wiring/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "35a9a363711748fb900c5310df292532d221b15417cbb4e2fcb49eded32a639d",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/how-a-guitar-tone-control-works/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "cb962c26f1bd390fb520ca27a42ffbcd3229af8eb8c2d3b8cd542d48fb4f93c8",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org",
+        "https://www.seymourduncan.com"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/how-les-paul-controls-work/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "f0e3e17c69813017c545043a1740b56134d2a75614cdd151118e61ac89c342b6",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/independent-dependent-volumes/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "decc5ed6186cedbe4354fab820124d8135460ee1ddb3cb82f15d398ba7951bc6",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org",
+        "https://www.seymourduncan.com",
+        "https://www.stewmac.com"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "9b298bc2bf9bf82318b243891f8df9478333e12029a54aa9d4f1631124023ad2",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/les-paul-installation/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "096394470970634110708961abe0f91d14c0896718337943ed471e7051f5e978",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/modern-vs-50s-les-paul-wiring/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "2d3b94a11a574d732c0805e07518402d8ae13645214a11ce7d30f5772e8fe7fb",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/output-jack-faults/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "b40124aee98c7e33c1396153cb0031f1f827e3a5370a6d96897ea17dea4d9595",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org",
+        "https://www.seymourduncan.com",
+        "https://www.switchcraft.com"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/partial-coil-splits/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "9682f4435e1558361a564c1d9ed73f23309e5f7c567882af68a1d178ebb799ec",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org",
+        "https://www.fralinpickups.com",
+        "https://www.seymourduncan.com"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/pickup-conductors/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "36a7737d50be232be22b4d759b13a38bb80c0839a865d0c9721c36e557b8989c",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/pickup-dc-resistance-output/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "f7d720139b1beb2ecff55f0d84a7956586f62e911ae7f4517d5c4cea45c861ec",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org",
+        "https://seymourduncan.zendesk.com",
+        "https://www.seymourduncan.com"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/pickup-inductance/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "6fe483f8131f1fb96d34d5ef1a235412be337fef0b104d6d27adbc132a780e34",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org",
+        "https://www.seymourduncan.com"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/pickup-phase-switching/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "8e14f1e8fd4cdbfb277e25d50d81aa5523fdf714928712e6c2a27e9ac381dea2",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org",
+        "https://www.fralinpickups.com",
+        "https://www.seymourduncan.com"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/potentiometers-explained/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "536f06f2da93b8bca54e5ff58926bba28da2ba0935c3d7502113250d020e8169",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/push-pull-dpdt/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "36a531dd05588c048285ad208894972c2141f834ee8bc7486f41289c3377e525",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org",
+        "https://www.bourns.com",
+        "https://www.fralinpickups.com",
+        "https://www.seymourduncan.com"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/reading-a-circuit-model/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "c1e0e53a4b0205195dbb886848187470b2bf173273f272b27c2a0368301cd639",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org",
+        "https://www.seymourduncan.com"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/selectors/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "d482d1910c5ddee9a5115324bbe5f46417a29a4eb5bcc5cf4109ce11c8862f8d",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/series-vs-parallel-pickup-wiring/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "24111cae9a96c15fa1777040a5be193808ec07a9b2c2e71a6b479cdf9c1014c3",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/tools/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "c582060a65720c256a8a00ef695bf4e7ed626dc9ea6756e67a0510014c46313a",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/treble-bleeds/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "a3ceca91378c87f0862c6b58f368973f73ea6767a71d515a3909ddf252e04738",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/troubleshooting/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "a15657b8cc5fb6c9eb1a9680e355dc8f7ae354c22b168a67f1a420d5db7f9bf7",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "luthier-hub/wiring-circuits-explained/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "65d1a9c7fe5cb4b8d1dd0103fcaa25c67587e5f907b50566876a99e5c1d2111f",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "news/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "e0e48430b29482b7cf1d034f6b368cf4cd0fb9375258db6b89c88771574824a7",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "news/workshop-closure/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "01e83f14c9ab8cfdcf470af10b525cda6165ed864d98c2f6b4f1bf6d4b0f2469",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "privacy/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "2daff598cda6f5bd95f91ab58b8a62f8bf32efcf62c36b07ec38c1eae499c21e",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://ico.org.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "products/ai-pot-ss-alphamini-a500k/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "fb2a957c009488e901e4bbcb47b7d3477586fdd1f41a1044e369815aa43e5090",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "products/bleed-cap/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "1974acdff606b3958fecc0dc4f9f235b0b2f1392ccd01fd9131ab82cd2969519",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "products/bleed-duncan/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "6cd34a96a69b0cdbe7676616ab793e8fb4fd005f34f2e61091d04c95d2035cea",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "products/bleed-premium/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "54df8bd9fbc63345bdac8cac642bab4d930d833cf96f9575ef15a36569de3505",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "products/bleed-prs/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "8de40724b2b15e11b91c919d2fab26d14ec71847dab0c0b8adc94602d6e7fa07",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "products/cde-022/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "d99fb6708cf08ad6a100c9d022ff4e7cee67262a49cb1c6503e6e9f7e3e50a47",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "products/cde-715p-600/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "ec940961787a0136fc794a021e98b956f847da1a89ea2a89244a53670ad4dcf2",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "products/pot-short-alpha-a/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "97dd43c485bb2de2483aa70c4f05d07174965ff47f06e0e82599b6f9cf25e758",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "products/pot-short-cts-a/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "762a5d36f697033432a26b133d02444a91b6d207c255625f19dc6a16e4d0e884",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "style.css",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "6a54f33efeb97b4ace1f6690be8f0b5e78a3ddb59ddc2c86876530f3e867e4e5",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://fonts.googleapis.com"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "terms/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "c78d40d9343cdc32fa81aead6ca1e411c93734c67ef468760d10f2a4f5c607e6",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "treble-bleed-designer/graph.mjs",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "04cae84bdabfbfc7bd0a919c8c49daf5c033cfb07df4492838db3e65400ef070",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "http://www.w3.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "treble-bleed-designer/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "d6e4a1c9c1cb68ae2b53b00dd02e9e46016ed27ac71464eb9aab1349763a8e91",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://macalisterelectronics.com",
+        "https://schema.org",
+        "https://www.seymourduncan.com"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "wiring-diagrams/wiring.js",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "fcd0572199b922bea11d1376e5039dae8bed8115d5984376aeb4a7ab93206da3",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "http://www.w3.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "wiring-generator/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "e2c30c47cdd6409fb43b2d8a6da783ad6a654aaf51a873e62b5b5e95939fc2a7",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org",
+        "https://www.premierguitar.com",
+        "https://www.seymourduncan.com"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "wiring-generator/render.mjs",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "b6844ed3dfbdbb7bfd6b25a679e184d581b5389b911fc2e892fa86b53bc8cae3",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "http://www.w3.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "wiring-kits/help-me-choose/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "dfdff9b854b11642c41b2e19c535daf7d17b082cb8cfb427bd2f9569604bb4dc",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "wiring-kits/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "cb73cceb3f62f09c5c2b96264eda9683a975725ed504d82c3b18f4953f6938ae",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "wiring-kits/prs-custom-24/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "49359a040365bbca74950a1f529b40e0675fa480797f62a252aae5a5a9f9609c",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "wiring-kits/prs-se-594/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "2fa81a81fa259b91e360ff8ea7ced7ff535655d1019f804287b9c1436036c1b5",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "wiring-kits/prs-se-custom-24/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "cb9e8a464fc0faef6a45e72741f71ff036b00a0002116dd1c0a1952944c06298",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    },
+    {
+      "execution": "not-executed-by-this-inventory",
+      "path": "wiring-kits/sg/index.html",
+      "productionRequests": 0,
+      "scope": "public-or-shared-static-analysis",
+      "sha256": "9c13deb7d00404c8cf60df9ddbc9bb408e9a7582d135427750f92c6afc280198",
+      "signals": [],
+      "urlLiteralOrigins": [
+        "https://apparitioninstruments.co.uk",
+        "https://schema.org"
+      ]
+    }
+  ],
+  "schemaVersion": 1,
+  "stripeIntegration": "not-executed; sessions prohibited",
+  "supabaseIntegration": "not-executed; separate authority required"
+}

@@ -24,13 +24,13 @@ export function sourceMutationClass(p){
  if(p==='index.html')return 'search-verification-environment';
  if(/^products\/[^/]+\//.test(p)||p==='products/index.html'||/^components\/(?:index.html|[^/]+\/index.html)$/.test(p))return 'catalogue-generator-input';
  if(p.startsWith('news/')||p==='operations/snapshot.json')return 'operations-generator-input';
- if(p==='sitemap.xml'||p==='luthier-hub/discovery.json'||p==='luthier-hub/knowledge.json'||/^luthier-hub\/.+\/index.html$/.test(p)||p==='luthier-hub/index.html'||['signal/index.html','wiring/index.html','treble-bleed/index.html'].includes(p))return 'cms-generator-input';
+ if(p==='sitemap.xml'||p==='luthier-hub/discovery.json'||p==='luthier-hub/knowledge.json'||/^luthier-hub\/.+\/index.html$/.test(p)||p==='luthier-hub/index.html'||['circuit-forge/index.html','wiring-generator/index.html','treble-bleed-designer/index.html'].includes(p))return 'cms-generator-input';
  return 'source-or-canonical-stamp';
 }
-export async function independentAttestation({root,manifestFile,manifestSHA256,oldInventoryFile,oldInventorySHA256,repositoryRoot,sourceTree,listing,freshRoot=null,freshLedger=null}){
+export async function independentAttestation({root,manifestFile,manifestSHA256,oldInventoryFile,oldInventorySHA256,previousManifestSHA256=manifestSHA256,repositoryRoot,sourceTree,listing,freshRoot=null,freshLedger=null}){
  const manifest=(await loadJSON(manifestFile,manifestSHA256)).value,actual=await inventory(root);if(!sameFiles(actual,{files:manifest.files}))fail('ATTESTATION_BASELINE','Candidate changed');
  const old=(await loadJSON(oldInventoryFile,oldInventorySHA256)).value;
- if(old.baselineManifestSHA256!==manifestSHA256)fail('ATTESTATION_BINDING','Prior evidence binds a different baseline');
+ if(old.baselineManifestSHA256!==previousManifestSHA256)fail('ATTESTATION_BINDING','Prior evidence binds a different baseline');
  if(sourceTree.truncated!==false||!/^[a-f0-9]{40}$/.test(sourceTree.sha)||sourceTree.sha!==listing.sourceTreeSHA)fail('SOURCE_TREE_BINDING','Missing complete authenticated source tree');
  const tree=new Map(sourceTree.tree.filter(x=>x.type==='blob').map(x=>[x.path,x]));
  const oldRows=new Map(old.entries.map(x=>[x.path,x])),members=new Set(listing.paths),observations=new Map();
@@ -43,7 +43,7 @@ export async function independentAttestation({root,manifestFile,manifestSHA256,o
  }
  const entries=[];
  for(const f of manifest.files){
-  const previous=oldRows.get(f.path);if(!previous||previous.sha256!==f.sha256)fail('ATTESTATION_BINDING','Prior per-file evidence changed');
+  const previous=oldRows.get(f.path),newObservation=observations.get(f.path);if(!previous||previous.sha256!==f.sha256&&(!newObservation||newObservation.sha256!==f.sha256||previous.observedSHA256))fail('ATTESTATION_BINDING','Only exact newly observed bytes may correct an unobserved reconstruction');
   let source=null;const member=tree.get('dist/'+f.path);
   if(member){const b=await readRegular(path.join(repositoryRoot,f.path));if(gitHash(b)!==member.sha||b.length!==member.size)fail('SOURCE_BLOB_BINDING','Source bytes do not match authenticated Git object: '+f.path);
    const transformed=/\.(?:html?|m?js)$/.test(f.path)?Buffer.from(stampSource(b.toString(),path.extname(f.path).slice(1),listing.sourceRevision)):b;

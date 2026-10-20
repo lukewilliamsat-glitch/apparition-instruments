@@ -1,0 +1,21 @@
+{
+  "baselineManifestSHA256": "f69ee4fa0b73b46a53eb6f3a575fb6e43eb46b37b94ebb41fc99a67fe1438450",
+  "browserAccepted": false,
+  "deterministic": true,
+  "exactObservedCorrections": 4,
+  "files": 423,
+  "historicalPathMembership": 423,
+  "kind": "atlas-phase2f-rehearsal",
+  "observed": 54,
+  "originalPreserved": true,
+  "previousManifestSHA256": "f09b597bf4d6fc0fd0e5f2cab6d64162eefb3652b1f3721d2c93b0173e0c0dc9",
+  "productionPreflightRejected": true,
+  "productionRequests": 0,
+  "protectedUnchanged": 422,
+  "publicationAuthorised": false,
+  "releaseId": "bb95052caa8ed6cb25b78b7b210f65d5cd006a1dc05d42f8a167d5fd2789148e",
+  "rollbackExact": true,
+  "schemaVersion": 1,
+  "technicalCertification": "blocked",
+  "unobserved": 369
+}

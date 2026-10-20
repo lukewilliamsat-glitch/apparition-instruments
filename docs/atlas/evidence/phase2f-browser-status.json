@@ -1,0 +1,7 @@
+{
+  "engine": null,
+  "reason": "Connected extension unavailable; cloud browser has no request-interception/process-isolation capability; no application opened",
+  "routesExecuted": 0,
+  "screenshots": 0,
+  "status": "not-executed"
+}

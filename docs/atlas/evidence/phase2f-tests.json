@@ -1,0 +1,11 @@
+{
+  "browserExecuted": false,
+  "failed": 0,
+  "fullSuitePassed": true,
+  "initialTimeout": "Earlier 180-second run retained as failure; corrected group cleanup and 420-second bound pass",
+  "isolation": "Inherited seccomp + no_new_privs; stripped environment; injected fixtures",
+  "networkProbes": 9,
+  "node": "22.20.0",
+  "passed": 352,
+  "productionRequests": 0
+}

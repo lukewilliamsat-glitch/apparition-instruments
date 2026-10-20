@@ -1,0 +1,10 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import * as fs from 'node:fs/promises';
+import path from 'node:path';
+import os from 'node:os';
+import {deploymentVersions} from '../../scripts/atlas/deployment-versions.mjs';
+import {runtimeDependencies} from '../../scripts/atlas/runtime-dependencies.mjs';
+import {sha256} from '../../scripts/atlas/core.mjs';
+test('versions: mixed source stamps remain a conflict even with valid local bytes',async()=>{const root=await fs.mkdtemp(path.join(os.tmpdir(),'atlas-versions-'));try{const source='a'.repeat(40),other='b'.repeat(40),b=Buffer.from('<script src="/app.mjs?v=one&amp;build='+other+'"></script>');await fs.writeFile(path.join(root,'index.html'),b);const a={baselineManifestSHA256:'c'.repeat(64),sourceRevision:source,entries:[{path:'index.html',sha256:sha256(b),evidenceAuthoritative:true,observedSHA256:sha256(b),deploymentPathAuthenticated:true,source:null}]};const x=await deploymentVersions({root,attestation:a});assert.deepEqual(x.conflictingPaths,['index.html']);assert.equal(x.coherentReconstruction,false);assert.equal(x.authenticatedHistoricalDeployment,false);}finally{await fs.rm(root,{recursive:true,force:true});}});
+test('dependencies: static URL/network signals never execute or certify integrations',async()=>{const root=await fs.mkdtemp(path.join(os.tmpdir(),'atlas-dependency-'));try{const b=Buffer.from("throw Error('must not execute'); fetch('https://catalogue.fixture.invalid/resource');");await fs.writeFile(path.join(root,'app.mjs'),b);const x=await runtimeDependencies({root,manifest:{files:[{path:'app.mjs',sha256:sha256(b)}]},manifestSHA256:'a'.repeat(64)});assert.equal(x.networkPrimitiveFiles,1);assert.equal(x.productionRequests,0);assert.equal(x.browserExecution,'pending');assert.deepEqual(x.rows[0].urlLiteralOrigins,['https://catalogue.fixture.invalid']);}finally{await fs.rm(root,{recursive:true,force:true});}});

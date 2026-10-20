@@ -1,0 +1,30 @@
+[
+  {
+    "action": "Exact observed response copied to separate successor reconstruction; original preserved",
+    "bytes": 10262,
+    "observedSHA256": "fb2a957c009488e901e4bbcb47b7d3477586fdd1f41a1044e369815aa43e5090",
+    "path": "products/ai-pot-ss-alphamini-a500k/index.html",
+    "previousSHA256": "6ea03fb4aca40f5258b0de925838fbc3abefd663ef75eb9863f5f4ab54a420e6"
+  },
+  {
+    "action": "Exact observed response copied to separate successor reconstruction; original preserved",
+    "bytes": 10956,
+    "observedSHA256": "54df8bd9fbc63345bdac8cac642bab4d930d833cf96f9575ef15a36569de3505",
+    "path": "products/bleed-premium/index.html",
+    "previousSHA256": "9b6b2da3a1f3a1980cb58b6f05d4fcf3ae76fd799bc4891a768f15f4aea82d2e"
+  },
+  {
+    "action": "Exact observed response copied to separate successor reconstruction; original preserved",
+    "bytes": 9989,
+    "observedSHA256": "97dd43c485bb2de2483aa70c4f05d07174965ff47f06e0e82599b6f9cf25e758",
+    "path": "products/pot-short-alpha-a/index.html",
+    "previousSHA256": "32be77155557f7f118376e180e685414a9772c649c62377672f9e8a196bae6ea"
+  },
+  {
+    "action": "Exact observed response copied to separate successor reconstruction; original preserved",
+    "bytes": 10140,
+    "observedSHA256": "7409973df7a9399c4c6fc694b8616559076f8bb9105caba7da1e9bc7b5354cf0",
+    "path": "components/potentiometers/index.html",
+    "previousSHA256": "f2811c214cedc10d168a55f767c2c9c464ec39b9b9312f11aa3987b29f8178e9"
+  }
+]

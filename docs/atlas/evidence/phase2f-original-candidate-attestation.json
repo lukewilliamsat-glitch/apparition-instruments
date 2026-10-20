@@ -1,0 +1,164 @@
+{
+  "archive": {
+    "artifactId": 11712976121,
+    "artifactZipSHA256": "d3e804f37e04ea25bbd5e5df3764d8ea2c2ea201f71c381f102142e1be29f3d8",
+    "pathSetExact": true,
+    "payloadAvailable": false,
+    "runId": 38167017686,
+    "unexpectedPaths": []
+  },
+  "baselineManifestSHA256": "f09b597bf4d6fc0fd0e5f2cab6d64162eefb3652b1f3721d2c93b0173e0c0dc9",
+  "classification": "coherent-reconstruction-with-authenticated-historical-path-membership",
+  "complete": false,
+  "conflicts": [
+    {
+      "bytes": 10137,
+      "deployedByteHashAuthenticated": false,
+      "deployment": {
+        "artifactId": 11712976121,
+        "runId": 38167017686,
+        "sourceRevision": "bb4ba2a932239a3ef397272b27143f0cd3adcccf"
+      },
+      "deploymentPathAuthenticated": true,
+      "evidenceAuthoritative": false,
+      "evidenceExists": true,
+      "evidenceType": "directly-observed-live-bytes",
+      "gaps": [
+        "observed-byte-mismatch"
+      ],
+      "observationSource": "authorisation-25-public-response",
+      "observedSHA256": "7409973df7a9399c4c6fc694b8616559076f8bb9105caba7da1e9bc7b5354cf0",
+      "path": "components/potentiometers/index.html",
+      "protectedContent": [],
+      "sha256": "f2811c214cedc10d168a55f767c2c9c464ec39b9b9312f11aa3987b29f8178e9",
+      "source": {
+        "blobSHA1": "2d876bc878dcbe056c82290e106b03f7418e40d4",
+        "candidateMatchesCanonical": true,
+        "canonicalSHA256": "f2811c214cedc10d168a55f767c2c9c464ec39b9b9312f11aa3987b29f8178e9",
+        "mutationClass": "catalogue-generator-input",
+        "sha256": "e3f599ddd980dac152b59d42a0b93da5408c470ac0bc88b82e94986b53b8777f"
+      },
+      "sufficientForCertification": false,
+      "versionCompatible": false
+    },
+    {
+      "bytes": 9347,
+      "deployedByteHashAuthenticated": false,
+      "deployment": {
+        "artifactId": 11712976121,
+        "runId": 38167017686,
+        "sourceRevision": "bb4ba2a932239a3ef397272b27143f0cd3adcccf"
+      },
+      "deploymentPathAuthenticated": true,
+      "evidenceAuthoritative": false,
+      "evidenceExists": true,
+      "evidenceType": "directly-observed-live-bytes",
+      "gaps": [
+        "observed-byte-mismatch"
+      ],
+      "observationSource": "authorisation-25-public-response",
+      "observedSHA256": "fb2a957c009488e901e4bbcb47b7d3477586fdd1f41a1044e369815aa43e5090",
+      "path": "products/ai-pot-ss-alphamini-a500k/index.html",
+      "protectedContent": [
+        "product-content"
+      ],
+      "sha256": "6ea03fb4aca40f5258b0de925838fbc3abefd663ef75eb9863f5f4ab54a420e6",
+      "source": {
+        "blobSHA1": "dbd1bb3fcc779c69c855dc7c2ffb78609d4b5c86",
+        "candidateMatchesCanonical": true,
+        "canonicalSHA256": "6ea03fb4aca40f5258b0de925838fbc3abefd663ef75eb9863f5f4ab54a420e6",
+        "mutationClass": "catalogue-generator-input",
+        "sha256": "cabcc0da8192669dbe640148ff758577679643a08d1f69a311337cb152586785"
+      },
+      "sufficientForCertification": false,
+      "versionCompatible": false
+    },
+    {
+      "bytes": 9717,
+      "deployedByteHashAuthenticated": false,
+      "deployment": {
+        "artifactId": 11712976121,
+        "runId": 38167017686,
+        "sourceRevision": "bb4ba2a932239a3ef397272b27143f0cd3adcccf"
+      },
+      "deploymentPathAuthenticated": true,
+      "evidenceAuthoritative": false,
+      "evidenceExists": true,
+      "evidenceType": "directly-observed-live-bytes",
+      "gaps": [
+        "observed-byte-mismatch"
+      ],
+      "observationSource": "authorisation-25-public-response",
+      "observedSHA256": "54df8bd9fbc63345bdac8cac642bab4d930d833cf96f9575ef15a36569de3505",
+      "path": "products/bleed-premium/index.html",
+      "protectedContent": [
+        "product-content"
+      ],
+      "sha256": "9b6b2da3a1f3a1980cb58b6f05d4fcf3ae76fd799bc4891a768f15f4aea82d2e",
+      "source": {
+        "blobSHA1": "aa1e49b8cd2218434efd140bbaaf411b553b1f4a",
+        "candidateMatchesCanonical": true,
+        "canonicalSHA256": "9b6b2da3a1f3a1980cb58b6f05d4fcf3ae76fd799bc4891a768f15f4aea82d2e",
+        "mutationClass": "catalogue-generator-input",
+        "sha256": "d2342927844ef156fedf6f5c1464de15b899ef4b09ced047a964f8b0ed1a7707"
+      },
+      "sufficientForCertification": false,
+      "versionCompatible": false
+    },
+    {
+      "bytes": 9074,
+      "deployedByteHashAuthenticated": false,
+      "deployment": {
+        "artifactId": 11712976121,
+        "runId": 38167017686,
+        "sourceRevision": "bb4ba2a932239a3ef397272b27143f0cd3adcccf"
+      },
+      "deploymentPathAuthenticated": true,
+      "evidenceAuthoritative": false,
+      "evidenceExists": true,
+      "evidenceType": "directly-observed-live-bytes",
+      "gaps": [
+        "observed-byte-mismatch"
+      ],
+      "observationSource": "authorisation-25-public-response",
+      "observedSHA256": "97dd43c485bb2de2483aa70c4f05d07174965ff47f06e0e82599b6f9cf25e758",
+      "path": "products/pot-short-alpha-a/index.html",
+      "protectedContent": [
+        "product-content"
+      ],
+      "sha256": "32be77155557f7f118376e180e685414a9772c649c62377672f9e8a196bae6ea",
+      "source": {
+        "blobSHA1": "96b45e528b3ca481715691b3a9836d249ece8157",
+        "candidateMatchesCanonical": true,
+        "canonicalSHA256": "32be77155557f7f118376e180e685414a9772c649c62377672f9e8a196bae6ea",
+        "mutationClass": "catalogue-generator-input",
+        "sha256": "f6f24881f7830aa3ccaffb1f9a98131098dd24e6c92ed93d948afabd80a8b6e9"
+      },
+      "sufficientForCertification": false,
+      "versionCompatible": false
+    }
+  ],
+  "counts": {
+    "authenticatedArtifactByteFiles": 0,
+    "authenticatedDeploymentPaths": 423,
+    "byteMismatches": 4,
+    "deploymentAssociatedSource": 415,
+    "exactObservedMatches": 50,
+    "files": 423,
+    "individuallyObserved": 54,
+    "sourceCanonicalMatches": 408,
+    "unresolvedExactByteFiles": 373
+  },
+  "currentProductionBaselineVerified": false,
+  "evidence": {
+    "deploymentLogSHA256": "638db906bf609b69e303126b086cfac76aee5b86be69e5c44c2c90ddddb575ff",
+    "freshLedgerSHA256": "2b0547643191775494a24a1382d911efa5e52716378c11adbb7d4c461b0a6c90",
+    "priorInventorySHA256": "abc6326cd807b570abb8d7e2f69ff6ecb80f2e16ebecc2ef4f5afe8dd1c7a471",
+    "sourceTreeSHA1": "0f6ac37987b07050f6d457ff42861943813389e7"
+  },
+  "fullReport": "Retained in recovery archive; successor inventory contains all 423 per-path classifications",
+  "historicalDeploymentBytesAuthenticated": false,
+  "kind": "atlas-original-candidate-conflicts",
+  "schemaVersion": 1,
+  "sourceRevision": "bb4ba2a932239a3ef397272b27143f0cd3adcccf"
+}
