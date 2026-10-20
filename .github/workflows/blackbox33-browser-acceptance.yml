@@ -1,4 +1,4 @@
-name: BLACKBOX 33 isolated browser feasibility
+name: BLACKBOX 33 isolated browser acceptance
 
 on:
   push:
@@ -39,21 +39,22 @@ jobs:
           # Official controller only, in disposable tooling; no app dependency or browser download.
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install --prefix "$RUNNER_TEMP/blackbox33-tools" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false playwright-core@1.56.1
           npm view playwright-core@1.56.1 dist.integrity > "$RUNNER_TEMP/blackbox33-evidence/controller-integrity.txt"
-      - name: Prove browser isolation before any application fixture
+      - name: Prove isolation then execute synthetic browser acceptance
         shell: bash
         run: |
           set -euo pipefail
           browser=$(cat "$RUNNER_TEMP/blackbox33-tools/browser-path")
           sudo unshare --net --mount --pid --fork --mount-proc /bin/bash tests/blackbox33/run-isolated.sh \
             "$GITHUB_WORKSPACE" "$RUNNER_TEMP/blackbox33-evidence" "$(command -v node)" "$browser" \
-            "$RUNNER_TEMP/blackbox33-tools/node_modules/playwright-core/index.mjs" "$(id -un)" "$(readlink /proc/self/ns/net)"
-      - name: Retain feasibility evidence only
+            "$RUNNER_TEMP/blackbox33-tools/node_modules/playwright-core/index.mjs" "$(id -un)" "$(readlink /proc/self/ns/net)" acceptance
+      - name: Retain acceptance evidence only
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: blackbox33-feasibility
+          name: blackbox33-acceptance
           path: |
             ${{ runner.temp }}/blackbox33-evidence/*.json
             ${{ runner.temp }}/blackbox33-evidence/*.txt
+            ${{ runner.temp }}/blackbox33-evidence/SCREENSHOTS/*.png
           retention-days: 14
           if-no-files-found: warn

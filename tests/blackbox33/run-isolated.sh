@@ -22,6 +22,11 @@ chown -R "$owner" "$output"
 cd "$root"
 # Browser/controller cannot inherit the runner's tokens, credentials or proxies.
 # PID + mount namespaces prevent access to parent runner processes via /proc.
-exec runuser -u "$owner" -- env -i HOME="$home" TMPDIR="$home" \
+runuser -u "$owner" -- env -i HOME="$home" TMPDIR="$home" \
   PATH="$(dirname "$node"):/usr/bin:/bin" LANG=C.UTF-8 \
   "$node" tests/blackbox33/feasibility.mjs "$output" "$browser" "$controller" "$host_namespace"
+if test "${8:-feasibility}" = acceptance; then
+  exec runuser -u "$owner" -- env -i HOME="$home" TMPDIR="$home" \
+    PATH="$(dirname "$node"):/usr/bin:/bin" LANG=C.UTF-8 \
+    "$node" tests/blackbox33/acceptance.mjs "$output" "$browser" "$controller"
+fi
