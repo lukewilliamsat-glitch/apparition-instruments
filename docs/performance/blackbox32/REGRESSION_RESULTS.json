@@ -1,0 +1,141 @@
+{
+  "baselineCommit": "baf899a62863998b749bca8387793a6b1ed5db61",
+  "baselineTree": "8597a99b14e663613ae0749c546a7db56c096654",
+  "stage": "final",
+  "runtime": {
+    "node": "22.20.0",
+    "acorn": "8.15.0",
+    "ada": "2.9.2",
+    "amaro": "1.1.2",
+    "ares": "1.34.5",
+    "brotli": "1.1.0",
+    "cjs_module_lexer": "2.1.0",
+    "cldr": "47.0",
+    "icu": "77.1",
+    "llhttp": "9.3.0",
+    "modules": "127",
+    "napi": "10",
+    "nbytes": "0.1.1",
+    "ncrypto": "0.0.1",
+    "nghttp2": "1.64.0",
+    "openssl": "3.5.2",
+    "simdjson": "3.13.0",
+    "simdutf": "6.4.2",
+    "sqlite": "3.50.4",
+    "tz": "2025b",
+    "undici": "6.21.2",
+    "unicode": "16.0",
+    "uv": "1.51.0",
+    "uvwasi": "0.0.23",
+    "v8": "12.4.254.21-node.33",
+    "zlib": "1.3.1-470d3a2",
+    "zstd": "1.5.7"
+  },
+  "dependencies": {
+    "happy-dom": "20.14.5",
+    "@electric-sql/pglite": "0.5.8"
+  },
+  "isolation": {
+    "passed": 6,
+    "probes": [
+      "socket denied 2/1",
+      "socket denied 2/2",
+      "socket denied 10/1",
+      "socket denied 10/2",
+      "synthetic DNS denied",
+      "child inherits denial"
+    ],
+    "NoNewPrivs": 1,
+    "Seccomp": 2
+  },
+  "suites": [
+    {
+      "suite": "blackbox31-static-images.mjs",
+      "exit": 0,
+      "status": "PASS",
+      "stdout": "{\"suite\":\"blackbox31-static-images\",\"runtime\":\"v22.20.0\",\"passed\":25,\"cases\":[\"valid static image and complete authoritative metadata\",\"no image needs metadata only\",\"bounded cache reuse, dedup and HTTP cache directive\",\"stale manifest produces placeholder, not an old photograph\",\"missing asset never causes an embedded image read\",\"equal-length corrupted static bytes are rejected\",\"bad manifest reference and digest rejected\",\"unsafe asset origin/path and malformed metadata fail closed\",\"unapproved image_reference URL never used as a fallback\",\"metadata and manifest outage handling\",\"generation invalidation rejects pending stale resolution\",\"publisher replacement archives new identity and retains old bytes\",\"concurrent replacement capture fails before publication\",\"unchanged capture downloads zero source images\",\"rollback pins retained immutable manifest and previous image\",\"image removal preserves old retained URL\",\"raw and mapped public clients integrate static path and share cache\",\"static byte verification is limited to four concurrent assets\",\"default disabled path is unchanged and never requests static resources\",\"Admin upload replacement deletion and metadata stay authoritative\",\"catalogue search/filter, cards/details and component basket preserve behaviour\",\"generator verifies retained assets before reading lightweight metadata\",\"fresh local Git recovery and ordinary assembly retain every version\",\"read-only assembly blocks uncommitted historical repairs\",\"publisher/assembly corruption is detected\"],\"measurements\":{\"synthetic14\":{\"legacy\":{\"raw\":530471,\"gzip\":397508},\"lightweight\":{\"raw\":6339,\"gzip\":711},\"imageBytesSeparate\":393624},\"validBrowserRead\":{\"metadataGET\":1,\"manifestGET\":1,\"staticAssetGET\":1,\"supabaseImageBearingGET\":0},\"repeatedCachedRead\":{\"additionalRequests\":0},\"generator\":{\"lightweightGET\":1,\"supabaseImageBearingGET\":0}},\"unintendedFetchAttempts\":0,\"productionRequests\":0,\"browserAcceptance\":false}\n",
+      "stderr": "",
+      "classification": null
+    },
+    {
+      "suite": "egress-static-assets-v2.mjs",
+      "exit": 0,
+      "status": "PASS",
+      "stdout": "{\"fixtureRawBefore\":301,\"fixtureRawAfter\":228,\"fixtureGzipBefore\":164,\"fixtureGzipAfter\":125,\"uniqueImageAssetBytes\":68}\nStatic assets V2 PASS: disabled legacy default, deterministic/hash/MIME/byte parity, dedup, replacement/removal, Admin upload adapter, old-asset retention, manifest rollback, publication failure, lightweight activated reads, full-byte readiness, strict placeholder fallback, malformed manifest, outage and expiry. Fixtures only; no production asset extraction/upload.\n",
+      "stderr": "",
+      "classification": null
+    },
+    {
+      "suite": "egress-static-assets-v2-dom.mjs",
+      "exit": 0,
+      "status": "PASS",
+      "stdout": "V2 DOM/integration PASS: static references accepted by actual card/detail renderers, lazy/alt/error fallbacks, stock/prices retained; 390/1440 fixture widths; actual repository and raw client retain inactive legacy transport/cache. No physical browser visual acceptance claimed.\n",
+      "stderr": "",
+      "classification": null
+    },
+    {
+      "suite": "component-repository.mjs",
+      "exit": 0,
+      "status": "PASS",
+      "stdout": "Async component repository: legacy load, edits, inventory, flags, pricing, images, storefront refresh, kit eligibility and corrupt-data preservation passed.\n",
+      "stderr": "",
+      "classification": null
+    },
+    {
+      "suite": "component-export.mjs",
+      "exit": 0,
+      "status": "PASS",
+      "stdout": "P05B export bridge: no seeding or writes, exact data preservation, inventory and images, invalid-record rejection, explicit Admin preview/download and stale-preview guard passed.\n",
+      "stderr": "",
+      "classification": null
+    },
+    {
+      "suite": "kit-snapshot.mjs",
+      "exit": 0,
+      "status": "PASS",
+      "stdout": "Saved kit names, quantities, specifications, prices and diagram persist independently of catalogue changes; legacy snapshots preserved; no internal costing.\n",
+      "stderr": "",
+      "classification": null
+    },
+    {
+      "suite": "p07b-checkout.mjs",
+      "exit": 0,
+      "status": "PASS",
+      "stdout": "P07B.2 live Checkout: live restricted key, authoritative pricing/delivery, GB/name collection, configured/component/mixed baskets PASS\n",
+      "stderr": "",
+      "classification": null
+    },
+    {
+      "suite": "blackbox32-hardening.mjs",
+      "exit": 0,
+      "status": "PASS",
+      "stdout": "{\"suite\":\"blackbox32-hardening\",\"runtime\":\"v22.20.0\",\"passed\":16,\"failed\":0,\"cases\":[\"wrong photo with valid revision and forged source label fails closed\",\"shared URL cannot reuse verification for contradictory source identity\",\"shared URL cannot bypass a contradictory byte-count contract\",\"two legitimate products sharing bytes coalesce to one asset GET\",\"interrupted asset stream fails to placeholder without fallback\",\"manifest invalid JSON, rejection and redirects fail closed\",\"redirected or wrong-MIME asset cannot become a photograph\",\"oversized streaming body is rejected and cancelled\",\"failed asset is coalesced briefly then recovers after retry expiry\",\"fresh replacement identity never displays cached old photo\",\"pinned image rollback preserves current authoritative price and stock\",\"ordinary capture-disabled assemblies retain both versions and current metadata\",\"uninitialised archive permits legacy preparation without image capture\",\"missing immutable manifest blocks generator before metadata request\",\"missing historical image blocks archive and retained generator\",\"mislabelled source is also rejected by offline archive verification\"],\"failures\":[],\"measurements\":{\"concurrentConsumers\":{\"metadataGET\":1,\"manifestGET\":1,\"assetGET\":1,\"embeddedGET\":0},\"retry\":{\"firstRead\":3,\"immediateAdditional\":0,\"afterExpiryAdditional\":1},\"ordinaryAssemblies\":{\"count\":3,\"newSourceImageReads\":0,\"historicalVersionsRetained\":2}},\"syntheticAssets\":{\"red\":{\"bytes\":70,\"sha256\":\"4ff6ab670a58c14270e034e2090d9a432caa263a14e0a25785386b0c12f880b5\"},\"blue\":{\"bytes\":70,\"sha256\":\"6a34118ba2e0bf5da5ab14cb63b121e2e8b2987a876668a9b2f9c30e1357470b\"}},\"unintendedFetchAttempts\":0,\"productionRequests\":0,\"browserAcceptance\":false}\n",
+      "stderr": "",
+      "classification": null
+    }
+  ],
+  "suiteInvocationsPassed": 8,
+  "productionRequests": 0,
+  "browserAcceptance": false,
+  "testFileSHA256": {
+    "blackbox31-static-images.mjs": "dd5555b6d2466ca34315315ce50971d910b38d8c9499955ba9fc1a01b43be105",
+    "egress-static-assets-v2.mjs": "ee80e4a7184faf8199b5872c0d089f201308a6641d38e4cf99ff6ab8ffaa2aa8",
+    "egress-static-assets-v2-dom.mjs": "ba530b391df989f8627c4fc91ccd84840ad0c9ea930d134fb14b95c968de04ca",
+    "component-repository.mjs": "489ab02b567965eae09edd10fba59d88c2feda9f318ada7f794a157dee8dde0e",
+    "component-export.mjs": "760872ba89ff9733ff0c258ac5e524078ddba8b6e6eff753350ba00176d5b47b",
+    "kit-snapshot.mjs": "32b700f63d075db726f77af3ca89b44b899569783df151558713d27261989e58",
+    "p07b-checkout.mjs": "41cfa38cb5737f7de14a435da31a0ea820550438cd5139318dc7618ec1f55f70",
+    "blackbox32-hardening.mjs": "319949c72aac9ee98ef19e00e947b30f261f8c3bcdd1425876630bba16c3e31f"
+  },
+  "reviewedFailureClassification": null,
+  "testedSourceCommit": "c7c6bdf565ba727426344dbe154251e387f637ae",
+  "testedSourceTree": "d2c33cc7fc3607b663fe03ed6c1765b65ad25334",
+  "acceptanceStatus": "PARTIAL",
+  "browserBlocker": "Supported browser controls expose no demonstrable fixture-only network isolation; no application page opened.",
+  "browserMeasurements": null,
+  "runtimeDefects": [],
+  "applicationDefectsCorrected": [
+    "source label not bound to verified bytes",
+    "URL-only verification cache reused across conflicting source/MIME/size contracts"
+  ]
+}

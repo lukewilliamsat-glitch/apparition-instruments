@@ -1,0 +1,54 @@
+{
+  "baselineCommit": "baf899a62863998b749bca8387793a6b1ed5db61",
+  "baselineTree": "8597a99b14e663613ae0749c546a7db56c096654",
+  "baselineBlobCount": 914,
+  "unchangedBaselineBlobs": 913,
+  "changedApplicationFiles": [
+    "dist/backend/catalogue-image-delivery.mjs"
+  ],
+  "deletedBaselineFiles": 0,
+  "sourceCommit": "c7c6bdf565ba727426344dbe154251e387f637ae",
+  "sourceTree": "d2c33cc7fc3607b663fe03ed6c1765b65ad25334",
+  "sourceFiles": {
+    "dist/backend/catalogue-image-delivery.mjs": {
+      "sha256": "0f52310bd39a66f62d393f69f355b39801a2f1e97c7d7f349eaff4f85cdc55f8",
+      "gitBlob": "4c9bd754e97e0247bc0703b0231d5e9266ccdeb6",
+      "bytes": 8284
+    },
+    "tests/blackbox32-hardening.mjs": {
+      "sha256": "319949c72aac9ee98ef19e00e947b30f261f8c3bcdd1425876630bba16c3e31f",
+      "gitBlob": "530db755201a67ab6754adf162d126b8f6713c9e",
+      "bytes": 13722
+    },
+    "tests/run-blackbox32.py": {
+      "sha256": "8dbe9a40cf25a147afe42f4ee6bc67ba30d69f08fe0939950d5334bcd9f9342d",
+      "gitBlob": "7fe36ac55f43a2a5cd72545674d9bddd874c8b3c",
+      "bytes": 5020
+    }
+  },
+  "activationConfig": {
+    "enabled": false,
+    "unchanged": true,
+    "sha256": "9d9e7e17b91d171e399b2e901b53210dc0232c514655c45bffd97a2a6624a358",
+    "gitBlob": "22d069be5d23efe764e2e38598bed611dd7a7522",
+    "bytes": 330
+  },
+  "workflow": {
+    "changed": false,
+    "trigger": "push main only; daily 0 3 * * * and manual remain untouched",
+    "installed": false,
+    "dispatched": false,
+    "sha256": "1700476525864d242d30c7e2c14909e5feabe41148337f2550a57e62a256934b",
+    "gitBlob": "a43d31b3d7371d02fe016a57a19a2690ceb0ea86",
+    "bytes": 2844
+  },
+  "frozenRC07": {
+    "commit": "55e5fba390f7cf648490f7e7b5e0114a4d0d510c",
+    "tree": "8bd71a5e69dcdaf77add68afcbec5f65a11ece4c",
+    "clean": true
+  },
+  "originalB31WorkspaceVerifiedUnchanged": true,
+  "productionServiceRequests": 0,
+  "productionDataChanges": 0,
+  "actualBrowserAcceptance": false
+}

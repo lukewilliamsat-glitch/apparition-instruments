@@ -1,0 +1,68 @@
+{
+  "baselineCommit": "baf899a62863998b749bca8387793a6b1ed5db61",
+  "baselineTree": "8597a99b14e663613ae0749c546a7db56c096654",
+  "stage": "probe",
+  "runtime": {
+    "node": "22.20.0",
+    "acorn": "8.15.0",
+    "ada": "2.9.2",
+    "amaro": "1.1.2",
+    "ares": "1.34.5",
+    "brotli": "1.1.0",
+    "cjs_module_lexer": "2.1.0",
+    "cldr": "47.0",
+    "icu": "77.1",
+    "llhttp": "9.3.0",
+    "modules": "127",
+    "napi": "10",
+    "nbytes": "0.1.1",
+    "ncrypto": "0.0.1",
+    "nghttp2": "1.64.0",
+    "openssl": "3.5.2",
+    "simdjson": "3.13.0",
+    "simdutf": "6.4.2",
+    "sqlite": "3.50.4",
+    "tz": "2025b",
+    "undici": "6.21.2",
+    "unicode": "16.0",
+    "uv": "1.51.0",
+    "uvwasi": "0.0.23",
+    "v8": "12.4.254.21-node.33",
+    "zlib": "1.3.1-470d3a2",
+    "zstd": "1.5.7"
+  },
+  "dependencies": {
+    "happy-dom": "20.14.5",
+    "@electric-sql/pglite": "0.5.8"
+  },
+  "isolation": {
+    "passed": 6,
+    "probes": [
+      "socket denied 2/1",
+      "socket denied 2/2",
+      "socket denied 10/1",
+      "socket denied 10/2",
+      "synthetic DNS denied",
+      "child inherits denial"
+    ],
+    "NoNewPrivs": 1,
+    "Seccomp": 2
+  },
+  "suites": [
+    {
+      "suite": "blackbox32-hardening.mjs",
+      "exit": 1,
+      "status": "FAIL",
+      "stdout": "{\"suite\":\"blackbox32-hardening\",\"runtime\":\"v22.20.0\",\"passed\":13,\"failed\":3,\"cases\":[\"two legitimate products sharing bytes coalesce to one asset GET\",\"interrupted asset stream fails to placeholder without fallback\",\"manifest invalid JSON, rejection and redirects fail closed\",\"redirected or wrong-MIME asset cannot become a photograph\",\"oversized streaming body is rejected and cancelled\",\"failed asset is coalesced briefly then recovers after retry expiry\",\"fresh replacement identity never displays cached old photo\",\"pinned image rollback preserves current authoritative price and stock\",\"ordinary capture-disabled assemblies retain both versions and current metadata\",\"uninitialised archive permits legacy preparation without image capture\",\"missing immutable manifest blocks generator before metadata request\",\"missing historical image blocks archive and retained generator\",\"mislabelled source is also rejected by offline archive verification\"],\"failures\":[{\"name\":\"wrong photo with valid revision and forged source label fails closed\",\"error\":\"AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\\n+ actual - expected\\n\\n+ {\\n+   key: '6a34118ba2e0bf5da5ab14cb63b121e2e8b2987a876668a9b2f9c30e1357470b',\\n+   kind: 'object',\\n+   mimeType: 'image/png',\\n+   url: 'https://images.blackbox32.invalid/assets/catalogue-images/6a34118ba2e0bf5da5ab14cb63b121e2e8b2987a876668a9b2f9c30e1357470b.png'\\n+ }\\n- null\\n\",\"classification\":\"application defect\"},{\"name\":\"shared URL cannot reuse verification for contradictory source identity\",\"error\":\"AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\\n+ actual - expected\\n\\n+ {\\n+   key: '4ff6ab670a58c14270e034e2090d9a432caa263a14e0a25785386b0c12f880b5',\\n+   kind: 'object',\\n+   mimeType: 'image/png',\\n+   url: 'https://images.blackbox32.invalid/assets/catalogue-images/4ff6ab670a58c14270e034e2090d9a432caa263a14e0a25785386b0c12f880b5.png'\\n+ }\\n- null\\n\",\"classification\":\"application defect\"},{\"name\":\"shared URL cannot bypass a contradictory byte-count contract\",\"error\":\"AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\\n+ actual - expected\\n\\n+ {\\n+   key: '4ff6ab670a58c14270e034e2090d9a432caa263a14e0a25785386b0c12f880b5',\\n+   kind: 'object',\\n+   mimeType: 'image/png',\\n+   url: 'https://images.blackbox32.invalid/assets/catalogue-images/4ff6ab670a58c14270e034e2090d9a432caa263a14e0a25785386b0c12f880b5.png'\\n+ }\\n- null\\n\",\"classification\":\"application defect\"}],\"measurements\":{\"concurrentConsumers\":{\"metadataGET\":1,\"manifestGET\":1,\"assetGET\":1,\"embeddedGET\":0},\"retry\":{\"firstRead\":3,\"immediateAdditional\":0,\"afterExpiryAdditional\":1},\"ordinaryAssemblies\":{\"count\":3,\"newSourceImageReads\":0,\"historicalVersionsRetained\":2}},\"syntheticAssets\":{\"red\":{\"bytes\":70,\"sha256\":\"4ff6ab670a58c14270e034e2090d9a432caa263a14e0a25785386b0c12f880b5\"},\"blue\":{\"bytes\":70,\"sha256\":\"6a34118ba2e0bf5da5ab14cb63b121e2e8b2987a876668a9b2f9c30e1357470b\"}},\"unintendedFetchAttempts\":0,\"productionRequests\":0,\"browserAcceptance\":false}\n",
+      "stderr": "",
+      "classification": "application defect"
+    }
+  ],
+  "suiteInvocationsPassed": 0,
+  "productionRequests": 0,
+  "browserAcceptance": false,
+  "testFileSHA256": {
+    "blackbox32-hardening.mjs": "319949c72aac9ee98ef19e00e947b30f261f8c3bcdd1425876630bba16c3e31f"
+  },
+  "reviewedFailureClassification": "application defect"
+}
