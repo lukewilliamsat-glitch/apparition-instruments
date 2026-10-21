@@ -1,9 +1,10 @@
 // Actual repository UI + native HTTP cache, realistic synthetic PNG bodies.
 import assert from 'node:assert/strict';import {createServer} from 'node:https';import {readFile,writeFile,readlink,mkdir} from 'node:fs/promises';import {resolve,join,extname} from 'node:path';import {pathToFileURL} from 'node:url';import {execFileSync} from 'node:child_process';import {createHash,X509Certificate} from 'node:crypto';import {gzipSync} from 'node:zlib';
 import {workload,sha} from './fixtures.mjs';
+import {lesPaulKitAssembly} from '../../dist/admin/assemblies.mjs';
 const [output,executablePath,controller,candidateCommit]=process.argv.slice(2),root=resolve('dist');
 const proof=JSON.parse(await readFile(join(output,'STAGE_A_RESULTS.json')));assert.equal(proof.status,'PASS');assert.equal(proof.namespace,await readlink('/proc/self/ns/net'));
-let server,assetsServer,browser,appOrigin,assetOrigin,current,mode='eager',neutral=false,phase,stats;
+let server,assetsServer,browser,appOrigin,assetOrigin,current,currentPage,mode='eager',neutral=false,phase,stats;
 const report={sourceCommit:candidateCommit,kind:'real Chrome synthetic image-scale acceptance',status:'FAIL',cases:[],measurements:[],unexpected:[],pageErrors:[],screenshots:[],productionRequests:0};
 const mime={'.mjs':'text/javascript','.js':'text/javascript','.css':'text/css','.html':'text/html','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.woff2':'font/woff2'};
 function send(res,status,body,type='application/json',cache='no-store',gzip=false,cors=false){let b=Buffer.isBuffer(body)?body:Buffer.from(body);if(gzip)b=gzipSync(b);res.writeHead(status,{'content-type':type,'content-length':b.length,'cache-control':cache,...gzip?{'content-encoding':'gzip'}:{},...cors?{'access-control-allow-origin':appOrigin}:{}});res.end(b);return b.length;}
@@ -17,7 +18,9 @@ async function serve(req,res){const u=new URL(req.url,appOrigin),p=u.pathname;
  if(p==='/backend/image-delivery-config.mjs')return send(res,200,'export const imageDeliveryConfig='+JSON.stringify({enabled:true,verificationMode:mode,assetOrigin:neutral?assetOrigin:appOrigin,assetBasePath:neutral?'/shop/v2':'',manifestPath:'/assets/catalogue-images/manifest.json'})+';','text/javascript');
  if(p.startsWith('/rest/v1/')){
   if(p==='/rest/v1/catalogue_delivery_v2'){assert(!u.searchParams.get('select').split(',').includes('image'));stats.metadataGETs++;return send(res,200,JSON.stringify(current.rows),'application/json','no-store',true);}
-  if(['/rest/v1/catalogue_wiring_kits','/rest/v1/kit_permitted_components','/rest/v1/catalogue_options','/rest/v1/rpc/public_commercial_destinations','/rest/v1/rpc/public_news'].includes(p))return send(res,200,'[]');
+  if(p==='/rest/v1/catalogue_wiring_kits'){const k=lesPaulKitAssembly.kitDefinition;return send(res,200,JSON.stringify([{id:lesPaulKitAssembly.id,sku:'FIXTURE-KIT',name:'Synthetic wiring kit',category:'kits',slug:'les-paul',base_price:1000,show_on_wiring_kits:true,builder_enabled:true,default_wiring_style:'modern',defaults:k.defaults,builder_options:k.builderOptions,component_resolvers:k.componentResolvers}]));}
+  if(p==='/rest/v1/kit_permitted_components')return send(res,200,JSON.stringify(current.rows.map(r=>({assembly_id:lesPaulKitAssembly.id,component_id:r.id}))));
+  if(['/rest/v1/catalogue_options','/rest/v1/rpc/public_commercial_destinations','/rest/v1/rpc/public_news'].includes(p))return send(res,200,'[]');
   if(p==='/rest/v1/rpc/get_site_operations')return send(res,200,JSON.stringify({server_time:new Date().toISOString(),store:{state:'OPEN',desired_state:'OPEN',customer_message:'Synthetic only'}}));
   report.unexpected.push({path:p,phase});return send(res,400,'{}');
  }
@@ -38,7 +41,7 @@ try{
   current=workload(count,size,unique);
   for(mode of ['eager','demand']){
    neutral=false;phase=count+' '+mode;stats=emptyStats();
-   const context=await browser.newContext({serviceWorkers:'block',viewport:{width:1440,height:900}}),page=await context.newPage(),cdp=await context.newCDPSession(page),tracked=new Set();await cdp.send('Network.enable');
+   const context=await browser.newContext({serviceWorkers:'block',viewport:{width:1440,height:900}}),page=await context.newPage(),cdp=await context.newCDPSession(page),tracked=new Set();currentPage=page;await cdp.send('Network.enable');
    page.on('pageerror',e=>report.pageErrors.push({phase,error:String(e)}));context.on('request',r=>{if(![appOrigin,assetOrigin].includes(new URL(r.url()).origin))report.unexpected.push({phase,url:r.url()});});
    cdp.on('Network.requestWillBeSent',e=>{if(e.request.url.includes('/assets/catalogue-images/')||e.request.url.includes('/catalogue_delivery_v2?'))tracked.add(e.requestId);});
    cdp.on('Network.loadingFinished',e=>{if(tracked.has(e.requestId))stats.encodedTrackedBytes+=e.encodedDataLength;});cdp.on('Network.requestServedFromCache',e=>{if(tracked.has(e.requestId))stats.cacheFlags++;});
@@ -58,5 +61,5 @@ try{
  await page.goto(appOrigin+'/components/');await page.waitForFunction(()=>document.querySelectorAll('.component-card[data-product]').length===14);const id=current.rows[0].id;await page.locator('#'+id).scrollIntoViewIfNeeded();await page.waitForSelector('#'+id+' img');await page.locator('#'+id+' img').evaluate(i=>i.decode());assert((await page.locator('#'+id+' img').getAttribute('data-verified-source')).startsWith(assetOrigin+'/shop/v2/assets/'));assert.equal(JSON.stringify(current.rows),before);report.cases.push({name:phase,status:'PASS'});await context.close();
  assert.equal(report.unexpected.length,0);assert.equal(report.pageErrors.length,0);report.status='PASS';
  report.method='Actual loopback HTTPS, native cache, no interception. Repository static resources are no-store; tracked counts isolate synthetic product imagery. Heap values are Chrome estimates, not decoded-image or total process memory. Fallback fonts only; no production/CDN/billing claims.';
-}catch(e){report.failure={error:String(e),stack:e.stack};process.exitCode=1;}
+}catch(e){report.failure={error:String(e),stack:e.stack};if(currentPage&&!currentPage.isClosed())report.fixtureDOM=await currentPage.evaluate(()=>({title:document.title,cards:document.querySelectorAll('.component-card[data-product]').length,status:document.getElementById('component-status')?.textContent})).catch(()=>null);process.exitCode=1;}
 finally{await browser?.close();if(server)await new Promise(r=>server.close(r));if(assetsServer)await new Promise(r=>assetsServer.close(r));await writeFile(join(output,'BROWSER_SCALE_RESULTS.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify({status:report.status,passed:report.cases.length,failure:report.failure}));}
