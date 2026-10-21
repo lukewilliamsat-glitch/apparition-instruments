@@ -1,0 +1,2016 @@
+{
+  "schemaVersion": 1,
+  "mission": "AUTHORISATION 34 \u2014 NIGHTFALL",
+  "missionStatus": "PASS \u2014 isolated engineering only",
+  "source": {
+    "baseCommit": "4f8138d079f5e5598420e74f0baadb161d51ed1c",
+    "baseTree": "1ed34329aa07df906def361d04fd8c4fcbfedf29",
+    "testedCommit": "135d2c8c6b177631c5c06358030aa610e44e322d",
+    "testedTree": "010714baf1181cf146aaaab19cbde7d0b9b2ad93",
+    "branch": "engineering/blackbox34-nightfall"
+  },
+  "ci": {
+    "run": 39577122377,
+    "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/39577122377",
+    "event": "push",
+    "conclusion": "success",
+    "jobs": {
+      "offline": 119145304621,
+      "browser": 119145303877
+    },
+    "artifacts": [
+      {
+        "id": 12335045457,
+        "name": "nightfall-offline-evidence",
+        "sha256": "ba61d7d8d193e6300e2ce6a166d56c2de7bed0b523b192ec38e4862e8e358ced"
+      },
+      {
+        "id": 12335390180,
+        "name": "nightfall-browser-evidence",
+        "sha256": "96f4b9735d66218c1de41d1addebceae0adb57aeae3d4a766e7e1fccdfa6e9bc"
+      }
+    ],
+    "retentionDays": 30,
+    "ZIPIntegrityAndDigestsVerified": true
+  },
+  "runtime": {
+    "node": "v22.20.0",
+    "chrome": "155.0.8059.84",
+    "controller": "playwright-core@1.56.1",
+    "controllerIntegrity": "sha512-hutraynyn31F+Bifme+Ps9Vq59hKuUCz7H1kDOcBs+2oGguKkWTU50bBWrtz34OUWmIwpBTWDxaRPXrIXkgvmQ==",
+    "chromeProvenance": "Preinstalled GitHub-hosted Ubuntu 24.04 image; no independent browser archive signature claim."
+  },
+  "node": {
+    "passed": 13,
+    "total": 13,
+    "isolation": {
+      "passed": 6,
+      "probes": [
+        "socket denied 2/1",
+        "socket denied 2/2",
+        "socket denied 10/1",
+        "socket denied 10/2",
+        "DNS blocked",
+        "child inherits denial"
+      ]
+    },
+    "suites": [
+      {
+        "suite": "blackbox34/publication.mjs",
+        "exit": 0,
+        "status": "PASS",
+        "stderr": "",
+        "sha256": "0f9374b54864fa03b54ec6b8f68b066427353abdb2c4d50d5606deeb2bce853d",
+        "evidence": {
+          "suite": "portable-publication",
+          "passed": 18,
+          "cases": [
+            "all scale fixture defaults reference present permitted components through actual repository mapping",
+            "uninitialised archive permits only explicitly legacy operation",
+            "fingerprint-checked initial capture is committed before assembly",
+            "deterministic complete bundle on repeated capture-disabled assembly",
+            "two host/base-path configurations preserve identical authoritative rows and asset bytes",
+            "path traversal credentials query and alternate origins are rejected",
+            "stale source capture is rejected without publication output",
+            "replacement/removal retain historical assets and immutable manifests",
+            "fresh checkout restores without any Actions artifact or local image state",
+            "historical rollback changes selection and retains every newer asset",
+            "stale publisher cannot overwrite durable archive",
+            "concurrent same-destination assembly has exactly one winner",
+            "missing manifest or required image blocks final bundle",
+            "corrupted committed asset is not accepted as an uncommitted repair",
+            "receipt tampering is rejected",
+            "committed symlinks cannot masquerade as portable image bytes",
+            "external bundle verification refuses symlinks even when target bytes match",
+            "initialised archive cannot masquerade as uninitialised"
+          ],
+          "sourceImageRequests": 3,
+          "ordinaryAssemblyImageRequests": 0,
+          "productionRequests": 0
+        }
+      },
+      {
+        "suite": "blackbox34/demand.mjs",
+        "exit": 0,
+        "status": "PASS",
+        "stderr": "",
+        "sha256": "1a4331b71ace7cba9acdf2e774dbc91f28e279f0c629a9a935bb548c28be4ac1",
+        "evidence": {
+          "suite": "demand-verification",
+          "passed": 14,
+          "cases": [
+            "500 product metadata resolves without any image bodies",
+            "first demand returns only fully verified immutable Blob bytes",
+            "concurrent shared consumers coalesce verification and use leased URL",
+            "at most four fetches and bounded queue and residency",
+            "warm JavaScript verified cache avoids repeated transport and hash",
+            "equal-length corruption never obtains a displayable URL",
+            "forged source mapping remains rejected on demand",
+            "generation invalidation rejects pending and old opaque handles",
+            "cancelling one consumer preserves another shared consumer",
+            "cancelling all consumers permits a later clean retry",
+            "unregistered handles cannot fetch arbitrary references",
+            "portable base paths apply to both manifest and verified image",
+            "removed and stale identities produce placeholders without image fetch",
+            "bounded pool evicts idle URLs while preserving active leases"
+          ],
+          "productionRequests": 0
+        }
+      },
+      {
+        "suite": "blackbox34/presentation.mjs",
+        "exit": 0,
+        "status": "PASS",
+        "stderr": "",
+        "sha256": "bcfc22ea9a665e92a027adfec3690ab24695b1a0330632bc2c41a4c28d768003",
+        "evidence": {
+          "suite": "demand-presentation-fixtures",
+          "passed": 5,
+          "cases": [
+            "pending presentation has stable geometry and no image fetch",
+            "intersection displays only fully verified Blob URL with accessible name",
+            "offscreen release and return reuse bounded verified lease",
+            "suspend and persisted resume restore the same correct image",
+            "teardown during pending load cannot insert detached content"
+          ],
+          "browserAcceptance": false,
+          "productionRequests": 0
+        }
+      },
+      {
+        "suite": "blackbox34/preflight.mjs",
+        "exit": 0,
+        "status": "PASS",
+        "stderr": "",
+        "sha256": "6aaf299c7802f0aeffa783f2bff9e5d45ccc7f1acb7b4a5b24e09e66f5745d15",
+        "evidence": {
+          "suite": "backend-preflight",
+          "passed": 25,
+          "cases": [
+            "exact three image-free requests preserve schema and source identities",
+            "HTTP 400 stops without retry or later requests",
+            "HTTP 402 stops without retry or later requests",
+            "HTTP 401 stops without retry or later requests",
+            "HTTP 403 stops without retry or later requests",
+            "HTTP 404 stops without retry or later requests",
+            "HTTP 429 stops without retry or later requests",
+            "HTTP 500 stops without retry or later requests",
+            "missing column stops on first response",
+            "unexpected private or image fields rejected without recording values",
+            "nested image payloads are rejected",
+            "unexpected null and malformed metadata are rejected",
+            "unsupported reference and identity formats stop at identity response",
+            "null-image records remain valid",
+            "identity/metadata race and deleted products fail closed",
+            "missing manufacturer option relationship rejected",
+            "row limit cannot masquerade as complete response",
+            "declared and streamed byte limits are enforced",
+            "compressed response is refused because encoded bytes cannot be independently proved",
+            "length truncation invalid UTF8 and invalid JSON are refused",
+            "redirects and unexpected public columns are refused",
+            "no production transport executes without distinct approval",
+            "altered plan and privileged credentials rejected before request",
+            "aggregate byte budget stops an otherwise per-response-bounded sequence",
+            "timeout aborts one nonresponding injected transport without retries"
+          ],
+          "productionRequests": 0,
+          "proposedProductionPlan": {
+            "version": 1,
+            "origin": "https://acdxpxvksvdwfajntzfx.supabase.co",
+            "role": "anon/public publishable key",
+            "maxRequests": 3,
+            "maxResponseBytes": 65536,
+            "maxTotalBytes": 131072,
+            "timeoutMs": 8000,
+            "redirects": false,
+            "retries": 0,
+            "contentEncoding": "identity",
+            "requests": [
+              {
+                "name": "metadata",
+                "rows": 20,
+                "url": "https://acdxpxvksvdwfajntzfx.supabase.co/rest/v1/catalogue_delivery_v2?select=id,sku,name,category,manufacturer,description,specs,product_content,individually,in_kits,sale_price,kit_price,kit_price_quantity,stock&order=id.asc&limit=20",
+                "columns": [
+                  "id",
+                  "sku",
+                  "name",
+                  "category",
+                  "manufacturer",
+                  "description",
+                  "specs",
+                  "product_content",
+                  "individually",
+                  "in_kits",
+                  "sale_price",
+                  "kit_price",
+                  "kit_price_quantity",
+                  "stock"
+                ]
+              },
+              {
+                "name": "identities",
+                "rows": 20,
+                "url": "https://acdxpxvksvdwfajntzfx.supabase.co/rest/v1/catalogue_delivery_v2?select=id,image_identity,image_reference&order=id.asc&limit=20",
+                "columns": [
+                  "id",
+                  "image_identity",
+                  "image_reference"
+                ]
+              },
+              {
+                "name": "options",
+                "rows": 100,
+                "url": "https://acdxpxvksvdwfajntzfx.supabase.co/rest/v1/catalogue_options?select=option_set,option_key,label,aliases,active,sort_order&active=eq.true&order=option_set.asc,option_key.asc&limit=100",
+                "columns": [
+                  "option_set",
+                  "option_key",
+                  "label",
+                  "aliases",
+                  "active",
+                  "sort_order"
+                ]
+              }
+            ]
+          },
+          "proposedProductionPlanSHA256": "bd9aca0efc68e8921150fbd0aefbce97059919f34d066d6b59c2cec9191e4f44"
+        }
+      },
+      {
+        "suite": "blackbox34/benchmark.mjs",
+        "exit": 0,
+        "status": "PASS",
+        "stderr": "",
+        "sha256": "f2860ca62f9c42b7f6f724e858f798946f1e7c6281a9ffa645a6abc41c9487c3",
+        "evidence": {
+          "suite": "nightfall-performance",
+          "runtime": "v22.20.0",
+          "passed": 9,
+          "results": [
+            {
+              "count": 14,
+              "size": 102400,
+              "uniqueImages": 10,
+              "neededProducts": 6,
+              "baseline": {
+                "metadataUsableMs": 72.711061,
+                "firstVerifiedImageMs": 38.60624200000001,
+                "firstRequiredImagesMs": 72.712183,
+                "coldAssetBodyBytes": 1024000,
+                "coldRequests": 12,
+                "peakConcurrent": 4,
+                "warmAdditionalBodyBytes": 0,
+                "warmAdditionalRequests": 0,
+                "warmMs": 0.36055500000000507,
+                "cpuUserMs": 65.047,
+                "cpuSystemMs": 21.12,
+                "rssBefore": 63787008,
+                "rssAfter": 78409728,
+                "sampledPeakRSS": 79548416,
+                "arrayBuffersAfter": 1961552
+              },
+              "candidate": {
+                "metadataUsableMs": 1.800810999999996,
+                "firstVerifiedImageMs": 6.386274,
+                "firstRequiredImagesMs": 26.071586999999994,
+                "coldAssetBodyBytes": 614400,
+                "coldRequests": 8,
+                "peakConcurrent": 4,
+                "warmAdditionalBodyBytes": 0,
+                "warmAdditionalRequests": 0,
+                "warmMs": 0.4480350000000044,
+                "cpuUserMs": 15.524,
+                "cpuSystemMs": 12.405,
+                "rssBefore": 78409728,
+                "rssAfter": 88858624,
+                "sampledPeakRSS": 88858624,
+                "arrayBuffersAfter": 3224510,
+                "verifiedPool": {
+                  "entries": 6,
+                  "active": 0,
+                  "queued": 0,
+                  "residentBytes": 614400,
+                  "reservedBytes": 0
+                }
+              }
+            },
+            {
+              "count": 14,
+              "size": 512000,
+              "uniqueImages": 10,
+              "neededProducts": 6,
+              "baseline": {
+                "metadataUsableMs": 163.879951,
+                "firstVerifiedImageMs": 65.43710599999997,
+                "firstRequiredImagesMs": 163.88300499999997,
+                "coldAssetBodyBytes": 5120000,
+                "coldRequests": 12,
+                "peakConcurrent": 4,
+                "warmAdditionalBodyBytes": 0,
+                "warmAdditionalRequests": 0,
+                "warmMs": 0.28549300000003086,
+                "cpuUserMs": 109.363,
+                "cpuSystemMs": 70.584,
+                "rssBefore": 117968896,
+                "rssAfter": 139591680,
+                "sampledPeakRSS": 143826944,
+                "arrayBuffersAfter": 12039076
+              },
+              "candidate": {
+                "metadataUsableMs": 0.849550000000022,
+                "firstVerifiedImageMs": 17.494913999999994,
+                "firstRequiredImagesMs": 95.25924600000002,
+                "coldAssetBodyBytes": 3072000,
+                "coldRequests": 8,
+                "peakConcurrent": 4,
+                "warmAdditionalBodyBytes": 0,
+                "warmAdditionalRequests": 0,
+                "warmMs": 0.24678599999998596,
+                "cpuUserMs": 56.047,
+                "cpuSystemMs": 43.148,
+                "rssBefore": 139591680,
+                "rssAfter": 148762624,
+                "sampledPeakRSS": 150847488,
+                "arrayBuffersAfter": 18183076,
+                "verifiedPool": {
+                  "entries": 6,
+                  "active": 0,
+                  "queued": 0,
+                  "residentBytes": 3072000,
+                  "reservedBytes": 0
+                }
+              }
+            },
+            {
+              "count": 14,
+              "size": 1048576,
+              "uniqueImages": 10,
+              "neededProducts": 6,
+              "baseline": {
+                "metadataUsableMs": 316.21188300000006,
+                "firstVerifiedImageMs": 126.13582600000007,
+                "firstRequiredImagesMs": 316.21481700000004,
+                "coldAssetBodyBytes": 10485760,
+                "coldRequests": 12,
+                "peakConcurrent": 4,
+                "warmAdditionalBodyBytes": 0,
+                "warmAdditionalRequests": 0,
+                "warmMs": 0.24385099999994964,
+                "cpuUserMs": 188.288,
+                "cpuSystemMs": 142.873,
+                "rssBefore": 189493248,
+                "rssAfter": 207134720,
+                "sampledPeakRSS": 207134720,
+                "arrayBuffersAfter": 37144606
+              },
+              "candidate": {
+                "metadataUsableMs": 0.8640120000000024,
+                "firstVerifiedImageMs": 34.622822999999926,
+                "firstRequiredImagesMs": 197.766701,
+                "coldAssetBodyBytes": 6291456,
+                "coldRequests": 8,
+                "peakConcurrent": 4,
+                "warmAdditionalBodyBytes": 0,
+                "warmAdditionalRequests": 0,
+                "warmMs": 0.27737200000001394,
+                "cpuUserMs": 131.492,
+                "cpuSystemMs": 84.168,
+                "rssBefore": 207134720,
+                "rssAfter": 193261568,
+                "sampledPeakRSS": 208896000,
+                "arrayBuffersAfter": 22112482,
+                "verifiedPool": {
+                  "entries": 6,
+                  "active": 0,
+                  "queued": 0,
+                  "residentBytes": 6291456,
+                  "reservedBytes": 0
+                }
+              }
+            },
+            {
+              "count": 14,
+              "size": 3145728,
+              "uniqueImages": 10,
+              "neededProducts": 6,
+              "baseline": {
+                "metadataUsableMs": 907.152311,
+                "firstVerifiedImageMs": 367.99871299999995,
+                "firstRequiredImagesMs": 907.1557060000002,
+                "coldAssetBodyBytes": 31457280,
+                "coldRequests": 12,
+                "peakConcurrent": 4,
+                "warmAdditionalBodyBytes": 0,
+                "warmAdditionalRequests": 0,
+                "warmMs": 0.3220369999999093,
+                "cpuUserMs": 586.463,
+                "cpuSystemMs": 380.794,
+                "rssBefore": 252440576,
+                "rssAfter": 304541696,
+                "sampledPeakRSS": 331292672,
+                "arrayBuffersAfter": 75589902
+              },
+              "candidate": {
+                "metadataUsableMs": 0.9470519999999851,
+                "firstVerifiedImageMs": 91.8021560000002,
+                "firstRequiredImagesMs": 571.7033500000002,
+                "coldAssetBodyBytes": 18874368,
+                "coldRequests": 8,
+                "peakConcurrent": 4,
+                "warmAdditionalBodyBytes": 0,
+                "warmAdditionalRequests": 0,
+                "warmMs": 0.3041699999998855,
+                "cpuUserMs": 335.219,
+                "cpuSystemMs": 261.646,
+                "rssBefore": 304541696,
+                "rssAfter": 311443456,
+                "sampledPeakRSS": 381419520,
+                "arrayBuffersAfter": 64055544,
+                "verifiedPool": {
+                  "entries": 6,
+                  "active": 0,
+                  "queued": 0,
+                  "residentBytes": 18874368,
+                  "reservedBytes": 0
+                }
+              }
+            },
+            {
+              "count": 100,
+              "size": 102400,
+              "uniqueImages": 25,
+              "neededProducts": 6,
+              "baseline": {
+                "metadataUsableMs": 84.48594400000002,
+                "firstVerifiedImageMs": 15.44216200000028,
+                "firstRequiredImagesMs": 84.48847800000021,
+                "coldAssetBodyBytes": 2560000,
+                "coldRequests": 27,
+                "peakConcurrent": 4,
+                "warmAdditionalBodyBytes": 0,
+                "warmAdditionalRequests": 0,
+                "warmMs": 0.5889019999999618,
+                "cpuUserMs": 55.527,
+                "cpuSystemMs": 35.663,
+                "rssBefore": 318652416,
+                "rssAfter": 309940224,
+                "sampledPeakRSS": 318652416,
+                "arrayBuffersAfter": 59898082
+              },
+              "candidate": {
+                "metadataUsableMs": 1.36955799999987,
+                "firstVerifiedImageMs": 4.31512900000007,
+                "firstRequiredImagesMs": 20.721228999999767,
+                "coldAssetBodyBytes": 614400,
+                "coldRequests": 8,
+                "peakConcurrent": 4,
+                "warmAdditionalBodyBytes": 0,
+                "warmAdditionalRequests": 0,
+                "warmMs": 0.4258310000000165,
+                "cpuUserMs": 12.908,
+                "cpuSystemMs": 9.507,
+                "rssBefore": 309940224,
+                "rssAfter": 312311808,
+                "sampledPeakRSS": 318476288,
+                "arrayBuffersAfter": 60649040,
+                "verifiedPool": {
+                  "entries": 6,
+                  "active": 0,
+                  "queued": 0,
+                  "residentBytes": 614400,
+                  "reservedBytes": 0
+                }
+              }
+            },
+            {
+              "count": 100,
+              "size": 512000,
+              "uniqueImages": 25,
+              "neededProducts": 6,
+              "baseline": {
+                "metadataUsableMs": 385.97583399999985,
+                "firstVerifiedImageMs": 60.99741899999981,
+                "firstRequiredImagesMs": 385.9776259999999,
+                "coldAssetBodyBytes": 12800000,
+                "coldRequests": 27,
+                "peakConcurrent": 4,
+                "warmAdditionalBodyBytes": 0,
+                "warmAdditionalRequests": 0,
+                "warmMs": 0.7824490000002697,
+                "cpuUserMs": 257.647,
+                "cpuSystemMs": 156.564,
+                "rssBefore": 315166720,
+                "rssAfter": 317943808,
+                "sampledPeakRSS": 324841472,
+                "arrayBuffersAfter": 28593766
+              },
+              "candidate": {
+                "metadataUsableMs": 2.5033870000002025,
+                "firstVerifiedImageMs": 17.607438999999886,
+                "firstRequiredImagesMs": 93.3645590000001,
+                "coldAssetBodyBytes": 3072000,
+                "coldRequests": 8,
+                "peakConcurrent": 4,
+                "warmAdditionalBodyBytes": 0,
+                "warmAdditionalRequests": 0,
+                "warmMs": 0.5763530000003811,
+                "cpuUserMs": 51.362,
+                "cpuSystemMs": 46.257,
+                "rssBefore": 317943808,
+                "rssAfter": 314572800,
+                "sampledPeakRSS": 317943808,
+                "arrayBuffersAfter": 34225766,
+                "verifiedPool": {
+                  "entries": 6,
+                  "active": 0,
+                  "queued": 0,
+                  "residentBytes": 3072000,
+                  "reservedBytes": 0
+                }
+              }
+            },
+            {
+              "count": 100,
+              "size": 1048576,
+              "uniqueImages": 25,
+              "neededProducts": 6,
+              "baseline": {
+                "metadataUsableMs": 803.965991,
+                "firstVerifiedImageMs": 130.71689500000002,
+                "firstRequiredImagesMs": 803.9674029999996,
+                "coldAssetBodyBytes": 26214400,
+                "coldRequests": 27,
+                "peakConcurrent": 4,
+                "warmAdditionalBodyBytes": 0,
+                "warmAdditionalRequests": 0,
+                "warmMs": 0.62083900000016,
+                "cpuUserMs": 519.224,
+                "cpuSystemMs": 356.368,
+                "rssBefore": 300646400,
+                "rssAfter": 309633024,
+                "sampledPeakRSS": 323092480,
+                "arrayBuffersAfter": 47145918
+              },
+              "candidate": {
+                "metadataUsableMs": 1.6258170000000973,
+                "firstVerifiedImageMs": 33.82046200000059,
+                "firstRequiredImagesMs": 190.48983600000065,
+                "coldAssetBodyBytes": 6291456,
+                "coldRequests": 8,
+                "peakConcurrent": 4,
+                "warmAdditionalBodyBytes": 0,
+                "warmAdditionalRequests": 0,
+                "warmMs": 0.4499759999998787,
+                "cpuUserMs": 114.049,
+                "cpuSystemMs": 83.085,
+                "rssBefore": 309633024,
+                "rssAfter": 318402560,
+                "sampledPeakRSS": 318402560,
+                "arrayBuffersAfter": 59728830,
+                "verifiedPool": {
+                  "entries": 6,
+                  "active": 0,
+                  "queued": 0,
+                  "residentBytes": 6291456,
+                  "reservedBytes": 0
+                }
+              }
+            },
+            {
+              "count": 500,
+              "size": 102400,
+              "uniqueImages": 50,
+              "neededProducts": 6,
+              "baseline": {
+                "metadataUsableMs": 168.03553600000032,
+                "firstVerifiedImageMs": 23.98547099999996,
+                "firstRequiredImagesMs": 168.03652800000054,
+                "coldAssetBodyBytes": 5120000,
+                "coldRequests": 52,
+                "peakConcurrent": 4,
+                "warmAdditionalBodyBytes": 0,
+                "warmAdditionalRequests": 0,
+                "warmMs": 2.198105000000396,
+                "cpuUserMs": 122.268,
+                "cpuSystemMs": 69.704,
+                "rssBefore": 316186624,
+                "rssAfter": 301502464,
+                "sampledPeakRSS": 317366272,
+                "arrayBuffersAfter": 32075344
+              },
+              "candidate": {
+                "metadataUsableMs": 4.629904999999781,
+                "firstVerifiedImageMs": 7.592241000000286,
+                "firstRequiredImagesMs": 24.261860999999953,
+                "coldAssetBodyBytes": 614400,
+                "coldRequests": 8,
+                "peakConcurrent": 4,
+                "warmAdditionalBodyBytes": 0,
+                "warmAdditionalRequests": 0,
+                "warmMs": 1.4717689999997674,
+                "cpuUserMs": 22.207,
+                "cpuSystemMs": 7.099,
+                "rssBefore": 301502464,
+                "rssAfter": 305999872,
+                "sampledPeakRSS": 306089984,
+                "arrayBuffersAfter": 33474860,
+                "verifiedPool": {
+                  "entries": 6,
+                  "active": 0,
+                  "queued": 0,
+                  "residentBytes": 614400,
+                  "reservedBytes": 0
+                }
+              }
+            },
+            {
+              "count": 500,
+              "size": 512000,
+              "uniqueImages": 50,
+              "neededProducts": 6,
+              "baseline": {
+                "metadataUsableMs": 791.1714930000007,
+                "firstVerifiedImageMs": 75.90378800000053,
+                "firstRequiredImagesMs": 791.1730850000004,
+                "coldAssetBodyBytes": 25600000,
+                "coldRequests": 52,
+                "peakConcurrent": 4,
+                "warmAdditionalBodyBytes": 0,
+                "warmAdditionalRequests": 0,
+                "warmMs": 2.879222999999911,
+                "cpuUserMs": 513.087,
+                "cpuSystemMs": 346.601,
+                "rssBefore": 298483712,
+                "rssAfter": 309825536,
+                "sampledPeakRSS": 322269184,
+                "arrayBuffersAfter": 38833766
+              },
+              "candidate": {
+                "metadataUsableMs": 5.595624999999927,
+                "firstVerifiedImageMs": 22.357922000000144,
+                "firstRequiredImagesMs": 100.22011900000052,
+                "coldAssetBodyBytes": 3072000,
+                "coldRequests": 8,
+                "peakConcurrent": 4,
+                "warmAdditionalBodyBytes": 0,
+                "warmAdditionalRequests": 0,
+                "warmMs": 1.5306659999996555,
+                "cpuUserMs": 66.103,
+                "cpuSystemMs": 44.805,
+                "rssBefore": 309825536,
+                "rssAfter": 316358656,
+                "sampledPeakRSS": 316358656,
+                "arrayBuffersAfter": 44977766,
+                "verifiedPool": {
+                  "entries": 6,
+                  "active": 0,
+                  "queued": 0,
+                  "residentBytes": 3072000,
+                  "reservedBytes": 0
+                }
+              }
+            }
+          ],
+          "verification3x3MiB": {
+            "wallMs": 295.6787519999998,
+            "cpuUserMs": 190.77,
+            "cpuSystemMs": 117.405
+          },
+          "method": "Injected uncached byte transport; real full-byte SHA-256/source hashing. Warm result is JavaScript verified cache, not native HTTP cache. Timings are runner-specific; RSS is process-level sampled, not isolated allocation or browser decoded-image memory.",
+          "productionRequests": 0
+        }
+      },
+      {
+        "suite": "blackbox31-static-images.mjs",
+        "exit": 0,
+        "status": "PASS",
+        "stderr": "",
+        "sha256": "dd5555b6d2466ca34315315ce50971d910b38d8c9499955ba9fc1a01b43be105",
+        "evidence": {
+          "suite": "blackbox31-static-images",
+          "runtime": "v22.20.0",
+          "passed": 25,
+          "cases": [
+            "valid static image and complete authoritative metadata",
+            "no image needs metadata only",
+            "bounded cache reuse, dedup and HTTP cache directive",
+            "stale manifest produces placeholder, not an old photograph",
+            "missing asset never causes an embedded image read",
+            "equal-length corrupted static bytes are rejected",
+            "bad manifest reference and digest rejected",
+            "unsafe asset origin/path and malformed metadata fail closed",
+            "unapproved image_reference URL never used as a fallback",
+            "metadata and manifest outage handling",
+            "generation invalidation rejects pending stale resolution",
+            "publisher replacement archives new identity and retains old bytes",
+            "concurrent replacement capture fails before publication",
+            "unchanged capture downloads zero source images",
+            "rollback pins retained immutable manifest and previous image",
+            "image removal preserves old retained URL",
+            "raw and mapped public clients integrate static path and share cache",
+            "static byte verification is limited to four concurrent assets",
+            "default disabled path is unchanged and never requests static resources",
+            "Admin upload replacement deletion and metadata stay authoritative",
+            "catalogue search/filter, cards/details and component basket preserve behaviour",
+            "generator verifies retained assets before reading lightweight metadata",
+            "fresh local Git recovery and ordinary assembly retain every version",
+            "read-only assembly blocks uncommitted historical repairs",
+            "publisher/assembly corruption is detected"
+          ],
+          "measurements": {
+            "synthetic14": {
+              "legacy": {
+                "raw": 530471,
+                "gzip": 397508
+              },
+              "lightweight": {
+                "raw": 6339,
+                "gzip": 711
+              },
+              "imageBytesSeparate": 393624
+            },
+            "validBrowserRead": {
+              "metadataGET": 1,
+              "manifestGET": 1,
+              "staticAssetGET": 1,
+              "supabaseImageBearingGET": 0
+            },
+            "repeatedCachedRead": {
+              "additionalRequests": 0
+            },
+            "generator": {
+              "lightweightGET": 1,
+              "supabaseImageBearingGET": 0
+            }
+          },
+          "unintendedFetchAttempts": 0,
+          "productionRequests": 0,
+          "browserAcceptance": false
+        }
+      },
+      {
+        "suite": "blackbox32-hardening.mjs",
+        "exit": 0,
+        "status": "PASS",
+        "stderr": "",
+        "sha256": "319949c72aac9ee98ef19e00e947b30f261f8c3bcdd1425876630bba16c3e31f",
+        "evidence": {
+          "suite": "blackbox32-hardening",
+          "runtime": "v22.20.0",
+          "passed": 16,
+          "failed": 0,
+          "cases": [
+            "wrong photo with valid revision and forged source label fails closed",
+            "shared URL cannot reuse verification for contradictory source identity",
+            "shared URL cannot bypass a contradictory byte-count contract",
+            "two legitimate products sharing bytes coalesce to one asset GET",
+            "interrupted asset stream fails to placeholder without fallback",
+            "manifest invalid JSON, rejection and redirects fail closed",
+            "redirected or wrong-MIME asset cannot become a photograph",
+            "oversized streaming body is rejected and cancelled",
+            "failed asset is coalesced briefly then recovers after retry expiry",
+            "fresh replacement identity never displays cached old photo",
+            "pinned image rollback preserves current authoritative price and stock",
+            "ordinary capture-disabled assemblies retain both versions and current metadata",
+            "uninitialised archive permits legacy preparation without image capture",
+            "missing immutable manifest blocks generator before metadata request",
+            "missing historical image blocks archive and retained generator",
+            "mislabelled source is also rejected by offline archive verification"
+          ],
+          "failures": [],
+          "measurements": {
+            "concurrentConsumers": {
+              "metadataGET": 1,
+              "manifestGET": 1,
+              "assetGET": 1,
+              "embeddedGET": 0
+            },
+            "retry": {
+              "firstRead": 3,
+              "immediateAdditional": 0,
+              "afterExpiryAdditional": 1
+            },
+            "ordinaryAssemblies": {
+              "count": 3,
+              "newSourceImageReads": 0,
+              "historicalVersionsRetained": 2
+            }
+          },
+          "syntheticAssets": {
+            "red": {
+              "bytes": 70,
+              "sha256": "4ff6ab670a58c14270e034e2090d9a432caa263a14e0a25785386b0c12f880b5"
+            },
+            "blue": {
+              "bytes": 70,
+              "sha256": "6a34118ba2e0bf5da5ab14cb63b121e2e8b2987a876668a9b2f9c30e1357470b"
+            }
+          },
+          "unintendedFetchAttempts": 0,
+          "productionRequests": 0,
+          "browserAcceptance": false
+        }
+      },
+      {
+        "suite": "egress-static-assets-v2.mjs",
+        "exit": 0,
+        "status": "PASS",
+        "stderr": "",
+        "sha256": "ee80e4a7184faf8199b5872c0d089f201308a6641d38e4cf99ff6ab8ffaa2aa8",
+        "evidence": {
+          "stdout": "{\"fixtureRawBefore\":301,\"fixtureRawAfter\":228,\"fixtureGzipBefore\":164,\"fixtureGzipAfter\":125,\"uniqueImageAssetBytes\":68}\nStatic assets V2 PASS: disabled legacy default, deterministic/hash/MIME/byte parity, dedup, replacement/removal, Admin upload adapter, old-asset retention, manifest rollback, publication failure, lightweight activated reads, full-byte readiness, strict placeholder fallback, malformed manifest, outage and expiry. Fixtures only; no production asset extraction/upload.\n"
+        }
+      },
+      {
+        "suite": "egress-static-assets-v2-dom.mjs",
+        "exit": 0,
+        "status": "PASS",
+        "stderr": "",
+        "sha256": "ba530b391df989f8627c4fc91ccd84840ad0c9ea930d134fb14b95c968de04ca",
+        "evidence": {
+          "stdout": "V2 DOM/integration PASS: static references accepted by actual card/detail renderers, lazy/alt/error fallbacks, stock/prices retained; 390/1440 fixture widths; actual repository and raw client retain inactive legacy transport/cache. No physical browser visual acceptance claimed.\n"
+        }
+      },
+      {
+        "suite": "component-repository.mjs",
+        "exit": 0,
+        "status": "PASS",
+        "stderr": "",
+        "sha256": "489ab02b567965eae09edd10fba59d88c2feda9f318ada7f794a157dee8dde0e",
+        "evidence": {
+          "stdout": "Async component repository: legacy load, edits, inventory, flags, pricing, images, storefront refresh, kit eligibility and corrupt-data preservation passed.\n"
+        }
+      },
+      {
+        "suite": "component-export.mjs",
+        "exit": 0,
+        "status": "PASS",
+        "stderr": "",
+        "sha256": "760872ba89ff9733ff0c258ac5e524078ddba8b6e6eff753350ba00176d5b47b",
+        "evidence": {
+          "stdout": "P05B export bridge: no seeding or writes, exact data preservation, inventory and images, invalid-record rejection, explicit Admin preview/download and stale-preview guard passed.\n"
+        }
+      },
+      {
+        "suite": "kit-snapshot.mjs",
+        "exit": 0,
+        "status": "PASS",
+        "stderr": "",
+        "sha256": "32b700f63d075db726f77af3ca89b44b899569783df151558713d27261989e58",
+        "evidence": {
+          "stdout": "Saved kit names, quantities, specifications, prices and diagram persist independently of catalogue changes; legacy snapshots preserved; no internal costing.\n"
+        }
+      },
+      {
+        "suite": "p07b-checkout.mjs",
+        "exit": 0,
+        "status": "PASS",
+        "stderr": "",
+        "sha256": "41cfa38cb5737f7de14a435da31a0ea820550438cd5139318dc7618ec1f55f70",
+        "evidence": {
+          "stdout": "P07B.2 live Checkout: live restricted key, authoritative pricing/delivery, GB/name collection, configured/component/mixed baskets PASS\n"
+        }
+      }
+    ]
+  },
+  "browser": {
+    "status": "PASS",
+    "passed": 32,
+    "failed": 0,
+    "cases": [
+      {
+        "name": "cold catalogue actual pages and native image decoding",
+        "status": "PASS"
+      },
+      {
+        "name": "repeat visit and native HTTP cache observation",
+        "status": "PASS"
+      },
+      {
+        "name": "native category and manufacturer filtering",
+        "status": "PASS"
+      },
+      {
+        "name": "detail navigation, correct photograph and return",
+        "status": "PASS"
+      },
+      {
+        "name": "switch product and revisit prior detail",
+        "status": "PASS"
+      },
+      {
+        "name": "synthetic basket via actual purchase button and basket renderer",
+        "status": "PASS"
+      },
+      {
+        "name": "concurrent repository consumers and shared immutable image",
+        "status": "PASS"
+      },
+      {
+        "name": "visual 390 cards details basket",
+        "status": "PASS"
+      },
+      {
+        "name": "visual 768 cards details basket",
+        "status": "PASS"
+      },
+      {
+        "name": "visual 1440 cards details basket",
+        "status": "PASS"
+      },
+      {
+        "name": "basic keyboard focus remains usable",
+        "status": "PASS"
+      },
+      {
+        "name": "warm manifest update transfers only the replacement image",
+        "status": "PASS"
+      },
+      {
+        "name": "warm historical rollback reuses retained images without stale prices",
+        "status": "PASS"
+      },
+      {
+        "name": "page suspension releases images and BFCache-style resume restores them",
+        "status": "PASS"
+      },
+      {
+        "name": "actual history navigation returns to correct verified images",
+        "status": "PASS"
+      },
+      {
+        "name": "fail closed missing-manifest",
+        "status": "PASS"
+      },
+      {
+        "name": "fail closed manifest-outage",
+        "status": "PASS"
+      },
+      {
+        "name": "fail closed missing-image",
+        "status": "PASS"
+      },
+      {
+        "name": "fail closed corrupt",
+        "status": "PASS"
+      },
+      {
+        "name": "fail closed equal-length-corrupt",
+        "status": "PASS"
+      },
+      {
+        "name": "fail closed invalid-hash",
+        "status": "PASS"
+      },
+      {
+        "name": "fail closed stale",
+        "status": "PASS"
+      },
+      {
+        "name": "fail closed wrong-mime",
+        "status": "PASS"
+      },
+      {
+        "name": "fail closed wrong-size",
+        "status": "PASS"
+      },
+      {
+        "name": "fail closed wrong-mapping",
+        "status": "PASS"
+      },
+      {
+        "name": "fail closed invalid-origin",
+        "status": "PASS"
+      },
+      {
+        "name": "fail closed unapproved-reference",
+        "status": "PASS"
+      },
+      {
+        "name": "fail closed interrupted",
+        "status": "PASS"
+      },
+      {
+        "name": "fail closed removed",
+        "status": "PASS"
+      },
+      {
+        "name": "replacement uses new immutable URL and native decoded pixels",
+        "status": "PASS"
+      },
+      {
+        "name": "pinned history retains old image with current price and stock",
+        "status": "PASS"
+      },
+      {
+        "name": "network and console boundaries",
+        "status": "PASS"
+      }
+    ],
+    "failures": [],
+    "unexpected": [],
+    "pageErrors": [],
+    "console": [
+      {
+        "phase": "fail closed missing-manifest",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "phase": "fail closed manifest-outage",
+        "text": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+      },
+      {
+        "phase": "fail closed missing-image",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "phase": "fail closed missing-image",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "phase": "fail closed missing-image",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      },
+      {
+        "phase": "fail closed interrupted",
+        "text": "Failed to load resource: net::ERR_EMPTY_RESPONSE"
+      }
+    ],
+    "snapshots": [
+      {
+        "phase": "cold catalogue actual pages and native image decoding",
+        "w": 64,
+        "h": 48,
+        "alt": "Fixture 00",
+        "loading": "lazy",
+        "box": {
+          "width": 366,
+          "height": 220
+        },
+        "fit": "contain"
+      },
+      {
+        "phase": "visual 390 cards details basket",
+        "width": 390,
+        "overflow": {
+          "viewport": 390,
+          "scroll": 390
+        }
+      },
+      {
+        "phase": "visual 768 cards details basket",
+        "width": 768,
+        "overflow": {
+          "viewport": 768,
+          "scroll": 768
+        }
+      },
+      {
+        "phase": "visual 1440 cards details basket",
+        "width": 1440,
+        "overflow": {
+          "viewport": 1440,
+          "scroll": 1440
+        }
+      }
+    ],
+    "focus": {
+      "tag": "A",
+      "text": "Skip to components",
+      "outline": "solid"
+    },
+    "limitations": [
+      "Existing catalogue has no text-search input; native category/manufacturer filters are exercised.",
+      "Existing basket item renderer has no product photograph; text-only basket is preserved.",
+      "External Google Fonts import is omitted only in served fixture CSS; shipped fallback fonts are used."
+    ],
+    "fixtureOverrides": [
+      {
+        "path": "style.css",
+        "originalSHA256": "6a54f33efeb97b4ace1f6690be8f0b5e78a3ddb59ddc2c86876530f3e867e4e5",
+        "servedSHA256": "7635db9e750a39cd201cf196cf6b47f1b1956e8f6b0c1d318b7ad2354bb8b26e",
+        "reason": "Prevent pre-existing external font request without disabling the native HTTP cache"
+      }
+    ]
+  },
+  "browserTrackedPhases": [
+    {
+      "phase": "cold catalogue actual pages and native image decoding",
+      "metadataGETs": 1,
+      "manifestGETs": 1,
+      "imageAttempts": 2,
+      "imageBodyBytes": 358
+    },
+    {
+      "phase": "repeat visit and native HTTP cache observation",
+      "metadataGETs": 0,
+      "manifestGETs": 1,
+      "imageAttempts": 0,
+      "imageBodyBytes": 0
+    },
+    {
+      "phase": "detail navigation, correct photograph and return",
+      "metadataGETs": 0,
+      "manifestGETs": 2,
+      "imageAttempts": 0,
+      "imageBodyBytes": 0
+    },
+    {
+      "phase": "switch product and revisit prior detail",
+      "metadataGETs": 0,
+      "manifestGETs": 2,
+      "imageAttempts": 0,
+      "imageBodyBytes": 0
+    },
+    {
+      "phase": "synthetic basket via actual purchase button and basket renderer",
+      "metadataGETs": 0,
+      "manifestGETs": 2,
+      "imageAttempts": 0,
+      "imageBodyBytes": 0
+    },
+    {
+      "phase": "concurrent repository consumers and shared immutable image",
+      "metadataGETs": 1,
+      "manifestGETs": 2,
+      "imageAttempts": 0,
+      "imageBodyBytes": 0
+    },
+    {
+      "phase": "visual 390 cards details basket",
+      "metadataGETs": 1,
+      "manifestGETs": 3,
+      "imageAttempts": 0,
+      "imageBodyBytes": 0
+    },
+    {
+      "phase": "visual 768 cards details basket",
+      "metadataGETs": 0,
+      "manifestGETs": 3,
+      "imageAttempts": 0,
+      "imageBodyBytes": 0
+    },
+    {
+      "phase": "visual 1440 cards details basket",
+      "metadataGETs": 0,
+      "manifestGETs": 3,
+      "imageAttempts": 0,
+      "imageBodyBytes": 0
+    },
+    {
+      "phase": "basic keyboard focus remains usable",
+      "metadataGETs": 0,
+      "manifestGETs": 1,
+      "imageAttempts": 0,
+      "imageBodyBytes": 0
+    },
+    {
+      "phase": "warm manifest update transfers only the replacement image",
+      "metadataGETs": 1,
+      "manifestGETs": 1,
+      "imageAttempts": 1,
+      "imageBodyBytes": 179
+    },
+    {
+      "phase": "warm historical rollback reuses retained images without stale prices",
+      "metadataGETs": 1,
+      "manifestGETs": 1,
+      "imageAttempts": 0,
+      "imageBodyBytes": 0
+    },
+    {
+      "phase": "page suspension releases images and BFCache-style resume restores them",
+      "metadataGETs": 0,
+      "manifestGETs": 1,
+      "imageAttempts": 0,
+      "imageBodyBytes": 0
+    },
+    {
+      "phase": "actual history navigation returns to correct verified images",
+      "metadataGETs": 0,
+      "manifestGETs": 4,
+      "imageAttempts": 0,
+      "imageBodyBytes": 0
+    },
+    {
+      "phase": "fail closed missing-manifest",
+      "metadataGETs": 1,
+      "manifestGETs": 1,
+      "imageAttempts": 0,
+      "imageBodyBytes": 0
+    },
+    {
+      "phase": "fail closed manifest-outage",
+      "metadataGETs": 1,
+      "manifestGETs": 1,
+      "imageAttempts": 0,
+      "imageBodyBytes": 0
+    },
+    {
+      "phase": "fail closed missing-image",
+      "metadataGETs": 1,
+      "manifestGETs": 2,
+      "imageAttempts": 5,
+      "imageBodyBytes": 379
+    },
+    {
+      "phase": "fail closed corrupt",
+      "metadataGETs": 1,
+      "manifestGETs": 1,
+      "imageAttempts": 2,
+      "imageBodyBytes": 358
+    },
+    {
+      "phase": "fail closed equal-length-corrupt",
+      "metadataGETs": 1,
+      "manifestGETs": 2,
+      "imageAttempts": 2,
+      "imageBodyBytes": 358
+    },
+    {
+      "phase": "fail closed invalid-hash",
+      "metadataGETs": 1,
+      "manifestGETs": 1,
+      "imageAttempts": 3,
+      "imageBodyBytes": 537
+    },
+    {
+      "phase": "fail closed stale",
+      "metadataGETs": 1,
+      "manifestGETs": 1,
+      "imageAttempts": 0,
+      "imageBodyBytes": 0
+    },
+    {
+      "phase": "fail closed wrong-mime",
+      "metadataGETs": 1,
+      "manifestGETs": 1,
+      "imageAttempts": 2,
+      "imageBodyBytes": 358
+    },
+    {
+      "phase": "fail closed wrong-size",
+      "metadataGETs": 1,
+      "manifestGETs": 1,
+      "imageAttempts": 2,
+      "imageBodyBytes": 358
+    },
+    {
+      "phase": "fail closed wrong-mapping",
+      "metadataGETs": 1,
+      "manifestGETs": 1,
+      "imageAttempts": 2,
+      "imageBodyBytes": 358
+    },
+    {
+      "phase": "fail closed invalid-origin",
+      "metadataGETs": 1,
+      "manifestGETs": 1,
+      "imageAttempts": 0,
+      "imageBodyBytes": 0
+    },
+    {
+      "phase": "fail closed unapproved-reference",
+      "metadataGETs": 1,
+      "manifestGETs": 1,
+      "imageAttempts": 0,
+      "imageBodyBytes": 0
+    },
+    {
+      "phase": "fail closed interrupted",
+      "metadataGETs": 1,
+      "manifestGETs": 1,
+      "imageAttempts": 2,
+      "imageBodyBytes": 179
+    },
+    {
+      "phase": "fail closed removed",
+      "metadataGETs": 1,
+      "manifestGETs": 1,
+      "imageAttempts": 0,
+      "imageBodyBytes": 0
+    },
+    {
+      "phase": "replacement uses new immutable URL and native decoded pixels",
+      "metadataGETs": 1,
+      "manifestGETs": 1,
+      "imageAttempts": 3,
+      "imageBodyBytes": 537
+    },
+    {
+      "phase": "pinned history retains old image with current price and stock",
+      "metadataGETs": 1,
+      "manifestGETs": 1,
+      "imageAttempts": 2,
+      "imageBodyBytes": 358
+    }
+  ],
+  "browserScale": {
+    "sourceCommit": "135d2c8c6b177631c5c06358030aa610e44e322d",
+    "kind": "real Chrome synthetic image-scale acceptance",
+    "status": "PASS",
+    "cases": [
+      {
+        "name": "14 eager",
+        "status": "PASS"
+      },
+      {
+        "name": "14 demand",
+        "status": "PASS"
+      },
+      {
+        "name": "100 eager",
+        "status": "PASS"
+      },
+      {
+        "name": "100 demand",
+        "status": "PASS"
+      },
+      {
+        "name": "500 eager",
+        "status": "PASS"
+      },
+      {
+        "name": "500 demand",
+        "status": "PASS"
+      },
+      {
+        "name": "neutral host /shop/v2",
+        "status": "PASS"
+      }
+    ],
+    "measurements": [
+      {
+        "count": 14,
+        "size": 102400,
+        "unique": 10,
+        "mode": "eager",
+        "metadataUsableMs": 468.89866599999993,
+        "firstVerifiedImageVisibleMs": 545.3851880000001,
+        "cold": {
+          "imageGETs": 10,
+          "imageBodyBytes": 1024000,
+          "metadataGETs": 1,
+          "technicalGETs": 0,
+          "manifestGETs": 1,
+          "encodedTrackedBytes": 1027966,
+          "cacheFlags": 0
+        },
+        "warmAdditionalImageGETs": 0,
+        "warmAdditionalImageBytes": 0,
+        "warmMs": 344.85197600000015,
+        "observedJSHeapBytes": 12571254
+      },
+      {
+        "count": 14,
+        "size": 102400,
+        "unique": 10,
+        "mode": "demand",
+        "metadataUsableMs": 342.3027599999998,
+        "firstVerifiedImageVisibleMs": 496.0341299999998,
+        "cold": {
+          "imageGETs": 3,
+          "imageBodyBytes": 307200,
+          "metadataGETs": 1,
+          "technicalGETs": 0,
+          "manifestGETs": 1,
+          "encodedTrackedBytes": 310737,
+          "cacheFlags": 0
+        },
+        "warmAdditionalImageGETs": 0,
+        "warmAdditionalImageBytes": 0,
+        "warmMs": 323.1100929999998,
+        "observedJSHeapBytes": 7151131
+      },
+      {
+        "count": 100,
+        "size": 512000,
+        "unique": 25,
+        "mode": "eager",
+        "metadataUsableMs": 816.9473229999999,
+        "firstVerifiedImageVisibleMs": 912.0944159999999,
+        "cold": {
+          "imageGETs": 25,
+          "imageBodyBytes": 12800000,
+          "metadataGETs": 1,
+          "technicalGETs": 0,
+          "manifestGETs": 1,
+          "encodedTrackedBytes": 12812829,
+          "cacheFlags": 0
+        },
+        "warmAdditionalImageGETs": 0,
+        "warmAdditionalImageBytes": 0,
+        "warmMs": 789.2031370000004,
+        "observedJSHeapBytes": 47188530
+      },
+      {
+        "count": 100,
+        "size": 512000,
+        "unique": 25,
+        "mode": "demand",
+        "metadataUsableMs": 349.59585100000004,
+        "firstVerifiedImageVisibleMs": 544.653096,
+        "cold": {
+          "imageGETs": 3,
+          "imageBodyBytes": 1536000,
+          "metadataGETs": 1,
+          "technicalGETs": 0,
+          "manifestGETs": 1,
+          "encodedTrackedBytes": 1543197,
+          "cacheFlags": 0
+        },
+        "warmAdditionalImageGETs": 0,
+        "warmAdditionalImageBytes": 0,
+        "warmMs": 393.6765400000004,
+        "observedJSHeapBytes": 15901496
+      },
+      {
+        "count": 500,
+        "size": 512000,
+        "unique": 50,
+        "mode": "eager",
+        "metadataUsableMs": 1318.8155299999999,
+        "firstVerifiedImageVisibleMs": 1542.384435,
+        "cold": {
+          "imageGETs": 50,
+          "imageBodyBytes": 25600000,
+          "metadataGETs": 1,
+          "technicalGETs": 0,
+          "manifestGETs": 1,
+          "encodedTrackedBytes": 25622020,
+          "cacheFlags": 0
+        },
+        "warmAdditionalImageGETs": 0,
+        "warmAdditionalImageBytes": 0,
+        "warmMs": 1386.0620020000006,
+        "observedJSHeapBytes": 36252458
+      },
+      {
+        "count": 500,
+        "size": 512000,
+        "unique": 50,
+        "mode": "demand",
+        "metadataUsableMs": 415.97644799999944,
+        "firstVerifiedImageVisibleMs": 685.5475239999996,
+        "cold": {
+          "imageGETs": 3,
+          "imageBodyBytes": 1536000,
+          "metadataGETs": 1,
+          "technicalGETs": 0,
+          "manifestGETs": 1,
+          "encodedTrackedBytes": 1553240,
+          "cacheFlags": 0
+        },
+        "warmAdditionalImageGETs": 0,
+        "warmAdditionalImageBytes": 0,
+        "warmMs": 554.4084559999992,
+        "observedJSHeapBytes": 17426626
+      }
+    ],
+    "unexpected": [],
+    "pageErrors": [],
+    "screenshots": [
+      "scale-100-desktop.png"
+    ],
+    "productionRequests": 0,
+    "browser": "155.0.8059.84",
+    "node": "v22.20.0",
+    "method": "Actual loopback HTTPS, native cache, no interception. Repository static resources are no-store; tracked counts isolate synthetic product imagery. Heap values are Chrome estimates, not decoded-image or total process memory. Fallback fonts only; no production/CDN/billing claims."
+  },
+  "isolation": {
+    "probeSourceLabel": "Unmodified BLACKBOX 33 feasibility probe retains its original baseline sourceCommit label; actual executed checkout is source.testedCommit and Stage A opens no application fixture.",
+    "stageA": {
+      "stage": "A",
+      "applicationFixturesOpened": 0,
+      "productionRequests": 0,
+      "status": "PASS",
+      "sourceCommit": "870a99c8ed99f981728f26b1eedb415af218b424",
+      "negativeControls": [
+        {
+          "name": "fetchIPv4",
+          "result": "blocked"
+        },
+        {
+          "name": "fetchIPv6",
+          "result": "blocked"
+        },
+        {
+          "name": "dns",
+          "result": "blocked"
+        },
+        {
+          "name": "image",
+          "result": "blocked"
+        },
+        {
+          "name": "redirect",
+          "result": "blocked"
+        },
+        {
+          "name": "websocket",
+          "result": "blocked"
+        },
+        {
+          "name": "script",
+          "result": "blocked"
+        },
+        {
+          "name": "worker",
+          "result": "blocked"
+        },
+        {
+          "name": "frame",
+          "result": "blocked"
+        },
+        {
+          "name": "navigation",
+          "result": "blocked"
+        }
+      ],
+      "requests": [
+        {
+          "url": "http://127.0.0.1:33365/",
+          "resource": "document"
+        },
+        {
+          "url": "http://192.0.2.1/probe",
+          "resource": "fetch"
+        },
+        {
+          "url": "http://[2001:db8::1]/probe",
+          "resource": "fetch"
+        },
+        {
+          "url": "http://blackbox33-negative.invalid/probe",
+          "resource": "fetch"
+        },
+        {
+          "url": "http://127.0.0.1:33365/redirect",
+          "resource": "fetch"
+        },
+        {
+          "url": "http://192.0.2.3/probe.js",
+          "resource": "script"
+        },
+        {
+          "url": "http://198.51.100.1/probe-frame",
+          "resource": "document"
+        },
+        {
+          "url": "http://127.0.0.1:33365/worker.js",
+          "resource": "script"
+        },
+        {
+          "url": "http://192.0.2.2/probe.png",
+          "resource": "image"
+        },
+        {
+          "url": "http://198.51.100.3/probe",
+          "resource": "fetch"
+        },
+        {
+          "url": "http://203.0.113.1/worker-probe",
+          "resource": "fetch"
+        },
+        {
+          "url": "http://203.0.113.2/navigation-probe",
+          "resource": "document"
+        }
+      ],
+      "responses": [
+        {
+          "url": "http://127.0.0.1:33365/",
+          "status": 200
+        },
+        {
+          "url": "http://127.0.0.1:33365/redirect",
+          "status": 302
+        },
+        {
+          "url": "http://127.0.0.1:33365/worker.js",
+          "status": 200
+        }
+      ],
+      "failures": [
+        {
+          "url": "http://198.51.100.1/probe-frame",
+          "resource": "document",
+          "error": "net::ERR_INTERNET_DISCONNECTED"
+        },
+        {
+          "url": "http://192.0.2.2/probe.png",
+          "resource": "image",
+          "error": "net::ERR_INTERNET_DISCONNECTED"
+        },
+        {
+          "url": "http://192.0.2.1/probe",
+          "resource": "fetch",
+          "error": "net::ERR_INTERNET_DISCONNECTED"
+        },
+        {
+          "url": "http://[2001:db8::1]/probe",
+          "resource": "fetch",
+          "error": "net::ERR_INTERNET_DISCONNECTED"
+        },
+        {
+          "url": "http://blackbox33-negative.invalid/probe",
+          "resource": "fetch",
+          "error": "net::ERR_INTERNET_DISCONNECTED"
+        },
+        {
+          "url": "http://192.0.2.3/probe.js",
+          "resource": "script",
+          "error": "net::ERR_INTERNET_DISCONNECTED"
+        },
+        {
+          "url": "http://198.51.100.3/probe",
+          "resource": "fetch",
+          "error": "net::ERR_INTERNET_DISCONNECTED"
+        },
+        {
+          "url": "http://203.0.113.1/worker-probe",
+          "resource": "fetch",
+          "error": "net::ERR_INTERNET_DISCONNECTED"
+        },
+        {
+          "url": "http://203.0.113.2/navigation-probe",
+          "resource": "document",
+          "error": "net::ERR_INTERNET_DISCONNECTED"
+        }
+      ],
+      "node": "v22.20.0",
+      "namespace": "net:[4026532316]",
+      "processProof": {
+        "connections": [
+          {
+            "family": 2,
+            "destination": "192.0.2.1",
+            "errno": 101,
+            "blocked": true
+          },
+          {
+            "family": 10,
+            "destination": "2001:db8::1",
+            "errno": 101,
+            "blocked": true
+          }
+        ],
+        "childNamespace": "net:[4026532316]"
+      },
+      "browser": "155.0.8059.84",
+      "chromiumSandbox": true,
+      "disposableBrowser": true,
+      "browserProof": {
+        "fetchIPv4": "blocked",
+        "fetchIPv6": "blocked",
+        "dns": "blocked",
+        "image": "blocked",
+        "redirect": "blocked",
+        "websocket": "blocked",
+        "script": "blocked",
+        "worker": "blocked"
+      },
+      "localOriginReachable": true,
+      "nextStageAuthorised": true
+    },
+    "addresses": [
+      {
+        "ifindex": 1,
+        "ifname": "lo",
+        "flags": [
+          "LOOPBACK",
+          "UP",
+          "LOWER_UP"
+        ],
+        "mtu": 65536,
+        "qdisc": "noqueue",
+        "operstate": "UNKNOWN",
+        "group": "default",
+        "txqlen": 1000,
+        "link_type": "loopback",
+        "address": "00:00:00:00:00:00",
+        "broadcast": "00:00:00:00:00:00",
+        "addr_info": [
+          {
+            "family": "inet",
+            "local": "127.0.0.1",
+            "prefixlen": 8,
+            "scope": "host",
+            "label": "lo",
+            "valid_life_time": 4294967295,
+            "preferred_life_time": 4294967295
+          },
+          {
+            "family": "inet6",
+            "local": "::1",
+            "prefixlen": 128,
+            "scope": "host",
+            "valid_life_time": 4294967295,
+            "preferred_life_time": 4294967295
+          }
+        ]
+      }
+    ],
+    "routes": [
+      {
+        "type": "local",
+        "dst": "127.0.0.0/8",
+        "dev": "lo",
+        "table": "local",
+        "protocol": "kernel",
+        "scope": "host",
+        "prefsrc": "127.0.0.1",
+        "flags": []
+      },
+      {
+        "type": "local",
+        "dst": "127.0.0.1",
+        "dev": "lo",
+        "table": "local",
+        "protocol": "kernel",
+        "scope": "host",
+        "prefsrc": "127.0.0.1",
+        "flags": []
+      },
+      {
+        "type": "broadcast",
+        "dst": "127.255.255.255",
+        "dev": "lo",
+        "table": "local",
+        "protocol": "kernel",
+        "scope": "link",
+        "prefsrc": "127.0.0.1",
+        "flags": []
+      },
+      {
+        "type": "local",
+        "dst": "::1",
+        "dev": "lo",
+        "table": "local",
+        "protocol": "kernel",
+        "metric": 0,
+        "flags": [],
+        "pref": "medium"
+      }
+    ]
+  },
+  "screenshots": [
+    {
+      "path": "SCREENSHOTS/catalogue-390.png",
+      "sha256": "ac1097783854cef0103c53c7c21658449d67ce7768b7da919329deb1c920bd21",
+      "gitBlobSHA": "87e42f83ff635c1f9a27d53c160ba35b4c9622ae",
+      "bytes": 38433,
+      "width": 390,
+      "height": 1000
+    },
+    {
+      "path": "SCREENSHOTS/catalogue-768.png",
+      "sha256": "b6103955fcd5d02e11bf4e56e3bde7130af3499e6a4251e46f88ba97180af466",
+      "gitBlobSHA": "c4e9749bbaaeaeb243651f506e0290388f745517",
+      "bytes": 59930,
+      "width": 768,
+      "height": 1000
+    },
+    {
+      "path": "SCREENSHOTS/catalogue-1440.png",
+      "sha256": "180b07e37d3d5451929f440d95c07180ab208b479911ef0270ad750c4a4dd354",
+      "gitBlobSHA": "b6385ba478127f7999a0f14259dc1bbc900ca5c9",
+      "bytes": 51134,
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "path": "SCREENSHOTS/detail-390.png",
+      "sha256": "9c63eaf24d0786ca514665cb31735fecf8035d35fe2e7529ae50389e2ad658f1",
+      "gitBlobSHA": "5bb0c474a7f431682e307bf878cdaf1fd887df8d",
+      "bytes": 38990,
+      "width": 390,
+      "height": 1000
+    },
+    {
+      "path": "SCREENSHOTS/detail-1440.png",
+      "sha256": "b656db84191dd68fefc1e7a01a51663a0317fa83b390aac88512d6dbb788085b",
+      "gitBlobSHA": "478ffa211ed568a5f25f19aad3bd0b4d64daab58",
+      "bytes": 68000,
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "path": "SCREENSHOTS/placeholder-390.png",
+      "sha256": "7e4712bc135ff64c1029d38a055f5e827e35dfe5cede693c6887ad1f4ae5044b",
+      "gitBlobSHA": "25e90eba12a77cfbc492915dff23b37cfdc00710",
+      "bytes": 40536,
+      "width": 390,
+      "height": 1000
+    },
+    {
+      "path": "SCREENSHOTS/placeholder-1440.png",
+      "sha256": "fa707d55136bf621b375611005c32d19bcd1b697b31e2e359c55bdfc5a0d7463",
+      "gitBlobSHA": "9d0e61c0dd381b4418079d299b5a2f5b544c9357",
+      "bytes": 54880,
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "path": "SCREENSHOTS/scale-100-desktop.png",
+      "sha256": "30801d69f0df13bb02a12cd061295aa08c156ae5cb820cb98378c0d83eece85f",
+      "gitBlobSHA": "f2b550961f7d86324f89d6588321cfaece573fd9",
+      "bytes": 41845,
+      "width": 1440,
+      "height": 900
+    }
+  ],
+  "sourceInventory": [
+    {
+      "path": ".github/workflows/blackbox34-nightfall.yml",
+      "gitBlobSHA": "977167ce0199442872bb278228a5aec806980b1b",
+      "sha256": "25823e87c395ce55d18cb1fd49a89505eec4193a2a873c4dfe7bc4b989c33074",
+      "bytes": 3824
+    },
+    {
+      "path": "dist/backend/catalogue-image-delivery.mjs",
+      "gitBlobSHA": "524badf01c8f6b353143ea36e3b50674a72c47d0",
+      "sha256": "cc6bca0abbc50b0832b91206e4a79c631ace7ebdfcffd9d6312b13fb9704671c",
+      "bytes": 10402
+    },
+    {
+      "path": "dist/backend/demand-image-presentation.mjs",
+      "gitBlobSHA": "ef01db9eecbf7f04bee8f1aaa355c0ddffd34d1c",
+      "sha256": "b3bd7d08ec7f82aac0013e7fc6991162fadc46249c471787a22a754c71c39ed3",
+      "bytes": 2865
+    },
+    {
+      "path": "dist/backend/static-image-contract.mjs",
+      "gitBlobSHA": "be2718d2bd3243015717f5dbed04336dd40926db",
+      "sha256": "5f71c9dd3670428abfe2a8b858c4c6c4d5564fe26d9ebb2a5b19e6cdf305b270",
+      "bytes": 899
+    },
+    {
+      "path": "dist/backend/verified-image-pool.mjs",
+      "gitBlobSHA": "bcc0c231d92598d3ee7b7fb47bce98d3e39c98b5",
+      "sha256": "c1f221d2c81ba11147e59aab67f241451806d546c5247ec8fdfa6204383b07f5",
+      "bytes": 3517
+    },
+    {
+      "path": "dist/components/cards.mjs",
+      "gitBlobSHA": "702b9cb0d13d30ff5f1dcf917bdc6b0370c5c5d6",
+      "sha256": "9c4be5e38fad7673cd4624ff18aaf418136d6685272916614e0452d84a8cf275",
+      "bytes": 4304
+    },
+    {
+      "path": "dist/products/app.mjs",
+      "gitBlobSHA": "a73267a84d35b389a6a103e4d4839ab625305308",
+      "sha256": "de10626f0afdf5e0b07aec5f65e35d74518f00aab3fdd861e813ce64de7924d2",
+      "bytes": 6759
+    },
+    {
+      "path": "scripts/catalogue-compatibility-preflight.mjs",
+      "gitBlobSHA": "99eb57365a2880943d58285aac445634e6599995",
+      "sha256": "fde4e39defdfce223056845aa7f6518cbf191bca9f84c0946f4bc2a2d395e508",
+      "bytes": 7626
+    },
+    {
+      "path": "scripts/generate-product-pages.mjs",
+      "gitBlobSHA": "ff1db09c62cb79cb00896747017d5057f3456289",
+      "sha256": "abe9068905e3726d648608e9edd00a531199e0b6b427b55f0681b81cd1df0b1c",
+      "bytes": 12568
+    },
+    {
+      "path": "scripts/portable-image-publication.mjs",
+      "gitBlobSHA": "b8994d7f2f0feac3eedbac6e9122b72139a9053f",
+      "sha256": "e9f40d904f676a483c12ea718f28d0d321e5da880a85982bf8cfc49b485276b3",
+      "bytes": 5144
+    },
+    {
+      "path": "scripts/retained-catalogue-snapshot.mjs",
+      "gitBlobSHA": "d2c1efee0ade092e2c6b6c4bb536832bc3ae396c",
+      "sha256": "71f40d70cce6a145d2ae139eda0cbab1838a53317747b8eb24e03a049e52b93e",
+      "bytes": 1787
+    },
+    {
+      "path": "tests/blackbox34/baseline-resolver.txt",
+      "gitBlobSHA": "4c9bd754e97e0247bc0703b0231d5e9266ccdeb6",
+      "sha256": "0f52310bd39a66f62d393f69f355b39801a2f1e97c7d7f349eaff4f85cdc55f8",
+      "bytes": 8284
+    },
+    {
+      "path": "tests/blackbox34/benchmark.mjs",
+      "gitBlobSHA": "5bdca075a8cc1dc132eda64f820d8c0ede93397d",
+      "sha256": "f2860ca62f9c42b7f6f724e858f798946f1e7c6281a9ffa645a6abc41c9487c3",
+      "bytes": 4721
+    },
+    {
+      "path": "tests/blackbox34/browser-fixture.mjs",
+      "gitBlobSHA": "e47057fe814fe2d7dd14d914419c7851042f8f15",
+      "sha256": "bf5cf0af5432b0112a733d3c71c190979fea781fb451801ec8f58abaf67b1e2b",
+      "bytes": 1518
+    },
+    {
+      "path": "tests/blackbox34/browser-scale.mjs",
+      "gitBlobSHA": "e3f21676279007f5c3d3937a52055e2f167cd232",
+      "sha256": "b61d240d4411998a2e3a7db9c00053b6a0214131cc063a037a8b37347f910ac3",
+      "bytes": 11576
+    },
+    {
+      "path": "tests/blackbox34/browser.mjs",
+      "gitBlobSHA": "4d461beb4317c0d11b3c0dd918a4706f387c658e",
+      "sha256": "1fab0e2a1b2931bc356b864261d20629f070a4248d87ffc820e51ab9bfe7cf2a",
+      "bytes": 4174
+    },
+    {
+      "path": "tests/blackbox34/demand.mjs",
+      "gitBlobSHA": "e42cc9ed6bd9e0b49ac323db46ba8daf27b96c41",
+      "sha256": "1a4331b71ace7cba9acdf2e774dbc91f28e279f0c629a9a935bb548c28be4ac1",
+      "bytes": 6585
+    },
+    {
+      "path": "tests/blackbox34/fixtures.mjs",
+      "gitBlobSHA": "012a446e47525931b86cc4e3af305a0769620794",
+      "sha256": "b230cf3f1307c1857562ccbd18c08cf5fd32a017cce125cba7fa3f451211f1ed",
+      "bytes": 3992
+    },
+    {
+      "path": "tests/blackbox34/preflight.mjs",
+      "gitBlobSHA": "cf1de5567dcbc3dcaa62419b8b48e7d19c058f25",
+      "sha256": "6aaf299c7802f0aeffa783f2bff9e5d45ccc7f1acb7b4a5b24e09e66f5745d15",
+      "bytes": 7210
+    },
+    {
+      "path": "tests/blackbox34/presentation.mjs",
+      "gitBlobSHA": "7f884ece6fbc684b4f1f2bcc41d8779278d9db29",
+      "sha256": "bcfc22ea9a665e92a027adfec3690ab24695b1a0330632bc2c41a4c28d768003",
+      "bytes": 3383
+    },
+    {
+      "path": "tests/blackbox34/publication.mjs",
+      "gitBlobSHA": "b6fdffd6dbe8313045cbe3cad972e314d8bde46c",
+      "sha256": "0f9374b54864fa03b54ec6b8f68b066427353abdb2c4d50d5606deeb2bce853d",
+      "bytes": 11606
+    },
+    {
+      "path": "tests/blackbox34/run-browser.sh",
+      "gitBlobSHA": "c021d9dfea174f72e8bf747f66be8f76bf0a0af2",
+      "sha256": "9d6c178b69445a650ed52f0f312c33ff0e78be01fa844fb1d1fba178fdfa3641",
+      "bytes": 1165
+    },
+    {
+      "path": "tests/run-blackbox34.py",
+      "gitBlobSHA": "e3fe8c12c3de82b5ef99c0088de080689c89a035",
+      "sha256": "0eceed0784178352991c242c1a623463ae52f34806c86edd679e6d22fccfa701",
+      "bytes": 3331
+    }
+  ],
+  "preservation": {
+    "productionMain": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+    "blackbox31": "baf899a62863998b749bca8387793a6b1ed5db61",
+    "blackbox32": "870a99c8ed99f981728f26b1eedb415af218b424",
+    "blackbox33": "4f8138d079f5e5598420e74f0baadb161d51ed1c",
+    "RC07Commit": "55e5fba390f7cf648490f7e7b5e0114a4d0d510c",
+    "RC07Tree": "8bd71a5e69dcdaf77add68afcbec5f65a11ece4c",
+    "RC07LocalClean": true,
+    "productionImageDeliveryEnabled": false,
+    "productionRequests": 0,
+    "productionDeployments": 0
+  },
+  "priorRuns": [
+    {
+      "run": 39573133912,
+      "commit": "7307d31f3b1e854d385936041ac3fcdf50cc8028",
+      "offline": "12/12 PASS",
+      "browser": "18 PASS, 14 FAIL",
+      "finding": "Eager-oriented scroll/URL assertions plus a dependent basket failure; no unexpected destinations/page errors. Adapted harness and reserved stable demand layout."
+    },
+    {
+      "run": 39574132935,
+      "commit": "91be11f25115f92acd2c0dd5df8a55cbdf670d2d",
+      "offline": "13/13 PASS",
+      "browser": "32/32 PASS; scale bootstrap FAIL",
+      "finding": "Missing synthetic wiring-kit definition."
+    },
+    {
+      "run": 39574676976,
+      "commit": "9b12bd3e6eb67c2b0538bcf30020d36165b5b39d",
+      "offline": "13/13 PASS",
+      "browser": "32/32 PASS; scale bootstrap FAIL",
+      "finding": "Fixture defaults referred to components outside synthetic permitted IDs. Added complete B33-style identifier/specification fixture graph and actual repository/kit-model prevalidation."
+    },
+    {
+      "run": 39575471573,
+      "commit": "42cdb5525f750ab7a176580a95d3f50706a97130",
+      "offline": "13/13 PASS",
+      "browser": "32/32 plus 7/7 scale PASS",
+      "finding": "Final additional adversarial fixture exposed portable-archive symlink acceptance; a regular-object/type and pre-read size guard was then added."
+    }
+  ],
+  "evidenceScope": "Selected results and screenshots durably retained in Git. Full raw browser events remain in the CI artifact; not production/CDN/billing telemetry.",
+  "portableSecurityBefore": {
+    "developmentRuntime": "Node 24.19.0",
+    "sourceCommit": "42cdb5525f750ab7a176580a95d3f50706a97130",
+    "expectedRejectionMissing": true,
+    "classification": "Application defect in the new portable assembler; reproducible matching-byte committed symlink accepted before correction.",
+    "originalDiagnostic": {
+      "exit": 1,
+      "stdout": "",
+      "stderr": "node:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\n\nAssertionError [ERR_ASSERTION]: Missing expected rejection.\n    at async file:///workspace/scratch/47dd7656a6b9/blackbox34-nightfall/tests/blackbox34/publication.mjs:33:697\n    at async test (file:///workspace/scratch/47dd7656a6b9/blackbox34-nightfall/tests/blackbox34/publication.mjs:8:38)\n    at async file:///workspace/scratch/47dd7656a6b9/blackbox34-nightfall/tests/blackbox34/publication.mjs:33:2 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: undefined,\n  expected: /Unsafe durable Git object/,\n  operator: 'rejects',\n  diff: 'simple'\n}\n\nNode.js v24.19.0\n"
+    }
+  }
+}
