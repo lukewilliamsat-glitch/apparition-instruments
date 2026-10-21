@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'none'; connect-src 'none'; font-src 'none'; frame-src 'none'; worker-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Catalogue — COMMAND 01 · isolated prototype</title>
+<link rel="stylesheet" href="../../dist/admin/application.css">
+<link rel="stylesheet" href="./workbench.css">
+<script type="module" src="./fixture-entry.mjs"></script>
+</head>
+<body data-admin-app data-command01>
+<a class="skip-link" href="#catalogue">Skip to catalogue</a>
+<header class="admin-app-topbar">
+  <a class="command-brand" href="#catalogue" aria-label="Apparition COMMAND catalogue"><span class="brand-mark" aria-hidden="true">A</span><span>APPARITION<small>COMMAND</small></span></a>
+  <span class="workspace-label">Catalogue workspace</span>
+  <span class="fixture-indicator"><span aria-hidden="true">●</span> Synthetic data <span class="wide-only">· Read only</span></span>
+</header>
+<aside class="admin-app-sidebar command-sidebar" aria-label="Workspace">
+  <p class="nav-caption">WORKSPACE</p>
+  <nav aria-label="COMMAND prototype"><a class="admin-nav-item" href="#catalogue" aria-current="page"><span aria-hidden="true">▦</span> Catalogue <span class="nav-count" id="nav-count">—</span></a></nav>
+  <div class="sidebar-note"><span class="eyebrow">COMMAND 01</span><p>A considered space for the details that matter.</p><small>Isolated interface preview.<br>No live business data.</small></div>
+</aside>
+<main class="admin-main" id="catalogue">
+  <div class="page-breadcrumb">WORKSPACE <span aria-hidden="true">/</span> CATALOGUE</div>
+  <div class="admin-page-header"><div><div class="heading-line"><h1>Catalogue</h1><span class="read-only">READ ONLY</span></div><p class="admin-page-description">Every component. A clearer view.</p></div><button id="refresh" class="secondary-button" type="button"><span aria-hidden="true">↻</span> Refresh catalogue</button></div>
+  <p class="fixture-notice"><strong>Fixture workspace</strong> · All names, prices and quantities below are synthetic examples. No changes can be made.</p>
+  <section class="catalogue-metrics" aria-label="Catalogue summary" id="metrics"></section>
+  <section class="filter-panel" aria-label="Find and filter products">
+    <div class="search-row"><label class="search-control"><span class="sr-only">Search catalogue</span><span aria-hidden="true" class="search-icon">⌕</span><input id="search" type="search" placeholder="Search products, SKUs or specifications…" autocomplete="off" maxlength="200"></label><span class="search-hint">Search stays local</span></div>
+    <div class="filter-grid">
+      <label>Category<select id="filter-category"><option value="">All categories</option></select></label>
+      <label>Manufacturer<select id="filter-manufacturer"><option value="">All manufacturers</option></select></label>
+      <label>Individual sale<select id="filter-individual"><option value="">Any eligibility</option><option value="yes">Eligible</option><option value="no">Not eligible</option></select></label>
+      <label>Kit use<select id="filter-kit"><option value="">Any eligibility</option><option value="yes">Eligible</option><option value="no">Not eligible</option></select></label>
+      <label>Stock status<select id="filter-stock"><option value="">All stock states</option><option value="in">In stock</option><option value="low">Low stock (1–3)</option><option value="out">Out of stock</option><option value="unknown">Not supplied</option></select></label>
+    </div>
+    <div id="active-filters" class="active-filters" hidden></div>
+  </section>
+  <div class="workbench-grid">
+    <section class="catalogue-list" aria-labelledby="list-heading">
+      <div class="section-toolbar"><div><h2 id="list-heading">Components <span id="result-count">—</span></h2><p id="result-note">Waiting for catalogue…</p></div><button type="button" id="clear-filters">Clear filters</button></div>
+      <p id="feedback" class="admin-feedback" role="status" aria-live="polite"></p>
+      <div id="error-panel" class="error-panel" role="alert" hidden><div><strong>Catalogue unavailable</strong><p id="error-message"></p></div><button type="button" id="retry">Retry catalogue</button></div>
+      <div id="table-wrap" class="command-table-wrap" hidden><table class="command-table"><caption class="sr-only">Read-only synthetic component catalogue. Select a product name to inspect its details.</caption><thead><tr><th scope="col">Product</th><th scope="col">Selling price</th><th scope="col">Stock</th><th scope="col">Eligibility</th></tr></thead><tbody id="rows"></tbody></table></div>
+      <div id="empty" class="command-empty" hidden><span class="empty-symbol" aria-hidden="true">⌕</span><h3 id="empty-heading">No matching components</h3><p id="empty-message">Try a broader search or clear your filters.</p><button type="button" id="empty-clear">Clear all filters</button></div>
+      <p class="list-footnote">Prices in GBP · Stock is a fixture quantity, not a delivery promise.<br>“Low stock” uses a prototype display threshold of 3; it is not a reorder rule.</p>
+    </section>
+    <aside class="product-inspector" id="inspector" aria-label="Read-only product inspector"></aside>
+  </div>
+  <footer class="command-footer"><span>APPARITION / COMMAND 01</span><span>Catalogue clarity. Existing authority preserved.</span></footer>
+</main>
+<noscript>This isolated prototype requires JavaScript. No live data connection is available.</noscript>
+</body></html>
