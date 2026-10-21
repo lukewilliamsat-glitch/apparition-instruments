@@ -116,13 +116,13 @@ export async function generate({rows,options=[],root=dist,preserveProductAssets=
 }
 // The production default remains legacy until a separately approved activation.
 // Tests inject the static mode, request transport and disposable verified archive.
-export async function readGeneratorCatalogue({config=publicBackendConfig,request=globalThis.fetch,root=dist,staticImages=imageDeliveryConfig.enabled,revision}={}){
+export async function readGeneratorCatalogue({config=publicBackendConfig,request=globalThis.fetch,root=dist,staticImages=imageDeliveryConfig.enabled,revision,delivery=imageDeliveryConfig}={}){
  const filter='&individually=eq.true&category=in.(potentiometers,capacitors,treble-bleeds)&sale_price=gt.0';
  if(!staticImages)return readPublicRows({config,request,maxAgeMs:0},'catalogue_components','?select='+productColumns+filter);
  await verifyArchive(root); // Fail before any backend request if retention is unavailable.
  const columns=productColumns.split(',').filter(c=>c!=='image').join(',');
  const rows=await readPublicRows({config,request,maxAgeMs:0},'catalogue_delivery_v2','?select='+columns+',image_identity,image_reference'+filter);
- return retainedCatalogueSnapshot(rows,root,{revision});
+ return retainedCatalogueSnapshot(rows,root,{revision,assetOrigin:delivery.assetOrigin,assetBasePath:delivery.assetBasePath});
 }
 async function fetchPublic(table){
  return table==='catalogue_components'?readGeneratorCatalogue():readPublicRows({config:publicBackendConfig,maxAgeMs:0},table,'?select='+optionColumns);

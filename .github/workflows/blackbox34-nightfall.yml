@@ -1,0 +1,85 @@
+name: NIGHTFALL isolated engineering acceptance
+on:
+  push:
+    branches: ['engineering/blackbox34-nightfall']
+    paths:
+      - '.github/workflows/blackbox34-nightfall.yml'
+      - 'tests/blackbox34/**'
+      - 'tests/run-blackbox34.py'
+      - 'dist/backend/**'
+      - 'dist/components/cards.mjs'
+      - 'dist/products/app.mjs'
+      - 'scripts/portable-image-publication.mjs'
+      - 'scripts/catalogue-compatibility-preflight.mjs'
+      - 'scripts/retained-catalogue-snapshot.mjs'
+      - 'scripts/generate-product-pages.mjs'
+permissions:
+  contents: read
+concurrency:
+  group: blackbox34-nightfall
+  cancel-in-progress: false
+jobs:
+  offline:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/blackbox34-nightfall'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.20.0'
+      - name: Existing locked test dependencies only
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Synthetic lifecycle, performance, preflight and regressions
+        env:
+          NIGHTFALL_EVIDENCE: ${{ runner.temp }}/nightfall-offline
+        run: python3 tests/run-blackbox34.py "$(command -v node)"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nightfall-offline-evidence
+          path: ${{ runner.temp }}/nightfall-offline/*.json
+          retention-days: 30
+  browser:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/blackbox34-nightfall'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.20.0'
+      - name: Reuse hosted Chrome and pinned disposable controller
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/nightfall-browser" "$RUNNER_TEMP/nightfall-tools"
+          browser=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || true)
+          test -n "$browser"
+          printf '%s\n' "$browser" > "$RUNNER_TEMP/nightfall-tools/browser-path"
+          "$browser" --version > "$RUNNER_TEMP/nightfall-browser/browser-version.txt"
+          node --version > "$RUNNER_TEMP/nightfall-browser/node-version.txt"
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install --prefix "$RUNNER_TEMP/nightfall-tools" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false playwright-core@1.56.1
+          npm view playwright-core@1.56.1 dist.integrity > "$RUNNER_TEMP/nightfall-browser/controller-integrity.txt"
+      - name: Verify isolation before fixtures, then run actual browser acceptance
+        shell: bash
+        run: |
+          set -euo pipefail
+          browser=$(cat "$RUNNER_TEMP/nightfall-tools/browser-path")
+          sudo unshare --net --mount --pid --fork --mount-proc /bin/bash tests/blackbox34/run-browser.sh \
+            "$GITHUB_WORKSPACE" "$RUNNER_TEMP/nightfall-browser" "$(command -v node)" "$browser" \
+            "$RUNNER_TEMP/nightfall-tools/node_modules/playwright-core/index.mjs" "$(id -un)" "$(readlink /proc/self/ns/net)" "$GITHUB_SHA"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nightfall-browser-evidence
+          path: |
+            ${{ runner.temp }}/nightfall-browser/*.json
+            ${{ runner.temp }}/nightfall-browser/*.txt
+            ${{ runner.temp }}/nightfall-browser/SCREENSHOTS/*.png
+            ${{ runner.temp }}/nightfall-browser/SCALE_SCREENSHOTS/*.png
+          retention-days: 30
