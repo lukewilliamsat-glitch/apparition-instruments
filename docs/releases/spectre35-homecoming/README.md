@@ -23,7 +23,9 @@ The existing daily workflow remains unchanged. A `[static-only]` push still invo
 
 [Release manifest](RELEASE_MANIFEST.json) · [Publication safety](PUBLICATION_SAFETY.md) · [Live acceptance status](LIVE_ACCEPTANCE.md) · [Rollback](ROLLBACK.md) · [Next phase and proposed approvals](NEXT_PHASE.md).
 
-The manifest's repository inventory is explicitly source-only; authoritative publication/rollback payload identities are null. Synthetic safety tests exercise guarded extraction, missing/corrupted/extra output rejection, deterministic assembly and exact fixture rollback. Their success cannot certify production. Separate branch-only CI has read-only permissions and no production deployment path.
+The manifest's repository inventory is explicitly source-only; authoritative publication/rollback payload identities are null. [Fresh read-only CI 39612316997](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/39612316997) passed **27/27 tests, zero skips**, on Python3.12.3. Four IPv4/IPv6 TCP/UDP socket probes were denied, child inheritance and NoNewPrivs verified; existing libseccomp was reused with no dependency installation. The local run passed 26 with its full-Git case explicitly skipped; CI completed that proof. [Test evidence](TEST_RESULTS.json).
+
+Synthetic safety tests exercise guarded extraction, missing/corrupted/extra output rejection, deterministic assembly and exact fixture rollback. Their success cannot certify production. Separate branch-only CI has read-only permissions and no production deployment path.
 
 SPECTRE's prior Chrome/Node22 acceptance is reused because the corrected CSS is byte-identical. Its known external-font/desktop-browser-zoom limitations and pre-existing 7px enlarged-text header overflow remain. No new live-browser acceptance is claimed.
 

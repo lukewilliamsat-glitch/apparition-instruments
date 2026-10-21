@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "mission": "AUTHORISATION 36 — OPERATION HOMECOMING",
-  "status": "BLOCKED — NOT DEPLOYED",
+  "mission": "AUTHORISATION 36 \u2014 OPERATION HOMECOMING",
+  "status": "BLOCKED \u2014 NOT DEPLOYED",
   "repository": "lukewilliamsat-glitch/apparition-instruments",
   "preparationBranch": "release/spectre35-homecoming",
   "productionMain": {
@@ -16,7 +16,8 @@
     "changedFiles": [
       "dist/customer-ui.css"
     ],
-    "deployable": false
+    "deployable": false,
+    "inventoryDerivation": "The 416 main source entries, replacing only customer-ui.css with the reviewed blob and byte size; verified by full Git diff in CI."
   },
   "css": {
     "path": "dist/customer-ui.css",
@@ -2583,7 +2584,8 @@
         "bytes": 4761,
         "mode": "100644"
       }
-    ]
+    ],
+    "commit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f"
   },
   "authoritativePublicationInventory": null,
   "publicationPayloadSHA256": null,
@@ -2599,11 +2601,24 @@
     "currentActiveDeploymentAssociation": "UNKNOWN",
     "deploymentConfigurationAPI": "CONNECTOR_ENDPOINT_UNSUPPORTED",
     "productionDeployment": "NOT EXECUTED",
-    "liveAcceptance": "NOT EXECUTED — deployment blocked"
+    "liveAcceptance": "NOT EXECUTED \u2014 deployment blocked"
   },
   "releaseSafetyTests": {
-    "status": "PENDING",
-    "CI": null
+    "status": "PASS",
+    "tests": 27,
+    "failed": 0,
+    "skipped": 0,
+    "CI": 39612316997,
+    "job": 119264089586,
+    "sourceCommit": "8aa4d3e386ba81ce6bf4c0833d43ced6b2bff998",
+    "sourceTree": "4353d0a6aaa8a0be2a9c31162e4412c6f03b0696",
+    "runtime": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "artifact": 12350517884,
+    "artifactSHA256": "cdee451d22421d5c82a647d15e2f19968d1ca90a0d1b12046d6e9934446dab82",
+    "artifactIntegrity": "SHA256 and ZIP integrity verified after retrieval",
+    "resultFile": "TEST_RESULTS.json",
+    "newBrowserRun": false,
+    "productionPublicationProven": false
   },
   "productionOperations": {
     "mainWrites": 0,

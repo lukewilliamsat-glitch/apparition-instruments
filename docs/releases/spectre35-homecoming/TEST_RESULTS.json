@@ -1,0 +1,190 @@
+{
+  "classification": "Offline fixtures PASS; production release BLOCKED",
+  "CI": {
+    "status": "PASS",
+    "tests": 27,
+    "failed": 0,
+    "skipped": 0,
+    "CI": 39612316997,
+    "job": 119264089586,
+    "sourceCommit": "8aa4d3e386ba81ce6bf4c0833d43ced6b2bff998",
+    "sourceTree": "4353d0a6aaa8a0be2a9c31162e4412c6f03b0696",
+    "runtime": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "artifact": 12350517884,
+    "artifactSHA256": "cdee451d22421d5c82a647d15e2f19968d1ca90a0d1b12046d6e9934446dab82",
+    "artifactIntegrity": "SHA256 and ZIP integrity verified after retrieval",
+    "resultFile": "TEST_RESULTS.json",
+    "newBrowserRun": false,
+    "productionPublicationProven": false
+  },
+  "results": {
+    "status": "PASS",
+    "tests": 27,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "runtime": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "sourceCSSSHA256": "16d6ebbd2372d54e32565a7999edfd1bc9152c785b77f1bcbf79ee47bba1794a",
+    "fixtureFiles": 11,
+    "productionGateBlockers": [
+      "productionWorkflowBackendFree",
+      "completeAuthoritativePublicationInput",
+      "completeRollbackInput",
+      "currentActiveDeploymentAssociation",
+      "authoritativePublicationInventory",
+      "publicationPayloadSHA256",
+      "rollbackPayloadSHA256"
+    ],
+    "scope": "Synthetic manifest/assembly/rollback checks; not current production certification"
+  },
+  "networkProof": {
+    "status": "PASS",
+    "networkSocketProbes": [
+      {
+        "family": 2,
+        "type": 1,
+        "errno": 1,
+        "denied": true
+      },
+      {
+        "family": 2,
+        "type": 2,
+        "errno": 1,
+        "denied": true
+      },
+      {
+        "family": 10,
+        "type": 1,
+        "errno": 1,
+        "denied": true
+      },
+      {
+        "family": 10,
+        "type": 2,
+        "errno": 1,
+        "denied": true
+      }
+    ],
+    "childInheritedDenial": true,
+    "NoNewPrivs": true,
+    "productionRequests": 0
+  },
+  "localResult": {
+    "status": "PASS",
+    "tests": 27,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 1,
+    "runtime": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "sourceCSSSHA256": "16d6ebbd2372d54e32565a7999edfd1bc9152c785b77f1bcbf79ee47bba1794a",
+    "fixtureFiles": 11,
+    "productionGateBlockers": [
+      "productionWorkflowBackendFree",
+      "completeAuthoritativePublicationInput",
+      "completeRollbackInput",
+      "currentActiveDeploymentAssociation",
+      "authoritativePublicationInventory",
+      "publicationPayloadSHA256",
+      "rollbackPayloadSHA256"
+    ],
+    "scope": "Synthetic manifest/assembly/rollback checks; not current production certification"
+  },
+  "localNetworkProof": {
+    "status": "PASS",
+    "networkSocketProbes": [
+      {
+        "family": 2,
+        "type": 1,
+        "errno": 1,
+        "denied": true
+      },
+      {
+        "family": 2,
+        "type": 2,
+        "errno": 1,
+        "denied": true
+      },
+      {
+        "family": 10,
+        "type": 1,
+        "errno": 1,
+        "denied": true
+      },
+      {
+        "family": 10,
+        "type": 2,
+        "errno": 1,
+        "denied": true
+      }
+    ],
+    "childInheritedDenial": true,
+    "NoNewPrivs": true,
+    "productionRequests": 0
+  },
+  "reusedBrowserEvidence": {
+    "run": 39583250290,
+    "source": "232017a80fd6c5f2a3083d99cd9f647d8f4db27e",
+    "conclusion": "success",
+    "scope": "Prior SPECTRE35 isolated acceptance, byte-identical CSS; not a new or live browser run"
+  },
+  "readOnlyGitHubEvidence": {
+    "main": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+    "latestSuccessfulPagesRun": 38167017686,
+    "missingArtifact": 11712976121,
+    "currentLookupHTTP": 404,
+    "artifactListing": [],
+    "priorArtifactDigestFromLog": "d3e804f37e04ea25bbd5e5df3764d8ea2c2ea201f71c381f102142e1be29f3d8",
+    "latestFailedRun": 39567549124,
+    "job": 119113386245,
+    "observedHTTP": 402,
+    "currentActiveDeployment": "UNKNOWN",
+    "pagesAndDeploymentAPI": "Connector 400 INVALID_ARGUMENT for unsupported endpoints"
+  },
+  "futurePreflight": {
+    "planSHA256": "bd9aca0efc68e8921150fbd0aefbce97059919f34d066d6b59c2cec9191e4f44",
+    "independentlyRecomputed": true,
+    "executed": false
+  },
+  "sourceFiles": [
+    {
+      "path": "dist/customer-ui.css",
+      "bytes": 18732,
+      "sha256": "16d6ebbd2372d54e32565a7999edfd1bc9152c785b77f1bcbf79ee47bba1794a"
+    },
+    {
+      "path": ".github/workflows/homecoming36-validation.yml",
+      "bytes": 1022,
+      "sha256": "86918e990b1946fd0793568fb748301617161b029d9eeea7f3ad4fe07b5c31e8"
+    },
+    {
+      "path": "tests/homecoming36/release_contract.py",
+      "bytes": 2881,
+      "sha256": "6885232e4556bb18e89a953c63f43e8f137df9a3b1dd0750d04c9c6d450111f6"
+    },
+    {
+      "path": "tests/homecoming36/run_offline.py",
+      "bytes": 2812,
+      "sha256": "9a86398cb5bc32718f1ac029aa6a16f5eb48c0bdef31a08e025234cf300cac86"
+    },
+    {
+      "path": "tests/homecoming36/test_release.py",
+      "bytes": 6640,
+      "sha256": "f3f54482b8f15a09c2219e916a2c44121f4d4184dcc0ae3f92dadc0e892b5ca5"
+    },
+    {
+      "path": "tests/homecoming36/replacements.json",
+      "bytes": 1082,
+      "sha256": "ef69ca72bfa98e1fee2f301653dc0684bbb0cb72cb2c2b4019cfe7fa847ce316"
+    },
+    {
+      "path": "tests/homecoming36/baseline-customer-ui.txt",
+      "bytes": 18494,
+      "sha256": "f72258fb8d455513d2cb38e3672f914207f81ee37664c7e6b32edc7d9c320f26"
+    }
+  ],
+  "productionChanges": [],
+  "warnings": [
+    "Fixture manifest consistency is not provenance or current production certification.",
+    "Local materialisation skips one full-Git test; CI executes all 27 with no skips."
+  ]
+}
