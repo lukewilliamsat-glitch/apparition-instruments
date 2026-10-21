@@ -36,7 +36,7 @@ context.on('page',p=>{p.on('console',m=>{if(m.type()==='error')consoleErrors.pus
 let page;
 const waitReady=async p=>p.waitForFunction(()=>window.commandFixture?.controller?.snapshot().status==='ready');
 const fresh=async(width=1440)=>{const p=await context.newPage();await p.setViewportSize({width,height:1000});await p.goto(origin+'/prototypes/command01/index.html');await waitReady(p);return p;};
-const shot=async(name,p=page)=>{await p.screenshot({path:join(output,'SCREENSHOTS',name+'.png'),fullPage:true,animations:'disabled'});screenshots.push(name+'.png');};
+const shot=async(name,p=page)=>{await p.screenshot({path:join(output,'SCREENSHOTS',name+'.png'),fullPage:false,animations:'disabled'});screenshots.push(name+'.png');};
 const test=async(name,fn)=>{try{await fn();results.push({name,status:'PASS'});}catch(error){results.push({name,status:'FAIL',error:String(error),stack:error.stack});}};
 const choose=async(id,p=page)=>{await p.locator('[data-product="'+id+'"]').click();await p.waitForFunction(id=>window.commandFixture.controller.snapshot().detail?.id===id,id);};
 const reset=async()=>{await page.evaluate(async()=>{const f=window.commandFixture;f.transport.reset();f.controller.close();f.controller.clearFilters();await f.controller.refresh({supersede:true});});await waitReady(page);};
@@ -130,6 +130,13 @@ try{
   await page.evaluate(async()=>{const f=window.commandFixture;f.transport.enqueue('list',()=>[]);await f.controller.refresh();});
   assert.equal(await page.locator('#empty-heading').textContent(),'No components in this fixture');assert(await page.locator('#error-panel').isHidden());await reset();
  });
+ await test('delayed detail completion does not steal focus from active search',async()=>{
+  const p=await fresh();
+  await p.evaluate(()=>window.commandFixture.transport.enqueue('detail',({id,records})=>new Promise(resolve=>window.releaseDetail=()=>resolve(records.find(r=>r.id===id)))));
+  await p.locator('[data-product="fx-cap-02"]').click();await p.locator('#search').focus();await p.locator('#search').fill('cap');
+  await p.evaluate(()=>window.releaseDetail());await p.waitForFunction(()=>window.commandFixture.controller.snapshot().detailStatus==='ready');
+  assert.equal(await p.evaluate(()=>document.activeElement.id),'search');assert.equal(await p.locator('#search').inputValue(),'cap');await p.close();
+ });
  await test('duplicate and malformed records surface a useful error',async()=>{
   for(const invalid of ['duplicate','malformed']){
    await page.evaluate(async(kind)=>{const f=window.commandFixture;f.transport.enqueue('list',()=>kind==='duplicate'?[f.records()[0],f.records()[0]]:[{id:''}]);await f.controller.refresh();},invalid);
@@ -169,6 +176,9 @@ try{
   }).join('\n'));
   await page.addStyleTag({url:origin+'/tests/command01/increased-text.css'});
   assert.equal(await page.locator('#search').evaluate(e=>getComputedStyle(e).fontSize),'26px');
+  assert(await page.locator('#search').evaluate(e=>e.clientHeight>=parseFloat(getComputedStyle(e).fontSize)*1.5+16),'Scaled search text must fit vertically');
+  assert(await page.locator('.search-icon').evaluate(e=>{const icon=e.getBoundingClientRect(),input=document.getElementById('search').getBoundingClientRect();return icon.top>=input.top&&icon.bottom<=input.bottom;}),'Search icon must stay within the enlarged control');
+  assert(await page.locator('.command-table th').evaluateAll(headers=>headers.every(th=>{const range=document.createRange();range.selectNodeContents(th);return range.getBoundingClientRect().right<=th.getBoundingClientRect().right-9;})),'Scaled column headings must not clip');
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));await shot('increased-text');
  });
  await page.close();page=await fresh();
