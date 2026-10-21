@@ -149,6 +149,8 @@ try{
   const dimensions=await page.evaluate(()=>({inner:innerWidth,scroll:document.documentElement.scrollWidth,inspector:document.getElementById('inspector').getBoundingClientRect().toJSON()}));
   assert(dimensions.scroll<=dimensions.inner+1,JSON.stringify(dimensions));
   assert(dimensions.inspector.width>=Math.min(width-32,290));assert(await page.locator('#detail-title').isVisible());
+  assert(await page.locator('[data-product="fx-wire-02"]').evaluate(e=>e.scrollWidth<=e.clientWidth+1),'Long product names must wrap rather than clip');
+  if(width<=820)assert(await page.locator('[data-close]').evaluate(e=>e.getBoundingClientRect().top>=document.querySelector('header').getBoundingClientRect().bottom),'Inspector close control must clear sticky header');
   viewportResults.push({width,...dimensions});
   if(width===390){await shot('mobile-inspector');await page.locator('[data-close]').click();await page.evaluate(()=>scrollTo(0,0));await shot('mobile-catalogue');}
   if(width===768)await shot('tablet-inspector');
@@ -199,3 +201,4 @@ try{
  console.log(JSON.stringify({status:report.status,total:report.total,passed:report.passed,failed:report.results.filter(r=>r.status==='FAIL')},null,2));
  if(report.failed)process.exitCode=1;
 }finally{await browser.close();await new Promise(r=>server.close(r));}
+
