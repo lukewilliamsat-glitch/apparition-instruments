@@ -6,7 +6,7 @@ import {categories,money,stockLabel,stockState,emptyFilters} from './model.mjs';
 export function mountWorkbench(document,{transport}={}) {
   const byId=id=>document.getElementById(id);
   const inspector=byId('inspector'),filters=['category','manufacturer','individual','kit','stock'];
-  let controller,lastRowsKey='',lastInspectorKey='',lastManufacturers='',disposed=false;
+  let controller,lastRowsKey='',lastInspectorKey='',lastManufacturers='',lastDisplayedDetail=null,disposed=false;
   const cleanups=[];
   const listen=(target,event,handler)=>{target.addEventListener(event,handler);cleanups.push(()=>target.removeEventListener(event,handler));};
   const add=(parent,tag,text,className)=>{const child=node(document,tag,text,className);parent.append(child);return child;};
@@ -86,7 +86,9 @@ export function mountWorkbench(document,{transport}={}) {
       add(image,'p','Synthetic SHA-256: '+row.imageInfo.sha256,'image-fingerprint');
     }
     const identity=section(body,'Record');const ids=add(identity,'dl');pair(ids,'Stable ID',row.id);pair(ids,'Fixture revision',row.revision);
-    if(state.focusInspector||focusWasInside){title.focus({preventScroll:true});if(state.focusInspector&&document.defaultView.innerWidth<=820)inspector.scrollIntoView({block:'start',behavior:'auto'});}
+    const requestedFocus=state.focusInspector&&row!==lastDisplayedDetail&&(document.activeElement?.dataset?.product===row.id||focusWasInside);
+    lastDisplayedDetail=row;
+    if(requestedFocus||focusWasInside){title.focus({preventScroll:true});if(requestedFocus&&document.defaultView.innerWidth<=820)inspector.scrollIntoView({block:'start',behavior:'auto'});}
   }
   function render(state){
     if(disposed)return;

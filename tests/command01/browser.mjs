@@ -71,6 +71,8 @@ try{
   await shot('desktop-inspector');
  });
  await test('selected identity survives filtering out and clearing',async()=>{
+  await page.locator('#search').focus();await page.locator('#search').fill('capacitor');
+  assert.equal(await page.evaluate(()=>document.activeElement.id),'search','Filter changes must not steal focus into the inspector');
   await page.locator('#filter-category').selectOption('capacitors');assert.match(await page.locator('#inspector').textContent(),/outside the current filters/);
   assert.equal(await page.evaluate(()=>window.commandFixture.controller.snapshot().selectedId),'fx-pot-01');
   await page.locator('#clear-filters').click();assert.equal(await page.locator('#detail-title').textContent(),'A500K audio taper potentiometer');
