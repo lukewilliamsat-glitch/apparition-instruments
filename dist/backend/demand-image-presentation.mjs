@@ -5,6 +5,9 @@ export function disposeDemandImages(root){for(const node of [root,...root.queryS
 export function mountDemandImage(host,handle,{alt,className,fallback,immediate=false}){
  if(!isDemandImage(handle))throw Error('Verified image handle required');
  const doc=host.ownerDocument,view=doc.defaultView;let observer,controller,lease,epoch=0,stopped=false,failed=false,paused=false;
+ // Observe a stable block area even before an <img> exists. Reserve the existing
+ // card image height to avoid shifting catalogue content after verification.
+ host.style.display='block';if(!immediate){host.style.minHeight='220px';fallback.style.height='220px';}
  host.append(fallback);host.dataset.imageState='pending';
  function leave(){epoch++;controller?.abort();controller=null;lease?.release();lease=null;host.replaceChildren(fallback);}
  async function enter(){

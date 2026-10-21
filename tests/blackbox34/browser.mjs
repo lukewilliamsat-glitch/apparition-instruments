@@ -8,7 +8,12 @@ replace('const [output,executablePath,controller]=','const [output,executablePat
 replace("sourceCommit:'870a99c8ed99f981728f26b1eedb415af218b424'",'sourceCommit:candidateCommit');
 replace("{enabled:true,assetOrigin:origin,manifestPath:","{enabled:true,verificationMode:'demand',assetOrigin:origin,manifestPath:");
 replace("assert((await img.getAttribute('src')).endsWith(expected.path));","assert((await img.getAttribute('data-verified-source')).endsWith(expected.path));assert((await img.getAttribute('src')).startsWith('blob:'));");
+replace("async function photo(page,id=target.id,expected=oldEntry){const img=", "async function photo(page,id=target.id,expected=oldEntry){await page.locator('#'+id).scrollIntoViewIfNeeded();const img=");
+replace("assert((await img.getAttribute('src')).endsWith(oldEntry.path));","assert((await img.getAttribute('data-verified-source')).endsWith(oldEntry.path));assert((await img.getAttribute('src')).startsWith('blob:'));");
+replace("assert((await page.locator('#product-detail img').getAttribute('src')).endsWith(secondEntry.path));","assert((await page.locator('#product-detail img').getAttribute('data-verified-source')).endsWith(secondEntry.path));");
+replace("assert((await page.locator('#product-detail img').getAttribute('src')).endsWith(oldEntry.path));","assert((await page.locator('#product-detail img').getAttribute('data-verified-source')).endsWith(oldEntry.path));");
 replace('url:r.image?.url','url:r.image?.key');
+replace("await test('synthetic basket via actual purchase button and basket renderer',async()=>{const add=","await test('synthetic basket via actual purchase button and basket renderer',async()=>{await page.goto(origin+'/products/'+target.id.toLowerCase()+'/');await page.waitForSelector('#product-detail img');const add=");
 replace('async function placeholder(page){await page.waitForFunction',"async function placeholder(page){await page.locator('#'+target.id).scrollIntoViewIfNeeded();await page.waitForFunction");
 replace("c?.querySelector('.component-mark')&&!c.querySelector('img.component-image')","c?.querySelector('.component-mark')&&!c.querySelector('img.component-image')&&!c.querySelector('[data-image-state=\"pending\"],[data-image-state=\"loading\"]')");
 replace("'NETWORK_CACHE_RESULTS.json'","'DEMAND_BROWSER_RESULTS.json'");

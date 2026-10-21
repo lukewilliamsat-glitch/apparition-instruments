@@ -5,7 +5,7 @@ root=Path(__file__).resolve().parents[1]
 node=str(Path(sys.argv[1]).resolve())
 development='--development' in sys.argv
 if sys.platform!='linux' or platform.machine()!='x86_64':raise SystemExit('Reviewed filter requires Linux x64')
-suites=['blackbox34/publication.mjs','blackbox34/demand.mjs','blackbox34/preflight.mjs','blackbox34/benchmark.mjs',
+suites=['blackbox34/publication.mjs','blackbox34/demand.mjs','blackbox34/presentation.mjs','blackbox34/preflight.mjs','blackbox34/benchmark.mjs',
  'blackbox31-static-images.mjs','blackbox32-hardening.mjs','egress-static-assets-v2.mjs','egress-static-assets-v2-dom.mjs',
  'component-repository.mjs','component-export.mjs','kit-snapshot.mjs','p07b-checkout.mjs']
 probes='''import socket,subprocess,sys,json
