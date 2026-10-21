@@ -1,0 +1,1417 @@
+{
+  "mission": "AUTHORISATION 38 — COMMAND 02 — The Forge Editor",
+  "date": "2026-10-21",
+  "overallStatus": "PARTIAL",
+  "implementationStatus": "PASS",
+  "functionalAcceptanceStatus": "PASS",
+  "evidencePublicationStatus": "BLOCKED: 0 of 10 required COMMAND02 PNGs committed",
+  "repository": "lukewilliamsat-glitch/apparition-instruments",
+  "visibility": "public",
+  "branch": "engineering/command02-forge-editor",
+  "productionMain": {
+    "commit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+    "tree": "eb2c9f1824602d19ed27f010cf080190a06c713e",
+    "inheritedBlobs": 899,
+    "changed": 0
+  },
+  "command01Baseline": {
+    "commit": "3b84871ccb338296b52b4fe3fe350be17284d235",
+    "tree": "be3867b1d1adfcf64c0783dce2e9c1e1c7eee7d3",
+    "branchUnchanged": true
+  },
+  "testedSource": {
+    "commit": "04bd1adfd8b6b1e21180b4f78622a404b9eb5701",
+    "tree": "b59e0039dae486477907fd541eb965d9df451564",
+    "manifest": {
+      "prototypes/command02/editor.css": {
+        "sha256": "fb87132b61ba40252929e6257d629380f8d7d89bd9dccac8af4c4e175e5d6334",
+        "gitBlob": "6d18a1d51737fe41ac334f6e568f4fdb797e5902",
+        "bytes": 6054
+      },
+      "prototypes/command02/schema.mjs": {
+        "sha256": "7f4d13f0ce23ee03a07337f0c2866c66812116187c5204ff0accc595095c75ea",
+        "gitBlob": "83bfffef41c8d750eca2e9f9a4374a9078607e5f",
+        "bytes": 5963
+      },
+      "prototypes/command02/index.html": {
+        "sha256": "082270ba2b43dd1259be1fa4bc40757f20e6e12b543a4cd6329bbb6fec9da404",
+        "gitBlob": "b94035577ef0639b2be530a2fe347584d2a5c9d5",
+        "bytes": 8978
+      },
+      "prototypes/command02/persistence.mjs": {
+        "sha256": "542cbe0c48c53b92d3d2328882d7bbd86db2c9338c2f09df073495003dbfc294",
+        "gitBlob": "7dd17ea86fc5387963498f9ca2ed5bbc6cdc5b98",
+        "bytes": 5982
+      },
+      "prototypes/command02/fixture-entry.mjs": {
+        "sha256": "915980aa268f2c5d31b07591fcc202f6404a17f5711b93d39882d6e5473b8808",
+        "gitBlob": "b9a1d190fc5c44cad6aacf342b8dc2028237f0b9",
+        "bytes": 714
+      },
+      "prototypes/command02/fixture-exit.html": {
+        "sha256": "3b6f64d86f444bc35b9c3078fd12b04bcce7049d68274df9615b9998b2d08e56",
+        "gitBlob": "94830af1f32a1a49a1c6ea36b93e88d20eb347ff",
+        "bytes": 289
+      },
+      "prototypes/command02/editor-view.mjs": {
+        "sha256": "7bbdd863a886e649baa2e15c71b40dca181080c5897fd84e58a1454ef7648adb",
+        "gitBlob": "81db3c2188d3e050ce0761d430270e655bf066e0",
+        "bytes": 13992
+      },
+      "prototypes/command02/session.mjs": {
+        "sha256": "7f41c994a276113dbf0b1dd88bb1f33823f979669acb28083f8d0ac5173408c5",
+        "gitBlob": "fd4bebd75223028a8ea81e7c7f65ed8301918c70",
+        "bytes": 8175
+      },
+      "tests/command02/browser.mjs": {
+        "sha256": "e4766b2d7d3d1502ee5f98affb70a4b72d3022a8f5c4174728dab0628603d12c",
+        "gitBlob": "cb9d194f5c4a4a3e641f49d4d17da5ae94009f16",
+        "bytes": 27840
+      },
+      "tests/command02/run-browser.sh": {
+        "sha256": "6467d20fc41ad8e982b30d747561b7b6495a17faed044e39c394e0394e96005c",
+        "gitBlob": "03d7e395514c276a3a2e4ae1a9566297e3882f7f",
+        "bytes": 1269
+      },
+      "tests/command02/logic.mjs": {
+        "sha256": "dd5884d585bbc1b70080850653a2cd6e351b5efb41c3a4b722dfc23d84b9bd90",
+        "gitBlob": "9e0b85e4b5fb295f23775dba1ae6d4b670a33a3f",
+        "bytes": 20890
+      },
+      "prototypes/command01/view.mjs": {
+        "sha256": "56844dc7852e382648d22851b6fadddd459580676814e79970faaedcf5caf109",
+        "gitBlob": "1bc2621eb4f8d0f80e047de1586510ca74265517",
+        "bytes": 14025
+      },
+      ".github/workflows/command02-acceptance.yml": {
+        "sha256": "607210d7c305aae2635750c164230d8a2347eeeb413c00111ef90a480fa25662",
+        "gitBlob": "c64b0c895e571ea9fdbe72a036abe0bf987cffe3",
+        "bytes": 2755
+      }
+    }
+  },
+  "finalCI": {
+    "run": 39630582702,
+    "job": 119327445240,
+    "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/39630582702",
+    "status": "completed",
+    "conclusion": "success",
+    "event": "push",
+    "attempt": 1,
+    "node": "v22.20.0",
+    "chrome": "155.0.8059.39",
+    "runner": "Ubuntu24.04",
+    "runnerImage": "20261012.334.1",
+    "controller": "playwright-core@1.56.1"
+  },
+  "previousCI": {
+    "run": 39629517340,
+    "conclusion": "success",
+    "nodePassed": 48,
+    "chromePassed": 37
+  },
+  "suites": {
+    "command02Node": {
+      "status": "PASS",
+      "node": "v22.20.0",
+      "total": 54,
+      "passed": 54,
+      "failed": 0,
+      "results": [
+        {
+          "name": "explicit synthetic persistence is mandatory",
+          "status": "PASS"
+        },
+        {
+          "name": "exact integer GBP parsing without rounding",
+          "status": "PASS"
+        },
+        {
+          "name": "required text and length validation",
+          "status": "PASS"
+        },
+        {
+          "name": "nullable prices and positive kit quantities",
+          "status": "PASS"
+        },
+        {
+          "name": "booleans are not coerced from arbitrary values",
+          "status": "PASS"
+        },
+        {
+          "name": "semantic equivalent prices produce no misleading changes",
+          "status": "PASS"
+        },
+        {
+          "name": "unsupported identity stock image and private mutations fail authority validation",
+          "status": "PASS"
+        },
+        {
+          "name": "C02 normalises canonical stock units without altering C01 source",
+          "status": "PASS"
+        },
+        {
+          "name": "summary does not expose original image data or private values",
+          "status": "PASS"
+        },
+        {
+          "name": "detail read excludes private cost and original image data",
+          "status": "PASS"
+        },
+        {
+          "name": "clean editor does not mutate fixture authority",
+          "status": "PASS"
+        },
+        {
+          "name": "review required before actual save",
+          "status": "PASS"
+        },
+        {
+          "name": "save preserves stock image private metadata and unedited fields",
+          "status": "PASS"
+        },
+        {
+          "name": "Series and Reference changes preserve other specification keys",
+          "status": "PASS"
+        },
+        {
+          "name": "actual fixture result updates the baseline and clears only submitted changes",
+          "status": "PASS"
+        },
+        {
+          "name": "concurrent save clicks submit exactly one update",
+          "status": "PASS"
+        },
+        {
+          "name": "edits made during pending save remain dirty after confirmation",
+          "status": "PASS"
+        },
+        {
+          "name": "review is invalidated by any subsequent field edit",
+          "status": "PASS"
+        },
+        {
+          "name": "case-insensitive duplicate SKU is rejected by authority with no mutation",
+          "status": "PASS"
+        },
+        {
+          "name": "permission denial is enforced by fixture authority",
+          "status": "PASS"
+        },
+        {
+          "name": "permission revoked during pending save is enforced at commit",
+          "status": "PASS"
+        },
+        {
+          "name": "confirmed failed permission can be reviewed and retried safely",
+          "status": "PASS"
+        },
+        {
+          "name": "confirmed failed validation can be reviewed and retried safely",
+          "status": "PASS"
+        },
+        {
+          "name": "confirmed failed disconnect-before can be reviewed and retried safely",
+          "status": "PASS"
+        },
+        {
+          "name": "ambiguous timeout-before blocks retry until operation reconciliation",
+          "status": "PASS"
+        },
+        {
+          "name": "ambiguous disconnect-after blocks retry until operation reconciliation",
+          "status": "PASS"
+        },
+        {
+          "name": "ambiguous unexpected-after blocks retry until operation reconciliation",
+          "status": "PASS"
+        },
+        {
+          "name": "unknown status and failed status check never enable unsafe retry",
+          "status": "PASS"
+        },
+        {
+          "name": "newer edits survive recovery of an already committed ambiguous save",
+          "status": "PASS"
+        },
+        {
+          "name": "conflict detected during review preserves all local values",
+          "status": "PASS"
+        },
+        {
+          "name": "conflict between review and commit is rejected atomically",
+          "status": "PASS"
+        },
+        {
+          "name": "two editors compare-and-set: exactly one winner",
+          "status": "PASS"
+        },
+        {
+          "name": "discard/reload obtains latest authority rather than stale original",
+          "status": "PASS"
+        },
+        {
+          "name": "failed reload retains the dirty draft",
+          "status": "PASS"
+        },
+        {
+          "name": "record deletion has a useful read failure without substitution",
+          "status": "PASS"
+        },
+        {
+          "name": "reversed product detail loads keep the latest identity",
+          "status": "PASS"
+        },
+        {
+          "name": "stale read failure cannot replace current product",
+          "status": "PASS"
+        },
+        {
+          "name": "old product save response cannot clear newer product edits",
+          "status": "PASS"
+        },
+        {
+          "name": "teardown ignores a late save completion",
+          "status": "PASS"
+        },
+        {
+          "name": "idempotent duplicate operation applies once and returns same authority",
+          "status": "PASS"
+        },
+        {
+          "name": "stale expected revision never changes authority",
+          "status": "PASS"
+        },
+        {
+          "name": "malformed save response is conservative and reconciles genuine status",
+          "status": "PASS"
+        },
+        {
+          "name": "unapproved persistence marker cannot silently fall back",
+          "status": "PASS"
+        },
+        {
+          "name": "negative network probes are denied by the formal test preload",
+          "status": "PASS"
+        },
+        {
+          "name": "application source has no live transport or HTML insertion",
+          "status": "PASS"
+        },
+        {
+          "name": "empty or nonplain patches cannot create phantom revisions",
+          "status": "PASS"
+        },
+        {
+          "name": "malformed specification responses fail without coercion",
+          "status": "PASS"
+        },
+        {
+          "name": "real client save deadline preserves uncertainty until late commit is proven",
+          "status": "PASS"
+        },
+        {
+          "name": "stalled read has a bounded failure and retry",
+          "status": "PASS"
+        },
+        {
+          "name": "stalled review retains local values and allows recovery",
+          "status": "PASS"
+        },
+        {
+          "name": "oversized monetary input is rejected before BigInt work",
+          "status": "PASS"
+        },
+        {
+          "name": "synthetic 14 product search/select/save/conflict workload",
+          "status": "PASS"
+        },
+        {
+          "name": "synthetic 100 product search/select/save/conflict workload",
+          "status": "PASS"
+        },
+        {
+          "name": "synthetic 500 product search/select/save/conflict workload",
+          "status": "PASS"
+        }
+      ],
+      "benchmarks": [
+        {
+          "products": 14,
+          "search100IterationsMs": 2.3297259999999937,
+          "summaryRawBytes": 5061,
+          "calls": [
+            {
+              "kind": "list",
+              "id": null
+            },
+            {
+              "kind": "read",
+              "id": "fx-pot-01"
+            },
+            {
+              "kind": "read",
+              "id": "fx-pot-01"
+            },
+            {
+              "kind": "save",
+              "id": "fx-pot-01",
+              "operationId": "command02-op-29"
+            },
+            {
+              "kind": "read",
+              "id": "fx-pot-01"
+            }
+          ],
+          "editingTwentyAdditionalReads": 0,
+          "productionMeasurement": false
+        },
+        {
+          "products": 100,
+          "search100IterationsMs": 10.021073999999999,
+          "summaryRawBytes": 36537,
+          "calls": [
+            {
+              "kind": "list",
+              "id": null
+            },
+            {
+              "kind": "read",
+              "id": "fx-pot-01"
+            },
+            {
+              "kind": "read",
+              "id": "fx-pot-01"
+            },
+            {
+              "kind": "save",
+              "id": "fx-pot-01",
+              "operationId": "command02-op-30"
+            },
+            {
+              "kind": "read",
+              "id": "fx-pot-01"
+            }
+          ],
+          "editingTwentyAdditionalReads": 0,
+          "productionMeasurement": false
+        },
+        {
+          "products": 500,
+          "search100IterationsMs": 40.882701999999995,
+          "summaryRawBytes": 183458,
+          "calls": [
+            {
+              "kind": "list",
+              "id": null
+            },
+            {
+              "kind": "read",
+              "id": "fx-pot-01"
+            },
+            {
+              "kind": "read",
+              "id": "fx-pot-01"
+            },
+            {
+              "kind": "save",
+              "id": "fx-pot-01",
+              "operationId": "command02-op-31"
+            },
+            {
+              "kind": "read",
+              "id": "fx-pot-01"
+            }
+          ],
+          "editingTwentyAdditionalReads": 0,
+          "productionMeasurement": false
+        }
+      ]
+    },
+    "command02Chrome": {
+      "status": "PASS",
+      "sourceCommit": "04bd1adfd8b6b1e21180b4f78622a404b9eb5701",
+      "node": "v22.20.0",
+      "browser": "155.0.8059.39",
+      "total": 39,
+      "passed": 39,
+      "failed": 0,
+      "results": [
+        {
+          "name": "catalogue context and selected inspector remain functioning",
+          "status": "PASS"
+        },
+        {
+          "name": "enter edit mode with labelled sections and complete authoritative read",
+          "status": "PASS"
+        },
+        {
+          "name": "edit description and price, review and genuinely persist synthetic changes",
+          "status": "PASS"
+        },
+        {
+          "name": "semantic equivalent money does not create pending changes",
+          "status": "PASS"
+        },
+        {
+          "name": "required fields and financial precision produce accessible errors",
+          "status": "PASS"
+        },
+        {
+          "name": "Series and Reference edits preserve technical facts and other authority",
+          "status": "PASS"
+        },
+        {
+          "name": "availability flags are existing booleans, not a publication workflow",
+          "status": "PASS"
+        },
+        {
+          "name": "stable identity and read-only stock/image/private boundaries",
+          "status": "PASS"
+        },
+        {
+          "name": "explicit discard reloads confirmed fixture values",
+          "status": "PASS"
+        },
+        {
+          "name": "dirty selection guard can cancel then discard and switch",
+          "status": "PASS"
+        },
+        {
+          "name": "filtering and clear preserve dirty product identity and fields",
+          "status": "PASS"
+        },
+        {
+          "name": "manual refresh guard retains edits when cancelled",
+          "status": "PASS"
+        },
+        {
+          "name": "background catalogue refresh cannot overwrite dirty editor",
+          "status": "PASS"
+        },
+        {
+          "name": "close and Escape protect unsaved edits with native confirmation",
+          "status": "PASS"
+        },
+        {
+          "name": "navigation-away guard keeps local edits until explicit discard",
+          "status": "PASS"
+        },
+        {
+          "name": "browser-native reload protection is exercised without leaving dirty page",
+          "status": "PASS"
+        },
+        {
+          "name": "confirmed save failure preserves local values and safe retry succeeds",
+          "status": "PASS"
+        },
+        {
+          "name": "authoritative duplicate SKU validation rejects without overwriting",
+          "status": "PASS"
+        },
+        {
+          "name": "ambiguous committed save blocks duplicates and checks operation outcome",
+          "status": "PASS"
+        },
+        {
+          "name": "simultaneous submissions and newer in-flight edits remain safe",
+          "status": "PASS"
+        },
+        {
+          "name": "concurrent actor conflict, field comparison and authoritative reload",
+          "status": "PASS"
+        },
+        {
+          "name": "conflict arriving after review is rejected at synthetic commit",
+          "status": "PASS"
+        },
+        {
+          "name": "reversed editor loads and stale errors preserve latest selection",
+          "status": "PASS"
+        },
+        {
+          "name": "malformed response becomes unresolved rather than false success",
+          "status": "PASS"
+        },
+        {
+          "name": "keyboard sections, form labels and native review focus remain usable",
+          "status": "PASS"
+        },
+        {
+          "name": "permission denial remains authoritative even with visible controls",
+          "status": "PASS"
+        },
+        {
+          "name": "stalled save reaches a real deadline and pending status remains guarded",
+          "status": "PASS"
+        },
+        {
+          "name": "saving different products at equal revision numbers refreshes each identity",
+          "status": "PASS"
+        },
+        {
+          "name": "empty successful and failed catalogue states remain distinct",
+          "status": "PASS"
+        },
+        {
+          "name": "responsive editing at 390px",
+          "status": "PASS"
+        },
+        {
+          "name": "responsive editing at 768px",
+          "status": "PASS"
+        },
+        {
+          "name": "responsive editing at 1024px",
+          "status": "PASS"
+        },
+        {
+          "name": "responsive editing at 1440px",
+          "status": "PASS"
+        },
+        {
+          "name": "responsive editing at 1920px",
+          "status": "PASS"
+        },
+        {
+          "name": "200% text and reduced motion preserve critical controls",
+          "status": "PASS"
+        },
+        {
+          "name": "browser workload 14 products, no per-keystroke list rendering or extra reads",
+          "status": "PASS"
+        },
+        {
+          "name": "browser workload 100 products, no per-keystroke list rendering or extra reads",
+          "status": "PASS"
+        },
+        {
+          "name": "browser workload 500 products, no per-keystroke list rendering or extra reads",
+          "status": "PASS"
+        },
+        {
+          "name": "candidate network and console remain clean",
+          "status": "PASS"
+        }
+      ],
+      "benchmarks": [
+        {
+          "kind": "viewport",
+          "width": 390,
+          "documentWidth": 390,
+          "editorWidth": 358
+        },
+        {
+          "kind": "viewport",
+          "width": 768,
+          "documentWidth": 768,
+          "editorWidth": 724
+        },
+        {
+          "kind": "viewport",
+          "width": 1024,
+          "documentWidth": 1024,
+          "editorWidth": 578.40625
+        },
+        {
+          "kind": "viewport",
+          "width": 1440,
+          "documentWidth": 1440,
+          "editorWidth": 655
+        },
+        {
+          "kind": "viewport",
+          "width": 1920,
+          "documentWidth": 1920,
+          "editorWidth": 915.40625
+        },
+        {
+          "kind": "synthetic-browser",
+          "products": 14,
+          "catalogueRefreshMs": 81.39999999996508,
+          "searchAndFrameMs": 5.7999999999883585,
+          "editingExtraReads": 0,
+          "editingListMutations": 0,
+          "productionMeasurement": false
+        },
+        {
+          "kind": "synthetic-browser",
+          "products": 100,
+          "catalogueRefreshMs": 87.39999999996508,
+          "searchAndFrameMs": 2.2000000000116415,
+          "editingExtraReads": 0,
+          "editingListMutations": 0,
+          "productionMeasurement": false
+        },
+        {
+          "kind": "synthetic-browser",
+          "products": 500,
+          "catalogueRefreshMs": 101.39999999996508,
+          "searchAndFrameMs": 8.199999999953434,
+          "editingExtraReads": 0,
+          "editingListMutations": 0,
+          "productionMeasurement": false
+        }
+      ],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "productionRequests": 0,
+      "network": {
+        "requestCount": 665,
+        "origins": [
+          "invalid"
+        ],
+        "resourceTypes": {
+          "document": 40,
+          "stylesheet": 118,
+          "script": 507
+        },
+        "responses": 665,
+        "productionRequests": 0,
+        "consoleErrors": [],
+        "pageErrors": []
+      }
+    },
+    "command01Node": {
+      "status": "PASS",
+      "node": "v22.20.0",
+      "total": 42,
+      "passed": 42,
+      "failed": 0,
+      "results": [
+        {
+          "name": "explicit synthetic transport is mandatory",
+          "status": "PASS"
+        },
+        {
+          "name": "14 distinct canonical component fixture records",
+          "status": "PASS"
+        },
+        {
+          "name": "duplicate IDs fail the response closed",
+          "status": "PASS"
+        },
+        {
+          "name": "malformed identity and unknown category fail",
+          "status": "PASS"
+        },
+        {
+          "name": "invalid stock and monetary values fail",
+          "status": "PASS"
+        },
+        {
+          "name": "kit quantity is a positive integer, not a discount",
+          "status": "PASS"
+        },
+        {
+          "name": "optional fields remain explicit unknowns",
+          "status": "PASS"
+        },
+        {
+          "name": "summary discards image bytes and private fields",
+          "status": "PASS"
+        },
+        {
+          "name": "UK money uses integer pence",
+          "status": "PASS"
+        },
+        {
+          "name": "stock display distinguishes zero, low and unknown",
+          "status": "PASS"
+        },
+        {
+          "name": "search covers verified names, SKUs, maker, category and specs",
+          "status": "PASS"
+        },
+        {
+          "name": "search is case insensitive and literal for special characters",
+          "status": "PASS"
+        },
+        {
+          "name": "search excludes arbitrary/private/descriptive JSON fields",
+          "status": "PASS"
+        },
+        {
+          "name": "search and five filters compose",
+          "status": "PASS"
+        },
+        {
+          "name": "kit-only and unknown stock fixtures are represented",
+          "status": "PASS"
+        },
+        {
+          "name": "empty dataset and no matches are legitimate",
+          "status": "PASS"
+        },
+        {
+          "name": "duplicate display names retain distinct identities",
+          "status": "PASS"
+        },
+        {
+          "name": "detail identity and revision fields remain explicit",
+          "status": "PASS"
+        },
+        {
+          "name": "image unloaded, absent, unavailable and removed are distinct",
+          "status": "PASS"
+        },
+        {
+          "name": "image removal is never inferred from omission or null",
+          "status": "PASS"
+        },
+        {
+          "name": "image URLs and arbitrary fields never reach image read model",
+          "status": "PASS"
+        },
+        {
+          "name": "invalid image metadata fails closed",
+          "status": "PASS"
+        },
+        {
+          "name": "initial load waits for the injected transport",
+          "status": "PASS"
+        },
+        {
+          "name": "simultaneous refreshes coalesce to one summary request",
+          "status": "PASS"
+        },
+        {
+          "name": "reversed summary completion cannot overwrite newer data",
+          "status": "PASS"
+        },
+        {
+          "name": "superseded list failure is ignored",
+          "status": "PASS"
+        },
+        {
+          "name": "failed list request recovers and releases coordination",
+          "status": "PASS"
+        },
+        {
+          "name": "malformed response preserves the last successful rows",
+          "status": "PASS"
+        },
+        {
+          "name": "empty successful list differs from request failure",
+          "status": "PASS"
+        },
+        {
+          "name": "on-demand details introduce exactly one selected-record read",
+          "status": "PASS"
+        },
+        {
+          "name": "reversed detail selection cannot populate wrong product",
+          "status": "PASS"
+        },
+        {
+          "name": "stale detail error cannot replace a newer valid inspector",
+          "status": "PASS"
+        },
+        {
+          "name": "detail failure supports an explicit retry",
+          "status": "PASS"
+        },
+        {
+          "name": "wrong detail identity and version fail closed",
+          "status": "PASS"
+        },
+        {
+          "name": "filtered-out selection stays bound to the stable ID",
+          "status": "PASS"
+        },
+        {
+          "name": "rapid local filters and clear add no transport requests",
+          "status": "PASS"
+        },
+        {
+          "name": "refresh retains valid selected details and invalidates older pending read",
+          "status": "PASS"
+        },
+        {
+          "name": "changed summary revision triggers one fresh selected detail",
+          "status": "PASS"
+        },
+        {
+          "name": "deleted selection clears without switching to another identity",
+          "status": "PASS"
+        },
+        {
+          "name": "teardown prevents pending completion and releases listeners through view",
+          "status": "PASS"
+        },
+        {
+          "name": "close invalidates pending details",
+          "status": "PASS"
+        },
+        {
+          "name": "deterministic source has no backend, HTML or image execution path",
+          "status": "PASS"
+        }
+      ],
+      "measurements": {
+        "kind": "synthetic only, not production or billed egress",
+        "images": "six artificial 131072-byte uniform buffers (highly compressible; not representative image compression)",
+        "legacyList": {
+          "rawBytes": 1054697,
+          "localGzipBytes": 3918
+        },
+        "summaryList": {
+          "rawBytes": 5125,
+          "localGzipBytes": 986
+        },
+        "detailMetadata": {
+          "rawBytes": 697,
+          "localGzipBytes": 426
+        },
+        "requestCounts": {
+          "initial": {
+            "list": 1,
+            "detail": 0
+          },
+          "twentyLocalFilters": {
+            "additionalList": 0,
+            "additionalDetail": 0
+          },
+          "firstSelection": {
+            "additionalDetail": 1
+          },
+          "repeatSameSelection": {
+            "additionalDetail": 0
+          },
+          "refreshUnchangedSelection": {
+            "additionalList": 1,
+            "additionalDetail": 0
+          }
+        },
+        "imageBytesRequestedByWorkbench": 0
+      }
+    },
+    "command01Chrome": {
+      "status": "PASS",
+      "sourceCommit": "04bd1adfd8b6b1e21180b4f78622a404b9eb5701",
+      "node": "v22.20.0",
+      "browser": "155.0.8059.39",
+      "isolationStage": "STAGE_A_RESULTS.json",
+      "results": [
+        {
+          "name": "initial image-free catalogue and useful overview",
+          "status": "PASS"
+        },
+        {
+          "name": "local search plus category filter; no extra requests",
+          "status": "PASS"
+        },
+        {
+          "name": "technical search and special characters are literal",
+          "status": "PASS"
+        },
+        {
+          "name": "individual and kit eligibility filters compose",
+          "status": "PASS"
+        },
+        {
+          "name": "authoritative selected detail, correct price vocabulary and focus",
+          "status": "PASS"
+        },
+        {
+          "name": "selected identity survives filtering out and clearing",
+          "status": "PASS"
+        },
+        {
+          "name": "change selection and Escape restore meaningful keyboard focus",
+          "status": "PASS"
+        },
+        {
+          "name": "no-result state is distinct and clearable",
+          "status": "PASS"
+        },
+        {
+          "name": "simultaneous refresh requests are coalesced",
+          "status": "PASS"
+        },
+        {
+          "name": "catalogue error, retained last rows and successful explicit retry",
+          "status": "PASS"
+        },
+        {
+          "name": "reversed catalogue responses keep newer rows and ignore stale success",
+          "status": "PASS"
+        },
+        {
+          "name": "reversed detail responses never show the earlier product",
+          "status": "PASS"
+        },
+        {
+          "name": "stale detail error is ignored after newer selection",
+          "status": "PASS"
+        },
+        {
+          "name": "detail failure and retry operate without changing identity",
+          "status": "PASS"
+        },
+        {
+          "name": "search text focus and selection survive asynchronous refresh",
+          "status": "PASS"
+        },
+        {
+          "name": "empty successful catalogue has legitimate empty presentation",
+          "status": "PASS"
+        },
+        {
+          "name": "delayed detail completion does not steal focus from active search",
+          "status": "PASS"
+        },
+        {
+          "name": "duplicate and malformed records surface a useful error",
+          "status": "PASS"
+        },
+        {
+          "name": "deleted selected product clears without choosing another",
+          "status": "PASS"
+        },
+        {
+          "name": "untrusted descriptions render as text and image URLs never load",
+          "status": "PASS"
+        },
+        {
+          "name": "all explicit image states and optional specifications are usable",
+          "status": "PASS"
+        },
+        {
+          "name": "responsive catalogue and inspector at 390px",
+          "status": "PASS"
+        },
+        {
+          "name": "responsive catalogue and inspector at 768px",
+          "status": "PASS"
+        },
+        {
+          "name": "responsive catalogue and inspector at 1024px",
+          "status": "PASS"
+        },
+        {
+          "name": "responsive catalogue and inspector at 1440px",
+          "status": "PASS"
+        },
+        {
+          "name": "responsive catalogue and inspector at 1920px",
+          "status": "PASS"
+        },
+        {
+          "name": "increased text at 200% remains readable and within document width",
+          "status": "PASS"
+        },
+        {
+          "name": "keyboard-only product discovery and inspector close",
+          "status": "PASS"
+        },
+        {
+          "name": "labels, status regions and reduced motion are present",
+          "status": "PASS"
+        },
+        {
+          "name": "teardown prevents pending detail updates and remount avoids duplicate listeners",
+          "status": "PASS"
+        },
+        {
+          "name": "missing transport fails closed without any live fallback",
+          "status": "PASS"
+        },
+        {
+          "name": "no application network requests escape the allowlisted fixture origin",
+          "status": "PASS"
+        }
+      ],
+      "total": 32,
+      "passed": 32,
+      "failed": 0,
+      "viewportResults": [
+        {
+          "width": 390,
+          "inner": 390,
+          "scroll": 390,
+          "inspector": {
+            "x": 16,
+            "y": 89.640625,
+            "width": 358,
+            "height": 974.96875,
+            "top": 89.640625,
+            "right": 374,
+            "bottom": 1064.609375,
+            "left": 16
+          }
+        },
+        {
+          "width": 768,
+          "inner": 768,
+          "scroll": 768,
+          "inspector": {
+            "x": 22,
+            "y": 89.578125,
+            "width": 724,
+            "height": 930.4375,
+            "top": 89.578125,
+            "right": 746,
+            "bottom": 1020.015625,
+            "left": 22
+          }
+        },
+        {
+          "width": 1024,
+          "inner": 1024,
+          "scroll": 1024,
+          "inspector": {
+            "x": 672,
+            "y": -94.53125,
+            "width": 330,
+            "height": 1003.3125,
+            "top": -94.53125,
+            "right": 1002,
+            "bottom": 908.78125,
+            "left": 672
+          }
+        },
+        {
+          "width": 1440,
+          "inner": 1440,
+          "scroll": 1440,
+          "inspector": {
+            "x": 1052.5625,
+            "y": -64.9375,
+            "width": 350,
+            "height": 974.96875,
+            "top": -64.9375,
+            "right": 1402.5625,
+            "bottom": 910.03125,
+            "left": 1052.5625
+          }
+        },
+        {
+          "width": 1920,
+          "inner": 1920,
+          "scroll": 1920,
+          "inspector": {
+            "x": 1482,
+            "y": -71.9375,
+            "width": 390,
+            "height": 980.96875,
+            "top": -71.9375,
+            "right": 1872,
+            "bottom": 909.03125,
+            "left": 1482
+          }
+        }
+      ],
+      "pageErrors": [],
+      "consoleErrors": [],
+      "productionRequests": 0,
+      "limitations": [
+        "Basic keyboard/semantic checks only; no full screen-reader or WCAG certification.",
+        "Synthetic transport only; no authenticated production integration.",
+        "No image bytes are loaded; image identities in fixtures are fictional."
+      ],
+      "network": {
+        "requestCount": 73,
+        "origins": [
+          "invalid"
+        ],
+        "resourceTypes": {
+          "undefined": 73
+        },
+        "responses": 73,
+        "productionRequests": 0,
+        "consoleErrors": [],
+        "pageErrors": []
+      }
+    }
+  },
+  "isolation": {
+    "stage": "A",
+    "applicationFixturesOpened": 0,
+    "productionRequests": 0,
+    "status": "PASS",
+    "sourceCommit": "04bd1adfd8b6b1e21180b4f78622a404b9eb5701",
+    "negativeControls": [
+      {
+        "name": "fetchIPv4",
+        "result": "blocked"
+      },
+      {
+        "name": "fetchIPv6",
+        "result": "blocked"
+      },
+      {
+        "name": "dns",
+        "result": "blocked"
+      },
+      {
+        "name": "image",
+        "result": "blocked"
+      },
+      {
+        "name": "redirect",
+        "result": "blocked"
+      },
+      {
+        "name": "websocket",
+        "result": "blocked"
+      },
+      {
+        "name": "script",
+        "result": "blocked"
+      },
+      {
+        "name": "worker",
+        "result": "blocked"
+      },
+      {
+        "name": "frame",
+        "result": "blocked"
+      },
+      {
+        "name": "navigation",
+        "result": "blocked"
+      }
+    ],
+    "failures": [
+      {
+        "url": "http://198.51.100.1/probe-frame",
+        "resource": "document",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://192.0.2.2/probe.png",
+        "resource": "image",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://192.0.2.1/probe",
+        "resource": "fetch",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://[2001:db8::1]/probe",
+        "resource": "fetch",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://command01-negative.invalid/probe",
+        "resource": "fetch",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://192.0.2.3/probe.js",
+        "resource": "script",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://198.51.100.3/probe",
+        "resource": "fetch",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://203.0.113.1/worker-probe",
+        "resource": "fetch",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://203.0.113.2/navigation-probe",
+        "resource": "document",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      }
+    ],
+    "node": "v22.20.0",
+    "namespace": "net:[4026532316]",
+    "processProof": {
+      "connections": [
+        {
+          "family": 2,
+          "destination": "192.0.2.1",
+          "errno": 101,
+          "blocked": true
+        },
+        {
+          "family": 10,
+          "destination": "2001:db8::1",
+          "errno": 101,
+          "blocked": true
+        }
+      ],
+      "childNamespace": "net:[4026532316]"
+    },
+    "browser": "155.0.8059.39",
+    "chromiumSandbox": true,
+    "disposableBrowser": true,
+    "browserProof": {
+      "fetchIPv4": "blocked",
+      "fetchIPv6": "blocked",
+      "dns": "blocked",
+      "image": "blocked",
+      "redirect": "blocked",
+      "websocket": "blocked",
+      "script": "blocked",
+      "worker": "blocked"
+    },
+    "localOriginReachable": true,
+    "nextStageAuthorised": true,
+    "method": "process-level Linux network namespace, only loopback; clean unprivileged environment; sandboxed disposable Chrome; same-namespace fixture server and inherited children; additional origin interception",
+    "productionProbeTargetsUsed": false,
+    "network": {
+      "requestCount": 12,
+      "origins": [
+        "invalid"
+      ],
+      "resourceTypes": {
+        "undefined": 12
+      },
+      "responses": 3,
+      "productionRequests": 0,
+      "consoleErrors": [],
+      "pageErrors": []
+    }
+  },
+  "evidenceArtifact": {
+    "id": 12359356215,
+    "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/39630582702/artifacts/12359356215",
+    "bytes": 2260908,
+    "sha256": "f54fcec558d89cddd6bf94c02580542da3ab91bd0e7177d7b6c290e636cae4ae",
+    "expiresAt": "2026-11-20T16:00:09Z",
+    "fullHashVerified": true,
+    "zipCRCVerified": true,
+    "pathsVerified": true,
+    "reportSourceIdentityVerified": true
+  },
+  "screenshots": {
+    "captured": 10,
+    "committedToCommand02Tree": 0,
+    "earlierUnreferencedBlobObjects": 2,
+    "files": {
+      "conflict-resolution.png": {
+        "bytes": 165235,
+        "sha256": "d992a43580c522d0b6f2bd03d9ae8a2a6d0d8f985ec9bdbc23a6c724aec016c9",
+        "gitBlob": "451344db05b04520e2cc3158a7504edb626e361b",
+        "dimensions": [
+          1440,
+          1100
+        ]
+      },
+      "desktop-editor.png": {
+        "bytes": 176310,
+        "sha256": "2d8941af6b70c95e1beebd21ab5c0b00312166e3b02b8c7303e0fb72790c8d63",
+        "gitBlob": "480383b4beef3cf79493f5303e63eeb520019213",
+        "dimensions": [
+          1440,
+          1100
+        ]
+      },
+      "validation-errors.png": {
+        "bytes": 170420,
+        "sha256": "4b0519ac3b2f319a0ecc037941bedd29d659536fa2c377d9527e79a737376d4b",
+        "gitBlob": "8889fe48bb44a55984a402dd63e3648d87af9d08",
+        "dimensions": [
+          1440,
+          1100
+        ]
+      },
+      "save-success.png": {
+        "bytes": 160887,
+        "sha256": "1c730c64af3bdece3748a04c785c24eafaa27035bd5cdb0568dea2644132335f",
+        "gitBlob": "054dbeced37e73b8a826b5bd67be29e64c3162f0",
+        "dimensions": [
+          1440,
+          1100
+        ]
+      },
+      "tablet-editor.png": {
+        "bytes": 71395,
+        "sha256": "e2df74644c599ea8bd0910cbb110a6f0442e7502f008d6dcfe8e3c6bcf3898cc",
+        "gitBlob": "e1d5531994003d86c795f08546ba4c882b1619bd",
+        "dimensions": [
+          768,
+          1100
+        ]
+      },
+      "save-outcome.png": {
+        "bytes": 153987,
+        "sha256": "c4239ad42f1e578f11291ae6f6d6060935f2d7cee156b63031d29579e233db06",
+        "gitBlob": "fe0013379a4295c6c128cb5b04ee26a0b035e015",
+        "dimensions": [
+          1440,
+          1100
+        ]
+      },
+      "mobile-editor.png": {
+        "bytes": 56988,
+        "sha256": "488d7dc35f7c4cc662844275afb5a0f76e849e3cc528968b9a3c6485ee7364aa",
+        "gitBlob": "59094e04ea6763d41df8cc15443de27e53a917e9",
+        "dimensions": [
+          390,
+          1100
+        ]
+      },
+      "dirty-editor.png": {
+        "bytes": 165697,
+        "sha256": "12db79db562ab040e5093166a67ee9a2d4ca07486223e3b32259b94923718d38",
+        "gitBlob": "5778d052d698e3d6ce50bc6239237e557ce0f295",
+        "dimensions": [
+          1440,
+          1100
+        ]
+      },
+      "catalogue-selected.png": {
+        "bytes": 151036,
+        "sha256": "7e5295589f943b7859243e2b2131dc80ef896b63a30481c154c8fe80b677989a",
+        "gitBlob": "1ee4ecac282d7e0fb989512a8ae6e77824244794",
+        "dimensions": [
+          1440,
+          1100
+        ]
+      },
+      "change-review.png": {
+        "bytes": 136704,
+        "sha256": "4f4dad321e513807deb9b5311004aa7c4af504a04de53efc3c4fe77ac2f34c6f",
+        "gitBlob": "e88eebd17d04ce4e055a1e398c32e9503b065d8b",
+        "dimensions": [
+          1440,
+          1100
+        ]
+      }
+    },
+    "publicationApprovalRequired": true
+  },
+  "automaticApprovalReview": {
+    "action": "github_create_blob: validation-errors.png",
+    "attempts": 2,
+    "secondAfterExactApprovalAndPayloadCheck": true,
+    "result": "rejected",
+    "reason": "Specific public screenshot publication/payload considered unauthorised",
+    "allFurtherPNGPublicationStopped": true,
+    "alternateRouteUsed": false
+  },
+  "limitations": [
+    "No live/backend/authenticated production acceptance",
+    "Fixture persistence lasts only one page lifetime",
+    "No comprehensive screen-reader/WCAG, cross-browser or physical-device acceptance",
+    "Synthetic benchmark samples are not production timing or billed egress measurements",
+    "Ten original PNGs still require durable branch preservation before evidence expiry",
+    "Real generic save has no verified component CAS/idempotency/atomic transaction contract"
+  ],
+  "productionActivity": {
+    "supabaseRequests": 0,
+    "stripeRequests": 0,
+    "liveStorefrontRequests": 0,
+    "customerDataUsed": false,
+    "SQLExecutions": 0,
+    "productionDataMutations": 0,
+    "emailsSent": 0,
+    "deployments": 0,
+    "mainWrites": 0,
+    "productionWorkflowChanges": 0
+  },
+  "preservation": {
+    "onlyInheritedCommand01BlobChangedInDescendant": "prototypes/command01/view.mjs (optional extension hooks)",
+    "frozenCommand01BranchUnchanged": true,
+    "unrelatedBranchesUnchangedBeforeEvidenceCommit": true,
+    "productionMainBlobsUnchanged": 899
+  }
+}

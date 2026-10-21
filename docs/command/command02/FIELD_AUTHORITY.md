@@ -41,3 +41,9 @@ Fixture authority revalidates the patch whitelist, required fields, types, price
 Production generic component saves lack the transactional/revision/idempotency contract simulated here. No component-specific immutable version history or save audit is established by the inspected path. A timestamp column alone is not proof of either. Future integration needs a separately reviewed server contract that preserves hidden image/private/content fields and existing inventory authority; this candidate cannot be attached directly to the production save function. No SQL or new RPC is proposed/executed here.
 
 All source links resolve under [the verified baseline](https://github.com/lukewilliamsat-glitch/apparition-instruments/tree/2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f). Assembly records, galleries, discounts, promotions, checkout, order and payment logic remain outside scope.
+
+## Final hardening checks
+
+The fixture authority rejects empty/non-plain patches and immutable/unsupported keys before constructing a new revision. Read responses require valid identity, revision and specification types. Monetary strings longer than 64 characters are rejected before BigInt parsing; accepted values still require at most two decimal places and the verified column bounds.
+
+Editable availability and price fields can affect a future real product's commerce eligibility/pricing; this candidate changes only fictional in-memory records. No checkout or stock authority is delegated to the editor. The source map above is evidence of existing contracts, not confirmation of deployed schema, RLS, permissions or production health.
