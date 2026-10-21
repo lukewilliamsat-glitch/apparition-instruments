@@ -17,7 +17,9 @@ const components=initialComponents().map((p,i)=>({id:p.id,sku:'FIXTURE-'+i,name:
 const k=lesPaulKitAssembly.kitDefinition;
 const fixtureRows={catalogue_components:components,catalogue_wiring_kits:[{id:lesPaulKitAssembly.id,sku:'FIXTURE-KIT',name:'Synthetic wiring kit',category:'kits',slug:'les-paul',base_price:1000,show_on_wiring_kits:true,builder_enabled:true,default_wiring_style:'modern',defaults:k.defaults,builder_options:k.builderOptions,component_resolvers:k.componentResolvers}],kit_permitted_components:components.map(p=>({assembly_id:lesPaulKitAssembly.id,component_id:p.id}))};
 const mime={'.html':'text/html','.css':'text/css','.mjs':'text/javascript','.js':'text/javascript','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.ico':'image/x-icon'};
-let browser;
+let browser,baselineMode=false;
+const baselineCSS=await readFile('tests/spectre35/baseline-customer-ui.txt');
+assert.equal(createHash('sha1').update('blob '+baselineCSS.length+'\0').update(baselineCSS).digest('hex'),'5a77dc0a6ee40fab7d1335c9c9c3003f36a36891');
 const server=createServer(async(req,res)=>{
  try{
   const url=new URL(req.url,'http://127.0.0.1'),path=url.pathname==='/'?'/index.html':url.pathname;
@@ -29,8 +31,8 @@ const server=createServer(async(req,res)=>{
   else if(path==='/backend/site-operations.mjs')body=Buffer.from(`const store={state:'OPEN',desired_state:'OPEN',observed_at:new Date().toISOString()};export async function readOperationsPresentation(){return {store,news:[]};}export async function readCurrentStore(){return store;}export async function readPublicAnnouncements(){return [];}`);
   else{
    const file=resolve(root,'.'+decodeURIComponent(path));if(!file.startsWith(root+'/'))throw Error('Unsafe fixture path');
-   body=await readFile(file);
-   if(extname(file)==='.css')body=Buffer.from(body.toString().replace(/@import\s+url\(['"]https:\/\/fonts\.googleapis\.com[^;]+;/g,''));
+   body=baselineMode&&path==='/customer-ui.css'?baselineCSS:await readFile(file);
+   if(extname(file)==='.css')body=Buffer.from(body.toString().replace(/@import\s+url\(['"]https:\/\/fonts\.googleapis\.com[^'"]+['"]\)\s*;/g,''));
   }
   res.writeHead(200,{'content-type':path.startsWith('/__fixture/public/')?'application/json':path==='/__fixture/font.ttf'?'font/ttf':mime[extname(path)]||'application/octet-stream','cache-control':'no-store','content-security-policy':"default-src 'self' data: blob:; connect-src 'self'; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; frame-src 'none'"});res.end(body);
  }catch(error){report.serverErrors.push({url:req.url,error:String(error)});res.writeHead(404);res.end('Local fixture unavailable');}
@@ -59,6 +61,13 @@ try{
  });
  context.on('request',r=>{report.requests.push({url:r.url(),type:r.resourceType()});if(new URL(r.url()).origin!==origin)report.externalAttempts.push(r.url());});
  const page=await context.newPage();page.on('pageerror',e=>report.pageErrors.push(String(e)));page.on('console',m=>{if(m.type()==='error')report.consoleErrors.push(m.text());});
+ baselineMode=true;
+ for(const width of [320,390,768,1024,1280,1440,1920,2560,3440,3840]){
+  await page.setViewportSize({width,height:width<=390?900:width===768?1024:1080});await page.goto(origin,{waitUntil:'networkidle'});const m=await measure(page);assert.match(m.headingFont,/Space Grotesk/);assert.equal(await page.evaluate(()=>getComputedStyle(document.documentElement).getPropertyValue('--serif').trim()),"'Space Grotesk',Arial,sans-serif");report.cases.push({name:'before-'+width,metrics:m});
+  if([320,390,768,1440,2560,3840].includes(width))await page.screenshot({path:join(screens,'before-'+width+'.png')});
+ }
+ assert(report.cases.find(c=>c.name==='before-2560').metrics.lineCount>3);assert.equal(report.cases.find(c=>c.name==='before-3840').metrics.heading.width,0);assert(report.cases.find(c=>c.name==='before-3840').metrics.lineCount>12);
+ baselineMode=false;
  const verify=(name,m)=>{assert.equal(m.lineCount,3,name+' three deliberate lines');assert.deepEqual(m.lines.map(l=>l.text),['Makeyour','presence','heard.'],name+' intact words');assert.equal(m.headingOverflow,false,name+' heading fits');assert.equal(m.documentOverflow,false,name+' document fits');assert(m.heading.y>=m.header.bottom,name+' no header collision');assert(m.cta.right<=m.viewport.width+1&&m.cta.x>=0,name+' CTA horizontal fit');assert(m.cta.bottom<m.hero.bottom-40,name+' hero contains CTA');};
  for(const width of [320,390,768,1024,1280,1440,1920,2560,3440,3840]){
   const height=width<=390?900:width===768?1024:1080;await page.setViewportSize({width,height});await page.goto(origin,{waitUntil:'networkidle'});await page.evaluate(()=>document.fonts.ready);
@@ -68,7 +77,7 @@ try{
   const focus=await page.locator('.hero-bottom .button').evaluate(e=>({style:getComputedStyle(e).outlineStyle,width:getComputedStyle(e).outlineWidth}));assert.equal(focus.style,'solid');assert.equal(focus.width,'2px');
   await page.keyboard.press('Enter');await page.waitForFunction(()=>location.hash==='#range');assert(await page.evaluate(()=>scrollY>0));report.checks.push({name:'CTA keyboard and focus '+width,status:'PASS',focus});
   if(width<=1024){await page.evaluate(()=>scrollTo(0,0));await page.locator('.menu-button').click();assert.equal(await page.locator('#mobile-nav').getAttribute('hidden'),null);await page.keyboard.press('Escape');assert.notEqual(await page.locator('#mobile-nav').getAttribute('hidden'),null);assert.equal(await page.locator('.menu-button').evaluate(e=>e===document.activeElement),true);report.checks.push({name:'Mobile navigation '+width,status:'PASS'});}
-  else{assert.equal(await page.locator('.site-header>nav').isVisible(),true);await page.locator('.site-header .nav-components summary').click();assert.equal(await page.locator('.site-header .nav-components').getAttribute('open'),'');await page.keyboard.press('Escape');assert.equal(await page.locator('.site-header .nav-components').getAttribute('open'),null);report.checks.push({name:'Desktop disclosure '+width,status:'PASS'});}
+  else{assert.equal(await page.locator('.site-header>nav').isVisible(),true);await page.locator('.site-header .nav-components summary').focus();await page.keyboard.press('ArrowDown');assert.equal(await page.locator('.site-header .nav-components').getAttribute('open'),'');await page.keyboard.press('Escape');assert.equal(await page.locator('.site-header .nav-components').getAttribute('open'),null);report.checks.push({name:'Desktop disclosure '+width,status:'PASS'});}
  }
  // Resize the same live document across the formerly failing range.
  await page.goto(origin,{waitUntil:'networkidle'});
@@ -90,6 +99,7 @@ try{
  const missing=await page.evaluate(async()=>{const face=new FontFace('SpectreMissing','url(data:font/woff2;base64,AA==)');try{await face.load();return false;}catch{document.body.style.setProperty('--serif','SpectreMissing, Arial, sans-serif');return true;}});assert(missing);const fallback=await measure(page);verify('missing-font',fallback);report.cases.push({name:'missing-font-fallback',metrics:fallback});
  // Existing no-JavaScript and partial stylesheet modes, without changing files.
  const noJS=await browser.newContext({serviceWorkers:'block',javaScriptEnabled:false,viewport:{width:2560,height:1080}}),plain=await noJS.newPage();await plain.goto(origin,{waitUntil:'networkidle'});const noJSMetrics=await measure(plain);verify('no-JS',noJSMetrics);report.cases.push({name:'no-JS',metrics:noJSMetrics});await noJS.close();
+ await page.setViewportSize({width:320,height:1080});await page.goto(origin,{waitUntil:'networkidle'});await page.locator('.hero-bottom p').evaluate(e=>e.textContent='Long-word containment: '+('Electroacoustics'.repeat(8)));const longWord=await measure(page);verify('long-paragraph-token',longWord);assert(longWord.paragraph.width<=288);report.cases.push({name:'long-paragraph-token',metrics:longWord});
  // Preserve hero parallax and honour reduced-motion changes using original site.mjs.
  await page.emulateMedia({reducedMotion:'no-preference'});await page.goto(origin,{waitUntil:'networkidle'});await page.evaluate(()=>scrollTo(0,200));await page.waitForTimeout(100);const moving=await page.locator('.hero-art').evaluate(e=>getComputedStyle(e).transform);assert.notEqual(moving,'none');await page.emulateMedia({reducedMotion:'reduce'});await page.waitForTimeout(100);const still=await page.locator('.hero-art').evaluate(e=>getComputedStyle(e).transform);assert.equal(still,'none');report.checks.push({name:'Parallax and reduced motion',status:'PASS',moving,still});
  // Intentional font decode failure is recorded separately, not hidden.
