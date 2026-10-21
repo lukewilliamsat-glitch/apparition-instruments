@@ -13,10 +13,14 @@ const allowed=new Set([
 'dist/admin/application.css','dist/admin/application.mjs','dist/admin/interaction.mjs','dist/admin/catalogue-presentation.mjs','dist/admin/sales-content-presentation.mjs'
 ]);
 const serverLog=[],requests=[],responses=[],consoleErrors=[],pageErrors=[],results=[],screenshots=[];
+let increasedTextCSS='';
 const mime={'.html':'text/html; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8'};
 const server=createServer(async(req,res)=>{
  let path;try{path=decodeURIComponent(new URL(req.url,'http://fixture.invalid').pathname).replace(/^\//,'');}catch{res.writeHead(400);res.end();return;}
  if(path==='favicon.ico'){res.writeHead(204);res.end();return;}
+ if(path==='tests/command01/increased-text.css'){
+  serverLog.push({path,status:200});res.writeHead(200,{'content-type':'text/css','cache-control':'no-store'});res.end(increasedTextCSS);return;
+ }
  if(!allowed.has(path)){serverLog.push({path,status:404});res.writeHead(404);res.end('Fixture resource unavailable');return;}
  try{const body=await readFile(resolve(path));serverLog.push({path,status:200});res.writeHead(200,{'content-type':mime[extname(path)],'cache-control':'no-store','x-content-type-options':'nosniff','referrer-policy':'no-referrer'});res.end(body);}
  catch{res.writeHead(500);res.end('Local fixture failure');}
@@ -159,7 +163,12 @@ try{
  });
  await test('increased text at 200% remains readable and within document width',async()=>{
   await page.setViewportSize({width:1024,height:1000});
-  await page.addStyleTag({content:'body[data-command01] * { font-size: max(1em, 16px) !important; } body[data-command01] { font-size: 28px !important; }'});
+  increasedTextCSS=await page.evaluate(()=>[...document.querySelectorAll('body,body *')].map((element,index)=>{
+   element.dataset.textScaleIndex=String(index);
+   return '[data-text-scale-index="'+index+'"]{font-size:'+parseFloat(getComputedStyle(element).fontSize)*2+'px !important}';
+  }).join('\n'));
+  await page.addStyleTag({url:origin+'/tests/command01/increased-text.css'});
+  assert.equal(await page.locator('#search').evaluate(e=>getComputedStyle(e).fontSize),'26px');
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));await shot('increased-text');
  });
  await page.close();page=await fresh();
@@ -176,6 +185,8 @@ try{
   assert.equal(await page.locator('#feedback').getAttribute('aria-live'),'polite');
   assert.equal(await page.locator('#error-panel').getAttribute('role'),'alert');
   assert(await page.evaluate(()=>matchMedia('(prefers-reduced-motion: reduce)').matches));
+  assert.equal(await page.locator('#refresh').evaluate(e=>getComputedStyle(e).transitionDuration),'0s');
+  assert.equal(await page.evaluate(()=>getComputedStyle(document.documentElement).scrollBehavior),'auto');
   assert.equal(await page.locator('h1').count(),1);
   assert.equal(await page.locator('button').filter({hasText:/Save|Publish|Delete|Upload|Adjust stock/}).count(),0);
  });
