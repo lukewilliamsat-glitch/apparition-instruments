@@ -1,0 +1,18 @@
+[
+  [
+    ".site-ui.home-page :is(.hero-content,.section){padding-inline:max(var(--ui-gutter),calc((100% - var(--ui-width))/2))}",
+    ".site-ui.home-page :is(.hero-content,.section){padding-inline:max(var(--ui-gutter),calc((100% - var(--ui-width))/2))}\n/* The shared gutters use the full hero width. A narrower max-width here would\n   subtract viewport-sized padding from a capped box on wide desktop screens. */\n.site-ui.home-page .hero-content{max-width:none}"
+  ],
+  [
+    ".site-ui.home-page .hero h1{font-size:clamp(3.5rem,8vw,7.5rem);line-height:1.02;max-width:900px}",
+    ".site-ui.home-page .hero h1{font-size:clamp(3.5rem,8vw,7.5rem);line-height:1.02;max-width:900px;overflow-wrap:normal}"
+  ],
+  [
+    ".site-ui.home-page .hero-bottom p{max-width:58ch;color:var(--ui-ink);font-size:var(--ui-body)}",
+    ".site-ui.home-page .hero-bottom p{max-width:min(100%,58ch);color:var(--ui-ink);font-size:var(--ui-body)}"
+  ],
+  [
+    ".site-ui.home-page .hero h1{font-size:clamp(3.5rem,16vw,5.5rem)}",
+    ".site-ui.home-page .hero h1{font-size:clamp(2rem,16vw,5.5rem)}"
+  ]
+]

@@ -1,0 +1,2637 @@
+{
+  "schemaVersion": 1,
+  "mission": "AUTHORISATION 36 — OPERATION HOMECOMING",
+  "status": "BLOCKED — NOT DEPLOYED",
+  "repository": "lukewilliamsat-glitch/apparition-instruments",
+  "preparationBranch": "release/spectre35-homecoming",
+  "productionMain": {
+    "commit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+    "tree": "eb2c9f1824602d19ed27f010cf080190a06c713e",
+    "observedChangeDuringMission": false
+  },
+  "CSSOnlyCandidate": {
+    "commit": "ee2ca60616c61304d26b7a2f7b9ff04555337cd0",
+    "tree": "f895a3173959b7e243566902be3552e44ecbc2b9",
+    "parent": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+    "changedFiles": [
+      "dist/customer-ui.css"
+    ],
+    "deployable": false
+  },
+  "css": {
+    "path": "dist/customer-ui.css",
+    "original": {
+      "gitBlob": "5a77dc0a6ee40fab7d1335c9c9c3003f36a36891",
+      "sha256": "f72258fb8d455513d2cb38e3672f914207f81ee37664c7e6b32edc7d9c320f26",
+      "bytes": 18494
+    },
+    "reviewed": {
+      "gitBlob": "525ae6e3aacb40b2385192e32eb894b351f25c75",
+      "sha256": "16d6ebbd2372d54e32565a7999edfd1bc9152c785b77f1bcbf79ee47bba1794a",
+      "bytes": 18732,
+      "commit": "4f09bd5b4d5109df6028a8dc0d00468512d9af1c",
+      "testedSourceCommit": "232017a80fd6c5f2a3083d99cd9f647d8f4db27e",
+      "ciRun": 39583250290,
+      "ciConclusion": "success"
+    }
+  },
+  "latestVisibleSuccessfulPagesRun": {
+    "id": 38167017686,
+    "sourceCommit": "bb4ba2a932239a3ef397272b27143f0cd3adcccf",
+    "sourceTree": "0f6ac37987b07050f6d457ff42861943813389e7",
+    "createdUTC": "2026-10-11T19:12:16Z",
+    "completedUTC": "2026-10-11T19:12:48Z",
+    "job": 114551575060,
+    "artifact": {
+      "id": 11712976121,
+      "zipSha256FromLog": "d3e804f37e04ea25bbd5e5df3764d8ea2c2ea201f71c381f102142e1be29f3d8",
+      "bytesFromLog": 20301778,
+      "retentionDaysFromLog": 1,
+      "currentRunArtifactListing": [],
+      "currentArtifactLookupHTTP": 404,
+      "payloadRecovered": false
+    },
+    "currentActiveDeploymentIndependentlyVerified": false
+  },
+  "latestMainRun": {
+    "id": 39567549124,
+    "job": 119113386245,
+    "status": "completed",
+    "conclusion": "failure",
+    "createdUTC": "2026-10-21T08:12:38Z",
+    "failureStep": "Generate public product pages from Supabase",
+    "error": "Public catalogue_components is unavailable (402).",
+    "uploadStep": "skipped",
+    "deploymentStep": "skipped"
+  },
+  "productionWorkflow": {
+    "path": ".github/workflows/static.yml",
+    "gitBlob": "a43d31b3d7371d02fe016a57a19a2690ceb0ea86",
+    "modified": false,
+    "pushBranch": "main",
+    "manual": true,
+    "cron": "0 3 * * *",
+    "concurrency": "pages",
+    "cancelInProgress": false,
+    "permissions": {
+      "contents": "read",
+      "pages": "write",
+      "id-token": "write"
+    },
+    "staticOnlyStillInvokesCMS": true,
+    "publicationOnlyPathValidated": false
+  },
+  "sourceInventory": {
+    "classification": "Repository source only; not an attested deployed payload",
+    "files": 416,
+    "htmlPages": 94,
+    "sourceDistIdenticalToLatestSuccessfulSource": true,
+    "entries": [
+      {
+        "path": "dist/404.html",
+        "gitBlob": "73d59db43eb5d3aa08a5dab79867da3aae2109e6",
+        "bytes": 916,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/account/account.css",
+        "gitBlob": "e30958357f891c8b07b3155503e59237a10837ef",
+        "bytes": 3409,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/account/app.mjs",
+        "gitBlob": "c38775751e0397ef3312027bf224dc8b3ab7018c",
+        "bytes": 10672,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/account/bootstrap.mjs",
+        "gitBlob": "0845df49f9e380d8cebe42cfa916d0b1eb6fcb77",
+        "bytes": 806,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/account/client.mjs",
+        "gitBlob": "00afa62927e4ff36ff7f47ead002da77a0b28ded",
+        "bytes": 444,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/account/index.html",
+        "gitBlob": "3bfd1ab450fa5e5ef464c22903ae385054cadaae",
+        "bytes": 7674,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/account/order/bootstrap.mjs",
+        "gitBlob": "628b986f3b7807fefe87a2de0cade6fd661a066a",
+        "bytes": 1671,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/account/order/index.html",
+        "gitBlob": "4707000d56968adb8bed28f0e878bde344141d6c",
+        "bytes": 3853,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/account/order/invoice/app.mjs",
+        "gitBlob": "8e24c34343852ab509cbe9be2e1942fdda3c6829",
+        "bytes": 1742,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/account/order/invoice/index.html",
+        "gitBlob": "1c0c5ed5863b2947af7394b34703d9262886d724",
+        "bytes": 701,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/account/order/model.mjs",
+        "gitBlob": "ea587862d91713c50ebd99cb1c1ca6f519cc5f32",
+        "bytes": 1268,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/account/order/order.css",
+        "gitBlob": "d6124683239955f15d2d8d231d57a6ba1e9a6db1",
+        "bytes": 1979,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/account/order/view.mjs",
+        "gitBlob": "5176890d1e9f431a4729fb1ab9ee4a769e13b085",
+        "bytes": 3578,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/account/supabase-client.mjs",
+        "gitBlob": "4d7d8201ef7da6ee8948b3db3729e169c523c92c",
+        "bytes": 222355,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/actions.mjs",
+        "gitBlob": "4fb2fef5db4d286a501f32c6068d944a50ba7b79",
+        "bytes": 1999,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/admin-auth.mjs",
+        "gitBlob": "844ba8558afaea9a4004062ce9fa1508b0269689",
+        "bytes": 3962,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/admin-gate.mjs",
+        "gitBlob": "9941539063d29ee8695b8b18d3ac9735dec24c99",
+        "bytes": 7157,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/admin.css",
+        "gitBlob": "6c86faa17d322a06999122996dee18ee59c9051f",
+        "bytes": 11570,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/admin.mjs",
+        "gitBlob": "9e6d36b9c6fc7e806e4e5fb3e222887d3c378307",
+        "bytes": 27146,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/application.css",
+        "gitBlob": "56cceca19342d42cd6a8f13359b8ee9221af06ae",
+        "bytes": 17602,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/application.mjs",
+        "gitBlob": "36854932761edb0259a450d0e16947dd33da38a1",
+        "bytes": 7640,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/assemblies.mjs",
+        "gitBlob": "061207ef23dfac1bb7b98a35ef1e88db46d39353",
+        "bytes": 10553,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/assembly-export.mjs",
+        "gitBlob": "9b8ef9b3eb0f3b429adf38f78269cf1579f4d558",
+        "bytes": 3163,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/assembly-repository.mjs",
+        "gitBlob": "8630099a45dacca27b22affdeecf333dcdee9381",
+        "bytes": 1093,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/assembly-ui.mjs",
+        "gitBlob": "6d10af00f593a33be5520e70473d921addf2e0cc",
+        "bytes": 14086,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/catalogue-options.mjs",
+        "gitBlob": "458276e0919a781b0f1c59d95861d012acf8094e",
+        "bytes": 2340,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/catalogue-presentation.mjs",
+        "gitBlob": "6d47f2e70fd62740d3731dbdec3a649b8dcf47d7",
+        "bytes": 2068,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/catalogue-settings/index.html",
+        "gitBlob": "439f85bccaa5554ead4fb175854594a5d19669a3",
+        "bytes": 859,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/catalogue-settings/settings.mjs",
+        "gitBlob": "66dde71d2a8cf6c89c35afdb950ea72c82c4b862",
+        "bytes": 5173,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/component-export.mjs",
+        "gitBlob": "2e219ddbf5963d50cffdd295f24c7084df703927",
+        "bytes": 3567,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/component-repository.mjs",
+        "gitBlob": "0aeb7d01a1982bd62ef487671002c084c56fcda8",
+        "bytes": 1322,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/conjure/app.mjs",
+        "gitBlob": "818ab173c4fbcabeab773d32247fecffb923e296",
+        "bytes": 9188,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/conjure/article-adapter.mjs",
+        "gitBlob": "a70fdd3e3dc627bb2e594b162e81c11a0cee2d95",
+        "bytes": 946,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/conjure/conjure.css",
+        "gitBlob": "6e73a64dc5d36bb84df8fd3106cec32d7954a0e7",
+        "bytes": 2632,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/conjure/context.mjs",
+        "gitBlob": "4e2fcdbe7264aaf6cc62cacdcc50351eb07a81d3",
+        "bytes": 7408,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/conjure/document-registry.mjs",
+        "gitBlob": "f087c718eb7b5608d9266b7fea4d3eedbfde3d63",
+        "bytes": 1525,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/conjure/document-repository.mjs",
+        "gitBlob": "8a862ae798e05f4421396370d34c4f51d42e4b74",
+        "bytes": 1068,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/conjure/document-session.mjs",
+        "gitBlob": "f0d32fc93681cd1124aeec6a2237f926ddffa6c2",
+        "bytes": 30597,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/conjure/index.html",
+        "gitBlob": "fd20374464d47683a4292da4de3fa51ec463da2c",
+        "bytes": 3608,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/conjure/insertion.mjs",
+        "gitBlob": "d4e23376e3318e315a770a5be57922b432a3d78d",
+        "bytes": 745,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/conjure/native-surface.mjs",
+        "gitBlob": "9fe4284b38f173fb9b37b717968eb889d17373f1",
+        "bytes": 7870,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/conjure/navigation.mjs",
+        "gitBlob": "8a667c03b546404e327b62f561380a8c3260d169",
+        "bytes": 718,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/conjure/page-adapter.mjs",
+        "gitBlob": "95f207457af18ca32576c14152c1694aaf01d976",
+        "bytes": 3950,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/conjure/page-document.mjs",
+        "gitBlob": "3978b53b44ffa741ee05562e7b358e6340562c57",
+        "bytes": 5421,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/conjure/page-mappings.mjs",
+        "gitBlob": "d119a7965ad875c93880aa4834dc111e8f35a142",
+        "bytes": 3666,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/conjure/pages.mjs",
+        "gitBlob": "104387c84ad8d4c8510d7f10f07e7c1bac6365c6",
+        "bytes": 3360,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/conjure/protected-document.mjs",
+        "gitBlob": "470afc596ee80a0d78ba7b9d27214b79c96e9647",
+        "bytes": 1872,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/conjure/sections.mjs",
+        "gitBlob": "a4e27650ccfcc40b69d25f2023041d4ebf4d5526",
+        "bytes": 2497,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/conjure/website-navigation.mjs",
+        "gitBlob": "c181d2bf31c60f24e88d3ea62b1ba332996f3dc3",
+        "bytes": 668,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/data.mjs",
+        "gitBlob": "d4f2edaa3afb26295dbad0f4cfc2db0973efe092",
+        "bytes": 9245,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/electrical-specs.mjs",
+        "gitBlob": "20cde2b7e61ff861e1c0a3d8b8f3470a47071d99",
+        "bytes": 5027,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/email-preview/app.mjs",
+        "gitBlob": "93821deed9ebd717a441ea99688627698b486847",
+        "bytes": 1718,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/email-preview/index.html",
+        "gitBlob": "a83aa38f95fb2dc3c217af38f19b8933e779a94b",
+        "bytes": 2319,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/email-preview/preview.css",
+        "gitBlob": "86ca4307d0f8b57a9b2da6cb796a5271dc5dbb65",
+        "bytes": 569,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/email-templates/index.html",
+        "gitBlob": "457b3d5ea9c79f8e95e2e4c45b264d4fc4050265",
+        "bytes": 4772,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/email-templates/studio.css",
+        "gitBlob": "034a92be8f9e740d89b38171c59de849520cda17",
+        "bytes": 7225,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/email-templates/studio.mjs",
+        "gitBlob": "63432dc94b1e0500b9729ea3420652f65e947aed",
+        "bytes": 13509,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/hub-cms/admin.mjs",
+        "gitBlob": "eb32a5fd5b04e76cae53222092fb601fd584d39d",
+        "bytes": 20880,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/hub-cms/cms.css",
+        "gitBlob": "7b1861c898ab66a915fdb01fc3e1d3cea03d9971",
+        "bytes": 5005,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/hub-cms/conjure.mjs",
+        "gitBlob": "91767c5b9a09679135d33e34949c9d86e77e1e73",
+        "bytes": 16316,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/hub-cms/document-state.mjs",
+        "gitBlob": "64e0c70e07b841d05e99ea375556c2b0e96ff07a",
+        "bytes": 194,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/hub-cms/docx-vendor.mjs",
+        "gitBlob": "7325d7e523924d3250aa76d0a17c75ed68bac0ea",
+        "bytes": 28181,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/hub-cms/docx.mjs",
+        "gitBlob": "224c53ee4315783792b9a6c07bfe7648528a9d10",
+        "bytes": 19553,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/hub-cms/editor-vendor.mjs",
+        "gitBlob": "4e52461eb30744657416d0eac2b0d1c1f648fd54",
+        "bytes": 247334,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/hub-cms/index.html",
+        "gitBlob": "bd523c7b771213a8db70a8e4528f7a2869361c59",
+        "bytes": 8866,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/hub-cms/library.mjs",
+        "gitBlob": "a821690508d8e6ae085d088250c70caa762e19bd",
+        "bytes": 1309,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/hub-cms/manifest-adapter.mjs",
+        "gitBlob": "166a4f2443bfa2059c9c3fedc27f51b3febde860",
+        "bytes": 4639,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/hub-cms/repository.mjs",
+        "gitBlob": "1125eabd07c4f1bfd91e24c16d4e0c88bd3fe52a",
+        "bytes": 1872,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/hub-cms/schema.mjs",
+        "gitBlob": "721bc7c844aaf87c3a93ba4e7a1843203939ba4c",
+        "bytes": 10011,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/hub-cms/visual-adapter.mjs",
+        "gitBlob": "df803f45a0da34c61c7de5d1d506307019f14e7a",
+        "bytes": 2898,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/hub-media/admin.mjs",
+        "gitBlob": "204f03e63eb4eea3e25a1b6589abc3fe6b69ba89",
+        "bytes": 4385,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/hub-media/index.html",
+        "gitBlob": "8d81722e1020a911a1b9ecc4d19165fec045c113",
+        "bytes": 2094,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/hub-media/media.css",
+        "gitBlob": "fa1aa5c25e3675316d8567a0b565d4a197cef61b",
+        "bytes": 605,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/hub-media/repository.mjs",
+        "gitBlob": "a263c56166d8e8731146eccdd1e2f3e1b4779213",
+        "bytes": 1116,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/images.mjs",
+        "gitBlob": "bd3729b2cced344791325854b616a15ea22ebe50",
+        "bytes": 1890,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/index.html",
+        "gitBlob": "b119449fb27cf384d4c6a6b744bae2e0300fed64",
+        "bytes": 14985,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/interaction.mjs",
+        "gitBlob": "a43d030fb3312d727c9aec14b3ab0e84e4d2ad4c",
+        "bytes": 1632,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/kit-bindings.mjs",
+        "gitBlob": "c9c634d8a565041c213770aaf461e034092884b0",
+        "bytes": 1741,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/app.mjs",
+        "gitBlob": "0231c13fd13d2d23b66600b894243b0ef899417d",
+        "bytes": 15146,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/build-sheet/app.mjs",
+        "gitBlob": "ec3932bf3f3de9613e260264723b162956aa8d13",
+        "bytes": 1963,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/build-sheet/index.html",
+        "gitBlob": "665ea66256508f6569d70d944a048d963ff240ac",
+        "bytes": 5168,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/build-sheet/model.mjs",
+        "gitBlob": "8d058ab45e14bfc8344d0b397a01bad19e5da358",
+        "bytes": 3181,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/build-sheet/picking.mjs",
+        "gitBlob": "f40cc8062bf94154d579917d4ac20ab1c837bb8e",
+        "bytes": 4667,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/build-sheet/print.mjs",
+        "gitBlob": "b0f097f61389dab53a50e5e8546978aaba4d365f",
+        "bytes": 1890,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/build-sheet/production.mjs",
+        "gitBlob": "243226bf4ea4e83a9ee85d86b29abc04211d7670",
+        "bytes": 1674,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/build-sheet/qc-model.mjs",
+        "gitBlob": "85b4afa347b9c32c82d9b6ef078ac10a01b76cdb",
+        "bytes": 2277,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/build-sheet/qc.mjs",
+        "gitBlob": "7764cd56f16e4d65d8e808a87c5a6ed4f56057ae",
+        "bytes": 3022,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/build-sheet/sheet.css",
+        "gitBlob": "a12f54a69919922158435eab939639d00d2db080",
+        "bytes": 4847,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/build-sheet/wiring.mjs",
+        "gitBlob": "add97eb11ef8f90ab4b72ab465b8a19bf587b544",
+        "bytes": 2718,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/create.mjs",
+        "gitBlob": "d941d5e4beb35a0d5d8801080954ba3bc1e8cde7",
+        "bytes": 7653,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/customer-aftercare.mjs",
+        "gitBlob": "0f52fdcf16e9fb26aca1708d31a09bc436ade785",
+        "bytes": 9811,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/detail-presentation.mjs",
+        "gitBlob": "a8977994e3f9ecd33cc8ac0185fe85f5be087778",
+        "bytes": 2084,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/email-review.mjs",
+        "gitBlob": "af2c4b101d0d8cf9a6a756788faf26aa88534ecc",
+        "bytes": 10880,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/external-edit.mjs",
+        "gitBlob": "f7493dbff7e1105f0b6a0ba0f15b551f785324ef",
+        "bytes": 7659,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/external-order.mjs",
+        "gitBlob": "3f52a2bf874469f0f04b45fb812265bc6d8b2fff",
+        "bytes": 4895,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/fulfilment-corrections.mjs",
+        "gitBlob": "0631ec8082882cbac6357d05e72dd99e56b5554b",
+        "bytes": 5018,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/handoff.mjs",
+        "gitBlob": "d9d601bf1618dfd87cd51ac22f80319f4a3678c4",
+        "bytes": 572,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/index.html",
+        "gitBlob": "2f94d8cfaa718afc6ce05afa7913d04502096471",
+        "bytes": 7725,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/invoice/app.mjs",
+        "gitBlob": "0204ce2c3c090566a3c622981a09f7822224aabb",
+        "bytes": 971,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/invoice/index.html",
+        "gitBlob": "1156e4d7e6f705c1e717037a8979490cc3e07fb9",
+        "bytes": 765,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/invoice/invoice.css",
+        "gitBlob": "eae2ee03f839800b2b40ab760ec29ce12a3daa6d",
+        "bytes": 3164,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/invoice/model.mjs",
+        "gitBlob": "b18f6936960b63d0b5b16373eb7bb730541aab08",
+        "bytes": 2162,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/lifecycle.mjs",
+        "gitBlob": "9f9e539f6f655a1c248d4fbad193a671e1ef54d6",
+        "bytes": 1387,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/model.mjs",
+        "gitBlob": "cad33e62559832b5bcf5f956f3a8a008706cc430",
+        "bytes": 7128,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/orders.css",
+        "gitBlob": "11d6ba7f19a485b2c7225041dc3ac238effb6c68",
+        "bytes": 6607,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/orders/view.mjs",
+        "gitBlob": "4637d84267a184df0c67868d608875711d43087e",
+        "bytes": 5426,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/overview.mjs",
+        "gitBlob": "86e91f2c774f8f5bf17fbf7ff2df1db216ebd08d",
+        "bytes": 7140,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/overview/index.html",
+        "gitBlob": "a7e74698a3b6e7f35975009af6728e3ecddbe77f",
+        "bytes": 702,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/physical-specs.mjs",
+        "gitBlob": "63a065a0ae191826b3f450c3477640a7b49182b7",
+        "bytes": 1902,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/pot-specs.mjs",
+        "gitBlob": "2b010b14df7c2b3ea632baa5c0571bd2e3a6cc1a",
+        "bytes": 1993,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/product-content.mjs",
+        "gitBlob": "cbf0cbe4b225b4af127ad39fff0e0f905d1e8867",
+        "bytes": 2623,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/sales-content-presentation.mjs",
+        "gitBlob": "7d546143fe847c7e2131aead8b05d740d874a183",
+        "bytes": 4367,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/site-operations/index.html",
+        "gitBlob": "f1ae56f9582f2ceaa98ef0e513e6a9871edf8c2e",
+        "bytes": 8176,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/site-operations/operations.css",
+        "gitBlob": "a0a123874f946832c2fdbb67376d927212eb40c5",
+        "bytes": 1416,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/site-operations/operations.mjs",
+        "gitBlob": "b5c32c9bcf0c5658f61bee6c7b3abe1dd763d265",
+        "bytes": 10409,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/wiring-kit-master/app.mjs",
+        "gitBlob": "fb7713b9f809c5194745510dbb6d4dde1afef5f6",
+        "bytes": 6385,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/wiring-kit-master/index.html",
+        "gitBlob": "ef4599923a1da01c4a3591164dacd36d1048553a",
+        "bytes": 7445,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/wiring-kit-master/master.css",
+        "gitBlob": "e9bc243ff9f54759b0687baff66a3f085b994305",
+        "bytes": 1656,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/admin/wiring-kit-master/model.mjs",
+        "gitBlob": "4936cc08097ff18f7d80a52141bdc920fdbcb586",
+        "bytes": 8061,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/app.js",
+        "gitBlob": "650c83261baed32ce8611299e577e39a68d5928d",
+        "bytes": 2051,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/assets/angel.png",
+        "gitBlob": "94cb7078c9a89aabec93764b1fb26a263a1719a6",
+        "bytes": 4233738,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/assets/apparition-logo-email.png",
+        "gitBlob": "fdc28f5a5503593ee186abd2073a35af609c8811",
+        "bytes": 50947,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/assets/apparition-logo.png",
+        "gitBlob": "8a5c82d8de26a3c3111bf62b0045745c53a2b1a8",
+        "bytes": 2201238,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/assets/dispatched-email.png",
+        "gitBlob": "c00089be1612e43dfeac066fda8c6f91307f966b",
+        "bytes": 34384,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/assets/generator-preview.svg",
+        "gitBlob": "3db4da7f93e1439bb183577856e6f032202ee20a",
+        "bytes": 8405,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/assets/guitar.webp",
+        "gitBlob": "d6ffff9c7f8fbe7dbbf9083bd51bf09f262584e0",
+        "bytes": 146330,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/assets/in-production-email.png",
+        "gitBlob": "679411edcf5c3f4ff286d223a98f221b959cad56",
+        "bytes": 23736,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/assets/interactive-wiring-preview.svg",
+        "gitBlob": "e4c4e4d3b64fd89347e80de61e353a90cf86a051",
+        "bytes": 44547,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/assets/les-paul-modern.png",
+        "gitBlob": "a8a5263eb5d1cb661d2167a46aad76d2a9a5fefa",
+        "bytes": 1669102,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/assets/ready-to-dispatch-email.png",
+        "gitBlob": "f31cc9e54a55ddef70801c3d8baa7fc12e1167a1",
+        "bytes": 28133,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/assets/signal-forge-full.svg",
+        "gitBlob": "406e204c145c04035629e23590d5b00e9624130b",
+        "bytes": 49306,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/assets/the-violinist-email.png",
+        "gitBlob": "f241bcd8ad46f29280192da17e43e2ed3a5fb57c",
+        "bytes": 68316,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/assets/the-violinist.png",
+        "gitBlob": "0378ec2fc7eda10747729b1f1ba2f2cb04491605",
+        "bytes": 2299680,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/authoring/document.mjs",
+        "gitBlob": "484edbf20b76bb34a85d985a55cefa732b117a7b",
+        "bytes": 2204,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/authoring/editor/canvas.mjs",
+        "gitBlob": "7679841778aa3340f579ac065d04e8707d0cfd5a",
+        "bytes": 9340,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/authoring/editor/coordinator.mjs",
+        "gitBlob": "0cfb15f13e9d302f15c7841f28f4886870501820",
+        "bytes": 2739,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/authoring/editor/kernel.mjs",
+        "gitBlob": "34cdf4a462bd395042fb9f22419361bb4bf15e81",
+        "bytes": 12539,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/authoring/editor/layout.mjs",
+        "gitBlob": "5a3906d1435cf7ba27cdf7545f633f3e7e012a17",
+        "bytes": 5146,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/authoring/media.mjs",
+        "gitBlob": "dd1db7ff88ebd1f938068c93703d7f1e089751bd",
+        "bytes": 2101,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/backend/assembly-data.mjs",
+        "gitBlob": "26703305a27d9136c543e0a308bef1ec3300194c",
+        "bytes": 7619,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/backend/catalogue-image-delivery.mjs",
+        "gitBlob": "0c51a03a526f855279814bcfe007c9dda26ec275",
+        "bytes": 5482,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/backend/catalogue-options.mjs",
+        "gitBlob": "34e3876c484c5095f2d4fc4c40907eff6eb4da45",
+        "bytes": 3527,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/backend/component-data.mjs",
+        "gitBlob": "a0bbf8f3c4a2301b8650ab7f95f813d925ffec8a",
+        "bytes": 8540,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/backend/email-templates.mjs",
+        "gitBlob": "4949939b52b8d8143551bca04b0349efc6befddf",
+        "bytes": 779,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/backend/image-delivery-config.mjs",
+        "gitBlob": "22d069be5d23efe764e2e38598bed611dd7a7522",
+        "bytes": 330,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/backend/local-import-plan.mjs",
+        "gitBlob": "12e780142ae11b37c357d67358868218fe08c6a9",
+        "bytes": 3280,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/backend/operations-admin.mjs",
+        "gitBlob": "611d4f84235d5cacd55a8bb56f1cdc2318f2ca95",
+        "bytes": 1502,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/backend/order-data.mjs",
+        "gitBlob": "2f1429e71c0ba3910602258c0d114e6938283986",
+        "bytes": 8442,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/backend/providers.mjs",
+        "gitBlob": "b9078fa9e465c65bb21bd41f95f3ece6879904d0",
+        "bytes": 3860,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/backend/public-config.mjs",
+        "gitBlob": "c23b9681097282816adad48f570a2eac306a9d2d",
+        "bytes": 326,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/backend/public-read.mjs",
+        "gitBlob": "43b8ca58a6a2a08aa2d4b8c2d3ac996d5c9acf4c",
+        "bytes": 7796,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/backend/site-operations.mjs",
+        "gitBlob": "91f007fe6f4e202d71ddde54ce4c125888173b77",
+        "bytes": 2352,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/basket-count.mjs",
+        "gitBlob": "057d371a598b328a2d14c3ed28caffdd886271ed",
+        "bytes": 538,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/basket-storage.mjs",
+        "gitBlob": "132a4b9e5fd0a02dd92a94db03e77eae2e44e11b",
+        "bytes": 716,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/basket-ui.mjs",
+        "gitBlob": "6e7d528e057fc777758608fd31c117359a4cba20",
+        "bytes": 5904,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/basket/basket.mjs",
+        "gitBlob": "0a50733eefa2a2a51b6027c1e09140a49285cc8e",
+        "bytes": 1612,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/basket/index.html",
+        "gitBlob": "c3d2faac4a7c6b315e17ad02da2f28e98aa121aa",
+        "bytes": 4044,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/brand.css",
+        "gitBlob": "b746c215d753eabc06bf1260053c977b18cb21e3",
+        "bytes": 39833,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/checkout/checkout.css",
+        "gitBlob": "cb1e0d23aaf2fb44f012ab41ca1330f504382df9",
+        "bytes": 761,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/checkout/checkout.mjs",
+        "gitBlob": "712a956c34fed66fe9b25f8b713f706367b7814a",
+        "bytes": 4785,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/checkout/index.html",
+        "gitBlob": "085a7b25d3b63c797ed17029c0a2fc1b164f69b5",
+        "bytes": 4137,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/checkout/success/index.html",
+        "gitBlob": "ef8de24127cddf5d9808dd97bfcc40603da59a5c",
+        "bytes": 3929,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/checkout/success/success.mjs",
+        "gitBlob": "b67e27ca7ba1618c3405260aafa84fd902d17633",
+        "bytes": 2158,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/circuit-forge/app.mjs",
+        "gitBlob": "bbfd64ce8ee5748d3f1210e9fe7fff2c65ee06e9",
+        "bytes": 36412,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/circuit-forge/application-shell.mjs",
+        "gitBlob": "a71d9770d6696ee59e34f83e8b6de9db893242ce",
+        "bytes": 6387,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/circuit-forge/experience-foundation.css",
+        "gitBlob": "a31ad993c127e1bc4799f47a52bd2e74c51f9a54",
+        "bytes": 3366,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/circuit-forge/forge.css",
+        "gitBlob": "aad286ab409bebf4dd001085cdee7eee47633bc9",
+        "bytes": 53909,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/circuit-forge/history.mjs",
+        "gitBlob": "8ee6a23c34897074118bdc3259da71a41da1d415",
+        "bytes": 733,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/circuit-forge/index.html",
+        "gitBlob": "fe8c3fc6cd2631702a3d1cee010382ab2f056ff6",
+        "bytes": 23357,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/circuit-forge/instrument-panel.mjs",
+        "gitBlob": "cef669c2b5a734f50fc5ce1abfd236cb4ade3aeb",
+        "bytes": 10679,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/circuit-forge/mobile-workbench.mjs",
+        "gitBlob": "9ccbf1620565c6d594279fe193d3549f750ae253",
+        "bytes": 11428,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/circuit-forge/model.mjs",
+        "gitBlob": "2323b506c0eb4bbb6bedcad6a19c2aa897947c22",
+        "bytes": 2397,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/circuit-forge/parts.mjs",
+        "gitBlob": "d9ffca14354aab96920cc027ee56ec1eda94df4b",
+        "bytes": 3571,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/circuit-forge/presentation.mjs",
+        "gitBlob": "de0956f27f88b845f778c8225b3f8fb7ed9772e9",
+        "bytes": 1171,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/circuit-forge/projects/index.html",
+        "gitBlob": "cdd96f5ad3cdc3d74b40d2da79cdf568b3deb7e2",
+        "bytes": 4129,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/circuit-forge/response-view.mjs",
+        "gitBlob": "dad7dafe00110b6659cfceb193bd17d836cf1c75",
+        "bytes": 4966,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/circuit-forge/response.mjs",
+        "gitBlob": "ff28db11e0e1632ba928de5ce9d5db52258d1d30",
+        "bytes": 178,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/circuit-forge/workbench.mjs",
+        "gitBlob": "d6a4408975244fbaa9d99cad333b8d09d82232b7",
+        "bytes": 10167,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/commerce.mjs",
+        "gitBlob": "8f094c13138befd8baf2e7b0ce7939be471b4c51",
+        "bytes": 4334,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/commercial/admin.mjs",
+        "gitBlob": "15021726c84c63d0322a2c51beb76cb52bc2e2bb",
+        "bytes": 4766,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/commercial/destinations.mjs",
+        "gitBlob": "49ef62ae877d3842be2140d7f3575f0ae72b7dd2",
+        "bytes": 1984,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/commercial/handoff.mjs",
+        "gitBlob": "abe2ba817e0530bd003edb33620545d4a1b920f2",
+        "bytes": 2144,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/components/capacitors/index.html",
+        "gitBlob": "1e9345af3ff5ac2c1734dce8b3470d671fb79fc3",
+        "bytes": 8337,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/components/cards.mjs",
+        "gitBlob": "9116274d775c8884075428153796a57c942fa938",
+        "bytes": 3893,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/components/catalogue-seed.mjs",
+        "gitBlob": "386df9b3bcb42b462c0e72094b6304797fa5568f",
+        "bytes": 6886,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/components/catalogue.mjs",
+        "gitBlob": "ac946da93ed4cb653bd8cfeca57445cac2cdcc12",
+        "bytes": 1139,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/components/components.css",
+        "gitBlob": "ece0487fda07bde7ea3ab55c21a14679533dc282",
+        "bytes": 4219,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/components/components.mjs",
+        "gitBlob": "7e60d20e4864fe841b98a246db02d2b42e934ff5",
+        "bytes": 4231,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/components/index.html",
+        "gitBlob": "217624eb737004e3714d272ce3b91a27eaeb792a",
+        "bytes": 16194,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/components/potentiometers/index.html",
+        "gitBlob": "2d876bc878dcbe056c82290e106b03f7418e40d4",
+        "bytes": 9808,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/components/treble-bleeds/index.html",
+        "gitBlob": "f07475bd713a1a346071daf92d8361d119617a57",
+        "bytes": 10365,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/contact/contact.css",
+        "gitBlob": "34f721b80acec6026de623a8b0009be9fcd88f50",
+        "bytes": 2863,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/contact/contact.mjs",
+        "gitBlob": "506fa8e3c64da57317debd16e160d0df0cc4bb09",
+        "bytes": 4285,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/contact/index.html",
+        "gitBlob": "cafa7af9f7717eabcb3d45aee466c1c46092412f",
+        "bytes": 8242,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/customer-ui.css",
+        "gitBlob": "5a77dc0a6ee40fab7d1335c9c9c3003f36a36891",
+        "bytes": 18494,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/deployment.mjs",
+        "gitBlob": "d14634a31a8cd6ecdc229a5143ea61ed17a715ef",
+        "bytes": 353,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/electronics/circuit-connectivity.mjs",
+        "gitBlob": "1eec3f3d7bcb6f655eaf7edaa7043d4dacbd9ba1",
+        "bytes": 1176,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/electronics/instrument/capabilities.mjs",
+        "gitBlob": "56f16952e63cc19f7cd07a5b8ca80d9d750696d8",
+        "bytes": 314,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/electronics/instrument/circuit.mjs",
+        "gitBlob": "5f88814e8b9f2c23902fa929620bb5a0992c6953",
+        "bytes": 5310,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/electronics/instrument/configuration.mjs",
+        "gitBlob": "5d3f09e8ead600b9605a9f504b38cc07c199a6b9",
+        "bytes": 21570,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/electronics/instrument/control-assignments.mjs",
+        "gitBlob": "2872a0486e08e1a03c1ca3e9d1a8b2785c67cbf4",
+        "bytes": 682,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/electronics/networks/treble-bleed.mjs",
+        "gitBlob": "3a65fa91b1368472eaae9e427a43d75a6586e646",
+        "bytes": 676,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/electronics/presentation/component-artwork.mjs",
+        "gitBlob": "4ea50689cd33b0e1c4fafdbc896b34efedc67281",
+        "bytes": 19262,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/electronics/presentation/educational-truth.mjs",
+        "gitBlob": "2946b8e5cadbd7ca53039088dee4f20714e94931",
+        "bytes": 1620,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/electronics/presentation/homepage-state.mjs",
+        "gitBlob": "f15f5d75bcaa26295dbe559da446eebf5a357adb",
+        "bytes": 951,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/electronics/response/analysis.mjs",
+        "gitBlob": "1d6ca848318185c09369998b1a664902b8c2a4e4",
+        "bytes": 9939,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/electronics/response/assumptions.mjs",
+        "gitBlob": "44aa0e1c76a2365a0b7a2a92f65c6a71be3b8fb6",
+        "bytes": 1535,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/electronics/response/circuit.mjs",
+        "gitBlob": "bf10267145a794e6a3975fe3b1db2d0636b474ba",
+        "bytes": 6111,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/electronics/response/circuits.mjs",
+        "gitBlob": "8ea76560354be538c0d3b1bd0a8164a86f54ab72",
+        "bytes": 2454,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/electronics/response/engine.mjs",
+        "gitBlob": "7282bc4f65c7b9b30a83f67d8c6b23bd6ca51984",
+        "bytes": 2902,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/electronics/state/circuit-state.mjs",
+        "gitBlob": "6714b1043e850d6b73227ad5df7f332ba13ecc2a",
+        "bytes": 9182,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/electronics/state/project.mjs",
+        "gitBlob": "6d33a3d5887365258f8dd579b2e105fbd599bb77",
+        "bytes": 7457,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/electronics/switching/coils.mjs",
+        "gitBlob": "61a8942e6d8da05039a79a67f6e607a719762fd0",
+        "bytes": 1959,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/electronics/switching/devices.mjs",
+        "gitBlob": "a5a88a61e9b1299ecdeefc53bd8e2f4f0389e867",
+        "bytes": 3082,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/electronics/switching/modifiers.mjs",
+        "gitBlob": "d3e5b3fbfbc3da0abe59cebe5861f6bb2fe1e354",
+        "bytes": 3220,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/electronics/ui/state-console.css",
+        "gitBlob": "e33d0fadc1a9a55d014d62ffdce77545726e123a",
+        "bytes": 1509,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/electronics/ui/state-console.mjs",
+        "gitBlob": "f5c41eeac0e007849393d262144c12adae2f1384",
+        "bytes": 2618,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/electronics/ui/workbench-console.mjs",
+        "gitBlob": "f21d85c26a7bb1bedeb1ca50e7f59bdbbb0dd0ff",
+        "bytes": 1493,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/electronics/ui/workbench-overview.mjs",
+        "gitBlob": "26c2f39ddc9c6088e42a710a77b1d1c52b3a5b3d",
+        "bytes": 2138,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/faq/index.html",
+        "gitBlob": "848d6dd1ff80d974998d8a21410123f111a835b3",
+        "bytes": 9288,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/favicon.svg",
+        "gitBlob": "c09ac42aa9f61706b5271ea15ef7df886aebfed8",
+        "bytes": 257,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/forge-pro/app.mjs",
+        "gitBlob": "b254d1fb10f3d6813130f66451d68d6ef9a4a386",
+        "bytes": 33228,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/forge-pro/application-shell.mjs",
+        "gitBlob": "4bb1845f14ddc9a1a6072e215e2c5e90c0096d58",
+        "bytes": 6023,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/forge-pro/bootstrap.mjs",
+        "gitBlob": "441877211272767b9442c7f0dd4183476fc575a8",
+        "bytes": 361,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/forge-pro/capabilities.mjs",
+        "gitBlob": "894ec086c99552c13582d53bf526de1d8b27c25c",
+        "bytes": 607,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/forge-pro/documents.mjs",
+        "gitBlob": "f44da1204458e3fe4207549df14e5d3aaa00857c",
+        "bytes": 3960,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/forge-pro/domain.mjs",
+        "gitBlob": "c7fdae586abcd07e5fb544fadcce839e115db2f2",
+        "bytes": 5660,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/forge-pro/editor-bridge.mjs",
+        "gitBlob": "fdc82060bc2f28973c14a1c4b6c46955405f5c99",
+        "bytes": 3098,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/forge-pro/engine-manifest.json",
+        "gitBlob": "5339b17c9245f5e4ba2aede1aa627777be783493",
+        "bytes": 5203,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/forge-pro/forge-pro.css",
+        "gitBlob": "eaa7e552e3bdc79108a88889d47ae10996799098",
+        "bytes": 2183,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/forge-pro/instrument-workspace-ui.mjs",
+        "gitBlob": "eb0673932d4c8e677ec7ee9c34f25501970687ab",
+        "bytes": 8961,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/forge-pro/instrument-workspace.mjs",
+        "gitBlob": "3766e4f09e0232382a9a456adef58b8c0c803c19",
+        "bytes": 8142,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/forge-pro/repository.mjs",
+        "gitBlob": "fb31a407c1b73f2a5f984efc3d00f67c334548bc",
+        "bytes": 2279,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/forge-reveal.mjs",
+        "gitBlob": "ec764f2a7266e0f4bf805bf9828f8a5a1cf898af",
+        "bytes": 6221,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/forge-shell/shell.css",
+        "gitBlob": "f9a361488960081d28b82cd585ea31d773f0229d",
+        "bytes": 16623,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/forge-shell/shell.mjs",
+        "gitBlob": "d06c3400e2e77b060db78e47d1f0790c1732ecc0",
+        "bytes": 9626,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/guitar-project/index.html",
+        "gitBlob": "9ba11382ce5c213bc3271e20a1d91710e5d611d1",
+        "bytes": 7424,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/homepage.css",
+        "gitBlob": "66bef9daf467072fb59b986e611f02da38cf91ba",
+        "bytes": 19031,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/hub-cms/body.mjs",
+        "gitBlob": "67b5c51a107faca4ba7b9c812c34f8f18baae6b0",
+        "bytes": 5515,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/hub-cms/config.mjs",
+        "gitBlob": "45aa85c056e4e48fdcb2f3a2190b97af523de519",
+        "bytes": 3893,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/hub-cms/presentation/bleeds.json",
+        "gitBlob": "8fda1aff77197f5ffc4f41750fa44c2bf505119e",
+        "bytes": 96813,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/hub-cms/presentation/capacitor-values.json",
+        "gitBlob": "11ff797951ae120cbc714fcb784e591923de1350",
+        "bytes": 59642,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/hub-cms/presentation/caps.json",
+        "gitBlob": "62fd9a90c1a65c82fa1c3c4123c9c95268c3566a",
+        "bytes": 77604,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/hub-cms/presentation/circuits.json",
+        "gitBlob": "8560a0e01d52d3724f676c6851dfec3fdd53f5bf",
+        "bytes": 81438,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/hub-cms/presentation/coil-split-guide.json",
+        "gitBlob": "6456ba1da47fcb0ff6b9799a514cd6fd982ce6ee",
+        "bytes": 50831,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/hub-cms/presentation/generic.json",
+        "gitBlob": "05684f6ad5db636fc984e613cb80e46276892915",
+        "bytes": 14804,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/hub-cms/presentation/glossary.json",
+        "gitBlob": "14125b81c727317c73d648ec9192ba2c6cf0b6b4",
+        "bytes": 29697,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/hub-cms/presentation/ground.json",
+        "gitBlob": "9381e3c92e403b8f18726f09f02beb0b1fdb40c5",
+        "bytes": 35328,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/hub-cms/presentation/grounding-guide.json",
+        "gitBlob": "57deca88a7d5b1bd73a57a54dc75529b4bc3a948",
+        "bytes": 50090,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/hub-cms/presentation/install.json",
+        "gitBlob": "5972823cfdaceb5a64996d682b37df850c9f0ab9",
+        "bytes": 102307,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/hub-cms/presentation/lp-controls.json",
+        "gitBlob": "d57fcf6211b7a8725075dde1ef8db8db65e479ba",
+        "bytes": 50962,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/hub-cms/presentation/lugs.json",
+        "gitBlob": "67015c1925c7bd59eb05ddd7ebbd3ebcedd24584",
+        "bytes": 65027,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/hub-cms/presentation/modern-50s.json",
+        "gitBlob": "8b6bfa30345eb69ccb16fe98925626c48a938640",
+        "bytes": 52733,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/hub-cms/presentation/pickups.json",
+        "gitBlob": "a5da1b1db52beab9c7b224a73cc6611c8cdf583f",
+        "bytes": 36528,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/hub-cms/presentation/pots.json",
+        "gitBlob": "0153bc620a10226cd52ecbabe777f106b3296d16",
+        "bytes": 132292,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/hub-cms/presentation/series-parallel-guide.json",
+        "gitBlob": "954092db125acd4fd64f513b73e2773c773456b0",
+        "bytes": 51130,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/hub-cms/presentation/switches.json",
+        "gitBlob": "8261295d2beaae641c681f639d0a2ba88130a3b6",
+        "bytes": 29669,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/hub-cms/presentation/taper.json",
+        "gitBlob": "5d0c33f9e893fa446cf9d4a066b0f04bd4328d8e",
+        "bytes": 59653,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/hub-cms/presentation/toggle-guide.json",
+        "gitBlob": "ed7e34f320cbd78d2af6666243ca31ddfbc385a4",
+        "bytes": 49849,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/hub-cms/presentation/tone.json",
+        "gitBlob": "4e5dd8f7c44fa41346014dbddd27d8685da639c7",
+        "bytes": 62394,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/hub-cms/presentation/tools.json",
+        "gitBlob": "7d3baf3a9a3f6e330a897b850807bce427939a9b",
+        "bytes": 34417,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/hub-cms/presentation/troubleshoot.json",
+        "gitBlob": "aaba43c1f96ef84fd668c9d645dcc562a212547b",
+        "bytes": 157948,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/hub-cms/presentation/values.json",
+        "gitBlob": "59e2beb6607be3a5c7fd9b5173a166527131d8da",
+        "bytes": 57612,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/hub-cms/render.mjs",
+        "gitBlob": "165f967ca3d2abd50cc3461086c12dcbc48ca1ea",
+        "bytes": 8116,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/index.html",
+        "gitBlob": "86985eef0314664e361cb6b2f70daf71a0c1a10e",
+        "bytes": 15098,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/interactive-tools/index.html",
+        "gitBlob": "f12782a92a19c10fcc19f984d29219a3da5144cd",
+        "bytes": 40146,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/interactive-tools/landing.css",
+        "gitBlob": "59bd9d480730f5fbe6c8fb7d21dab6a5b3032582",
+        "bytes": 9619,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/interactive-tools/landing.mjs",
+        "gitBlob": "cc3cde4011482e9f0a584431b7c43f044556922c",
+        "bytes": 710,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/invoice/document.mjs",
+        "gitBlob": "8904a561e2a64973f4765751077fa0d32bcda2cf",
+        "bytes": 5155,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/knowledge.css",
+        "gitBlob": "322528b77939f4719d9ca0885c9cbb2bc7f645dc",
+        "bytes": 11424,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/knowledge/context.mjs",
+        "gitBlob": "d5faa6c3cbeb160e34372505b8cee852c58281bd",
+        "bytes": 844,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/knowledge/forge-journey.mjs",
+        "gitBlob": "5f50766d1d9454e751850f8dbcfa0efb030d3970",
+        "bytes": 1686,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/knowledge/kit-project.mjs",
+        "gitBlob": "4c1d977d495e0f9cd676a18e207a362cfe1752ac",
+        "bytes": 3004,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/knowledge/project-panel.mjs",
+        "gitBlob": "c053a3ba9cace8eb7b51cd1c1e180d470dd1704d",
+        "bytes": 3763,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/knowledge/registry.mjs",
+        "gitBlob": "79c2a8313fe034a56e7f09b686f03fafa1f527dc",
+        "bytes": 18293,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/les-paul-kits/choice-details.mjs",
+        "gitBlob": "f67a2fee22e5babce310154e3975cfd694517bbd",
+        "bytes": 2849,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/les-paul-kits/config.mjs",
+        "gitBlob": "b7880fb3e88c04a3181893eec931490732f48493",
+        "bytes": 12498,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/les-paul-kits/diagram.mjs",
+        "gitBlob": "d77f2853d249363971a6583bf367f865e6f6c45d",
+        "bytes": 3010,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/les-paul-kits/fields.mjs",
+        "gitBlob": "149d302f2fcfe5cc6399c884c83de251594d6dc8",
+        "bytes": 11120,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/les-paul-kits/index.html",
+        "gitBlob": "715b5645f663ce06a6cc0506fc0258f08dba1ed7",
+        "bytes": 12045,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/les-paul-kits/kits.css",
+        "gitBlob": "57880cbbdb33f20d072e582fd6d71b5b57813dc0",
+        "bytes": 16863,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/les-paul-kits/kits.mjs",
+        "gitBlob": "50ee228aafc9daf831ba0c649e361d7bf1a007cc",
+        "bytes": 13380,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/les-paul-kits/snapshot.mjs",
+        "gitBlob": "935415ac5fe1f812b4f6edecb1afa0dff2337456",
+        "bytes": 1466,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/022-vs-047-tone-capacitors/index.html",
+        "gitBlob": "b8765d79caf005b851c9c92ec5cc5a717e7f7825",
+        "bytes": 14999,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/250k-vs-500k-pots/index.html",
+        "gitBlob": "9a8ce841ad9013735892158a208ca70b40eb8fd0",
+        "bytes": 14790,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/articles.mjs",
+        "gitBlob": "32bdf5a18c379017c04486d84999135100aa7df1",
+        "bytes": 2830,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/audio-vs-linear-taper-pots/index.html",
+        "gitBlob": "2a190a6e10d8bddc5b43d5729334a94248c659ac",
+        "bytes": 13554,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/cable-capacitance/index.html",
+        "gitBlob": "dac7a62e81fec7e397b7d7c53aa1ca1ab7f491ee",
+        "bytes": 13061,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/capacitors-treble-bleeds/index.html",
+        "gitBlob": "45c3595d2e4baea93660dbdbd9546af75986acbd",
+        "bytes": 17492,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/categories/pickups/index.html",
+        "gitBlob": "dc82939cbe709a869135f015c7352b44560f2487",
+        "bytes": 12245,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/categories/potentiometers/index.html",
+        "gitBlob": "d2431c8a23b2d82fdd12927aaac52150889e8b00",
+        "bytes": 9211,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/categories/tone-controls/index.html",
+        "gitBlob": "6aedc76c8d70ce2eba74a5aff4880516fcb1d81c",
+        "bytes": 9069,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/categories/treble-bleeds/index.html",
+        "gitBlob": "7ea218c1e88e6513f85292da671ce397c3c3928c",
+        "bytes": 7440,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/categories/troubleshooting/index.html",
+        "gitBlob": "739ee5a9074fe8bb562a865e9bfa49fc04c6c1a4",
+        "bytes": 9041,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/categories/wiring/index.html",
+        "gitBlob": "99cb62c15614dd593fd9c831e0ef303a5daa00b3",
+        "bytes": 12254,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/coil-splitting-explained/index.html",
+        "gitBlob": "c225ec217d8bcec8afcb7413d27cd5acab4fcafb",
+        "bytes": 12844,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/conductors.mjs",
+        "gitBlob": "a8210040658eb9e63a50bc5ec2a9287039b2b3ef",
+        "bytes": 1633,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/discovery.json",
+        "gitBlob": "3c07c2a4a1a5949c6a222a155613029e88ce76a9",
+        "bytes": 26380,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/glossary/index.html",
+        "gitBlob": "56a2eda51705c321b0b3dabaa972e2271bdc7ee6",
+        "bytes": 13374,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/grounding-output/index.html",
+        "gitBlob": "97d3a2e2526c61a58205b45df72dba2d983ec58a",
+        "bytes": 11383,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/guitar-grounding-common-problems/index.html",
+        "gitBlob": "d3b1bdb18a9da30a9dd980519433984d607a97e1",
+        "bytes": 12440,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/guitar-pot-lug-numbering-wiring/index.html",
+        "gitBlob": "0a33409dcbae3e9327b727367ec96c380cc7018d",
+        "bytes": 16412,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/guitar-three-way-toggle-switch-wiring/index.html",
+        "gitBlob": "8758777cf66219b5c80ad16ce93a0090421aac53",
+        "bytes": 13877,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/how-a-guitar-tone-control-works/index.html",
+        "gitBlob": "83e8e556d2f79d09ed459fd78d5730073b67cb64",
+        "bytes": 16053,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/how-les-paul-controls-work/index.html",
+        "gitBlob": "e36f97a81cc1842db094f3e187c3d03e1b991dfc",
+        "bytes": 13795,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/hub-v4.css",
+        "gitBlob": "aa94b3215260e8783c3e712470a6a26975cd0705",
+        "bytes": 20193,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/hub.mjs",
+        "gitBlob": "6e297ec238a30ccfd75bbb7e22f3a801b334d3ed",
+        "bytes": 2258,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/independent-dependent-volumes/index.html",
+        "gitBlob": "23b71481a5d42831022b7f71f5567d6e2310c4ae",
+        "bytes": 13529,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/index.html",
+        "gitBlob": "03048c335d96d1c602c78d886c4f9b84618951af",
+        "bytes": 56782,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/instrument-context.mjs",
+        "gitBlob": "ecde7008b6dd07bdfdec76af7e115f8ce9925fe9",
+        "bytes": 824,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/knowledge.json",
+        "gitBlob": "c130baa1838b2c14895bb32ca957b9f52d5104a0",
+        "bytes": 16740,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/les-paul-installation/index.html",
+        "gitBlob": "bb4dc50fff06684939ab4fc962d97a9b3e738bac",
+        "bytes": 18271,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/modern-vs-50s-les-paul-wiring/index.html",
+        "gitBlob": "18bf2f92696de93828ff1ceaf08ae2e330e6f79f",
+        "bytes": 14227,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/output-jack-faults/index.html",
+        "gitBlob": "42d5a4dc73ec7853ac5e1938ca617d94318ac36a",
+        "bytes": 12820,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/partial-coil-splits/index.html",
+        "gitBlob": "fccee0e472d260a6449e1a32ff6e78034ea6b3ec",
+        "bytes": 13301,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/pickup-conductors/index.html",
+        "gitBlob": "5aef6a191e3e33871c3db80e73578206545d8f9b",
+        "bytes": 11477,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/pickup-dc-resistance-output/index.html",
+        "gitBlob": "18e5aef7eefb8967d88764c22158f214d31ebf91",
+        "bytes": 13161,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/pickup-inductance/index.html",
+        "gitBlob": "7501b48f8c65145a3a672f2fcd9f0ff596ac6c02",
+        "bytes": 12903,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/pickup-phase-switching/index.html",
+        "gitBlob": "7f0d628d5076a0b78794de1f4a9822a4d85ea5d4",
+        "bytes": 13218,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/potentiometers-explained/index.html",
+        "gitBlob": "b84fd52a77d6401b859ab4ed0b77831b501ee257",
+        "bytes": 25540,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/push-pull-dpdt/index.html",
+        "gitBlob": "0b84bdff0010a66fb0b409df12eae9abbd9cf93c",
+        "bytes": 13166,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/reading-a-circuit-model/index.html",
+        "gitBlob": "23791c56f1bd0a6d77d0fe86748d2bb9dac72cd9",
+        "bytes": 13577,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/reference.css",
+        "gitBlob": "82b5dd84a5ef2f437058b00983aaab3e8faadbb0",
+        "bytes": 13351,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/selectors/index.html",
+        "gitBlob": "0f05bbb01bc82559ffebb6b2089021510bd739f0",
+        "bytes": 10826,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/series-vs-parallel-pickup-wiring/index.html",
+        "gitBlob": "db0b2ddf1d37dc77ce3c15714fc7b81ec6b47da1",
+        "bytes": 12787,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/tools/index.html",
+        "gitBlob": "3f54e2850da11264e9f7beacd47651e4edf33d5f",
+        "bytes": 13905,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/treble-bleeds/index.html",
+        "gitBlob": "95875d17d2af495effeb397dd79a129875b6674f",
+        "bytes": 20704,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/troubleshooting/index.html",
+        "gitBlob": "6362dc9acd89bd495f6fae8558b542fd1615e5a4",
+        "bytes": 24009,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/luthier-hub/wiring-circuits-explained/index.html",
+        "gitBlob": "e3451008881471470ecc2befe4ed4a5092ce70da",
+        "bytes": 18269,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/navigation.css",
+        "gitBlob": "08f53e3da58880ed92cc8e145e9f75525c9a6819",
+        "bytes": 468,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/news/index.html",
+        "gitBlob": "5bf1d6eefddcb26478435021348d661ed698375f",
+        "bytes": 4616,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/operations/model.mjs",
+        "gitBlob": "9ebf8503350348a072c4a6f1cd65866c1d081d54",
+        "bytes": 3062,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/operations/news-render.mjs",
+        "gitBlob": "fb1fe62fcc406ad5ad8c098f600f538029358aef",
+        "bytes": 1966,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/operations/operations.css",
+        "gitBlob": "d675970cb5cf0ab0da3be7a7d6775049d7bf48c9",
+        "bytes": 2494,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/operations/presets.mjs",
+        "gitBlob": "d54fe18535838a96783d3a775e2982fcfd546b05",
+        "bytes": 1659,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/operations/public.mjs",
+        "gitBlob": "9c25ddebcd744ff5748cb88253fe84178a46733d",
+        "bytes": 6438,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/operations/purchase-controls.mjs",
+        "gitBlob": "e188563ff5338c13dae267fc6d7cdea5575e9b1e",
+        "bytes": 1570,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/operations/snapshot.json",
+        "gitBlob": "77e4d0f495e8a87c58f3db3673041c1515c7cc0e",
+        "bytes": 345,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/privacy/index.html",
+        "gitBlob": "d6ebef3e7fe28eef392f85b57aaa496012932e73",
+        "bytes": 13129,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/products/ai-pot-ss-alphamini-a500k/index.html",
+        "gitBlob": "dbd1bb3fcc779c69c855dc7c2ffb78609d4b5c86",
+        "bytes": 9018,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/products/app.mjs",
+        "gitBlob": "3bd2aa566993fcc32b7f89ef541e06c6b9c53f7f",
+        "bytes": 6477,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/products/bleed-cap/index.html",
+        "gitBlob": "8e68287d9f7f91c8671c3c874a400d6311fd8c60",
+        "bytes": 8677,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/products/bleed-duncan/index.html",
+        "gitBlob": "414028e63cfa6b594e5227aef9b8f28694d82a2d",
+        "bytes": 8788,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/products/bleed-premium/index.html",
+        "gitBlob": "aa1e49b8cd2218434efd140bbaaf411b553b1f4a",
+        "bytes": 9388,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/products/bleed-prs/index.html",
+        "gitBlob": "a6f622834ea1c45509f0c8ffa26e141e8de9c414",
+        "bytes": 8502,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/products/cde-022/index.html",
+        "gitBlob": "4425b54bd960a25505acbfd3605d83d4a7bff9db",
+        "bytes": 8453,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/products/index.html",
+        "gitBlob": "5242369bb76fb1d6310ef662fcb1ceb73c30f72a",
+        "bytes": 3815,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/products/model.mjs",
+        "gitBlob": "d3701f17af9b961df21eafba12a92646673c9116",
+        "bytes": 5325,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/products/pot-short-alpha-a/index.html",
+        "gitBlob": "96b45e528b3ca481715691b3a9836d249ece8157",
+        "bytes": 8745,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/products/pot-short-cts-a/index.html",
+        "gitBlob": "f4524ee8ea4da6a9a2dbae463af85436c557c0ea",
+        "bytes": 8921,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/products/presentation.mjs",
+        "gitBlob": "8c50e7df56ea696d68037dd39e1d74c9f9620cee",
+        "bytes": 4775,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/products/product.css",
+        "gitBlob": "62acb0f83ac6e7b7d7f57f5b7017d6b2e42753fc",
+        "bytes": 2473,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/products/sbe-600/index.html",
+        "gitBlob": "8f1aaeae82e8535ee6af2802734f0771bb2f3095",
+        "bytes": 8559,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/robots.txt",
+        "gitBlob": "3e66af01ffa1f63d198b9cd654082009a97d60d3",
+        "bytes": 80,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/site.mjs",
+        "gitBlob": "8e9897324e345c0f3d73246e0e534ba9fb778ba9",
+        "bytes": 5755,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/sitemap.xml",
+        "gitBlob": "4719d19d518831956b5fc9b26b89c940c7db2d09",
+        "bytes": 5962,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/style.css",
+        "gitBlob": "d978eb1f9add5ee765c6c70ecd4f03b78617bd7c",
+        "bytes": 13106,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/terms/index.html",
+        "gitBlob": "0f6d469be7c51227e2a34b0a4121174bf7d4dfdf",
+        "bytes": 16023,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/treble-bleed-designer/app.mjs",
+        "gitBlob": "2e901db2b2719a28a0ccccc4598a718f017944fb",
+        "bytes": 9418,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/treble-bleed-designer/circuits.mjs",
+        "gitBlob": "c55659a4a9a38fb8fa7442cc7a54100dc118a04b",
+        "bytes": 110,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/treble-bleed-designer/designer.css",
+        "gitBlob": "770872f8a91a25940e98ba0851620c48f20d07f0",
+        "bytes": 6674,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/treble-bleed-designer/engine.mjs",
+        "gitBlob": "cf8d4582ae677bfbfc3726fc4f42843bda0bb9b7",
+        "bytes": 189,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/treble-bleed-designer/frozen.mjs",
+        "gitBlob": "6fdd247957a7d448e0f3697f15967208afbf4e1e",
+        "bytes": 963,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/treble-bleed-designer/graph.mjs",
+        "gitBlob": "91340b23810dc50e5f49960bc4df4f0bc06b3792",
+        "bytes": 2843,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/treble-bleed-designer/index.html",
+        "gitBlob": "ec4ec6f9c9b1e32259a3df16a071d84ea9e6d698",
+        "bytes": 13495,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/treble-bleed-designer/product-match.mjs",
+        "gitBlob": "5401933c5ac256b8d49f971fbeb240485d161455",
+        "bytes": 1181,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-diagrams/index.html",
+        "gitBlob": "a32f71e502850b2a8bf216417912836e8c8f350b",
+        "bytes": 483,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-diagrams/wiring.css",
+        "gitBlob": "77cc26fb397d980aff20881b72a6ca3b90b85277",
+        "bytes": 9821,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-diagrams/wiring.js",
+        "gitBlob": "56cffe8d73eecb1ed830f3cb1e3832f426153d65",
+        "bytes": 12977,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-generator/app.mjs",
+        "gitBlob": "489f855aeb14e983058a4453f71918120146219c",
+        "bytes": 30750,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-generator/build-guide.mjs",
+        "gitBlob": "b5756154d0b7fc704559cc66c77fc79af2cef0cd",
+        "bytes": 3714,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-generator/colours.mjs",
+        "gitBlob": "997cd720002dabc20a322df383d40c06883a766f",
+        "bytes": 3555,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-generator/components.mjs",
+        "gitBlob": "cae52a35c12f78a93571e1bc29c82fdfdcae2beb",
+        "bytes": 149,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-generator/composition.mjs",
+        "gitBlob": "bb5c83024a1ff2668ea6f51c6f2a0ce1b84eb3b5",
+        "bytes": 1073,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-generator/diagram-navigation.mjs",
+        "gitBlob": "53a40c549fec26aa75f1a7adafe5ca5a41b2b6dc",
+        "bytes": 2598,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-generator/diagram-semantics.mjs",
+        "gitBlob": "d345311e60d64ae9a0b7b245a847ddaa28b5e8eb",
+        "bytes": 2749,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-generator/explain.mjs",
+        "gitBlob": "653cf6a5a9741ca00a3a74a762deed6949f2c35d",
+        "bytes": 991,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-generator/explanation.mjs",
+        "gitBlob": "cf6dd936810c87b78ea1d87a7c404e643b4491c2",
+        "bytes": 10220,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-generator/generator.css",
+        "gitBlob": "192db12097fa77136059e4b5d705fae5d083e564",
+        "bytes": 12456,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-generator/guided-build-ui.mjs",
+        "gitBlob": "b52b118dca7bd5800bcb42f9c16774caeaad56cb",
+        "bytes": 8995,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-generator/guided-build.mjs",
+        "gitBlob": "25e4f80d51ebcaf1695b27f32293158c60f40037",
+        "bytes": 6680,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-generator/index.html",
+        "gitBlob": "538cb70df962e53faa8bb0dbacfa5affda405afa",
+        "bytes": 16687,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-generator/inspection.mjs",
+        "gitBlob": "661d65f2685941a98b0fe6816581d0f8af514002",
+        "bytes": 1137,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-generator/layouts.mjs",
+        "gitBlob": "908a76d33531c764f7efec039dcf4d7ea80e8545",
+        "bytes": 11863,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-generator/model.mjs",
+        "gitBlob": "c4de792de4931c726b69ef6455152414563b840e",
+        "bytes": 13606,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-generator/physical.mjs",
+        "gitBlob": "b70cfad59c74f8f3a23bc9364c6361c4768f0ae8",
+        "bytes": 3282,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-generator/presentation.mjs",
+        "gitBlob": "615d38394a14eb0c18dc5887b8070a2ac4013b66",
+        "bytes": 882,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-generator/public-platform.mjs",
+        "gitBlob": "745a907634ecb9cfbc127063dbc38701da010f6f",
+        "bytes": 516,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-generator/render.mjs",
+        "gitBlob": "a3b879329261f0653d516c3679600d89f1458562",
+        "bytes": 22087,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-generator/routing.mjs",
+        "gitBlob": "c7af149f585f351cf6daada4804e497835e46801",
+        "bytes": 13627,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-generator/session.mjs",
+        "gitBlob": "51b4a3525e9d9c9cc3c3ead64de19303f3c22ca8",
+        "bytes": 2202,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-generator/workbench.css",
+        "gitBlob": "41da5aa1caa82e07436ab85cb43949eaa22cb335",
+        "bytes": 10862,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-kits/build/index.html",
+        "gitBlob": "61f7acc9d2c1fdb081df0e4bd40e85519a353258",
+        "bytes": 3146,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-kits/builder-entry.mjs",
+        "gitBlob": "bed794dbe6dadb34e604a8140c347cce72196182",
+        "bytes": 770,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-kits/builder-options.mjs",
+        "gitBlob": "8f5c8a5a46383f59545c3ff90e1acb6d6a05e0d4",
+        "bytes": 4397,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-kits/builder-shell.mjs",
+        "gitBlob": "2c4cb098a79ddca859ba3333894241630725e598",
+        "bytes": 1422,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-kits/family-repository.mjs",
+        "gitBlob": "7388e4063e59f85eb6fcb27b5f9953d26e159c92",
+        "bytes": 2797,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-kits/fitment.mjs",
+        "gitBlob": "4dde6f9274da11be08585b16e485613617bee905",
+        "bytes": 1434,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-kits/help-me-choose/guide.mjs",
+        "gitBlob": "be0fc1f8cee4cb11e9c0445b74cc83f4074688eb",
+        "bytes": 6811,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-kits/help-me-choose/index.html",
+        "gitBlob": "42558c0e109c0f1807866525df53d8036abaef0d",
+        "bytes": 5675,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-kits/help-me-choose/recommend.mjs",
+        "gitBlob": "abf18ab06af40949ac1739d0721de2ad132475e6",
+        "bytes": 3597,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-kits/index.html",
+        "gitBlob": "de7e207c7f4956860abeb7065823a77ca91b8ce9",
+        "bytes": 8118,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-kits/kit-component-discovery.mjs",
+        "gitBlob": "1a94509dcc87f0ff254ede0e4c48e02a1b1862c6",
+        "bytes": 6217,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-kits/kit-data.mjs",
+        "gitBlob": "092ba248a9524956ad9de7702a5b7e2f1e6522d2",
+        "bytes": 6986,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-kits/kit-requirements.mjs",
+        "gitBlob": "6cdb203a9df076fbdf1c604b94b35d50c59ac3d8",
+        "bytes": 2530,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-kits/kit-seed.mjs",
+        "gitBlob": "e4526c983afd0c91ec7b0b525aa2699998e726bc",
+        "bytes": 4679,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-kits/landing.css",
+        "gitBlob": "475e416650f22647783969f467ef76dd83045048",
+        "bytes": 2619,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-kits/landing.mjs",
+        "gitBlob": "a3266dd068b0b42cd1dae47e450eec97df68e123",
+        "bytes": 2469,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-kits/prs-custom-24/index.html",
+        "gitBlob": "6f55ffc767dc8701a8cb1d720bd068a4a4458418",
+        "bytes": 5575,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-kits/prs-se-594/index.html",
+        "gitBlob": "e033f895a954850761a976a07c4872e43d99cea9",
+        "bytes": 5544,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-kits/prs-se-custom-24/index.html",
+        "gitBlob": "9fae2042434bee87c522646792979e64a1f69079",
+        "bytes": 5609,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-kits/sg/index.html",
+        "gitBlob": "aa239d7f1b59596d44d008f7077ef6c574fbd499",
+        "bytes": 5513,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-kits/specification/index.html",
+        "gitBlob": "b6d04a2b62f6f90936f615a3baf2e13b98ebecd2",
+        "bytes": 5713,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-kits/specification/sheet.css",
+        "gitBlob": "c249455876ed25d90e141e8cacb3028a787ca618",
+        "bytes": 3968,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-kits/specification/sheet.mjs",
+        "gitBlob": "402f7b68944570f17fbacaeab57badb39cbdb4ba",
+        "bytes": 2499,
+        "mode": "100644"
+      },
+      {
+        "path": "dist/wiring-kits/system.css",
+        "gitBlob": "00cb30defbca10d9705c89202bb158652bd25362",
+        "bytes": 4761,
+        "mode": "100644"
+      }
+    ]
+  },
+  "authoritativePublicationInventory": null,
+  "publicationPayloadSHA256": null,
+  "rollbackPayloadSHA256": null,
+  "gates": {
+    "sourceScope": "PASS",
+    "reviewedCSSIdentity": "PASS",
+    "priorIsolatedHeroAcceptance": "PASS",
+    "currentMainReconciliation": "PASS",
+    "productionWorkflowBackendFree": "FAIL",
+    "completeAuthoritativePublicationInput": "BLOCKED",
+    "completeRollbackInput": "BLOCKED",
+    "currentActiveDeploymentAssociation": "UNKNOWN",
+    "deploymentConfigurationAPI": "CONNECTOR_ENDPOINT_UNSUPPORTED",
+    "productionDeployment": "NOT EXECUTED",
+    "liveAcceptance": "NOT EXECUTED — deployment blocked"
+  },
+  "releaseSafetyTests": {
+    "status": "PENDING",
+    "CI": null
+  },
+  "productionOperations": {
+    "mainWrites": 0,
+    "productionWorkflowChanges": 0,
+    "deployments": 0,
+    "SupabaseRequests": 0,
+    "StripeRequests": 0,
+    "liveStorefrontRequests": 0,
+    "imagePublications": 0,
+    "imageAdapterActivations": 0
+  },
+  "nightfall": {
+    "branch": "engineering/blackbox34-nightfall",
+    "commit": "c3003c6a56075964f5036ea57507aed8f431b64e",
+    "tree": "e724bd72db397eccd6d3a2277d7e7ad373c5b775",
+    "testedSource": "135d2c8c6b177631c5c06358030aa610e44e322d",
+    "CI": 39577122377,
+    "conclusion": "success",
+    "merged": false,
+    "activated": false,
+    "preflightPlanSHA256": "bd9aca0efc68e8921150fbd0aefbce97059919f34d066d6b59c2cec9191e4f44",
+    "preflightExecuted": false
+  },
+  "limitations": [
+    "Source inventory and successful historical logs cannot prove the complete currently served website.",
+    "404 establishes artifact unavailability through the current API, not its exact deletion cause.",
+    "Pages/deployment configuration endpoints were rejected by connector URL allowlist (400 INVALID_ARGUMENT); no authentication bypass attempted.",
+    "No live inspection was executed because the mandatory production stage was stopped.",
+    "Historical Atlas reconstruction is not adopted as a current production baseline."
+  ]
+}

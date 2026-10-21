@@ -1,0 +1,31 @@
+name: HOMECOMING release safety fixtures (no deployment)
+on:
+  push:
+    branches: ['release/spectre35-homecoming']
+    paths:
+      - '.github/workflows/homecoming36-validation.yml'
+      - 'tests/homecoming36/**'
+      - 'dist/customer-ui.css'
+permissions:
+  contents: read
+concurrency:
+  group: homecoming36-validation
+  cancel-in-progress: false
+jobs:
+  validate:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/release/spectre35-homecoming'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 3
+          persist-credentials: false
+      - name: Kernel-isolated synthetic release checks only
+        run: python3 tests/homecoming36/run_offline.py "$RUNNER_TEMP/homecoming36"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: homecoming36-fixture-evidence
+          path: ${{ runner.temp }}/homecoming36/*.json
+          retention-days: 30
