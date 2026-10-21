@@ -2,7 +2,7 @@ import {uiNode as node} from '../../dist/admin/application.mjs';
 import {fields,displayValue,categories,editable} from './schema.mjs';
 import {createEditorSession} from './session.mjs';
 
-export function createEditorView(document,{persistence,onSaved=()=>{}}){
+export function createEditorView(document,{persistence,onSaved=()=>{},timeoutMs=8000}){
  const $=id=>document.getElementById(id),root=$('editor-workspace'),form=$('product-form');
  let session,renderedId=null,section='general',savedRevision=null,confirmPending=null,confirmInvoker=null,closed=false;
  const controls=new Map(),errors=new Map(),cleanups=[];
@@ -28,6 +28,7 @@ export function createEditorView(document,{persistence,onSaved=()=>{}}){
   if(field.money||field.integer)input.inputMode=field.money?'decimal':'numeric';
   if(field.money){label.classList.add('currency-field');input.setAttribute('aria-label',field.label+' in GBP');}
   input.autocomplete='off';
+  if(field.required)input.required=true;
   const error=add(label,'span','','field-error');error.id='field-error-'+key;input.setAttribute('aria-describedby',error.id);
   controls.set(key,input);errors.set(key,error);
   listen(input,field.boolean?'change':'input',()=>session.set(key,field.boolean?input.checked:input.value));
@@ -92,7 +93,7 @@ export function createEditorView(document,{persistence,onSaved=()=>{}}){
   for(const [key,value]of Object.entries(s.baseline.technicalSpecs??{}))if(typeof value==='string')add(existing,'p',key+': '+value,'editor-help');
   if(s.phase==='saved'&&s.id+':'+s.baseline.revision!==savedRevision){savedRevision=s.id+':'+s.baseline.revision;onSaved(s.baseline);}
  }
- session=createEditorSession({persistence,onChange:render});
+ session=createEditorSession({persistence,onChange:render,timeoutMs});
  function confirm(message){
   if(confirmPending)return Promise.resolve(false);
   confirmInvoker=document.activeElement;$('confirm-message').textContent=message;$('discard-confirm').showModal();$('keep-editing').focus();

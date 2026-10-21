@@ -1,7 +1,12 @@
 import {fields,editable,validateDraft,changes,patchFor,fingerprint,readRecord} from './schema.mjs';
 let sequence=0;
-export function createEditorSession({persistence,onChange=()=>{}}={}){
+export function createEditorSession({persistence,onChange=()=>{},timeoutMs=8000}={}){
  if(persistence?.kind!=='command02-synthetic'||['read','save','status'].some(m=>typeof persistence[m]!=='function'))throw Error('Explicit synthetic persistence is required. Live writes are disabled.');
+ if(!Number.isFinite(timeoutMs)||timeoutMs<1||timeoutMs>60000)throw Error('Invalid operation deadline.');
+ const bounded=(operation,label)=>new Promise((resolve,reject)=>{
+  const timer=setTimeout(()=>reject(Object.assign(Error(label+' timed out. Verify the outcome before retrying a save.'),{outcome:'unknown'})),timeoutMs);
+  Promise.resolve(operation).then(value=>{clearTimeout(timer);resolve(value);},error=>{clearTimeout(timer);reject(error);});
+ });
  let alive=true,epoch=0,readAbort,pendingSave=null;
  const state={phase:'closed',id:null,baseline:null,draft:null,server:null,error:'',notice:'',conflict:false,operation:null,review:null};
  const snapshot=()=>{
@@ -16,21 +21,21 @@ export function createEditorSession({persistence,onChange=()=>{}}={}){
  function set(key,value){if(!alive||!state.draft)return;if(!Object.hasOwn(fields,key))throw Error('Unsupported editor field.');state.draft[key]=value;state.review=null;if(!['unknown','checking','conflict','saving'].includes(state.phase))state.error='';state.notice='';if(['saved','error','review'].includes(state.phase))state.phase='editing';emit();}
  async function open(id){
   if(!alive)return;const token=fresh();pendingSave=null;Object.assign(state,{phase:'loading',id,baseline:null,draft:null,server:null,error:'',notice:'',conflict:false,operation:null,review:null});emit();
-  try{const result=readRecord(await persistence.read(id,{signal:readAbort.signal}),id);if(!alive||token!==epoch)return;Object.assign(state,{phase:'editing',baseline:result,server:result,draft:editable(result)});}
+  try{const result=readRecord(await bounded(persistence.read(id,{signal:readAbort.signal}),'Product read'),id);if(!alive||token!==epoch)return;Object.assign(state,{phase:'editing',baseline:result,server:result,draft:editable(result)});}
   catch(error){if(!alive||token!==epoch)return;state.phase='load-error';state.error=error.message;}
   emit();
  }
  async function reload(){
   if(!alive||!state.id||['saving','unknown','checking'].includes(state.phase))return false;
   const token=fresh(),id=state.id;state.phase='reloading';state.error='';emit();
-  try{const result=readRecord(await persistence.read(id,{signal:readAbort.signal}),id);if(!alive||token!==epoch)return false;Object.assign(state,{phase:'editing',baseline:result,server:result,draft:editable(result),conflict:false,review:null,notice:'Draft discarded. Latest fixture values loaded.'});emit();return true;}
+  try{const result=readRecord(await bounded(persistence.read(id,{signal:readAbort.signal}),'Product reload'),id);if(!alive||token!==epoch)return false;Object.assign(state,{phase:'editing',baseline:result,server:result,draft:editable(result),conflict:false,review:null,notice:'Draft discarded. Latest fixture values loaded.'});emit();return true;}
   catch(error){if(alive&&token===epoch){state.phase=state.baseline?'error':'load-error';state.error='Reload failed. Your local values were preserved. '+error.message;emit();}return false;}
  }
  async function review(){
   if(!snapshot().canReview)return false;
   const token=epoch,id=state.id;state.phase='reviewing';state.error='';emit();
   try{
-   const current=readRecord(await persistence.read(id),id);
+   const current=readRecord(await bounded(persistence.read(id),'Revision review'),id);
    if(!alive||token!==epoch)return false;
    state.server=current;
    if(current.revision!==state.baseline.revision){state.conflict=true;state.phase='conflict';state.error='A newer fixture revision is available. Review the differences and reload before saving.';emit();return false;}
@@ -58,7 +63,7 @@ export function createEditorSession({persistence,onChange=()=>{}}={}){
   state.operation=request;state.phase='saving';state.error='';state.notice='';emit();
   const task=(async()=>{
    try{
-    const result=await persistence.save({id:request.id,expectedRevision:request.expectedRevision,patch:request.patch,operationId:request.operationId});
+    const result=await bounded(persistence.save({id:request.id,expectedRevision:request.expectedRevision,patch:request.patch,operationId:request.operationId}),'Product save');
     if(!alive||token!==epoch)return false;
     try{accept(result,request);}catch(error){state.phase='unknown';state.error=error.message+' Check the outcome before retrying.';}
    }catch(error){
@@ -77,7 +82,7 @@ export function createEditorSession({persistence,onChange=()=>{}}={}){
   if(!alive||state.phase!=='unknown'||!state.operation)return;
   const token=epoch,request=state.operation;state.phase='checking';state.error='';emit();
   try{
-   const outcome=await persistence.status(request.operationId);if(!alive||token!==epoch)return;
+   const outcome=await bounded(persistence.status(request.operationId),'Outcome check');if(!alive||token!==epoch)return;
    if(outcome.status==='committed'){try{accept(outcome.result,request);}catch(error){state.phase='unknown';state.error=error.message;}}
    else if(outcome.status==='not-applied'){state.phase='error';state.operation=null;state.review=null;state.error='Outcome confirmed: no changes applied. It is safe to review and retry.';}
    else{state.phase='unknown';state.error='The authority cannot yet confirm the outcome. Retry remains blocked.';}

@@ -16,6 +16,7 @@ const intMax=2147483647;
 export function parseMoney(value){
  if(typeof value!=='string')throw Error('Enter a GBP amount as text.');
  const s=value.trim();if(!s)return null;
+ if(s.length>64)throw Error('Enter a shorter GBP amount.');
  if(!/^\d+(?:\.\d{1,2})?$/.test(s))throw Error('Use a non-negative GBP amount with at most two decimals.');
  const [whole,fraction='']=s.split('.'),pence=BigInt(whole)*100n+BigInt(fraction.padEnd(2,'0'));
  if(pence>BigInt(intMax))throw Error('Price exceeds the existing integer-pence range.');
@@ -63,6 +64,7 @@ export const patchFor=(original,draft)=>Object.fromEntries(changes(original,draf
 export const fingerprint=patch=>JSON.stringify(Object.fromEntries(Object.entries(patch).sort(([a],[b])=>a.localeCompare(b))));
 export function validatePatch(patch,current,records){
  if(!patch||typeof patch!=='object'||Array.isArray(patch))throw Error('Invalid change payload.');
+ if(![Object.prototype,null].includes(Object.getPrototypeOf(patch))||!Object.keys(patch).length)throw Error('A plain nonempty change payload is required.');
  for(const key of Object.keys(patch))if(!Object.hasOwn(fields,key))throw Error('Unsupported mutation: '+key+'.');
  const draft=editable(current);
  for(const [key,value]of Object.entries(patch)){
@@ -91,6 +93,7 @@ export function readRecord(record,expectedId){
  if(!record||record.id!==expectedId||!/^sim-[1-9]\d*$/.test(record.revision??''))throw Error('Unexpected fixture record identity or revision.');
  summary(record);
  if(!record.specs||typeof record.specs!=='object'||Array.isArray(record.specs))throw Error('Invalid specification object.');
+ for(const key of ['Series','Reference'])if(record.specs[key]!=null&&typeof record.specs[key]!=='string')throw Error('Invalid specification text.');
  const result=validateDraft(editable(record));if(!result.valid)throw Error('Invalid authoritative fixture fields.');
  return structuredClone(record);
 }
