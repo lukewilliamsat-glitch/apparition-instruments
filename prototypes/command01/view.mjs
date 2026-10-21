@@ -3,12 +3,17 @@ import {setAdminFeedback} from '../../dist/admin/interaction.mjs';
 import {createWorkbench} from './controller.mjs';
 import {categories,money,stockLabel,stockState,emptyFilters} from './model.mjs';
 
-export function mountWorkbench(document,{transport}={}) {
+export function mountWorkbench(document,{transport,extension={}}={}) {
   const byId=id=>document.getElementById(id);
   const inspector=byId('inspector'),filters=['category','manufacturer','individual','kit','stock'];
   let controller,lastRowsKey='',lastInspectorKey='',lastManufacturers='',lastDisplayedDetail=null,disposed=false;
   const cleanups=[];
   const listen=(target,event,handler)=>{target.addEventListener(event,handler);cleanups.push(()=>target.removeEventListener(event,handler));};
+  const act=(action,run)=>{
+    const allowed=extension.beforeAction?.(action)??true;
+    if(allowed&&typeof allowed.then==='function')void allowed.then(ok=>{if(ok&&!disposed)run();}).catch(error=>setAdminFeedback(byId('feedback'),error.message,'error'));
+    else if(allowed&&!disposed)run();
+  };
   const add=(parent,tag,text,className)=>{const child=node(document,tag,text,className);parent.append(child);return child;};
   const pair=(dl,label,value)=>{const line=add(dl,'div',undefined,'detail-line');add(line,'dt',label);add(line,'dd',value);};
   const section=(parent,label)=>{const s=add(parent,'section',undefined,'inspector-section');add(s,'h4',label);return s;};
@@ -119,18 +124,18 @@ export function mountWorkbench(document,{transport}={}) {
     byId('empty-heading').textContent=state.rows.length?'No matching components':'No components in this fixture';
     byId('empty-message').textContent=state.rows.length?'Try a broader search or clear your filters.':'The catalogue loaded successfully and returned an empty list.';
     byId('empty-clear').hidden=!state.rows.length;
-    renderRows(state);renderInspector(state);
+    renderRows(state);renderInspector(state);extension.onState?.(state);
   }
   try{controller=createWorkbench({transport,onChange:render});}
   catch(error){byId('error-panel').hidden=false;byId('error-message').textContent=error.message;byId('refresh').disabled=true;byId('retry').disabled=true;return{blocked:true,destroy(){disposed=true;}};}
   listen(byId('search'),'input',event=>controller.setFilter('query',event.target.value));
   for(const filter of filters)listen(byId('filter-'+filter),'change',event=>controller.setFilter(filter,event.target.value));
   for(const id of ['clear-filters','empty-clear'])listen(byId(id),'click',()=>controller.clearFilters());
-  for(const id of ['refresh','retry'])listen(byId(id),'click',()=>void controller.refresh());
+  for(const id of ['refresh','retry'])listen(byId(id),'click',()=>act({type:'refresh'},()=>void controller.refresh()));
   listen(byId('active-filters'),'click',event=>{const button=event.target.closest('button[data-clear-filter]');if(button){controller.setFilter(button.dataset.clearFilter,'');byId('search').focus();}});
-  listen(byId('rows'),'click',event=>{const button=event.target.closest('button[data-product]');if(button)void controller.select(button.dataset.product);});
-  listen(inspector,'click',event=>{if(event.target.closest('[data-close]'))clearSelection();if(event.target.closest('[data-retry-detail]'))void controller.select(controller.snapshot().selectedId);});
-  listen(document,'keydown',event=>{if(event.key==='Escape'&&inspector.contains(document.activeElement)){event.preventDefault();clearSelection();}});
+  listen(byId('rows'),'click',event=>{const button=event.target.closest('button[data-product]');if(button)act({type:'select',id:button.dataset.product},()=>void controller.select(button.dataset.product));});
+  listen(inspector,'click',event=>{if(event.target.closest('[data-close]'))act({type:'close'},clearSelection);if(event.target.closest('[data-retry-detail]'))void controller.select(controller.snapshot().selectedId);});
+  listen(document,'keydown',event=>{if(event.key==='Escape'&&inspector.contains(document.activeElement)){event.preventDefault();act({type:'close'},clearSelection);}});
   listen(document.defaultView,'pagehide',()=>controller.destroy());
   void controller.refresh();
   return {controller,destroy(){disposed=true;controller.destroy();for(const cleanup of cleanups)cleanup();}};
