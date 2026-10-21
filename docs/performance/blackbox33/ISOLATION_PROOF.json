@@ -1,0 +1,281 @@
+{
+  "schemaVersion": 1,
+  "stageA": {
+    "stage": "A",
+    "applicationFixturesOpened": 0,
+    "productionRequests": 0,
+    "status": "PASS",
+    "sourceCommit": "870a99c8ed99f981728f26b1eedb415af218b424",
+    "negativeControls": [
+      {
+        "name": "fetchIPv4",
+        "result": "blocked"
+      },
+      {
+        "name": "fetchIPv6",
+        "result": "blocked"
+      },
+      {
+        "name": "dns",
+        "result": "blocked"
+      },
+      {
+        "name": "image",
+        "result": "blocked"
+      },
+      {
+        "name": "websocket",
+        "result": "blocked"
+      },
+      {
+        "name": "redirect",
+        "result": "blocked"
+      },
+      {
+        "name": "script",
+        "result": "blocked"
+      },
+      {
+        "name": "worker",
+        "result": "blocked"
+      },
+      {
+        "name": "frame",
+        "result": "blocked"
+      },
+      {
+        "name": "navigation",
+        "result": "blocked"
+      }
+    ],
+    "requests": [
+      {
+        "url": "http://127.0.0.1:36249/",
+        "resource": "document"
+      },
+      {
+        "url": "http://192.0.2.1/probe",
+        "resource": "fetch"
+      },
+      {
+        "url": "http://[2001:db8::1]/probe",
+        "resource": "fetch"
+      },
+      {
+        "url": "http://blackbox33-negative.invalid/probe",
+        "resource": "fetch"
+      },
+      {
+        "url": "http://127.0.0.1:36249/redirect",
+        "resource": "fetch"
+      },
+      {
+        "url": "http://192.0.2.3/probe.js",
+        "resource": "script"
+      },
+      {
+        "url": "http://198.51.100.1/probe-frame",
+        "resource": "document"
+      },
+      {
+        "url": "http://127.0.0.1:36249/worker.js",
+        "resource": "script"
+      },
+      {
+        "url": "http://192.0.2.2/probe.png",
+        "resource": "image"
+      },
+      {
+        "url": "http://198.51.100.3/probe",
+        "resource": "fetch"
+      },
+      {
+        "url": "http://203.0.113.1/worker-probe",
+        "resource": "fetch"
+      },
+      {
+        "url": "http://203.0.113.2/navigation-probe",
+        "resource": "document"
+      }
+    ],
+    "responses": [
+      {
+        "url": "http://127.0.0.1:36249/",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:36249/redirect",
+        "status": 302
+      },
+      {
+        "url": "http://127.0.0.1:36249/worker.js",
+        "status": 200
+      }
+    ],
+    "failures": [
+      {
+        "url": "http://198.51.100.1/probe-frame",
+        "resource": "document",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://192.0.2.2/probe.png",
+        "resource": "image",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://192.0.2.1/probe",
+        "resource": "fetch",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://[2001:db8::1]/probe",
+        "resource": "fetch",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://192.0.2.3/probe.js",
+        "resource": "script",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://blackbox33-negative.invalid/probe",
+        "resource": "fetch",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://198.51.100.3/probe",
+        "resource": "fetch",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://203.0.113.1/worker-probe",
+        "resource": "fetch",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://203.0.113.2/navigation-probe",
+        "resource": "document",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      }
+    ],
+    "node": "v22.20.0",
+    "namespace": "net:[4026532269]",
+    "processProof": {
+      "connections": [
+        {
+          "family": 2,
+          "destination": "192.0.2.1",
+          "errno": 101,
+          "blocked": true
+        },
+        {
+          "family": 10,
+          "destination": "2001:db8::1",
+          "errno": 101,
+          "blocked": true
+        }
+      ],
+      "childNamespace": "net:[4026532269]"
+    },
+    "browser": "155.0.8059.39",
+    "chromiumSandbox": true,
+    "disposableBrowser": true,
+    "browserProof": {
+      "fetchIPv4": "blocked",
+      "fetchIPv6": "blocked",
+      "dns": "blocked",
+      "image": "blocked",
+      "websocket": "blocked",
+      "redirect": "blocked",
+      "script": "blocked",
+      "worker": "blocked"
+    },
+    "localOriginReachable": true,
+    "nextStageAuthorised": true
+  },
+  "addresses": [
+    {
+      "ifindex": 1,
+      "ifname": "lo",
+      "flags": [
+        "LOOPBACK",
+        "UP",
+        "LOWER_UP"
+      ],
+      "mtu": 65536,
+      "qdisc": "noqueue",
+      "operstate": "UNKNOWN",
+      "group": "default",
+      "txqlen": 1000,
+      "link_type": "loopback",
+      "address": "00:00:00:00:00:00",
+      "broadcast": "00:00:00:00:00:00",
+      "addr_info": [
+        {
+          "family": "inet",
+          "local": "127.0.0.1",
+          "prefixlen": 8,
+          "scope": "host",
+          "label": "lo",
+          "valid_life_time": 4294967295,
+          "preferred_life_time": 4294967295
+        },
+        {
+          "family": "inet6",
+          "local": "::1",
+          "prefixlen": 128,
+          "scope": "host",
+          "valid_life_time": 4294967295,
+          "preferred_life_time": 4294967295
+        }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "type": "local",
+      "dst": "127.0.0.0/8",
+      "dev": "lo",
+      "table": "local",
+      "protocol": "kernel",
+      "scope": "host",
+      "prefsrc": "127.0.0.1",
+      "flags": []
+    },
+    {
+      "type": "local",
+      "dst": "127.0.0.1",
+      "dev": "lo",
+      "table": "local",
+      "protocol": "kernel",
+      "scope": "host",
+      "prefsrc": "127.0.0.1",
+      "flags": []
+    },
+    {
+      "type": "broadcast",
+      "dst": "127.255.255.255",
+      "dev": "lo",
+      "table": "local",
+      "protocol": "kernel",
+      "scope": "link",
+      "prefsrc": "127.0.0.1",
+      "flags": []
+    },
+    {
+      "type": "local",
+      "dst": "::1",
+      "dev": "lo",
+      "table": "local",
+      "protocol": "kernel",
+      "metric": 0,
+      "flags": [],
+      "pref": "medium"
+    }
+  ],
+  "browserVersion": "Google Chrome 155.0.8059.39",
+  "nodeVersion": "v22.20.0",
+  "controllerIntegrity": "sha512-hutraynyn31F+Bifme+Ps9Vq59hKuUCz7H1kDOcBs+2oGguKkWTU50bBWrtz34OUWmIwpBTWDxaRPXrIXkgvmQ==",
+  "sourceArtifactSHA256": "4e75066afc27139e9636761db8ed31d71b34a38eed50bc7d85d3ddc9688b9e90"
+}
