@@ -1,0 +1,1753 @@
+{
+  "mission": "Authorisation 37 — COMMAND 01",
+  "status": "PASS within isolated synthetic scope",
+  "date": "2026-10-21",
+  "branch": "engineering/command01-catalogue-workbench",
+  "baseline": {
+    "commit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+    "tree": "eb2c9f1824602d19ed27f010cf080190a06c713e",
+    "originalBlobs": 899
+  },
+  "testedSource": {
+    "commit": "5f82f7403e188605895cf53427c03d8b157681cd",
+    "tree": "c3699c2b1ff75235e7f19f4673296a3bcde4daf5",
+    "manifest": {
+      "prototypes/command01/fixture-entry.mjs": {
+        "sha256": "0ffddf62fd0ed7233ebf3f8a1cef2e416fad4eaeb8693583b72859de3e9325b0",
+        "gitBlob": "4e1a31c91f65a4e91bb3e3bddcbce6522d785118",
+        "bytes": 661
+      },
+      "prototypes/command01/index.html": {
+        "sha256": "1e0a378b0a755f8861c1f0cfbfa4a1a9507714187afb1f68d3b7526c493f40c8",
+        "gitBlob": "ddd685c8167da29dcf7f84795579ae7aba6cdfb4",
+        "bytes": 5766
+      },
+      "prototypes/command01/model.mjs": {
+        "sha256": "1d6efcc47242ec9829a2a9a270a71dff18293e044f35d65e400de2f27bac30ed",
+        "gitBlob": "32c087f8206b5497c43ed2bcc667af3aa9d9660e",
+        "bytes": 5079
+      },
+      "prototypes/command01/workbench.css": {
+        "sha256": "07bab5c4f7917546d3f1a5398ed465701c6c68fb42dc92a5de2a330a6c031f3d",
+        "gitBlob": "e8e09bfdd34fb48ccbe7a51c967acb68dae25bfc",
+        "bytes": 15712
+      },
+      "prototypes/command01/view.mjs": {
+        "sha256": "7639b92b351d2c1246cacdd6202046130b6a38a4456bd408df2e4905c6be78c2",
+        "gitBlob": "951b95f48cd1e35f481240a001bdfe6df72d7ae4",
+        "bytes": 13573
+      },
+      "prototypes/command01/fixtures.mjs": {
+        "sha256": "5ed0c3503f1f7c1befbfc48e2482b1b61375c709bb4a51929c01a5c7a46db64e",
+        "gitBlob": "b808cf1bec999450bedf9f910015cd9c968aa395",
+        "bytes": 5537
+      },
+      "prototypes/command01/controller.mjs": {
+        "sha256": "e406d20122c21aae765519b6937a6142bee3d565552269d47521d957c36b0e44",
+        "gitBlob": "49d70d30ad9750ddc47767cbdf80f220203f8d9b",
+        "bytes": 4265
+      },
+      "tests/command01/isolation.mjs": {
+        "sha256": "cd1added3f18e18677bfa9ec009cb1b32f6e66c9919ae989b41640a1e7d46806",
+        "gitBlob": "5b81f9a75354430d35b7f5e92706f357d65b67b2",
+        "bytes": 6268
+      },
+      "tests/command01/network-guard.cjs": {
+        "sha256": "73b5bc8ff2d829ef30ec0674e48c6b6667d5d118e00a2d25e8c07c4e55884382",
+        "gitBlob": "334cd66eba3a1eb4afd3696ae5c72ef7afc631ab",
+        "bytes": 812
+      },
+      "tests/command01/browser.mjs": {
+        "sha256": "bfa98bde24d8dca2ab68d93d2ea9299e776607b128844c46a2257e19e0c3e2f4",
+        "gitBlob": "fbdd97089fee913b7ee4528fd38a60b81123d77f",
+        "bytes": 22652
+      },
+      "tests/command01/logic.mjs": {
+        "sha256": "0817af757ea7faccaba3fa647b0ca6fd527ac7116c79a10d6ee34e5f334b20e9",
+        "gitBlob": "4a50102a5ed965b6459986f57ca49370d437313f",
+        "bytes": 14265
+      },
+      "tests/command01/run-browser.sh": {
+        "sha256": "4f6207e467a6fe7ee05bfedcd258a84b620c003f1504489b499651dab217ec7d",
+        "gitBlob": "d2805ad1f9b5ddb1c6f7cbdae4c273dbb3172161",
+        "bytes": 1191
+      },
+      ".github/workflows/command01-acceptance.yml": {
+        "sha256": "fe5a190c9b23f5df3cce9c6d797b6b07bd8d741bd7b526fa6c088f950f62e25e",
+        "gitBlob": "9c43186f4108f77951ce9330662e3fb8605cf4ce",
+        "bytes": 2716
+      }
+    }
+  },
+  "finalCI": {
+    "run": 39618086032,
+    "job": 119284092684,
+    "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/39618086032",
+    "conclusion": "success",
+    "artifact": 12353302276,
+    "artifactSHA256": "d03032a44d4b0b94c877d915e2da638950385f66b74161cf2c60c21ce4fae0a7",
+    "zipIntegrity": "PASS",
+    "artifactExpires": "2026-11-20"
+  },
+  "ciHistory": [
+    {
+      "id": 39618086032,
+      "sha": "5f82f7403e188605895cf53427c03d8b157681cd",
+      "workflow": "COMMAND 01 isolated acceptance",
+      "path": ".github/workflows/command01-acceptance.yml",
+      "event": "push",
+      "conclusion": "success",
+      "status": "completed",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/39618086032"
+    },
+    {
+      "id": 39617443932,
+      "sha": "a42d668f1769737843c19500d448beba94f98a28",
+      "workflow": "COMMAND 01 isolated acceptance",
+      "path": ".github/workflows/command01-acceptance.yml",
+      "event": "push",
+      "conclusion": "success",
+      "status": "completed",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/39617443932"
+    },
+    {
+      "id": 39617212207,
+      "sha": "fb3da5591a06467f7e65e5d0aa234b0320487052",
+      "workflow": "COMMAND 01 isolated acceptance",
+      "path": ".github/workflows/command01-acceptance.yml",
+      "event": "push",
+      "conclusion": "failure",
+      "status": "completed",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/39617212207"
+    },
+    {
+      "id": 39616893647,
+      "sha": "f3fa8197a2dc78810e826253ecafa8de71d79f64",
+      "workflow": "COMMAND 01 isolated acceptance",
+      "path": ".github/workflows/command01-acceptance.yml",
+      "event": "push",
+      "conclusion": "failure",
+      "status": "completed",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/39616893647"
+    },
+    {
+      "id": 39616347166,
+      "sha": "6eb205e79d8a97d65790ec576a0f0526a33bc1f0",
+      "workflow": "COMMAND 01 isolated acceptance",
+      "path": ".github/workflows/command01-acceptance.yml",
+      "event": "push",
+      "conclusion": "failure",
+      "status": "completed",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/39616347166"
+    }
+  ],
+  "node": {
+    "status": "PASS",
+    "node": "v22.20.0",
+    "total": 42,
+    "passed": 42,
+    "failed": 0,
+    "results": [
+      {
+        "name": "explicit synthetic transport is mandatory",
+        "status": "PASS"
+      },
+      {
+        "name": "14 distinct canonical component fixture records",
+        "status": "PASS"
+      },
+      {
+        "name": "duplicate IDs fail the response closed",
+        "status": "PASS"
+      },
+      {
+        "name": "malformed identity and unknown category fail",
+        "status": "PASS"
+      },
+      {
+        "name": "invalid stock and monetary values fail",
+        "status": "PASS"
+      },
+      {
+        "name": "kit quantity is a positive integer, not a discount",
+        "status": "PASS"
+      },
+      {
+        "name": "optional fields remain explicit unknowns",
+        "status": "PASS"
+      },
+      {
+        "name": "summary discards image bytes and private fields",
+        "status": "PASS"
+      },
+      {
+        "name": "UK money uses integer pence",
+        "status": "PASS"
+      },
+      {
+        "name": "stock display distinguishes zero, low and unknown",
+        "status": "PASS"
+      },
+      {
+        "name": "search covers verified names, SKUs, maker, category and specs",
+        "status": "PASS"
+      },
+      {
+        "name": "search is case insensitive and literal for special characters",
+        "status": "PASS"
+      },
+      {
+        "name": "search excludes arbitrary/private/descriptive JSON fields",
+        "status": "PASS"
+      },
+      {
+        "name": "search and five filters compose",
+        "status": "PASS"
+      },
+      {
+        "name": "kit-only and unknown stock fixtures are represented",
+        "status": "PASS"
+      },
+      {
+        "name": "empty dataset and no matches are legitimate",
+        "status": "PASS"
+      },
+      {
+        "name": "duplicate display names retain distinct identities",
+        "status": "PASS"
+      },
+      {
+        "name": "detail identity and revision fields remain explicit",
+        "status": "PASS"
+      },
+      {
+        "name": "image unloaded, absent, unavailable and removed are distinct",
+        "status": "PASS"
+      },
+      {
+        "name": "image removal is never inferred from omission or null",
+        "status": "PASS"
+      },
+      {
+        "name": "image URLs and arbitrary fields never reach image read model",
+        "status": "PASS"
+      },
+      {
+        "name": "invalid image metadata fails closed",
+        "status": "PASS"
+      },
+      {
+        "name": "initial load waits for the injected transport",
+        "status": "PASS"
+      },
+      {
+        "name": "simultaneous refreshes coalesce to one summary request",
+        "status": "PASS"
+      },
+      {
+        "name": "reversed summary completion cannot overwrite newer data",
+        "status": "PASS"
+      },
+      {
+        "name": "superseded list failure is ignored",
+        "status": "PASS"
+      },
+      {
+        "name": "failed list request recovers and releases coordination",
+        "status": "PASS"
+      },
+      {
+        "name": "malformed response preserves the last successful rows",
+        "status": "PASS"
+      },
+      {
+        "name": "empty successful list differs from request failure",
+        "status": "PASS"
+      },
+      {
+        "name": "on-demand details introduce exactly one selected-record read",
+        "status": "PASS"
+      },
+      {
+        "name": "reversed detail selection cannot populate wrong product",
+        "status": "PASS"
+      },
+      {
+        "name": "stale detail error cannot replace a newer valid inspector",
+        "status": "PASS"
+      },
+      {
+        "name": "detail failure supports an explicit retry",
+        "status": "PASS"
+      },
+      {
+        "name": "wrong detail identity and version fail closed",
+        "status": "PASS"
+      },
+      {
+        "name": "filtered-out selection stays bound to the stable ID",
+        "status": "PASS"
+      },
+      {
+        "name": "rapid local filters and clear add no transport requests",
+        "status": "PASS"
+      },
+      {
+        "name": "refresh retains valid selected details and invalidates older pending read",
+        "status": "PASS"
+      },
+      {
+        "name": "changed summary revision triggers one fresh selected detail",
+        "status": "PASS"
+      },
+      {
+        "name": "deleted selection clears without switching to another identity",
+        "status": "PASS"
+      },
+      {
+        "name": "teardown prevents pending completion and releases listeners through view",
+        "status": "PASS"
+      },
+      {
+        "name": "close invalidates pending details",
+        "status": "PASS"
+      },
+      {
+        "name": "deterministic source has no backend, HTML or image execution path",
+        "status": "PASS"
+      }
+    ],
+    "measurements": {
+      "kind": "synthetic only, not production or billed egress",
+      "images": "six artificial 131072-byte uniform buffers (highly compressible; not representative image compression)",
+      "legacyList": {
+        "rawBytes": 1054697,
+        "localGzipBytes": 3918
+      },
+      "summaryList": {
+        "rawBytes": 5125,
+        "localGzipBytes": 986
+      },
+      "detailMetadata": {
+        "rawBytes": 697,
+        "localGzipBytes": 426
+      },
+      "requestCounts": {
+        "initial": {
+          "list": 1,
+          "detail": 0
+        },
+        "twentyLocalFilters": {
+          "additionalList": 0,
+          "additionalDetail": 0
+        },
+        "firstSelection": {
+          "additionalDetail": 1
+        },
+        "repeatSameSelection": {
+          "additionalDetail": 0
+        },
+        "refreshUnchangedSelection": {
+          "additionalList": 1,
+          "additionalDetail": 0
+        }
+      },
+      "imageBytesRequestedByWorkbench": 0
+    }
+  },
+  "browser": {
+    "status": "PASS",
+    "sourceCommit": "5f82f7403e188605895cf53427c03d8b157681cd",
+    "node": "v22.20.0",
+    "browser": "155.0.8059.39",
+    "isolationStage": "STAGE_A_RESULTS.json",
+    "results": [
+      {
+        "name": "initial image-free catalogue and useful overview",
+        "status": "PASS"
+      },
+      {
+        "name": "local search plus category filter; no extra requests",
+        "status": "PASS"
+      },
+      {
+        "name": "technical search and special characters are literal",
+        "status": "PASS"
+      },
+      {
+        "name": "individual and kit eligibility filters compose",
+        "status": "PASS"
+      },
+      {
+        "name": "authoritative selected detail, correct price vocabulary and focus",
+        "status": "PASS"
+      },
+      {
+        "name": "selected identity survives filtering out and clearing",
+        "status": "PASS"
+      },
+      {
+        "name": "change selection and Escape restore meaningful keyboard focus",
+        "status": "PASS"
+      },
+      {
+        "name": "no-result state is distinct and clearable",
+        "status": "PASS"
+      },
+      {
+        "name": "simultaneous refresh requests are coalesced",
+        "status": "PASS"
+      },
+      {
+        "name": "catalogue error, retained last rows and successful explicit retry",
+        "status": "PASS"
+      },
+      {
+        "name": "reversed catalogue responses keep newer rows and ignore stale success",
+        "status": "PASS"
+      },
+      {
+        "name": "reversed detail responses never show the earlier product",
+        "status": "PASS"
+      },
+      {
+        "name": "stale detail error is ignored after newer selection",
+        "status": "PASS"
+      },
+      {
+        "name": "detail failure and retry operate without changing identity",
+        "status": "PASS"
+      },
+      {
+        "name": "search text focus and selection survive asynchronous refresh",
+        "status": "PASS"
+      },
+      {
+        "name": "empty successful catalogue has legitimate empty presentation",
+        "status": "PASS"
+      },
+      {
+        "name": "delayed detail completion does not steal focus from active search",
+        "status": "PASS"
+      },
+      {
+        "name": "duplicate and malformed records surface a useful error",
+        "status": "PASS"
+      },
+      {
+        "name": "deleted selected product clears without choosing another",
+        "status": "PASS"
+      },
+      {
+        "name": "untrusted descriptions render as text and image URLs never load",
+        "status": "PASS"
+      },
+      {
+        "name": "all explicit image states and optional specifications are usable",
+        "status": "PASS"
+      },
+      {
+        "name": "responsive catalogue and inspector at 390px",
+        "status": "PASS"
+      },
+      {
+        "name": "responsive catalogue and inspector at 768px",
+        "status": "PASS"
+      },
+      {
+        "name": "responsive catalogue and inspector at 1024px",
+        "status": "PASS"
+      },
+      {
+        "name": "responsive catalogue and inspector at 1440px",
+        "status": "PASS"
+      },
+      {
+        "name": "responsive catalogue and inspector at 1920px",
+        "status": "PASS"
+      },
+      {
+        "name": "increased text at 200% remains readable and within document width",
+        "status": "PASS"
+      },
+      {
+        "name": "keyboard-only product discovery and inspector close",
+        "status": "PASS"
+      },
+      {
+        "name": "labels, status regions and reduced motion are present",
+        "status": "PASS"
+      },
+      {
+        "name": "teardown prevents pending detail updates and remount avoids duplicate listeners",
+        "status": "PASS"
+      },
+      {
+        "name": "missing transport fails closed without any live fallback",
+        "status": "PASS"
+      },
+      {
+        "name": "no application network requests escape the allowlisted fixture origin",
+        "status": "PASS"
+      }
+    ],
+    "total": 32,
+    "passed": 32,
+    "failed": 0,
+    "viewportResults": [
+      {
+        "width": 390,
+        "inner": 390,
+        "scroll": 390,
+        "inspector": {
+          "x": 16,
+          "y": 89.640625,
+          "width": 358,
+          "height": 974.96875,
+          "top": 89.640625,
+          "right": 374,
+          "bottom": 1064.609375,
+          "left": 16
+        }
+      },
+      {
+        "width": 768,
+        "inner": 768,
+        "scroll": 768,
+        "inspector": {
+          "x": 22,
+          "y": 89.578125,
+          "width": 724,
+          "height": 930.4375,
+          "top": 89.578125,
+          "right": 746,
+          "bottom": 1020.015625,
+          "left": 22
+        }
+      },
+      {
+        "width": 1024,
+        "inner": 1024,
+        "scroll": 1024,
+        "inspector": {
+          "x": 672,
+          "y": -94.53125,
+          "width": 330,
+          "height": 1003.3125,
+          "top": -94.53125,
+          "right": 1002,
+          "bottom": 908.78125,
+          "left": 672
+        }
+      },
+      {
+        "width": 1440,
+        "inner": 1440,
+        "scroll": 1440,
+        "inspector": {
+          "x": 1052.5625,
+          "y": -64.9375,
+          "width": 350,
+          "height": 974.96875,
+          "top": -64.9375,
+          "right": 1402.5625,
+          "bottom": 910.03125,
+          "left": 1052.5625
+        }
+      },
+      {
+        "width": 1920,
+        "inner": 1920,
+        "scroll": 1920,
+        "inspector": {
+          "x": 1482,
+          "y": -71.9375,
+          "width": 390,
+          "height": 980.96875,
+          "top": -71.9375,
+          "right": 1872,
+          "bottom": 909.03125,
+          "left": 1482
+        }
+      }
+    ],
+    "screenshots": [
+      "desktop-overview.png",
+      "desktop-active-filters.png",
+      "desktop-inspector.png",
+      "desktop-empty.png",
+      "desktop-error-retry.png",
+      "mobile-inspector.png",
+      "mobile-catalogue.png",
+      "tablet-inspector.png",
+      "increased-text.png"
+    ],
+    "requests": [
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/index.html",
+        "resource": "document"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/application.css",
+        "resource": "stylesheet"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/workbench.css",
+        "resource": "stylesheet"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/fixture-entry.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/view.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/fixtures.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/application.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/interaction.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/controller.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/model.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/catalogue-presentation.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/sales-content-presentation.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/index.html",
+        "resource": "document"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/application.css",
+        "resource": "stylesheet"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/workbench.css",
+        "resource": "stylesheet"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/fixture-entry.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/view.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/fixtures.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/application.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/interaction.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/controller.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/model.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/catalogue-presentation.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/sales-content-presentation.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/tests/command01/increased-text.css",
+        "resource": "stylesheet"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/index.html",
+        "resource": "document"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/application.css",
+        "resource": "stylesheet"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/workbench.css",
+        "resource": "stylesheet"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/fixture-entry.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/view.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/fixtures.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/application.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/interaction.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/controller.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/model.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/catalogue-presentation.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/sales-content-presentation.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/index.html",
+        "resource": "document"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/application.css",
+        "resource": "stylesheet"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/workbench.css",
+        "resource": "stylesheet"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/fixture-entry.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/view.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/fixtures.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/application.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/interaction.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/controller.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/model.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/catalogue-presentation.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/sales-content-presentation.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/index.html",
+        "resource": "document"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/application.css",
+        "resource": "stylesheet"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/workbench.css",
+        "resource": "stylesheet"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/fixture-entry.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/view.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/fixtures.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/application.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/interaction.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/controller.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/model.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/catalogue-presentation.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/sales-content-presentation.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/index.html",
+        "resource": "document"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/application.css",
+        "resource": "stylesheet"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/workbench.css",
+        "resource": "stylesheet"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/fixture-entry.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/view.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/fixtures.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/application.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/interaction.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/controller.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/model.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/catalogue-presentation.mjs",
+        "resource": "script"
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/sales-content-presentation.mjs",
+        "resource": "script"
+      }
+    ],
+    "responses": [
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/index.html",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/application.css",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/workbench.css",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/fixture-entry.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/view.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/fixtures.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/application.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/model.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/interaction.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/controller.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/catalogue-presentation.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/sales-content-presentation.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/index.html",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/application.css",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/workbench.css",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/fixture-entry.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/view.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/fixtures.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/application.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/controller.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/interaction.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/model.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/catalogue-presentation.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/sales-content-presentation.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/tests/command01/increased-text.css",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/index.html",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/application.css",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/workbench.css",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/fixture-entry.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/view.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/fixtures.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/interaction.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/application.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/controller.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/model.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/catalogue-presentation.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/sales-content-presentation.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/index.html",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/application.css",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/workbench.css",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/fixture-entry.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/view.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/fixtures.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/controller.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/application.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/model.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/interaction.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/catalogue-presentation.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/sales-content-presentation.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/index.html",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/application.css",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/workbench.css",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/fixture-entry.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/view.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/fixtures.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/controller.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/interaction.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/model.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/application.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/catalogue-presentation.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/sales-content-presentation.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/index.html",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/application.css",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/workbench.css",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/fixture-entry.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/view.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/fixtures.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/application.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/interaction.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/controller.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/prototypes/command01/model.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/catalogue-presentation.mjs",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:42969/dist/admin/sales-content-presentation.mjs",
+        "status": 200
+      }
+    ],
+    "serverLog": [
+      {
+        "path": "prototypes/command01/index.html",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/application.css",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/workbench.css",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/fixture-entry.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/view.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/fixtures.mjs",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/application.mjs",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/interaction.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/controller.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/model.mjs",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/catalogue-presentation.mjs",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/sales-content-presentation.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/index.html",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/application.css",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/workbench.css",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/fixture-entry.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/view.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/fixtures.mjs",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/application.mjs",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/interaction.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/controller.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/model.mjs",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/catalogue-presentation.mjs",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/sales-content-presentation.mjs",
+        "status": 200
+      },
+      {
+        "path": "tests/command01/increased-text.css",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/index.html",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/application.css",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/workbench.css",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/fixture-entry.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/view.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/fixtures.mjs",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/application.mjs",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/interaction.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/controller.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/model.mjs",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/catalogue-presentation.mjs",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/sales-content-presentation.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/index.html",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/application.css",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/workbench.css",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/fixture-entry.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/view.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/fixtures.mjs",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/application.mjs",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/interaction.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/controller.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/model.mjs",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/catalogue-presentation.mjs",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/sales-content-presentation.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/index.html",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/application.css",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/workbench.css",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/fixture-entry.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/view.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/fixtures.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/controller.mjs",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/interaction.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/model.mjs",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/application.mjs",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/catalogue-presentation.mjs",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/sales-content-presentation.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/index.html",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/application.css",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/workbench.css",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/fixture-entry.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/view.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/fixtures.mjs",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/application.mjs",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/interaction.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/controller.mjs",
+        "status": 200
+      },
+      {
+        "path": "prototypes/command01/model.mjs",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/catalogue-presentation.mjs",
+        "status": 200
+      },
+      {
+        "path": "dist/admin/sales-content-presentation.mjs",
+        "status": 200
+      }
+    ],
+    "pageErrors": [],
+    "consoleErrors": [],
+    "productionRequests": 0,
+    "limitations": [
+      "Basic keyboard/semantic checks only; no full screen-reader or WCAG certification.",
+      "Synthetic transport only; no authenticated production integration.",
+      "No image bytes are loaded; image identities in fixtures are fictional."
+    ]
+  },
+  "isolation": {
+    "stage": "A",
+    "applicationFixturesOpened": 0,
+    "productionRequests": 0,
+    "status": "PASS",
+    "sourceCommit": "5f82f7403e188605895cf53427c03d8b157681cd",
+    "negativeControls": [
+      {
+        "name": "fetchIPv4",
+        "result": "blocked"
+      },
+      {
+        "name": "fetchIPv6",
+        "result": "blocked"
+      },
+      {
+        "name": "dns",
+        "result": "blocked"
+      },
+      {
+        "name": "image",
+        "result": "blocked"
+      },
+      {
+        "name": "redirect",
+        "result": "blocked"
+      },
+      {
+        "name": "websocket",
+        "result": "blocked"
+      },
+      {
+        "name": "script",
+        "result": "blocked"
+      },
+      {
+        "name": "worker",
+        "result": "blocked"
+      },
+      {
+        "name": "frame",
+        "result": "blocked"
+      },
+      {
+        "name": "navigation",
+        "result": "blocked"
+      }
+    ],
+    "requests": [
+      {
+        "url": "http://127.0.0.1:35287/",
+        "resource": "document"
+      },
+      {
+        "url": "http://192.0.2.1/probe",
+        "resource": "fetch"
+      },
+      {
+        "url": "http://[2001:db8::1]/probe",
+        "resource": "fetch"
+      },
+      {
+        "url": "http://command01-negative.invalid/probe",
+        "resource": "fetch"
+      },
+      {
+        "url": "http://127.0.0.1:35287/redirect",
+        "resource": "fetch"
+      },
+      {
+        "url": "http://192.0.2.3/probe.js",
+        "resource": "script"
+      },
+      {
+        "url": "http://198.51.100.1/probe-frame",
+        "resource": "document"
+      },
+      {
+        "url": "http://192.0.2.2/probe.png",
+        "resource": "image"
+      },
+      {
+        "url": "http://127.0.0.1:35287/worker.js",
+        "resource": "script"
+      },
+      {
+        "url": "http://198.51.100.3/probe",
+        "resource": "fetch"
+      },
+      {
+        "url": "http://203.0.113.1/worker-probe",
+        "resource": "fetch"
+      },
+      {
+        "url": "http://203.0.113.2/navigation-probe",
+        "resource": "document"
+      }
+    ],
+    "responses": [
+      {
+        "url": "http://127.0.0.1:35287/",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:35287/redirect",
+        "status": 302
+      },
+      {
+        "url": "http://127.0.0.1:35287/worker.js",
+        "status": 200
+      }
+    ],
+    "failures": [
+      {
+        "url": "http://198.51.100.1/probe-frame",
+        "resource": "document",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://192.0.2.2/probe.png",
+        "resource": "image",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://192.0.2.1/probe",
+        "resource": "fetch",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://[2001:db8::1]/probe",
+        "resource": "fetch",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://command01-negative.invalid/probe",
+        "resource": "fetch",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://192.0.2.3/probe.js",
+        "resource": "script",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://198.51.100.3/probe",
+        "resource": "fetch",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://203.0.113.1/worker-probe",
+        "resource": "fetch",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://203.0.113.2/navigation-probe",
+        "resource": "document",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      }
+    ],
+    "node": "v22.20.0",
+    "namespace": "net:[4026532269]",
+    "processProof": {
+      "connections": [
+        {
+          "family": 2,
+          "destination": "192.0.2.1",
+          "errno": 101,
+          "blocked": true
+        },
+        {
+          "family": 10,
+          "destination": "2001:db8::1",
+          "errno": 101,
+          "blocked": true
+        }
+      ],
+      "childNamespace": "net:[4026532269]"
+    },
+    "browser": "155.0.8059.39",
+    "chromiumSandbox": true,
+    "disposableBrowser": true,
+    "browserProof": {
+      "fetchIPv4": "blocked",
+      "fetchIPv6": "blocked",
+      "dns": "blocked",
+      "image": "blocked",
+      "redirect": "blocked",
+      "websocket": "blocked",
+      "script": "blocked",
+      "worker": "blocked"
+    },
+    "localOriginReachable": true,
+    "nextStageAuthorised": true
+  },
+  "screenshots": {
+    "desktop-error-retry.png": {
+      "bytes": 125164,
+      "sha256": "f573d0285575727782ae7a618c94b9387dec239a9f8e4bfa1fcc79d6f4bdd44c",
+      "gitBlob": "1ce6043178655419876c96a4c37256b1a30b846c"
+    },
+    "mobile-catalogue.png": {
+      "bytes": 61195,
+      "sha256": "f0f6c56e1c9f5cbb900a3c878c2979acf5f507c5c630c58f884cb0372ca920b8",
+      "gitBlob": "b79d0cbe9645d61367336a24e9a00ba607b8566d"
+    },
+    "desktop-empty.png": {
+      "bytes": 101463,
+      "sha256": "73a7a39067071f498d4b0ec3cceba1be207f61095c4eb1d04bc9051a58fdfc27",
+      "gitBlob": "7425a5b0ff56efe95ef863eaef96e395b24a0124"
+    },
+    "mobile-inspector.png": {
+      "bytes": 56844,
+      "sha256": "3a0a61934e5a4151d8b846d9dd56d4fa75098cab5bbe0666b5152cf7799251bd",
+      "gitBlob": "f472b0d915e59b6396ec4c2ee387bafea34f40e3"
+    },
+    "increased-text.png": {
+      "bytes": 176486,
+      "sha256": "c3705c25a65ea9d00404b871b25ae2f3ee2af7392be3ca88e48c90009dfdde86",
+      "gitBlob": "2fb4ee8fccde3a4d605144386231c1665e37e40f"
+    },
+    "desktop-inspector.png": {
+      "bytes": 131478,
+      "sha256": "35944a005cb6be3e4a2ad67c3823983ba82f06436adb2e16eb15f9a273262b23",
+      "gitBlob": "a651a061c525acd679bc1f781941c7c447658dd1"
+    },
+    "desktop-overview.png": {
+      "bytes": 121436,
+      "sha256": "f7fd72d25356098c3c97af75023db4b0401c6dd8d55c11c644b4224013c63a4b",
+      "gitBlob": "09c5b7c0dc3b4ccf92b10c00293c388904400936"
+    },
+    "tablet-inspector.png": {
+      "bytes": 62530,
+      "sha256": "7e71ea37354bc5e35bf52f24b00c424496c32a45f24419571d25e30a5041cabc",
+      "gitBlob": "38f3eed8657a6014125178852d7da1608dd7086b"
+    },
+    "desktop-active-filters.png": {
+      "bytes": 117697,
+      "sha256": "ce21755f5317266483c1a066125c931bb845deb053551c62e5048e2f8b3f0ab6",
+      "gitBlob": "330d04d1741a38f61e2c25616a7b03baba78e1d9"
+    }
+  },
+  "sourceReview": {
+    "all899OriginalBlobsUnchanged": true,
+    "existingWorkflowUnchanged": true,
+    "applicationDependenciesAdded": 0,
+    "reused": [
+      "dist/admin/application.css",
+      "uiNode",
+      "statusBadge",
+      "setAdminFeedback"
+    ],
+    "onlyNewPaths": [
+      "prototypes/command01/",
+      "tests/command01/",
+      "docs/command/command01/",
+      ".github/workflows/command01-acceptance.yml"
+    ]
+  },
+  "safety": {
+    "productionSupabaseRequests": 0,
+    "stripeRequests": 0,
+    "liveStorefrontRequests": 0,
+    "productionAuthenticationSessions": 0,
+    "businessDataWrites": 0,
+    "productionDeployments": 0,
+    "mainWrites": 0,
+    "existingRefsChanged": 0,
+    "productionImageBytesRequested": 0
+  },
+  "scopeLimitations": [
+    "Synthetic read-only transport only; no production authentication or backend access.",
+    "salePrice is a selling price, not a regular-versus-discount contract.",
+    "Wiring-kit assemblies remain outside the component inspector.",
+    "No comprehensive assistive-technology or cross-browser certification.",
+    "Decorative monogram can exceed its fixed border under the doubled-font stress test; no control is obscured.",
+    "Synthetic byte measurements are not billed egress savings."
+  ]
+}
