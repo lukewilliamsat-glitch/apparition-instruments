@@ -51,7 +51,8 @@ export function createBridge({identity,transport,mode='read-only',now=Date.now,t
  function revision(row,stock,versions){
   if(mode==='fixture-versioned'){const value=versions?.[row.id];if(typeof value!=='string'||!/^sim-[1-9]\d*$/.test(value))fail('MALFORMED','Missing synthetic revision evidence.');return value;}
   // A display/cache identity only; explicitly NOT compare-and-set or a DB revision.
-  let h=2166136261;for(const ch of JSON.stringify([row,stock]))h=Math.imul(h^ch.charCodeAt(0),16777619);return 'read-'+(h>>>0).toString(16);
+  const common=summaryColumns.split(',').filter(k=>!k.includes(':')).map(k=>row[k]);
+  let h=2166136261;for(const ch of JSON.stringify([common,stock.component_id,stock.quantity,stock.stock_unit]))h=Math.imul(h^ch.charCodeAt(0),16777619);return 'read-'+(h>>>0).toString(16);
  }
  async function list(){
   const ctx=await permitted('catalogueRead');check(ctx);if(pendingList?.epoch===epoch){const value=await pendingList.promise;check(ctx);return clone(value);}
