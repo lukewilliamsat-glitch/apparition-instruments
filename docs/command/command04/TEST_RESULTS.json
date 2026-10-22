@@ -1,0 +1,932 @@
+{
+  "mission": "Authorisation40 \u2014 COMMAND04 \u2014 IRONCLAD",
+  "date": "2026-10-22",
+  "status": "PASS \u2014 isolated engineering scope only",
+  "repository": "lukewilliamsat-glitch/apparition-instruments",
+  "branch": "engineering/command04-ironclad",
+  "base": {
+    "commit": "2c2d629a6194506d34c2fbbcce4742fceee94488",
+    "tree": "e85d7e8c181f1f8cfd576cedbe53c64a8958f7cf"
+  },
+  "testedSource": {
+    "commit": "24d7232b13de2cea3c43a892ec433a8ae5322a7e",
+    "tree": "9e0f17f45fe17399cc102dd1b8f656c9430c2fb1",
+    "manifest": {
+      ".github/workflows/command04-acceptance.yml": {
+        "sha256": "a3b3309e3230ef60bff7bfdc7cd0c340ea5759129ed68484a83b4de592d0e627",
+        "bytes": 4179,
+        "gitBlob": "45d46a361fb6c020d056bdbef3cd0d9e2f1378b4"
+      },
+      "docs/command/command04/README.md": {
+        "sha256": "d0028ee3abb2af8afda03899db29d16b432336eed3497a425e0bf46c66591077",
+        "bytes": 10689,
+        "gitBlob": "bb69c514ccf4ac0a419aa9f42721b57ef8e9e614"
+      },
+      "prototypes/command04/contract.mjs": {
+        "sha256": "d65a8394040d7c12bbb174607d58633822ff7cccd9f47ca899fad703ce8a6db8",
+        "bytes": 3197,
+        "gitBlob": "4fecab48bc16047bc2f2e1507eee783a5bc972df"
+      },
+      "prototypes/command04/entry.mjs": {
+        "sha256": "c6e0bc6ec9d965c4012660cdcf1c985486659c9b8d7272aabdb01bdeb6e66795",
+        "bytes": 4207,
+        "gitBlob": "08748e5484f0fceac2e79b25fe58edd838ca7203"
+      },
+      "prototypes/command04/index.html": {
+        "sha256": "fa40cfb668cf2ebb8a23171a3b41eff2f43d4c5e7648e969d73f7cd4413a3bd8",
+        "bytes": 9707,
+        "gitBlob": "4346ea512a2f6f5a4bfe58d0dd3a65bcde1a22e4"
+      },
+      "prototypes/command04/server.mjs": {
+        "sha256": "4df4c92351be7275035f8ebe8bcef32207e26f5efca43023a8790381460b5dd7",
+        "bytes": 5315,
+        "gitBlob": "91c4cb6d79bb43574ad593aedf447cbf740a968c"
+      },
+      "prototypes/command04/wire.mjs": {
+        "sha256": "daac0b5c3492f9d4f07b2770ab8c93df317c6d39793b2ffa8d6176c7fc87289d",
+        "bytes": 2291,
+        "gitBlob": "230ec6e5f0523c30fdf903edc2e2fde1e22f57c5"
+      },
+      "tests/command04/browser.mjs": {
+        "sha256": "a0f317270945a6062b9d8765331c1b6904d17e471b6632b1a346893c07d41d3c",
+        "bytes": 11263,
+        "gitBlob": "7ae8e38e0eef29827803c13f838343e92082f4ae"
+      },
+      "tests/command04/logic.mjs": {
+        "sha256": "6ad869466f0071466a2addc31925d2020f2c4389859aef4f8fc15bd153e8e6b3",
+        "bytes": 14366,
+        "gitBlob": "cc080f130c17e7cd5e5d70b3c2f75f4f2d8de726"
+      },
+      "tests/command04/postgres-fixture.sql": {
+        "sha256": "2a25b812a98d02dffb6b91c274c315c8350ed6bd56c62e1c39b4ae7cb31cd298",
+        "bytes": 13268,
+        "gitBlob": "0f10e2ebf8b6ad4cbb28d55e34df55b186fb2dbc"
+      },
+      "tests/command04/postgres.py": {
+        "sha256": "04b84745e76ee4717b7ab5f678f396e19a3edf1d44279771ec15b421cc130255",
+        "bytes": 15629,
+        "gitBlob": "027dca284cbd600d2e1964e5cf5070cc2536b370"
+      },
+      "tests/command04/run-isolated.sh": {
+        "sha256": "42ca9c62925b98daf1a4193c33dd00b5b97846f4d717ad88ba9d1ab4982cfe7f",
+        "bytes": 3361,
+        "gitBlob": "fbb27d63eb1ff279e5eb3ba655593c3e0abb8006"
+      },
+      "tests/command04/source-integrity.py": {
+        "sha256": "557388681a43b84814d88a3c06b6a535f391ac34dc8dc437f5b9b373a9c04b95",
+        "bytes": 2623,
+        "gitBlob": "f452251d3f635f486384fbe1d2ab6534c1fd0b01"
+      }
+    }
+  },
+  "ci": {
+    "run": 39788439046,
+    "job": 119857702389,
+    "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/39788439046",
+    "conclusion": "success",
+    "attempt": 1,
+    "priorRuns": [
+      {
+        "run": 39787148386,
+        "commit": "344bd2a636058debfc838d45c985350cfbc36285",
+        "result": "failure",
+        "reason": "Disposable SQL CASE expression parser error before PG scenarios; 218 Node tests and isolation passed, browser not reached"
+      },
+      {
+        "run": 39787484452,
+        "commit": "9d9eb8cac5a15fc614fe73b8cfc2e70e1de28a18",
+        "result": "failure",
+        "reason": "58/59 PostgreSQL; caller impersonation test inherited superuser original session; 12/13 C04 Chrome, external session-loss test attempted blocked background modal click; inherited suites passed"
+      }
+    ]
+  },
+  "runtime": {
+    "node": "v22.20.0",
+    "chrome": "155.0.8059.84",
+    "postgres": "PostgreSQL 16.15 (Ubuntu 16.15-1.pgdg24.04+2) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit",
+    "controller": "playwright-core@1.56.1",
+    "browserProvenance": "Preinstalled GitHub-hosted Ubuntu24.04 Chrome; no independent browser binary signature claim"
+  },
+  "results": {
+    "suites": {
+      "COMMAND01": {
+        "node": {
+          "passed": 42,
+          "total": 42
+        },
+        "browser": {
+          "passed": 32,
+          "total": 32
+        }
+      },
+      "COMMAND02": {
+        "node": {
+          "passed": 54,
+          "total": 54
+        },
+        "browser": {
+          "passed": 39,
+          "total": 39
+        }
+      },
+      "COMMAND03": {
+        "node": {
+          "passed": 59,
+          "total": 59
+        },
+        "browser": {
+          "passed": 35,
+          "total": 35
+        }
+      },
+      "COMMAND04": {
+        "node": {
+          "passed": 64,
+          "total": 64
+        },
+        "browser": {
+          "passed": 13,
+          "total": 13
+        }
+      }
+    },
+    "combinedNode": 219,
+    "combinedChrome": 119,
+    "postgres": {
+      "status": "PASS",
+      "postgres": "PostgreSQL 16.15 (Ubuntu 16.15-1.pgdg24.04+2) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit",
+      "total": 61,
+      "passed": 61,
+      "failed": 0,
+      "results": [
+        {
+          "name": "roles, FORCE RLS, private tables, fixed definer contexts and grants",
+          "status": "PASS"
+        },
+        {
+          "name": "anonymous denied",
+          "status": "PASS"
+        },
+        {
+          "name": "non-member authenticated role denied",
+          "status": "PASS"
+        },
+        {
+          "name": "read-only member reads but cannot mutate",
+          "status": "PASS"
+        },
+        {
+          "name": "caller role and capability claims cannot be spoofed",
+          "status": "PASS"
+        },
+        {
+          "name": "caller cannot impersonate another DB session",
+          "status": "PASS"
+        },
+        {
+          "name": "ordinary caller cannot assume owner role",
+          "status": "PASS"
+        },
+        {
+          "name": "caller GUC does not grant membership",
+          "status": "PASS"
+        },
+        {
+          "name": "atomic three-record write, revision, receipt, audit and original image",
+          "status": "PASS"
+        },
+        {
+          "name": "identical committed retry is idempotent",
+          "status": "PASS"
+        },
+        {
+          "name": "different payload under same operation ID denied",
+          "status": "PASS"
+        },
+        {
+          "name": "same operation ID on different product denied",
+          "status": "PASS"
+        },
+        {
+          "name": "canonical JSON key ordering preserves replay",
+          "status": "PASS"
+        },
+        {
+          "name": "old revision cannot overwrite newer product",
+          "status": "PASS"
+        },
+        {
+          "name": "other actor cannot read receipt",
+          "status": "PASS"
+        },
+        {
+          "name": "missing receipt remains unknown",
+          "status": "PASS"
+        },
+        {
+          "name": "reconciliation proves committed response loss",
+          "status": "PASS"
+        },
+        {
+          "name": "protected field id",
+          "status": "PASS"
+        },
+        {
+          "name": "protected field stock",
+          "status": "PASS"
+        },
+        {
+          "name": "protected field stockUnit",
+          "status": "PASS"
+        },
+        {
+          "name": "protected field image",
+          "status": "PASS"
+        },
+        {
+          "name": "protected field imageData",
+          "status": "PASS"
+        },
+        {
+          "name": "protected field imageInfo",
+          "status": "PASS"
+        },
+        {
+          "name": "protected field privateCost",
+          "status": "PASS"
+        },
+        {
+          "name": "protected field revision",
+          "status": "PASS"
+        },
+        {
+          "name": "protected field specs",
+          "status": "PASS"
+        },
+        {
+          "name": "protected field category",
+          "status": "PASS"
+        },
+        {
+          "name": "validation fractional pence",
+          "status": "PASS"
+        },
+        {
+          "name": "validation negative price",
+          "status": "PASS"
+        },
+        {
+          "name": "validation oversize price",
+          "status": "PASS"
+        },
+        {
+          "name": "validation bad boolean",
+          "status": "PASS"
+        },
+        {
+          "name": "validation blank SKU",
+          "status": "PASS"
+        },
+        {
+          "name": "validation zero kit quantity",
+          "status": "PASS"
+        },
+        {
+          "name": "validation long description",
+          "status": "PASS"
+        },
+        {
+          "name": "non-string product ID rejected",
+          "status": "PASS"
+        },
+        {
+          "name": "inventory capability independent",
+          "status": "PASS"
+        },
+        {
+          "name": "cost capability independent",
+          "status": "PASS"
+        },
+        {
+          "name": "stock expected value conflict",
+          "status": "PASS"
+        },
+        {
+          "name": "negative stock result denied",
+          "status": "PASS"
+        },
+        {
+          "name": "missing product fails closed",
+          "status": "PASS"
+        },
+        {
+          "name": "statement failure rolls back complete transaction at products",
+          "status": "PASS"
+        },
+        {
+          "name": "statement failure rolls back complete transaction at inventory",
+          "status": "PASS"
+        },
+        {
+          "name": "statement failure rolls back complete transaction at internal_cost",
+          "status": "PASS"
+        },
+        {
+          "name": "statement failure rolls back complete transaction at operations",
+          "status": "PASS"
+        },
+        {
+          "name": "statement failure rolls back complete transaction at audit",
+          "status": "PASS"
+        },
+        {
+          "name": "concurrent duplicate operation commits only once",
+          "status": "PASS"
+        },
+        {
+          "name": "concurrent same-revision different operations conflict",
+          "status": "PASS"
+        },
+        {
+          "name": "concurrent cross-product casefold SKU uniqueness",
+          "status": "PASS"
+        },
+        {
+          "name": "outer transaction failure rolls back receipt, audit and records",
+          "status": "PASS"
+        },
+        {
+          "name": "terminated backend rolls back all state; in-flight absence is unknown",
+          "status": "PASS"
+        },
+        {
+          "name": "revoked authority cannot write, replay or reconcile",
+          "status": "PASS"
+        },
+        {
+          "name": "authority expiry during advisory-lock wait denies mutation",
+          "status": "PASS"
+        },
+        {
+          "name": "expired authority denied",
+          "status": "PASS"
+        },
+        {
+          "name": "immutable audit UPDATE",
+          "status": "PASS"
+        },
+        {
+          "name": "immutable audit DELETE",
+          "status": "PASS"
+        },
+        {
+          "name": "immutable audit TRUNCATE",
+          "status": "PASS"
+        },
+        {
+          "name": "immutable operations UPDATE",
+          "status": "PASS"
+        },
+        {
+          "name": "immutable operations DELETE",
+          "status": "PASS"
+        },
+        {
+          "name": "immutable operations TRUNCATE",
+          "status": "PASS"
+        },
+        {
+          "name": "client cannot directly write protected product/inventory",
+          "status": "PASS"
+        },
+        {
+          "name": "foreign keys restrict deletion, no cascade",
+          "status": "PASS"
+        }
+      ],
+      "transport": "Unix socket only; server listen_addresses empty in loopback-only namespace",
+      "productionRequests": 0,
+      "scope": "Fresh disposable schema and login-role model. NOT current Supabase schema, RLS, JWT/session integration or production guarantees."
+    },
+    "command04Node": {
+      "status": "PASS",
+      "node": "v22.20.0",
+      "total": 64,
+      "passed": 64,
+      "failed": 0,
+      "results": [
+        {
+          "name": "explicit synthetic authority required; live transport cannot activate",
+          "status": "PASS"
+        },
+        {
+          "name": "atomic product/inventory/private cost commit, one revision/audit/receipt",
+          "status": "PASS"
+        },
+        {
+          "name": "rollback at staged product",
+          "status": "PASS"
+        },
+        {
+          "name": "rollback at staged inventory",
+          "status": "PASS"
+        },
+        {
+          "name": "rollback at staged private-cost",
+          "status": "PASS"
+        },
+        {
+          "name": "rollback at staged audit",
+          "status": "PASS"
+        },
+        {
+          "name": "rollback at staged receipt",
+          "status": "PASS"
+        },
+        {
+          "name": "concurrent identical requests coalesce and commit once",
+          "status": "PASS"
+        },
+        {
+          "name": "changed content with same operation ID denied",
+          "status": "PASS"
+        },
+        {
+          "name": "canonical key order permits exact retry",
+          "status": "PASS"
+        },
+        {
+          "name": "two different operations on same revision yield one conflict",
+          "status": "PASS"
+        },
+        {
+          "name": "stale revision rejected with current public record",
+          "status": "PASS"
+        },
+        {
+          "name": "concurrent SKU claims produce one valid unique result",
+          "status": "PASS"
+        },
+        {
+          "name": "receipt survives unrelated newer product state",
+          "status": "PASS"
+        },
+        {
+          "name": "unknown status cannot claim not-applied",
+          "status": "PASS"
+        },
+        {
+          "name": "different actor cannot reconcile another receipt",
+          "status": "PASS"
+        },
+        {
+          "name": "same operation string is independently scoped to actor",
+          "status": "PASS"
+        },
+        {
+          "name": "server permission: revoked",
+          "status": "PASS"
+        },
+        {
+          "name": "server permission: expired",
+          "status": "PASS"
+        },
+        {
+          "name": "server permission: read-denied",
+          "status": "PASS"
+        },
+        {
+          "name": "server permission: write-denied",
+          "status": "PASS"
+        },
+        {
+          "name": "server permission: wrong-subject",
+          "status": "PASS"
+        },
+        {
+          "name": "server permission: spoofed-token",
+          "status": "PASS"
+        },
+        {
+          "name": "server permission: scoped-product",
+          "status": "PASS"
+        },
+        {
+          "name": "revocation immediately before commit rolls back all staged data",
+          "status": "PASS"
+        },
+        {
+          "name": "expiry while a transaction is staged prevents commit",
+          "status": "PASS"
+        },
+        {
+          "name": "replay rechecks current permission",
+          "status": "PASS"
+        },
+        {
+          "name": "protected patch field: id",
+          "status": "PASS"
+        },
+        {
+          "name": "protected patch field: category",
+          "status": "PASS"
+        },
+        {
+          "name": "protected patch field: stock",
+          "status": "PASS"
+        },
+        {
+          "name": "protected patch field: stockUnit",
+          "status": "PASS"
+        },
+        {
+          "name": "protected patch field: privateCost",
+          "status": "PASS"
+        },
+        {
+          "name": "protected patch field: image",
+          "status": "PASS"
+        },
+        {
+          "name": "protected patch field: imageData",
+          "status": "PASS"
+        },
+        {
+          "name": "protected patch field: imageInfo",
+          "status": "PASS"
+        },
+        {
+          "name": "protected patch field: revision",
+          "status": "PASS"
+        },
+        {
+          "name": "protected patch field: specs",
+          "status": "PASS"
+        },
+        {
+          "name": "protected patch field: product_content",
+          "status": "PASS"
+        },
+        {
+          "name": "protected patch field: __proto__",
+          "status": "PASS"
+        },
+        {
+          "name": "validation negative price",
+          "status": "PASS"
+        },
+        {
+          "name": "validation fractional pence",
+          "status": "PASS"
+        },
+        {
+          "name": "validation large price",
+          "status": "PASS"
+        },
+        {
+          "name": "validation empty SKU",
+          "status": "PASS"
+        },
+        {
+          "name": "validation empty name",
+          "status": "PASS"
+        },
+        {
+          "name": "validation unknown field",
+          "status": "PASS"
+        },
+        {
+          "name": "validation bad boolean",
+          "status": "PASS"
+        },
+        {
+          "name": "validation zero quantity",
+          "status": "PASS"
+        },
+        {
+          "name": "validation oversized description",
+          "status": "PASS"
+        },
+        {
+          "name": "trimmed text, source specs and explicit price null preserved",
+          "status": "PASS"
+        },
+        {
+          "name": "inventory and cost require separate capabilities",
+          "status": "PASS"
+        },
+        {
+          "name": "inventory expected quantity conflict protects stock",
+          "status": "PASS"
+        },
+        {
+          "name": "negative result and unsafe inventory arithmetic rejected",
+          "status": "PASS"
+        },
+        {
+          "name": "explicit stock-only command advances shared product revision",
+          "status": "PASS"
+        },
+        {
+          "name": "cost-only command audit and public privacy",
+          "status": "PASS"
+        },
+        {
+          "name": "pending status reflects only owning actor while commit is held",
+          "status": "PASS"
+        },
+        {
+          "name": "receipt and audit getters return defensive copies",
+          "status": "PASS"
+        },
+        {
+          "name": "missing product rejected without receipt",
+          "status": "PASS"
+        },
+        {
+          "name": "wire composes existing bridge and saves through new authority",
+          "status": "PASS"
+        },
+        {
+          "name": "wire disconnect after commit reconciles without second mutation",
+          "status": "PASS"
+        },
+        {
+          "name": "undefined fields cannot become an implicit empty command",
+          "status": "PASS"
+        },
+        {
+          "name": "malformed authority capability cannot grant write access",
+          "status": "PASS"
+        },
+        {
+          "name": "invalid authority expiry cannot reconcile receipts",
+          "status": "PASS"
+        },
+        {
+          "name": "network and child process guard rejects escape probes",
+          "status": "PASS"
+        },
+        {
+          "name": "no production client or endpoint is imported",
+          "status": "PASS"
+        }
+      ],
+      "productionRequests": 0,
+      "scope": "In-process synthetic transaction/reference and compatibility tests; not production DB guarantees"
+    },
+    "command04Browser": {
+      "status": "PASS",
+      "sourceCommit": "24d7232b13de2cea3c43a892ec433a8ae5322a7e",
+      "sourceTree": "9e0f17f45fe17399cc102dd1b8f656c9430c2fb1",
+      "node": "v22.20.0",
+      "browser": "155.0.8059.84",
+      "total": 13,
+      "passed": 13,
+      "failed": 0,
+      "results": [
+        {
+          "name": "locked start has no real authentication or catalogue call",
+          "status": "PASS"
+        },
+        {
+          "name": "authoritative product save creates one receipt/audit and preserves originals",
+          "status": "PASS"
+        },
+        {
+          "name": "dirty editor values and selection survive background refresh",
+          "status": "PASS"
+        },
+        {
+          "name": "version conflict preserves local draft and blocks commit",
+          "status": "PASS"
+        },
+        {
+          "name": "response loss reconciles a committed save without retry",
+          "status": "PASS"
+        },
+        {
+          "name": "failed precommit save retains draft and explicit retry succeeds",
+          "status": "PASS"
+        },
+        {
+          "name": "permission loss after review is rechecked by server",
+          "status": "PASS"
+        },
+        {
+          "name": "external session loss during committed save remains owner-scoped",
+          "status": "PASS"
+        },
+        {
+          "name": "direct protected inventory/image mutation cannot bypass editor",
+          "status": "PASS"
+        },
+        {
+          "name": "responsive editor and keyboard fields 390",
+          "status": "PASS"
+        },
+        {
+          "name": "responsive editor and keyboard fields 768",
+          "status": "PASS"
+        },
+        {
+          "name": "responsive editor and keyboard fields 1440",
+          "status": "PASS"
+        },
+        {
+          "name": "teardown prevents further protected interaction",
+          "status": "PASS"
+        }
+      ],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "productionRequests": 0,
+      "screenshotsCaptured": 0,
+      "scope": "Actual isolated browser application using synthetic authority; no live backend or visual owner sign-off"
+    }
+  },
+  "isolation": {
+    "stage": "A",
+    "applicationFixturesOpened": 0,
+    "productionRequests": 0,
+    "status": "PASS",
+    "sourceCommit": "24d7232b13de2cea3c43a892ec433a8ae5322a7e",
+    "negativeControls": [
+      {
+        "name": "fetchIPv4",
+        "result": "blocked"
+      },
+      {
+        "name": "fetchIPv6",
+        "result": "blocked"
+      },
+      {
+        "name": "dns",
+        "result": "blocked"
+      },
+      {
+        "name": "image",
+        "result": "blocked"
+      },
+      {
+        "name": "redirect",
+        "result": "blocked"
+      },
+      {
+        "name": "websocket",
+        "result": "blocked"
+      },
+      {
+        "name": "script",
+        "result": "blocked"
+      },
+      {
+        "name": "worker",
+        "result": "blocked"
+      },
+      {
+        "name": "frame",
+        "result": "blocked"
+      },
+      {
+        "name": "navigation",
+        "result": "blocked"
+      }
+    ],
+    "node": "v22.20.0",
+    "namespace": "net:[4026532272]",
+    "processProof": {
+      "connections": [
+        {
+          "family": 2,
+          "destination": "192.0.2.1",
+          "errno": 101,
+          "blocked": true
+        },
+        {
+          "family": 10,
+          "destination": "2001:db8::1",
+          "errno": 101,
+          "blocked": true
+        }
+      ],
+      "childNamespace": "net:[4026532272]"
+    },
+    "browser": "155.0.8059.84",
+    "chromiumSandbox": true,
+    "disposableBrowser": true,
+    "browserProof": {
+      "fetchIPv4": "blocked",
+      "fetchIPv6": "blocked",
+      "dns": "blocked",
+      "image": "blocked",
+      "redirect": "blocked",
+      "websocket": "blocked",
+      "script": "blocked",
+      "worker": "blocked"
+    },
+    "localOriginReachable": true,
+    "nextStageAuthorised": true
+  },
+  "sourcePreservation": {
+    "before": {
+      "status": "PASS",
+      "executionCommit": "24d7232b13de2cea3c43a892ec433a8ae5322a7e",
+      "tree": "9e0f17f45fe17399cc102dd1b8f656c9430c2fb1",
+      "base": "2c2d629a6194506d34c2fbbcce4742fceee94488",
+      "unchangedOriginalBlobs": 977,
+      "newFiles": {
+        ".github/workflows/command04-acceptance.yml": {
+          "sha256": "a3b3309e3230ef60bff7bfdc7cd0c340ea5759129ed68484a83b4de592d0e627",
+          "bytes": 4179,
+          "gitBlob": "45d46a361fb6c020d056bdbef3cd0d9e2f1378b4"
+        },
+        "docs/command/command04/README.md": {
+          "sha256": "d0028ee3abb2af8afda03899db29d16b432336eed3497a425e0bf46c66591077",
+          "bytes": 10689,
+          "gitBlob": "bb69c514ccf4ac0a419aa9f42721b57ef8e9e614"
+        },
+        "prototypes/command04/contract.mjs": {
+          "sha256": "d65a8394040d7c12bbb174607d58633822ff7cccd9f47ca899fad703ce8a6db8",
+          "bytes": 3197,
+          "gitBlob": "4fecab48bc16047bc2f2e1507eee783a5bc972df"
+        },
+        "prototypes/command04/entry.mjs": {
+          "sha256": "c6e0bc6ec9d965c4012660cdcf1c985486659c9b8d7272aabdb01bdeb6e66795",
+          "bytes": 4207,
+          "gitBlob": "08748e5484f0fceac2e79b25fe58edd838ca7203"
+        },
+        "prototypes/command04/index.html": {
+          "sha256": "fa40cfb668cf2ebb8a23171a3b41eff2f43d4c5e7648e969d73f7cd4413a3bd8",
+          "bytes": 9707,
+          "gitBlob": "4346ea512a2f6f5a4bfe58d0dd3a65bcde1a22e4"
+        },
+        "prototypes/command04/server.mjs": {
+          "sha256": "4df4c92351be7275035f8ebe8bcef32207e26f5efca43023a8790381460b5dd7",
+          "bytes": 5315,
+          "gitBlob": "91c4cb6d79bb43574ad593aedf447cbf740a968c"
+        },
+        "prototypes/command04/wire.mjs": {
+          "sha256": "daac0b5c3492f9d4f07b2770ab8c93df317c6d39793b2ffa8d6176c7fc87289d",
+          "bytes": 2291,
+          "gitBlob": "230ec6e5f0523c30fdf903edc2e2fde1e22f57c5"
+        },
+        "tests/command04/browser.mjs": {
+          "sha256": "a0f317270945a6062b9d8765331c1b6904d17e471b6632b1a346893c07d41d3c",
+          "bytes": 11263,
+          "gitBlob": "7ae8e38e0eef29827803c13f838343e92082f4ae"
+        },
+        "tests/command04/logic.mjs": {
+          "sha256": "6ad869466f0071466a2addc31925d2020f2c4389859aef4f8fc15bd153e8e6b3",
+          "bytes": 14366,
+          "gitBlob": "cc080f130c17e7cd5e5d70b3c2f75f4f2d8de726"
+        },
+        "tests/command04/postgres-fixture.sql": {
+          "sha256": "2a25b812a98d02dffb6b91c274c315c8350ed6bd56c62e1c39b4ae7cb31cd298",
+          "bytes": 13268,
+          "gitBlob": "0f10e2ebf8b6ad4cbb28d55e34df55b186fb2dbc"
+        },
+        "tests/command04/postgres.py": {
+          "sha256": "04b84745e76ee4717b7ab5f678f396e19a3edf1d44279771ec15b421cc130255",
+          "bytes": 15629,
+          "gitBlob": "027dca284cbd600d2e1964e5cf5070cc2536b370"
+        },
+        "tests/command04/run-isolated.sh": {
+          "sha256": "42ca9c62925b98daf1a4193c33dd00b5b97846f4d717ad88ba9d1ab4982cfe7f",
+          "bytes": 3361,
+          "gitBlob": "fbb27d63eb1ff279e5eb3ba655593c3e0abb8006"
+        },
+        "tests/command04/source-integrity.py": {
+          "sha256": "557388681a43b84814d88a3c06b6a535f391ac34dc8dc437f5b9b373a9c04b95",
+          "bytes": 2623,
+          "gitBlob": "f452251d3f635f486384fbe1d2ab6534c1fd0b01"
+        }
+      }
+    },
+    "afterIdentical": true,
+    "all977InheritedBlobsUnchanged": true,
+    "productionMain": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+    "existingWorkflowsChanged": false,
+    "frozenBranchesChanged": false
+  },
+  "artifact": {
+    "id": 12429383684,
+    "name": "command04-ironclad-text-evidence",
+    "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/39788439046/artifacts/12429383684",
+    "sha256": "e33369aba019900677677a58302da6ac0d2e9836fdf4ed07e88e87b986e8b13d",
+    "bytes": 29365,
+    "files": 19,
+    "zipCRCAndExactFileList": "PASS",
+    "independentReadback": "PASS",
+    "expiredAtVerification": false,
+    "retentionDaysRequested": 30,
+    "expiresAt": "2026-11-21T13:39:13Z",
+    "containsPNGs": false,
+    "containsDatabaseFilesProfilesOrSeeds": false
+  },
+  "securityScope": "Actual disposable PostgreSQL role/grant/RLS/transaction tests plus in-process/browser fixtures. Not production Supabase/JWT/session/RLS/schema or availability certification. No production migration exists in this candidate.",
+  "productionRequests": 0,
+  "productionChanges": [],
+  "newScreenshotsPublished": 0,
+  "ownerReview": "Existing COMMAND03 artifact12422172177 and new mutation/security contract review remain owner decisions; no COMMAND05 automatically"
+}
