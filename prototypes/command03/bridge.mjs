@@ -8,10 +8,10 @@ export function createBridge({identity,transport,mode='read-only',now=Date.now,t
  if(mode==='fixture-versioned'&&['save','status'].some(k=>typeof transport[k]!=='function'))throw Error('Explicit synthetic version/status capabilities required.');
  let alive=true,epoch=0,authorization=null,authPending=null,pendingList=null;
  const listeners=new Set(),controllers=new Set(),cache=new Map(),operations=new Map();
- const state={status:'signed-out',subject:null,capabilities:{catalogueRead:false,productRead:false,productWrite:false}};
+ const state={status:'signed-out',subject:null,catalogueGeneration:null,capabilities:{catalogueRead:false,productRead:false,productWrite:false}};
  const snapshot=()=>clone({...state,epoch,mode,productionWritesSupported:false,versionGuarantee:mode==='fixture-versioned'?'synthetic-cas-only':'none'});
  function emit(){for(const fn of listeners)fn(snapshot());}
- function clear(status='checking'){epoch++;authorization=null;authPending=null;pendingList=null;cache.clear();for(const c of controllers)c.abort();controllers.clear();Object.assign(state,{status,subject:null,capabilities:{catalogueRead:false,productRead:false,productWrite:false}});emit();}
+ function clear(status='checking'){epoch++;authorization=null;authPending=null;pendingList=null;cache.clear();for(const c of controllers)c.abort();controllers.clear();Object.assign(state,{status,subject:null,catalogueGeneration:null,capabilities:{catalogueRead:false,productRead:false,productWrite:false}});emit();}
  const unsubscribe=identity.subscribe(s=>clear(s.status==='present'?'checking':s.status));
  function current(){
   if(!alive)fail('TEARDOWN','The bridge is closed.');
@@ -26,7 +26,7 @@ export function createBridge({identity,transport,mode='read-only',now=Date.now,t
   try{return await Promise.race([Promise.resolve().then(()=>{if(controller.signal.aborted)fail('CANCELLED','Request cancelled.');return run(controller.signal);}),cancellation,deadline]);}
   finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);controllers.delete(controller);}
  }
- function securityFailure(error){if(['PERMISSION','EXPIRED','REVOKED','NO_SESSION'].includes(error.code)){cache.clear();authorization=null;Object.assign(state,{status:error.code.toLowerCase(),subject:null,capabilities:{catalogueRead:false,productRead:false,productWrite:false}});emit();}}
+ function securityFailure(error){if(['PERMISSION','EXPIRED','REVOKED','NO_SESSION'].includes(error.code)){cache.clear();authorization=null;Object.assign(state,{status:error.code.toLowerCase(),subject:null,catalogueGeneration:null,capabilities:{catalogueRead:false,productRead:false,productWrite:false}});emit();}}
  async function authorize(){
   const s=current(),ctx={epoch,identityGeneration:s.generation,session:s.session};
   if(authPending?.epoch===epoch)return authPending.promise;
@@ -67,7 +67,7 @@ export function createBridge({identity,transport,mode='read-only',now=Date.now,t
     for(const row of rows){seen.add(row.id);const stock=index.get(row.id);result.push(mapRecord(row,stock,revision(row,stock,versions)));}
     if(rows.length<100)break;
    }
-   check(ctx);return result;
+   check(ctx);state.catalogueGeneration=ctx.identityGeneration;emit();return result;
   })();pendingList={epoch,promise};try{const value=await promise;check(ctx);return clone(value);}finally{if(pendingList?.promise===promise)pendingList=null;}
  }
  async function product(id,{signal,force=false,context}={}){

@@ -4,19 +4,21 @@ import {createFixtureIdentity} from './identity.mjs';
 import {createFixtureWire} from './fixture-wire.mjs';
 import {createBridge} from './bridge.mjs';
 const identity=createFixtureIdentity(),fixture=createFixtureWire(),bridge=createBridge({identity,transport:fixture.transport,mode:'fixture-versioned',timeoutMs:2000});
-const port=bridge.createEditorPort(),$=id=>document.getElementById(id);let app,retainedOwner=null,lastSubject=null,closed=false;
+const port=bridge.createEditorPort(),$=id=>document.getElementById(id);let app,retainedOwner=null,lastSubject=null,visibleGeneration=null,closed=false;
 const editor=createEditorView(document,{persistence:port,timeoutMs:2500,onSaved:()=>{if(app)void app.controller.refresh({supersede:true});}});
 app=mountWorkbench(document,{transport:bridge.catalogueTransport,extension:{
  beforeAction:async action=>{const allowed=await editor.beforeAction(action);if(allowed&&editor.session.snapshot().phase==='closed'){port.release();retainedOwner=null;}return allowed;},
- onState:editor.workbenchState
+ onState:state=>{editor.workbenchState(state);paint(bridge.snapshot());}
 }});
 function paint(s){
  if(closed)return;const draft=editor.session.snapshot();
+ if(s.status!=='authorized')visibleGeneration=null;
+ if(s.status==='authorized'&&app?.controller.snapshot().status==='ready'&&s.catalogueGeneration===identity.snapshot().generation)visibleGeneration=s.catalogueGeneration;
  if(draft.phase==='closed'){retainedOwner=null;if(port.owner())port.release();}
  if(s.status!=='authorized'&&draft.phase!=='closed'&&!retainedOwner)retainedOwner=port.owner()??lastSubject;
- const allowed=s.status==='authorized'&&s.capabilities.catalogueRead&&(!retainedOwner||retainedOwner===s.subject);
+ const allowed=s.status==='authorized'&&s.capabilities.catalogueRead&&visibleGeneration===identity.snapshot().generation&&(!retainedOwner||retainedOwner===s.subject);
  $('bridge-protected').hidden=!allowed;$('bridge-protected').inert=!allowed;
- if(!allowed){for(const dialog of document.querySelectorAll('dialog[open]'))dialog.close();}
+ if(!allowed){for(const dialog of document.querySelectorAll('dialog[open]')){if(dialog.id==='discard-confirm')$('keep-editing').click();else dialog.close();}}
  const blockedOwner=s.status==='authorized'&&retainedOwner&&retainedOwner!==s.subject;
  $('bridge-status').textContent=blockedOwner?'An earlier identity has a retained draft. Restore its synthetic session to continue.':s.status==='authorized'?(s.capabilities.productWrite?'Authorised fixture session · synthetic saves available':'Read-only fixture session · product saves denied'):s.status==='signed-out'?'No synthetic session · catalogue access locked':'Session '+s.status+' · any local draft is retained';
  $('bridge-status').setAttribute('role',allowed?'status':'alert');
