@@ -9,7 +9,7 @@ env={'PATH':str(bindir)+':/usr/bin:/bin','LANG':'C.UTF-8','PGHOST':str(socket),'
 roles={'ic_alice','ic_bob','ic_reader','ic_stranger','ic_anon'}
 def call(sql,role=None,ok=True):
  assert role is None or role in roles
- p=subprocess.run([str(bindir/'psql'),'-X','-q','-A','-t','-v','ON_ERROR_STOP=1'],input=(('SET SESSION AUTHORIZATION '+role+';\n') if role else '')+sql,text=True,capture_output=True,env=env,timeout=25)
+ p=subprocess.run([str(bindir/'psql'),'-X','-q','-A','-t','-v','ON_ERROR_STOP=1'],input=sql,text=True,capture_output=True,env={**env,'PGUSER':role or dbuser},timeout=25)
  if ok: assert p.returncode==0,p.stderr
  else: assert p.returncode!=0,'Unexpected SQL success'
  return p.stdout.strip() if ok else p.stderr
@@ -53,6 +53,7 @@ test('non-member authenticated role denied',lambda:call("SELECT ironclad_fixture
 test('read-only member reads but cannot mutate',lambda:(read(role='ic_reader'),deny(cmd(),'PERMISSION','ic_reader')))
 test('caller role and capability claims cannot be spoofed',lambda:deny(dict(cmd(),actor='synthetic-a',capabilities={'productWrite':True}),'VALIDATION'))
 test('caller cannot impersonate another DB session',lambda:call('SET SESSION AUTHORIZATION ic_alice;', 'ic_bob',False))
+test('ordinary caller cannot assume owner role',lambda:call('SET ROLE ic_owner;','ic_alice',False))
 test('caller GUC does not grant membership',lambda:call("SET request.jwt.claim.sub='synthetic-a'; SELECT ironclad_fixture.read_product('fx-pot-01');",'ic_stranger',False))
 
 def atomic():
@@ -110,8 +111,8 @@ def rollback_outer():
 test('outer transaction failure rolls back receipt, audit and records',rollback_outer)
 
 def interrupted():
- before=snapshot();c=cmd();script="SET SESSION AUTHORIZATION ic_alice; SET application_name='ironclad-disposable-interruption'; BEGIN; SELECT ironclad_fixture.mutate("+jq(c)+'); SELECT pg_sleep(15); COMMIT;'
- proc=subprocess.Popen([str(bindir/'psql'),'-X','-q','-A','-t','-v','ON_ERROR_STOP=1'],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,env=env)
+ before=snapshot();c=cmd();script="SET application_name='ironclad-disposable-interruption'; BEGIN; SELECT ironclad_fixture.mutate("+jq(c)+'); SELECT pg_sleep(15); COMMIT;'
+ proc=subprocess.Popen([str(bindir/'psql'),'-X','-q','-A','-t','-v','ON_ERROR_STOP=1'],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,env={**env,'PGUSER':'ic_alice'})
  proc.stdin.write(script);proc.stdin.close();pid=''
  try:
   for _ in range(50):
@@ -131,6 +132,22 @@ def revocation():
  try:deny(committed,'PERMISSION');call("SELECT ironclad_fixture.operation_status('"+committed['operationId']+"');",'ic_alice',False)
  finally:call("UPDATE ironclad_fixture.principals SET enabled=true WHERE role_name='ic_alice';")
 test('revoked authority cannot write, replay or reconcile',revocation)
+def expiry_wait():
+ c=cmd();before=snapshot();lock_sql="SET application_name='ironclad-expiry-lock'; BEGIN; SELECT pg_advisory_xact_lock(hashtextextended('synthetic-a:"+c['operationId']+"',0)); SELECT pg_sleep(1.5); COMMIT;"
+ proc=subprocess.Popen([str(bindir/'psql'),'-X','-q','-A','-t','-v','ON_ERROR_STOP=1'],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,env=env)
+ proc.stdin.write(lock_sql);proc.stdin.close()
+ try:
+  for _ in range(40):
+   if call("SELECT count(*) FROM pg_stat_activity WHERE application_name='ironclad-expiry-lock' AND wait_event='PgSleep';")=='1':break
+   time.sleep(.025)
+  else:raise AssertionError('Fixture operation lock not held')
+  call("UPDATE ironclad_fixture.principals SET expires_at=clock_timestamp()+interval '0.3 second' WHERE role_name='ic_alice';")
+  deny(c,'PERMISSION');equal(snapshot(),before);proc.wait(timeout=5)
+ finally:
+  if proc.poll() is None:proc.terminate();proc.wait(timeout=5)
+  call("UPDATE ironclad_fixture.principals SET expires_at=clock_timestamp()+interval '1 day' WHERE role_name='ic_alice';")
+test('authority expiry during advisory-lock wait denies mutation',expiry_wait)
+
 
 def expiry():
  call("UPDATE ironclad_fixture.principals SET expires_at=clock_timestamp()-interval '1 second' WHERE role_name='ic_alice';")

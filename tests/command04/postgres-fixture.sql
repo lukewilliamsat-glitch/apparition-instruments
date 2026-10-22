@@ -2,11 +2,11 @@
 -- Creates only a fresh isolated namespace/roles in an empty throwaway cluster.
 \set ON_ERROR_STOP on
 CREATE ROLE ic_owner NOLOGIN NOSUPERUSER NOBYPASSRLS;
-CREATE ROLE ic_alice NOLOGIN;
-CREATE ROLE ic_bob NOLOGIN;
-CREATE ROLE ic_reader NOLOGIN;
-CREATE ROLE ic_stranger NOLOGIN;
-CREATE ROLE ic_anon NOLOGIN;
+CREATE ROLE ic_alice LOGIN;
+CREATE ROLE ic_bob LOGIN;
+CREATE ROLE ic_reader LOGIN;
+CREATE ROLE ic_stranger LOGIN;
+CREATE ROLE ic_anon LOGIN;
 CREATE SCHEMA ironclad_fixture AUTHORIZATION ic_owner;
 REVOKE ALL ON SCHEMA ironclad_fixture FROM PUBLIC;
 SET ROLE ic_owner;
@@ -95,6 +95,7 @@ BEGIN
  IF c ? 'inventory' AND NOT principal.inventory_write OR c ? 'internalCost' AND NOT principal.cost_write THEN RAISE EXCEPTION '[PERMISSION] Separate write capability required'; END IF;
  -- Same actor/operation serializes even across products. Hash collision only serializes unrelated work.
  PERFORM pg_advisory_xact_lock(hashtextextended(principal.subject||':'||op,0));
+ IF principal.expires_at<=clock_timestamp() THEN RAISE EXCEPTION '[PERMISSION] Authority expired while waiting'; END IF;
  SELECT * INTO prior FROM ironclad_fixture.operations WHERE actor=principal.subject AND operation_id=op;
  IF FOUND THEN
   IF prior.command<>c THEN RAISE EXCEPTION '[IDEMPOTENCY] Operation content changed'; END IF;
@@ -144,6 +145,7 @@ BEGIN
   v:=c->'internalCost';
   IF jsonb_typeof(v)<>'number' OR v::text !~ '^[0-9]+$' OR (v::text)::numeric>2147483647 THEN RAISE EXCEPTION '[VALIDATION] Private cost bound'; END IF;
  END IF;
+ IF principal.expires_at<=clock_timestamp() THEN RAISE EXCEPTION '[PERMISSION] Authority expired before mutation'; END IF;
  -- Product, inventory, private cost, receipt and audit are one SQL transaction.
  UPDATE ironclad_fixture.products SET body=b,revision=revision+1 WHERE id=product_id;
  IF c ? 'inventory' THEN UPDATE ironclad_fixture.inventory SET quantity=new_stock WHERE component_id=product_id; END IF;
