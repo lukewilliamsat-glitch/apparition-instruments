@@ -20,9 +20,52 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          # Evidence commit -> preserved handover -> frozen tested application.
+          fetch-depth: 3
       - uses: actions/setup-node@v4
         with:
           node-version: '22.20.0'
+      - name: Verify frozen application and inherited file integrity
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/command03-evidence"
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, subprocess
+          def git(*args):
+              return subprocess.check_output(['git', *args])
+          frozen = '53c4063cccc6be097bc53a0c04f1c9ef2c75bf7c'
+          handover = 'a43b9525fa080e6d1905cf298d922684746a6c4e'
+          assert git('rev-parse', frozen + '^{tree}').decode().strip() == 'c3124dac437bb9e72e7a2d7632b1cc6f2f452b1e'
+          assert git('rev-parse', handover + '^{tree}').decode().strip() == 'b43d8e7d1297c1c4aa6da0c0400b12cf8dd07a8e'
+          allowed = {'.github/workflows/command03-acceptance.yml', 'tests/command03/browser.mjs'}
+          changed = set(git('diff', '--name-only', handover, 'HEAD').decode().splitlines())
+          assert changed == allowed, sorted(changed)
+          verified, application = 0, {}
+          for entry in git('ls-tree', '-r', '-z', handover).split(b'\0'):
+              if not entry:
+                  continue
+              meta, name = entry.split(b'\t', 1)
+              mode, kind, expected = meta.decode().split()
+              path = name.decode()
+              assert kind == 'blob'
+              if path in allowed:
+                  continue
+              data = pathlib.Path(path).read_bytes()
+              actual = hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest()
+              assert actual == expected, path
+              verified += 1
+              if path.startswith('prototypes/command03/'):
+                  assert git('rev-parse', frozen + ':' + path).decode().strip() == actual
+                  application[path] = {'gitBlob': actual, 'sha256': hashlib.sha256(data).hexdigest(), 'bytes': len(data)}
+          assert verified == 974 and len(application) == 8
+          proof = {'status': 'PASS', 'executionCommit': os.environ['GITHUB_SHA'],
+                   'testedApplication': {'commit': frozen, 'tree': 'c3124dac437bb9e72e7a2d7632b1cc6f2f452b1e', 'files': application},
+                   'preservedHandover': handover, 'unchangedOriginalBlobs': verified, 'evidenceOnlyChanges': sorted(changed)}
+          target = pathlib.Path(os.environ['RUNNER_TEMP']) / 'command03-evidence' / 'SOURCE_IDENTITY.json'
+          target.write_text(json.dumps(proof, indent=2) + '\n')
+          print(json.dumps({'status': proof['status'], 'unchangedOriginalBlobs': verified, 'frozenApplicationFiles': len(application)}))
+          PY
       - name: Hosted Chrome and pinned disposable controller
         shell: bash
         run: |
@@ -47,9 +90,11 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: command03-text-evidence
-          # Exact allowlist: no PNGs or disposable profile contents are published.
+          name: command03-afterimage-evidence
+          # Authorisation 39A: these eight synthetic PNGs are retained only in
+          # this temporary Actions artifact. No profiles or other PNGs included.
           path: |
+            ${{ runner.temp }}/command03-evidence/SOURCE_IDENTITY.json
             ${{ runner.temp }}/command03-evidence/NODE_RESULTS.json
             ${{ runner.temp }}/command03-evidence/BROWSER_RESULTS.json
             ${{ runner.temp }}/command03-evidence/STAGE_A_RESULTS.json
@@ -62,4 +107,13 @@ jobs:
             ${{ runner.temp }}/command03-evidence/controller-integrity.txt
             ${{ runner.temp }}/command03-evidence/namespace-*.json
             ${{ runner.temp }}/command03-evidence/namespace-id.txt
+            ${{ runner.temp }}/command03-evidence/SCREENSHOTS/unauthenticated.png
+            ${{ runner.temp }}/command03-evidence/SCREENSHOTS/authorised-editor.png
+            ${{ runner.temp }}/command03-evidence/SCREENSHOTS/write-denied.png
+            ${{ runner.temp }}/command03-evidence/SCREENSHOTS/expired-draft-retained.png
+            ${{ runner.temp }}/command03-evidence/SCREENSHOTS/version-conflict.png
+            ${{ runner.temp }}/command03-evidence/SCREENSHOTS/uncertain-save.png
+            ${{ runner.temp }}/command03-evidence/SCREENSHOTS/mobile-editor.png
+            ${{ runner.temp }}/command03-evidence/SCREENSHOTS/tablet-editor.png
+          if-no-files-found: error
           retention-days: 30
