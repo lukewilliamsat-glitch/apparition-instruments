@@ -23,7 +23,7 @@ done
 cp "$output/SOURCE_IDENTITY.json" "$output/C03/SOURCE_IDENTITY.json"
 run_isolated --require ./tests/command01/network-guard.cjs tests/command04/logic.mjs "$output/NODE_RESULTS.json" "$output/PG_SEED.json"
 # Existing server binaries only. No apt, Docker download, external service or password.
-pg_bin=''
+pg_bin=''; pg_failure=0
 for candidate in /usr/lib/postgresql/*/bin; do
  if test -x "$candidate/initdb" && test -x "$candidate/pg_ctl" && test -x "$candidate/psql"; then pg_bin=$candidate; fi
 done
@@ -34,7 +34,14 @@ if test -n "$pg_bin"; then
  pg "$pg_bin/initdb" -D "$pg_data" -A trust --no-locale --encoding=UTF8 > "$output/postgres-init.txt"
  trap 'pg "$pg_bin/pg_ctl" -D "$pg_data" -m immediate stop > "$output/postgres-stop.txt" 2>&1 || true' EXIT
  pg "$pg_bin/pg_ctl" -D "$pg_data" -l "$output/postgres-disposable.log" -o "-c listen_addresses='' -k $output/pg-socket -p 55439 -c unix_socket_permissions=0700" -w start > "$output/postgres-start.txt"
- pg /usr/bin/python3 tests/command04/postgres.py "$output" "$output/pg-socket" "$pg_bin" "$owner"
+ if pg /usr/bin/python3 tests/command04/postgres.py "$output" "$output/pg-socket" "$pg_bin" "$owner"; then
+  :
+ else
+  pg_failure=1
+  if ! test -f "$output/POSTGRES_RESULTS.json"; then
+   printf '%s\n' '{"status":"FAIL","stage":"fixture setup or harness","reason":"PostgreSQL process failed; inspect job logs","productionRequests":0}' > "$output/POSTGRES_RESULTS.json"
+  fi
+ fi
 else
  printf '%s\n' '{"status":"BLOCKED","reason":"No preinstalled PostgreSQL server binaries; no installation attempted","productionRequests":0}' > "$output/POSTGRES_RESULTS.json"
 fi
@@ -44,3 +51,5 @@ done
 run_isolated tests/command04/browser.mjs "$output" "$browser" "$controller" "$commit"
 # Recheck all inherited application bytes after execution as well as before it.
 runuser -u "$owner" -- env -i HOME="$fixture_home" PATH=/usr/bin:/bin LANG=C.UTF-8 /usr/bin/python3 tests/command04/source-integrity.py "$output" "$commit" --after
+
+exit "$pg_failure"

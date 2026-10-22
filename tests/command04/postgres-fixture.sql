@@ -111,10 +111,10 @@ BEGIN
   IF jsonb_typeof(c->'patch')<>'object' OR c->'patch'='{}'::jsonb THEN RAISE EXCEPTION '[VALIDATION] Invalid product patch'; END IF;
   FOR k,v IN SELECT * FROM jsonb_each(c->'patch') LOOP
    IF k IN ('name','sku','description','series','reference') THEN
-    IF jsonb_typeof(v)<>'string' OR length(v#>>'{}')>CASE k WHEN 'sku' THEN 80 WHEN 'description' THEN 5000 ELSE 300 END OR k IN ('name','sku') AND btrim(v#>>'{}')='' THEN RAISE EXCEPTION '[VALIDATION] Invalid text'; END IF;
+    IF jsonb_typeof(v)<>'string' OR length(v#>>'{}')>(CASE k WHEN 'sku' THEN 80 WHEN 'description' THEN 5000 ELSE 300 END) OR k IN ('name','sku') AND btrim(v#>>'{}')='' THEN RAISE EXCEPTION '[VALIDATION] Invalid text'; END IF;
     v:=to_jsonb(btrim(v#>>'{}'));
     IF k IN ('series','reference') THEN
-     IF v='""'::jsonb THEN b:=jsonb_set(b,'{specs}',(b->'specs')-CASE k WHEN 'series' THEN 'Series' ELSE 'Reference' END);
+     IF v='""'::jsonb THEN b:=jsonb_set(b,'{specs}',(b->'specs')-(CASE k WHEN 'series' THEN 'Series' ELSE 'Reference' END));
      ELSE b:=jsonb_set(b,ARRAY['specs',CASE k WHEN 'series' THEN 'Series' ELSE 'Reference' END],v); END IF;
     ELSE b:=jsonb_set(b,ARRAY[k],v); END IF;
    ELSIF k IN ('salePrice','kitPrice','kitPriceQuantity') THEN
