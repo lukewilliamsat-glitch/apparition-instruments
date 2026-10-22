@@ -1,0 +1,65 @@
+name: COMMAND 03 isolated bridge acceptance
+on:
+  push:
+    branches: ['engineering/command03-the-bridge']
+    paths:
+      - '.github/workflows/command03-acceptance.yml'
+      - 'tests/command03/**'
+      - 'prototypes/command03/**'
+permissions:
+  contents: read
+concurrency:
+  group: command03-acceptance
+  cancel-in-progress: false
+jobs:
+  browser:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/command03-the-bridge'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.20.0'
+      - name: Hosted Chrome and pinned disposable controller
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/command03-evidence" "$RUNNER_TEMP/command03-tools"
+          browser=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || true)
+          test -n "$browser"
+          printf '%s\n' "$browser" > "$RUNNER_TEMP/command03-tools/browser-path"
+          "$browser" --version > "$RUNNER_TEMP/command03-evidence/browser-version.txt"
+          node --version > "$RUNNER_TEMP/command03-evidence/node-version.txt"
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install --prefix "$RUNNER_TEMP/command03-tools" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false playwright-core@1.56.1
+          npm view playwright-core@1.56.1 dist.integrity > "$RUNNER_TEMP/command03-evidence/controller-integrity.txt"
+          test "$(cat "$RUNNER_TEMP/command03-evidence/controller-integrity.txt")" = 'sha512-hutraynyn31F+Bifme+Ps9Vq59hKuUCz7H1kDOcBs+2oGguKkWTU50bBWrtz34OUWmIwpBTWDxaRPXrIXkgvmQ=='
+      - name: Prove outbound isolation, then test the actual workbench
+        shell: bash
+        run: |
+          set -euo pipefail
+          browser=$(cat "$RUNNER_TEMP/command03-tools/browser-path")
+          sudo unshare --net --mount --pid --fork --mount-proc /bin/bash tests/command03/run-browser.sh \
+            "$GITHUB_WORKSPACE" "$RUNNER_TEMP/command03-evidence" "$(command -v node)" "$browser" \
+            "$RUNNER_TEMP/command03-tools/node_modules/playwright-core/index.mjs" "$(id -un)" "$(readlink /proc/self/ns/net)" "$GITHUB_SHA"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: command03-text-evidence
+          # Exact allowlist: no PNGs or disposable profile contents are published.
+          path: |
+            ${{ runner.temp }}/command03-evidence/NODE_RESULTS.json
+            ${{ runner.temp }}/command03-evidence/BROWSER_RESULTS.json
+            ${{ runner.temp }}/command03-evidence/STAGE_A_RESULTS.json
+            ${{ runner.temp }}/command03-evidence/SCREENSHOT_CAPTURE_MANIFEST.json
+            ${{ runner.temp }}/command03-evidence/C01/NODE_RESULTS.json
+            ${{ runner.temp }}/command03-evidence/C01/BROWSER_RESULTS.json
+            ${{ runner.temp }}/command03-evidence/C02/NODE_RESULTS.json
+            ${{ runner.temp }}/command03-evidence/C02/BROWSER_RESULTS.json
+            ${{ runner.temp }}/command03-evidence/*version.txt
+            ${{ runner.temp }}/command03-evidence/controller-integrity.txt
+            ${{ runner.temp }}/command03-evidence/namespace-*.json
+            ${{ runner.temp }}/command03-evidence/namespace-id.txt
+          retention-days: 30

@@ -1,0 +1,12 @@
+/* Minimal lifecycle presentation over the existing COMMAND shell and editor. */
+#bridge-session{position:relative;margin:18px 26px 12px 230px;padding:16px 20px;border:1px solid #5d553d;border-radius:5px;background:#1b2019;color:#eeeae1;max-width:1100px;z-index:40}
+#bridge-session h1{font-size:18px!important;margin:0 0 8px!important;letter-spacing:0!important}
+#bridge-session p{margin:7px 0;max-width:80ch;color:#c6cebf}
+#bridge-session .bridge-buttons{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+#bridge-session button{padding:9px 14px;border:1px solid #716548;background:#292d21;color:#f5ead1}
+#bridge-session button:focus-visible{outline:2px solid #e4c989;outline-offset:3px}
+#bridge-readonly{color:#e4c989!important}
+body[data-command03]:has(#bridge-protected[hidden]) #bridge-session{margin:7vh auto;width:min(680px,calc(100% - 32px));padding:26px}
+[data-command03] #bridge-protected[hidden]{display:none!important}
+@media(max-width:1050px){#bridge-session{margin:16px 22px}#bridge-session h1{font-size:17px!important}}
+@media(prefers-reduced-motion:reduce){#bridge-session *{scroll-behavior:auto;transition:none}}
