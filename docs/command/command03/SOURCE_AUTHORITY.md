@@ -35,3 +35,24 @@ No least-data original-image metadata projection is established. The adapter ret
 ## Unknown / future approval gates
 
 Current deployed RLS/grants, session revocation timing, Auth settings, policy drift, real table/JSON projection responses, product-specific audits, version enforcement and atomic/idempotent mutation support require separately authorised verification. Frontend visibility and a valid token are not server authorisation. The candidate cannot be wired to the existing generic save as a safe versioned adapter.
+
+## Exact inspected source objects
+
+All entries below were read at the verified production-main commit; their blob identities make this review recoverable without live backend access.
+
+| Repository path | Git blob |
+|---|---|
+| `dist/admin/admin-auth.mjs` | `844ba8558afaea9a4004062ce9fa1508b0269689` |
+| `dist/admin/admin-gate.mjs` | `9941539063d29ee8695b8b18d3ac9735dec24c99` |
+| `dist/backend/providers.mjs` | `b9078fa9e465c65bb21bd41f95f3ece6879904d0` |
+| `dist/backend/component-data.mjs` | `a0bbf8f3c4a2301b8650ab7f95f813d925ffec8a` |
+| `dist/admin/data.mjs` | `d4f2edaa3afb26295dbad0f4cfc2db0973efe092` |
+| `dist/admin/admin.mjs` | `9e6d36b9c6fc7e806e4e5fb3e222887d3c378307` |
+| `dist/admin/component-repository.mjs` | `0aeb7d01a1982bd62ef487671002c084c56fcda8` |
+| `dist/admin/actions.mjs` | `4fb2fef5db4d286a501f32c6068d944a50ba7b79` |
+| `dist/admin/product-content.mjs` | `cbf0cbe4b225b4af127ad39fff0e0f905d1e8867` |
+| `dist/backend/public-read.mjs` | `43b8ca58a6a2a08aa2d4b8c2d3ac996d5c9acf4c` |
+| `supabase/migrations/20260924131615_p05a_backend_foundation.sql` | `ca6d9820ba10ff96fd80593c3d84194164f86ec9` |
+| `supabase/migrations/20260924131924_p05a_domain_identity_constraints.sql` | `5adb5929a236ad98ed807588ab75b720e9a86264` |
+| `supabase/migrations/20260924194844_p06a_safe_component_deletion.sql` | `7c1f54a19e9e97dd40224394d4c70847a25e4dfd` |
+| `supabase/migrations/20261002163408_platform_qa_catalogue_read_grants.sql` | `6a7a8ee625ca7cc8bdc80341e35be0403c53d491` |
