@@ -8,5 +8,6 @@
 #bridge-readonly{color:#e4c989!important}
 body[data-command03]:has(#bridge-protected[hidden]) #bridge-session{margin:7vh auto;width:min(680px,calc(100% - 32px));padding:26px}
 [data-command03] #bridge-protected[hidden]{display:none!important}
+@media(min-width:821px){[data-command03] .product-inspector{max-height:calc(100dvh - 116px);overflow-y:auto;scrollbar-gutter:stable;overscroll-behavior:contain}}
 @media(max-width:1050px){#bridge-session{margin:16px 22px}#bridge-session h1{font-size:17px!important}}
 @media(prefers-reduced-motion:reduce){#bridge-session *{scroll-behavior:auto;transition:none}}
