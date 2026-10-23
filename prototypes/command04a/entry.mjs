@@ -7,6 +7,11 @@ let pending=false,closed=false,wasOpen=false,lastValidation='';
 const setText=(element,text)=>{if(element.textContent!==text)element.textContent=text;};
 const sections=['general','specifications','pricing','availability','inventory','images'];
 const names=['General','Specifications','Pricing','Availability','Inventory · read only','Images · metadata only'];
+// Native dialog cancellation releases its focus trap after the cancel event.
+// Restore the invoker on close; never move focus after submission or concealment.
+$('change-review').addEventListener('close',()=>{
+ if(!closed&&!$('bridge-protected').hidden&&app.editor.snapshot().phase==='review')$('review-changes').focus({preventScroll:true});
+});
 for(const [i,key] of sections.entries())$('section-select').add(new Option(names[i],key));
 $('section-select').addEventListener('change',()=>{app.view.selectSection($('section-select').value);$('section-select').focus({preventScroll:true});});
 $('catalogue-toggle').addEventListener('click',()=>{
@@ -19,6 +24,7 @@ $('catalogue-toggle').addEventListener('click',()=>{
 const hints={name:'Required. Use a recognisable product name.',sku:'Required. The authority checks SKU uniqueness.',description:'Plain text. New lines are preserved.',salePrice:'GBP · selling price, not a promotional discount.',kitPrice:'GBP · price for the kit quantity below.',kitPriceQuantity:'Whole number. Blank means not supplied.'};
 for(const [key,field] of Object.entries(fields)){
  const input=$('editor-field-'+key),label=input.closest('label');label.htmlFor=input.id;
+ const caption=document.createElement('span');caption.id='field-label-'+key;caption.textContent=field.label+(field.money?' (GBP)':'');label.firstChild.replaceWith(caption);input.setAttribute('aria-labelledby',caption.id);
  if(hints[key]){const hint=document.createElement('span');hint.id='field-hint-'+key;hint.className='field-hint';hint.textContent=hints[key];label.append(hint);input.setAttribute('aria-describedby',input.getAttribute('aria-describedby')+' '+hint.id);}
  if(field.money)label.dataset.currency='GBP';
 }
@@ -34,9 +40,10 @@ function render(){
  // Only generic guidance is rendered outside the protected subtree.
  let title='Authentication required',description='Start a fictional session to inspect the catalogue. Product data stays concealed until access is authorised.';
  if(session.status==='authorized'&&protectedVisible){title=session.capabilities.productWrite?'Preview session active':'Read-only access';description=session.capabilities.productWrite?'Synthetic catalogue · changes apply only to this temporary preview.':'This session can inspect products. Saving needs product write permission; local proposals remain unsaved.';}
- else if(session.status==='authorized'){title='Restore the original session';description='A retained draft belongs to an earlier identity. Restore that session to continue; its product details remain concealed.';}
+ else if(session.status==='authorized'&&draft.needsProtection){title='Restore the original session';description='A retained draft belongs to an earlier identity. Restore that session to continue; its product details remain concealed.';}
+ else if(session.status==='authorized'||session.status==='checking'){title='Opening catalogue';description='Checking this session and loading the synthetic catalogue.';}
  else if(session.status==='expired'){title='Session expired';description='Restore authentication to continue. Any retained local draft is unsaved and remains concealed until the original identity returns.';}
- else if(session.status==='revoked'||session.status==='denied'){title='Access denied';description='This session no longer has authority. Product details are concealed. Restore an authorised session to continue.';}
+ else if(session.status==='revoked'||session.status==='permission'){title='Access denied';description='This session no longer has authority. Product details are concealed. Restore an authorised session to continue.';}
  else if(draft.needsProtection){title='Session ended';description='Your local draft is retained but unsaved. Restore the original session to continue.';}
  setText($('session-title'),title);setText($('session-description'),description);
  $('session-guidance').dataset.tone=protectedVisible&&session.capabilities.productWrite?'neutral':'attention';
