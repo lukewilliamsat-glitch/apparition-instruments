@@ -49,7 +49,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: command04a-nocturne-text-evidence
+          name: command04a-nocturne-evidence
           # Owner-authorised original PNG retention; never publish screenshots in Git.
           path: |
             ${{ runner.temp }}/command04a-evidence/NOCTURNE_SOURCE.json
@@ -100,5 +100,11 @@ jobs:
             ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/after-12-session-expired.png
             ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/after-13-uncertain.png
             ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/after-14-auth-required.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/after-15-editor-1024.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/after-16-editor-1920.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/after-17-text-200-390.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/after-18-text-200-1024.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/after-19-mobile-review.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/after-20-mobile-conflict.png
           if-no-files-found: error
           retention-days: 30
