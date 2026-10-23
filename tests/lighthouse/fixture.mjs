@@ -9,7 +9,7 @@ import {lesPaulKitAssembly} from '../../dist/admin/assemblies.mjs';
 const root=resolve('dist'),mime={'.html':'text/html','.css':'text/css','.mjs':'text/javascript','.js':'text/javascript','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.ico':'image/x-icon'};
 export const basketKey='apparition.basket.v1';
 export const savedBasket=JSON.stringify({version:1,items:[{id:'fictional-intent',product:'component',sku:'cde-022',quantity:1}]});
-export const components=initialComponents().map((p,i)=>({id:p.id,sku:'FICTIONAL-'+i,name:'Fictional workshop component '+i,category:p.category,manufacturer:'Fictional workshop',description:'Fictional fixture, no production product claim.',specs:p.specs,product_content:{},individually:true,in_kits:true,sale_price:599,kit_price:100,kit_price_quantity:1,stock:20,image:null}));
+export const components=initialComponents().map((p,i)=>({id:p.id,sku:'FICTIONAL-'+i,name:'Fictional workshop component '+i,category:p.category,manufacturer:'Fictional workshop',description:'Fictional fixture, no production product claim.',specs:p.specs,product_content:{},individually:p.individually,in_kits:p.inKits,sale_price:599,kit_price:100,kit_price_quantity:1,stock:20,image:null}));
 const k=lesPaulKitAssembly.kitDefinition;
 export const kits=[{id:lesPaulKitAssembly.id,sku:'FICTIONAL-KIT',name:'Fictional wiring kit',category:'kits',slug:'les-paul',base_price:1000,show_on_wiring_kits:true,builder_enabled:true,default_wiring_style:'modern',defaults:k.defaults,builder_options:k.builderOptions,component_resolvers:k.componentResolvers}];
 export async function createFixture(){
@@ -23,7 +23,10 @@ export async function createFixture(){
     const resource=path.slice('/__fixture/backend/'.length);
     if(resource==='rest/v1/rpc/get_site_operations')return json({server_time:new Date().toISOString(),store:{state:state.store||'OPEN',desired_state:state.store||'OPEN',customer_message:state.store==='ORDERS_PAUSED'?'Fictional workshop pause.':''}});
     if(resource.startsWith('rest/v1/rpc/public_news'))return json([]);
-    if(resource==='rest/v1/rpc/public_commercial_destinations')return json([]);
+    if(resource==='rest/v1/rpc/public_commercial_destinations'){
+     if(state.commercial)await pause(300);
+     return json(state.commercial?[{scope:'PRODUCT',scope_key:'cde-022',destination_type:'EBAY',url:'https://www.ebay.co.uk/itm/FICTIONAL',label:'Fictional listing',paused_only:false}]:[]);
+    }
     if(resource==='rest/v1/commerce_shipping')return json([{standard_delivery_pence:399,free_delivery_threshold_pence:5000}]);
     if(resource==='rest/v1/catalogue_wiring_kits')return state.kitReject?json({},500):json(kits);
     if(resource==='rest/v1/kit_permitted_components')return json(components.map(p=>({assembly_id:lesPaulKitAssembly.id,component_id:p.id})));
@@ -34,6 +37,7 @@ export async function createFixture(){
      if(state.catalogue==='malformed'){res.writeHead(200,{'content-type':'application/json'});return res.end('not JSON');}
      if(state.catalogue==='invalid')return json({rows:[]});
      let rows=state.catalogue==='empty'?[]:components;
+     if(state.unsupportedCategory)rows=rows.map(p=>({...p,individually:true}));
      if(state.longText)rows=rows.map(p=>({...p,name:'Fictional long component name — '+('carefully described workshop part '.repeat(9)),sku:'FICTIONAL-'+('LONG-'.repeat(12)),description:'Fictional long description. '.repeat(50)}));
      if(url.searchParams.has('id'))rows=rows.filter(p=>p.id===url.searchParams.get('id').replace(/^eq\./,''));
      return json(rows);

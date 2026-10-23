@@ -48,7 +48,7 @@ async function graph(response,doc){
  const repository=createPublicComponentRepository({config:{url:'https://lantern.invalid',publishableKey:'fixture'},request:async()=>{requests++;return response();}});
  const context=vm.createContext({document:doc,location:{hash:'',pathname:'/components/'},window:{addEventListener(){}},URLSearchParams,URL,console});
  retainedContexts.push(context);
- const synthetic=(values)=>new vm.SyntheticModule(Object.keys(values),function(){for(const [k,v] of Object.entries(values))this.setExport(k,v);},{context});
+ const synthetic=(values)=>{const module=new vm.SyntheticModule(Object.keys(values),function(){for(const [k,v] of Object.entries(values))this.setExport(k,v);},{context});retainedContexts.push(module);return module;};
  const catalogue=new vm.SourceTextModule(catalogueSource,{context,identifier:'catalogue'});
  await catalogue.link(()=>synthetic({componentRepository:()=>repository}));
  const component=new vm.SourceTextModule(componentSource,{context,identifier:'components'});
@@ -60,6 +60,7 @@ async function graph(response,doc){
   if(spec.includes('deployment'))return synthetic({deploymentPath:p=>p});
   return synthetic({bindPurchaseControl(){},assertPurchaseAllowed(){}});
  });
+ retainedContexts.push(catalogue,component,repository);
  return {catalogue,component,requests:()=>requests,renders:()=>renders};
 }
 let passed=0;const cases=[];

@@ -15,6 +15,8 @@ if changed:
  original=git('show',base+':tests/lantern/startup.mjs')+'\n'
  expected=original.replace("async function graph(response,doc){", "// Keep VM contexts owned until this test process exits (Node 22 VM lifetime).\nconst retainedContexts=globalThis.__lanternTestVMContexts=[];\nasync function graph(response,doc){")
  expected=expected.replace(" const synthetic=(values)=>", " retainedContexts.push(context);\n const synthetic=(values)=>")
+ expected=expected.replace("const synthetic=(values)=>new vm.SyntheticModule(Object.keys(values),function(){for(const [k,v] of Object.entries(values))this.setExport(k,v);},{context});", "const synthetic=(values)=>{const module=new vm.SyntheticModule(Object.keys(values),function(){for(const [k,v] of Object.entries(values))this.setExport(k,v);},{context});retainedContexts.push(module);return module;};")
+ expected=expected.replace(" return {catalogue,component,requests:()=>requests,renders:()=>renders};", " retainedContexts.push(catalogue,component,repository);\n return {catalogue,component,requests:()=>requests,renders:()=>renders};")
  assert (root/'tests/lantern/startup.mjs').read_text()==expected
 added=git('diff','--name-only','--diff-filter=A',base,commit).splitlines()
 assert all(p.startswith(('tests/lighthouse/','docs/storefront/lighthouse/')) or p=='.github/workflows/raven-lighthouse.yml' for p in added),added
