@@ -1,0 +1,9 @@
+{
+  "name": "lighthouse-disposable-tools",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "happy-dom": "20.14.5",
+    "playwright-core": "1.56.1"
+  }
+}
