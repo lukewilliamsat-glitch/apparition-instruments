@@ -21,7 +21,7 @@ export async function createFixture(){
    const json=(data,status=200)=>{res.writeHead(status,{'content-type':'application/json','cache-control':'no-store'});res.end(JSON.stringify(data));};
    if(path.startsWith('/__fixture/backend/')){
     const resource=path.slice('/__fixture/backend/'.length);
-    if(resource==='rest/v1/rpc/get_site_operations')return json({server_time:new Date().toISOString(),store:{state:state.store||'OPEN',desired_state:state.store||'OPEN',customer_message:state.store==='ORDERS_PAUSED'?'Fictional workshop pause.':''}});
+    if(resource==='rest/v1/rpc/get_site_operations')return json({server_time:new Date().toISOString(),store:{state:state.store||'OPEN',desired_state:state.store||'OPEN',pause_from:state.store==='ORDERS_PAUSED'?new Date(Date.now()-60000).toISOString():null,resume_at:null,updated_at:new Date().toISOString(),customer_title:'Fictional ordering pause',customer_message:state.store==='ORDERS_PAUSED'?'Fictional workshop pause.':''}});
     if(resource.startsWith('rest/v1/rpc/public_news'))return json([]);
     if(resource==='rest/v1/rpc/public_commercial_destinations'){
      if(state.commercial)await pause(300);
