@@ -41,10 +41,13 @@ const fixtures={
  malformed:()=>new Response('not JSON'),invalidSchema:()=>Response.json({rows:[]}),invalidStock:()=>Response.json([{...valid,stock:'2'}])
 };
 const catalogueSource=readFileSync('dist/components/catalogue.mjs','utf8'),componentSource=readFileSync('dist/components/components.mjs','utf8');
+// Keep VM contexts owned until this test process exits (Node 22 VM lifetime).
+const retainedContexts=globalThis.__lanternTestVMContexts=[];
 async function graph(response,doc){
  let requests=0,renders=0;
  const repository=createPublicComponentRepository({config:{url:'https://lantern.invalid',publishableKey:'fixture'},request:async()=>{requests++;return response();}});
  const context=vm.createContext({document:doc,location:{hash:'',pathname:'/components/'},window:{addEventListener(){}},URLSearchParams,URL,console});
+ retainedContexts.push(context);
  const synthetic=(values)=>new vm.SyntheticModule(Object.keys(values),function(){for(const [k,v] of Object.entries(values))this.setExport(k,v);},{context});
  const catalogue=new vm.SourceTextModule(catalogueSource,{context,identifier:'catalogue'});
  await catalogue.link(()=>synthetic({componentRepository:()=>repository}));
