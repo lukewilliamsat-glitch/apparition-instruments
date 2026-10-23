@@ -1,0 +1,540 @@
+{
+  "mission": "AUTHORISATION 45 / RAVEN LANTERN",
+  "reportDate": "2026-10-23",
+  "overall": "PARTIAL",
+  "ownerApproved": false,
+  "source": {
+    "baseCommit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+    "baseTree": "eb2c9f1824602d19ed27f010cf080190a06c713e",
+    "auditCommit": "88f33ba97c749e469554e20182f783e00e42f0a2",
+    "auditTree": "251f05e9ece60e05e1a42b95f7be23ad90a3ff05",
+    "branch": "engineering/raven-lantern",
+    "testedApplicationCommit": "41887b3214a526bd69ca8e3e01d6dec4890cf340",
+    "testedApplicationTree": "a2eab9cbbc856821c68fa4d476086ce21aa77fa4",
+    "evidenceCommit": "Containing Git commit; documentation-only child of the tested application commit",
+    "identityProof": "GitHub-created application tree matched independent local staged tree. Fresh clean checkout of exact application commit repeated all six suites after scratch reset."
+  },
+  "offlineExecution": {
+    "status": "PASS",
+    "scope": "offline Node/VM and test-double acceptance; NOT Chrome",
+    "node": "v24.19.0",
+    "isolation": {
+      "direct": [
+        {
+          "family": 2,
+          "kind": 1,
+          "errno": 1
+        },
+        {
+          "family": 2,
+          "kind": 2,
+          "errno": 1
+        },
+        {
+          "family": 10,
+          "kind": 1,
+          "errno": 1
+        },
+        {
+          "family": 10,
+          "kind": 2,
+          "errno": 1
+        }
+      ],
+      "child": "DENIED",
+      "noNewPrivs": true,
+      "applicationModulesOpened": 0
+    },
+    "results": [
+      {
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "--experimental-vm-modules",
+          "--import",
+          "./tests/fixtures/offline-guard.mjs",
+          "tests/lantern/startup.mjs"
+        ],
+        "exitCode": 0,
+        "stdout": "{\"status\":\"PASS\",\"checks\":83,\"cases\":[\"baseline-import-rejection-http401\",\"baseline-import-rejection-http402\",\"baseline-import-rejection-http500\",\"baseline-import-rejection-malformed\",\"baseline-import-rejection-invalidSchema\",\"components-success\",\"components-success-dedup\",\"components-empty\",\"components-empty-dedup\",\"components-http401\",\"components-http402\",\"components-http500\",\"components-timeout\",\"components-malformed\",\"components-invalidSchema\",\"components-invalidStock\",\"components-loading-hidden\",\"components-deadline-and-late-settlement\",\"components-unexpected-initialisation\",\"product-success\",\"product-success-dedup\",\"product-empty\",\"product-empty-dedup\",\"product-http401\",\"product-http402\",\"product-http500\",\"product-timeout\",\"product-malformed\",\"product-invalidSchema\",\"product-invalidStock\",\"product-loading-hidden\",\"product-deadline-and-late-settlement\",\"product-unexpected-initialisation\",\"basket-success\",\"basket-success-dedup\",\"basket-empty\",\"basket-empty-dedup\",\"basket-http401\",\"basket-http402\",\"basket-http500\",\"basket-timeout\",\"basket-malformed\",\"basket-invalidSchema\",\"basket-invalidStock\",\"basket-loading-hidden\",\"basket-deadline-and-late-settlement\",\"basket-unexpected-initialisation\",\"checkout-success\",\"checkout-success-dedup\",\"checkout-empty\",\"checkout-empty-dedup\",\"checkout-http401\",\"checkout-http402\",\"checkout-http500\",\"checkout-timeout\",\"checkout-malformed\",\"checkout-invalidSchema\",\"checkout-invalidStock\",\"checkout-loading-hidden\",\"checkout-deadline-and-late-settlement\",\"checkout-unexpected-initialisation\",\"entry-dist/components/index.html\",\"entry-dist/components/capacitors/index.html\",\"entry-dist/components/potentiometers/index.html\",\"entry-dist/components/treble-bleeds/index.html\",\"entry-dist/products/index.html\",\"entry-dist/products/ai-pot-ss-alphamini-a500k/index.html\",\"entry-dist/products/bleed-cap/index.html\",\"entry-dist/products/bleed-duncan/index.html\",\"entry-dist/products/bleed-premium/index.html\",\"entry-dist/products/bleed-prs/index.html\",\"entry-dist/products/cde-022/index.html\",\"entry-dist/products/pot-short-alpha-a/index.html\",\"entry-dist/products/pot-short-cts-a/index.html\",\"entry-dist/products/sbe-600/index.html\",\"entry-dist/basket/index.html\",\"entry-dist/checkout/index.html\",\"closed-route-imports\",\"copy-faq\",\"copy-components\",\"copy-basket-checkout\",\"commerce-stock-quantity-authority\",\"operations-authority\"],\"scope\":\"Node VM, real catalogue/transport, stubbed renderer/DOM; NOT Chrome\",\"productionRequests\":0}\n",
+        "stderr": "(node:8) ExperimentalWarning: VM Modules is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+      },
+      {
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "--import",
+          "./tests/fixtures/offline-guard.mjs",
+          "tests/p07b-checkout.mjs"
+        ],
+        "exitCode": 0,
+        "stdout": "P07B.2 live Checkout: live restricted key, authoritative pricing/delivery, GB/name collection, configured/component/mixed baskets PASS\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "--import",
+          "./tests/fixtures/offline-guard.mjs",
+          "tests/p07b2-checkout-status.mjs"
+        ],
+        "exitCode": 0,
+        "stdout": "P07B.2 success status: read-only session lookup, paid only after verified fulfilment PASS\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "--import",
+          "./tests/fixtures/offline-guard.mjs",
+          "tests/operations-v1-checkout.mjs"
+        ],
+        "exitCode": 0,
+        "stdout": "Operations checkout: authoritative service guard, direct request denial, safe failures, DB/intermediate pause, no Stripe calls PASS\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "--import",
+          "./tests/fixtures/offline-guard.mjs",
+          "tests/egress-cache-browser.mjs"
+        ],
+        "exitCode": 0,
+        "stdout": "Browser cache integration PASS: large-image navigation reuse, actual authenticated Admin transport invalidation, strict persisted expiry/offline denial, optional storage and private allowlist preserved.\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "--import",
+          "./tests/fixtures/offline-guard.mjs",
+          "tests/product-content.mjs"
+        ],
+        "exitCode": 0,
+        "stdout": "Product content: independent fields, paragraph preservation, add/edit/remove/reorder rows, reload persistence, validation and unchanged stock/prices/images/kit data passed.\nStorefront: title fallback, independent short/full copy, paragraph breaks, ordered specifications, technical fallback and unchanged pricing passed.\n",
+        "stderr": ""
+      }
+    ],
+    "productionRequests": 0,
+    "browser": "NOT TESTED"
+  },
+  "sourceIntegrity": {
+    "status": "PASS",
+    "base": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+    "baselineFiles": 899,
+    "unchanged": 880,
+    "changed": [
+      "dist/basket-ui.mjs",
+      "dist/basket/index.html",
+      "dist/checkout/index.html",
+      "dist/components/capacitors/index.html",
+      "dist/components/index.html",
+      "dist/components/potentiometers/index.html",
+      "dist/components/treble-bleeds/index.html",
+      "dist/faq/index.html",
+      "dist/products/ai-pot-ss-alphamini-a500k/index.html",
+      "dist/products/bleed-cap/index.html",
+      "dist/products/bleed-duncan/index.html",
+      "dist/products/bleed-premium/index.html",
+      "dist/products/bleed-prs/index.html",
+      "dist/products/cde-022/index.html",
+      "dist/products/index.html",
+      "dist/products/pot-short-alpha-a/index.html",
+      "dist/products/pot-short-cts-a/index.html",
+      "dist/products/sbe-600/index.html",
+      "tests/p10c-storefront-truth.mjs"
+    ],
+    "routeHTML": 16,
+    "commerceRulesUnchanged": true,
+    "workflowChanges": 0,
+    "newModules": {
+      "dist/storefront/startup.mjs": "816b77ada3339b0afad426dff44f999e45a9084422be7c2d88eee439e5d7a8b9",
+      "dist/storefront/entry.mjs": "8e1395073c57c859cd6ecc7b7638ab74d6bf411e8358a48942db8d9efab2d641"
+    }
+  },
+  "environment": {
+    "python": "3.12.14",
+    "machine": "x86_64",
+    "binaries": {
+      "node": "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "google-chrome": null,
+      "google-chrome-stable": null,
+      "chromium": null,
+      "chromium-browser": null,
+      "unshare": "/usr/bin/unshare"
+    },
+    "browserPaths": {
+      "/opt/google/chrome/chrome": false,
+      "/usr/bin/google-chrome": false,
+      "/usr/bin/chromium": false,
+      "/root/.cache/ms-playwright": false
+    },
+    "networkNamespaceProbe": {
+      "exitCode": 1,
+      "stderr": "unshare: unshare failed: Operation not permitted"
+    },
+    "node22": false,
+    "claim": "No Chrome execution attempted; no package or browser installed."
+  },
+  "candidateFiles": [
+    {
+      "path": "dist/basket-ui.mjs",
+      "bytes": 5974,
+      "sha256": "cb5b0b6e3e19e44b9f4ac1e661cddaa080d614da2a6b811ea89b42473bc04fb0",
+      "gitBlob": "7b73f104da4e3d2ac1648bea4a50fc4cdd77e13b"
+    },
+    {
+      "path": "dist/basket/index.html",
+      "bytes": 4119,
+      "sha256": "945303d121fa710fe78c4eb0660fc648e8c8c6fbc29a55908bdd0fda759224c2",
+      "gitBlob": "c8b844a57a00307914949cf0b162aff0ca550dfe"
+    },
+    {
+      "path": "dist/checkout/index.html",
+      "bytes": 4202,
+      "sha256": "610576670b81d194fd80bc8f7d2970b1ceeacc59bac97b2014288b1748bfba3d",
+      "gitBlob": "15bb82315d6a4cddcf2bf0a78c08a097e2958c04"
+    },
+    {
+      "path": "dist/components/capacitors/index.html",
+      "bytes": 8402,
+      "sha256": "b6e8163493ad0238952375e0aa0a3b2170c0343c2beb69860efadcee1dccbf0b",
+      "gitBlob": "b056a94fe13f0408bcf1f9f7b1a1fdd4fd6f826e"
+    },
+    {
+      "path": "dist/components/index.html",
+      "bytes": 16259,
+      "sha256": "fbbe76b2f679335f2bb52c5ba134cd8219ed618869ca95c2420375f40abe7d5d",
+      "gitBlob": "eed5d057b80b83feac0909c656dea43368580dac"
+    },
+    {
+      "path": "dist/components/potentiometers/index.html",
+      "bytes": 9873,
+      "sha256": "cb5a889de54965fb55f07a41e575b81f9033a0605a5606280c385401ac92fc9d",
+      "gitBlob": "7d75ae509241a07a04e8625f09237ca485f3ce8b"
+    },
+    {
+      "path": "dist/components/treble-bleeds/index.html",
+      "bytes": 10430,
+      "sha256": "77eefbc8ec0e75c702a68ba5046eab853e35950a6e1183a84d63b26cb563445e",
+      "gitBlob": "62c514f8a35d7e6938ab004c32c63037c6148125"
+    },
+    {
+      "path": "dist/faq/index.html",
+      "bytes": 9719,
+      "sha256": "58f262a8ad6ce93dba71d486f56fc971e5e695dfd4fd31de8221c1cd4155f954",
+      "gitBlob": "862cc12ed6619c48c70c289608ca7f01fbb4a481"
+    },
+    {
+      "path": "dist/products/ai-pot-ss-alphamini-a500k/index.html",
+      "bytes": 9014,
+      "sha256": "bca0bb9d64d819fce409330ad3a6608e471e4b899e2534583f7e6478f4aa4c6b",
+      "gitBlob": "d4f7688f5ed5870cb9e7cec40aff86b472b057e4"
+    },
+    {
+      "path": "dist/products/bleed-cap/index.html",
+      "bytes": 8673,
+      "sha256": "b01072946ebec74c04162469eadda22db4a0f664928d65c613d2f5af4a722041",
+      "gitBlob": "f4d1286252cc194e2b13a96d6952f0bbc3d0bd82"
+    },
+    {
+      "path": "dist/products/bleed-duncan/index.html",
+      "bytes": 8784,
+      "sha256": "83e7c844a05ce9bde106f9632f1614f910d81b1607df99a7192e4f852345ba8d",
+      "gitBlob": "7045b43d318e5fc3ddedf597b6336e1015a7e240"
+    },
+    {
+      "path": "dist/products/bleed-premium/index.html",
+      "bytes": 9384,
+      "sha256": "39ef5fdb4f1713e25a246ae61a844c9507815db27115707d22ca2133b738f0e5",
+      "gitBlob": "46238198b2a3dadf8941a4bb91bb61c7f645a3c2"
+    },
+    {
+      "path": "dist/products/bleed-prs/index.html",
+      "bytes": 8498,
+      "sha256": "f82809548874714fa70f3c3a5d8fa44514fd0ebfa5b61d2653bf097dd511829a",
+      "gitBlob": "ed1a7ba86a1850f3684affdc6354c86105519457"
+    },
+    {
+      "path": "dist/products/cde-022/index.html",
+      "bytes": 8449,
+      "sha256": "1ee4bd8d20a9b343d62c06204d4c3c73cbac0c74fb7968cda9a9597c8995337e",
+      "gitBlob": "dba35abd7c2c55fe94bc87b9dfe0e24d8bf2e42f"
+    },
+    {
+      "path": "dist/products/index.html",
+      "bytes": 3811,
+      "sha256": "89413ec55a7d3ae63ff3564dd9c4c06b7249dcd093bf3731082465fc525037a4",
+      "gitBlob": "73eecef133018d150171cc6a3c899d397598515d"
+    },
+    {
+      "path": "dist/products/pot-short-alpha-a/index.html",
+      "bytes": 8741,
+      "sha256": "52831a62e1205d1e076fe00488927f0ea2a9467b873aab37b0c1afd6b95d09ea",
+      "gitBlob": "f7a1fb77d5dcd7398f5128fb4011c9a155783db4"
+    },
+    {
+      "path": "dist/products/pot-short-cts-a/index.html",
+      "bytes": 8917,
+      "sha256": "1494ba99f80e3091c0205fa33d278f6f43b15f264d3e06d4fe3f4d56efd39e30",
+      "gitBlob": "3b92716e491c13cdf9723d27ef3835b2953498fe"
+    },
+    {
+      "path": "dist/products/sbe-600/index.html",
+      "bytes": 8555,
+      "sha256": "8b4152814041affad77370a9c2397664c0663db0035f6784747b7917d9a2ce52",
+      "gitBlob": "2f008042d2f4a80ba24c7c68e130c93a59b01d5f"
+    },
+    {
+      "path": "dist/storefront/entry.mjs",
+      "bytes": 588,
+      "sha256": "8e1395073c57c859cd6ecc7b7638ab74d6bf411e8358a48942db8d9efab2d641",
+      "gitBlob": "5ec69106997065ac31148cfa3dd1a0b6f81b0597"
+    },
+    {
+      "path": "dist/storefront/startup.mjs",
+      "bytes": 3727,
+      "sha256": "816b77ada3339b0afad426dff44f999e45a9084422be7c2d88eee439e5d7a8b9",
+      "gitBlob": "1a2a951ceca22d9275e05be2c27dd313120e7a6c"
+    },
+    {
+      "path": "tests/lantern/run-offline.py",
+      "bytes": 4575,
+      "sha256": "7a481cd03d850039ca9f761c70de8ac00a277d62817f081137ed4015a96d339d",
+      "gitBlob": "2fb335b02537f15afc301c9c08019c4f08abf25b"
+    },
+    {
+      "path": "tests/lantern/source-integrity.py",
+      "bytes": 3323,
+      "sha256": "772acc072f9cf079a4740ff481cd279fce44e68d4d5360cb83fd7f765fce11b3",
+      "gitBlob": "0a8a4acfa2e0ce1ee662d8f7e6ca624a96d88b5f"
+    },
+    {
+      "path": "tests/lantern/startup.mjs",
+      "bytes": 12187,
+      "sha256": "da2b5e7648583d65b4da9de44de0558a3c6293f2cd4b754f4507d50ad28b96e0",
+      "gitBlob": "84201c143bad795f2ae88077c9393688e558419b"
+    },
+    {
+      "path": "tests/p10c-storefront-truth.mjs",
+      "bytes": 3349,
+      "sha256": "03f407fdfa2311e341d38e4c847dd1b04de62bf45b7f12cef991575a90f5e0fe",
+      "gitBlob": "fc3684bcbf2257fa253628e2a6436e546505c4f4"
+    }
+  ],
+  "importGraph": {
+    "entryPoints": [
+      "components/components.mjs",
+      "products/app.mjs",
+      "basket/basket.mjs",
+      "checkout/checkout.mjs",
+      "site.mjs"
+    ],
+    "localModules": 79,
+    "relativeEdges": 171,
+    "missing": []
+  },
+  "syntax": {
+    "status": "PASS",
+    "files": [
+      "dist/storefront/startup.mjs",
+      "dist/storefront/entry.mjs",
+      "tests/lantern/startup.mjs",
+      "tests/p10c-storefront-truth.mjs"
+    ]
+  },
+  "notExecuted": [
+    {
+      "files": [
+        "tests/p10c-storefront-truth.mjs",
+        "tests/p10d-product-detail.mjs",
+        "tests/premium-storefront-v1.mjs",
+        "tests/holiday-checkout-basket.mjs"
+      ],
+      "reason": "happy-dom unavailable; import.meta.resolve returned ERR_MODULE_NOT_FOUND. No dependency installed."
+    },
+    {
+      "runtime": "Node 22",
+      "reason": "Only Node 24.19.0 runtime available."
+    },
+    {
+      "runtime": "Chrome",
+      "viewports": [
+        390,
+        768,
+        1024,
+        1440,
+        1920
+      ],
+      "reason": "No Chrome executable; namespace creation denied; existing safe workflows restricted to frozen branches."
+    }
+  ],
+  "testLimits": [
+    "Node VM and behavioural DOM double are not native browser, layout or assistive technology acceptance.",
+    "Components entry uses stub renderer; other three route boundary fixtures evaluate catalogue rather than full route controllers.",
+    "Eager kit graph is source-reviewed; its rejection is represented by generic loader rejection.",
+    "No live service availability inferred from mocked tests; inherited stdout saying live/Browser describes test scenarios."
+  ],
+  "ci": {
+    "runId": null,
+    "runUrl": null,
+    "observedBranchRuns": 0,
+    "workflowChanges": 0,
+    "dispatches": 0,
+    "reason": "No eligible pre-existing safe workflow for this branch; no authority to change workflows."
+  },
+  "screenshots": [],
+  "artifact": {
+    "id": null,
+    "url": null,
+    "expiresAt": null,
+    "readBackVerified": false,
+    "reason": "No CI run or screenshots; text evidence retained and read back in Git."
+  },
+  "preservedBranchHeads": [
+    {
+      "name": "atlas/phase2a-deployment-safety",
+      "sha": "df66b1428d709ccd4043cbe1117d70cd4a71ad83"
+    },
+    {
+      "name": "atlas/phase2b-production-recovery",
+      "sha": "9026ad4d0a12e532f6878ef5ae6221d8865bf3e4"
+    },
+    {
+      "name": "atlas/phase2c-workflow-recovery",
+      "sha": "b2963bae6a3c587e8491cd41f7f2b457bad01eca"
+    },
+    {
+      "name": "atlas/phase2d-certification-release",
+      "sha": "d6e83af61d919f4fa6a01352ac414fc73254679a"
+    },
+    {
+      "name": "atlas/phase2e-release-readiness",
+      "sha": "33183afaa51a16e7d35b711fd39d2eac37045eaf"
+    },
+    {
+      "name": "atlas/phase2f-independent-attestation",
+      "sha": "397b16451dd8cc36305aaaf088729a9ad490e573"
+    },
+    {
+      "name": "atlas/phase2g-certification-closure",
+      "sha": "fe16cc5752460dcc2a26968d4ee144b7bc940893"
+    },
+    {
+      "name": "customer-ui-v2-recovery",
+      "sha": "0a50dedbd2a70a7d5773576c76caef77d298af98"
+    },
+    {
+      "name": "docs/apparition-reset-checkpoint-20261020",
+      "sha": "c0c8a8f4ee65fbcfc3f800685ae1a219d992fda7"
+    },
+    {
+      "name": "docs/atlas-freeze-command-handover",
+      "sha": "4e2bf850cf2705447f051c8a75d84c0bb5ace678"
+    },
+    {
+      "name": "docs/conversation-continuity-20261020",
+      "sha": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f"
+    },
+    {
+      "name": "docs/conversation-roadmap-handover-20261020",
+      "sha": "64383164a5e8ece12e7245c8b50e9dfa50f83c18"
+    },
+    {
+      "name": "engineering/blackbox31-static-image-rc",
+      "sha": "baf899a62863998b749bca8387793a6b1ed5db61"
+    },
+    {
+      "name": "engineering/blackbox32-browser-acceptance",
+      "sha": "870a99c8ed99f981728f26b1eedb415af218b424"
+    },
+    {
+      "name": "engineering/blackbox33-browser-verification",
+      "sha": "4f8138d079f5e5598420e74f0baadb161d51ed1c"
+    },
+    {
+      "name": "engineering/blackbox34-nightfall",
+      "sha": "c3003c6a56075964f5036ea57507aed8f431b64e"
+    },
+    {
+      "name": "engineering/command01-catalogue-workbench",
+      "sha": "3b84871ccb338296b52b4fe3fe350be17284d235"
+    },
+    {
+      "name": "engineering/command02-forge-editor",
+      "sha": "048824545c1fc3655778bc7cca22bc6f2e1bc447"
+    },
+    {
+      "name": "engineering/command03-the-bridge",
+      "sha": "2c2d629a6194506d34c2fbbcce4742fceee94488"
+    },
+    {
+      "name": "engineering/command04-ironclad",
+      "sha": "20002c45933a7f24b08f6d5f0199a7fc8fa1a282"
+    },
+    {
+      "name": "engineering/command04a-nocturne",
+      "sha": "993108aa7d65ac204ef54a7018a85f5c783813fd"
+    },
+    {
+      "name": "engineering/nightfall-dawnbreaker-readiness",
+      "sha": "542cc90cf9c301b4571d246ce9ae105bddefc2d0"
+    },
+    {
+      "name": "engineering/raven-blackwing-audit",
+      "sha": "88f33ba97c749e469554e20182f783e00e42f0a2"
+    },
+    {
+      "name": "engineering/spectre-hero-responsive-fix",
+      "sha": "4f09bd5b4d5109df6028a8dc0d00468512d9af1c"
+    },
+    {
+      "name": "main",
+      "sha": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f"
+    },
+    {
+      "name": "operations-v1-recovery",
+      "sha": "2d8cf37f7dd082d5f4e6419738ea02201cf33b5d"
+    },
+    {
+      "name": "p07b2-live-cutover-prepared",
+      "sha": "a6847dae2ee136f22e47934438f6fc0473cafb95"
+    },
+    {
+      "name": "platform-qa-v1-recovery",
+      "sha": "af13a3b6a27198f1dddf6d02b2389eb234016274"
+    },
+    {
+      "name": "premium-storefront-v1-recovery",
+      "sha": "f4e9c265a66c3baf52d2ca931fd990afb198fdef"
+    },
+    {
+      "name": "release/spectre35-homecoming",
+      "sha": "f89657ec28c73a153f65c1f346fc974747bd5994"
+    },
+    {
+      "name": "research/blackbox-supabase-egress-forensics",
+      "sha": "64383164a5e8ece12e7245c8b50e9dfa50f83c18"
+    },
+    {
+      "name": "visual-correction-recovery",
+      "sha": "c7d9b7c5576c6eafec93e9fbaa8b302680888cd1"
+    },
+    {
+      "name": "workbench-consolidation-v2-recovery",
+      "sha": "bd1d30772e3cdfff3cf1d262701c7ddafaec8bee"
+    }
+  ],
+  "restrictions": {
+    "phaseA": "ON HOLD",
+    "providerRecovery": "UNKNOWN",
+    "publicCatalogue": "UNTESTED",
+    "phaseBCExecuted": false,
+    "productionRequests": 0,
+    "sqlExecuted": false,
+    "realPaymentSessions": 0,
+    "mainChanged": false,
+    "deployed": false,
+    "mainIntegrated": false,
+    "backgroundExposure": "Unchanged production Pages workflow has daily 03:00 UTC generation schedule. Not invoked, disabled or validated by this mission; remaining egress unknown."
+  }
+}
