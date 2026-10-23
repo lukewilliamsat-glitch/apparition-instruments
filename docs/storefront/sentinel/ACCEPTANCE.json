@@ -1,0 +1,1655 @@
+{
+  "mission": "AUTHORISATION 46 / ECLIPSE / SENTINEL",
+  "scopeResult": "PASS \u2014 isolated candidate",
+  "ownerInteractionApproved": false,
+  "branch": "engineering/raven-sentinel",
+  "source": {
+    "status": "PASS",
+    "baseCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+    "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+    "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+    "inheritedFiles": 922,
+    "unchanged": 918,
+    "changes": [
+      "dist/basket-ui.mjs",
+      "dist/checkout/checkout.mjs",
+      "dist/commerce.mjs",
+      "dist/contact/contact.mjs"
+    ],
+    "added": [
+      ".github/workflows/raven-sentinel.yml",
+      "tests/sentinel/basket.mjs",
+      "tests/sentinel/browser.mjs",
+      "tests/sentinel/checkout.mjs",
+      "tests/sentinel/contact.mjs",
+      "tests/sentinel/regressions.mjs",
+      "tests/sentinel/run-isolated.sh",
+      "tests/sentinel/source-integrity.py"
+    ],
+    "protectedBackendAndExistingWorkflowsUnchanged": true,
+    "files": {
+      "dist/basket-ui.mjs": {
+        "baseBlob": "7b73f104da4e3d2ac1648bea4a50fc4cdd77e13b",
+        "candidateBlob": "f13651f57415486ddc1f950f16b57fc2f0bef8c0",
+        "sha256": "e2867e3c821b0d8cc0b1592d3e012ee1501a3add82d93159927a79550dbbae71"
+      },
+      "dist/basket/basket.mjs": {
+        "baseBlob": "0a50733eefa2a2a51b6027c1e09140a49285cc8e",
+        "candidateBlob": "0a50733eefa2a2a51b6027c1e09140a49285cc8e",
+        "sha256": "ca64791d51d30d59704c983ff9e0bdb456fd05ed9969026d2e4179bc999b2321"
+      },
+      "dist/checkout/checkout.mjs": {
+        "baseBlob": "712a956c34fed66fe9b25f8b713f706367b7814a",
+        "candidateBlob": "04fc5b5635284d790f63e53a73b3b65d2d86112e",
+        "sha256": "932970a1029c801d021d99ef91a423f0aa1b6ce682ed2fd777062722c109e45c"
+      },
+      "dist/commerce.mjs": {
+        "baseBlob": "8f094c13138befd8baf2e7b0ce7939be471b4c51",
+        "candidateBlob": "fb6a075d86d5a23a76abf131ec0ba6d18df65d65",
+        "sha256": "412264e6e792b278611f6e8af142ac34875015a55ffaffe5ffe10cb12e0e8e34"
+      },
+      "dist/contact/contact.mjs": {
+        "baseBlob": "506fa8e3c64da57317debd16e160d0df0cc4bb09",
+        "candidateBlob": "987562f9388784406372363065651cd9cc7cd37b",
+        "sha256": "f754074514e0810152d20630076bff5ce3c545bfc59bb70f0436758e42c03c1e"
+      }
+    }
+  },
+  "sourceAfter": {
+    "status": "PASS",
+    "baseCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+    "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+    "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+    "inheritedFiles": 922,
+    "unchanged": 918,
+    "changes": [
+      "dist/basket-ui.mjs",
+      "dist/checkout/checkout.mjs",
+      "dist/commerce.mjs",
+      "dist/contact/contact.mjs"
+    ],
+    "added": [
+      ".github/workflows/raven-sentinel.yml",
+      "tests/sentinel/basket.mjs",
+      "tests/sentinel/browser.mjs",
+      "tests/sentinel/checkout.mjs",
+      "tests/sentinel/contact.mjs",
+      "tests/sentinel/regressions.mjs",
+      "tests/sentinel/run-isolated.sh",
+      "tests/sentinel/source-integrity.py"
+    ],
+    "protectedBackendAndExistingWorkflowsUnchanged": true,
+    "files": {
+      "dist/basket-ui.mjs": {
+        "baseBlob": "7b73f104da4e3d2ac1648bea4a50fc4cdd77e13b",
+        "candidateBlob": "f13651f57415486ddc1f950f16b57fc2f0bef8c0",
+        "sha256": "e2867e3c821b0d8cc0b1592d3e012ee1501a3add82d93159927a79550dbbae71"
+      },
+      "dist/basket/basket.mjs": {
+        "baseBlob": "0a50733eefa2a2a51b6027c1e09140a49285cc8e",
+        "candidateBlob": "0a50733eefa2a2a51b6027c1e09140a49285cc8e",
+        "sha256": "ca64791d51d30d59704c983ff9e0bdb456fd05ed9969026d2e4179bc999b2321"
+      },
+      "dist/checkout/checkout.mjs": {
+        "baseBlob": "712a956c34fed66fe9b25f8b713f706367b7814a",
+        "candidateBlob": "04fc5b5635284d790f63e53a73b3b65d2d86112e",
+        "sha256": "932970a1029c801d021d99ef91a423f0aa1b6ce682ed2fd777062722c109e45c"
+      },
+      "dist/commerce.mjs": {
+        "baseBlob": "8f094c13138befd8baf2e7b0ce7939be471b4c51",
+        "candidateBlob": "fb6a075d86d5a23a76abf131ec0ba6d18df65d65",
+        "sha256": "412264e6e792b278611f6e8af142ac34875015a55ffaffe5ffe10cb12e0e8e34"
+      },
+      "dist/contact/contact.mjs": {
+        "baseBlob": "506fa8e3c64da57317debd16e160d0df0cc4bb09",
+        "candidateBlob": "987562f9388784406372363065651cd9cc7cd37b",
+        "sha256": "f754074514e0810152d20630076bff5ce3c545bfc59bb70f0436758e42c03c1e"
+      }
+    }
+  },
+  "runtime": {
+    "node": "v22.20.0",
+    "Chrome": "155.0.8059.39",
+    "happy-dom": "20.14.5",
+    "playwright-core": "1.56.1"
+  },
+  "ci": {
+    "id": 39988495190,
+    "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/39988495190",
+    "conclusion": "success"
+  },
+  "baseline": {
+    "run": 39983839658,
+    "harnessCommit": "0729b70acc480a4703f3968cdde2f7d6322eac5a",
+    "applicationCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+    "readBack": {
+      "status": "PASS",
+      "artifact": {
+        "id": 12514044916,
+        "name": "raven-sentinel-evidence",
+        "size_in_bytes": 642819,
+        "url": "https://api.github.com/repos/lukewilliamsat-glitch/apparition-instruments/actions/artifacts/12514044916",
+        "archive_download_url": "https://api.github.com/repos/lukewilliamsat-glitch/apparition-instruments/actions/artifacts/12514044916/zip",
+        "expired": false,
+        "created_at": "2026-10-23T16:06:00Z",
+        "expires_at": "2026-11-22T16:06:00Z",
+        "updated_at": "2026-10-23T16:06:00Z",
+        "digest": "sha256:fba9798940539d77ffe9027fdbc127ed04082b146f1f02b4e1bf093d880009e5",
+        "workflow_run": {
+          "id": 39983839658,
+          "repository_id": 1383011149,
+          "head_repository_id": 1383011149,
+          "head_branch": "engineering/raven-sentinel",
+          "head_sha": "0729b70acc480a4703f3968cdde2f7d6322eac5a"
+        }
+      },
+      "readBackAt": "2026-10-23T16:35:43.332829+00:00",
+      "pngCount": 4,
+      "screenshots": [
+        {
+          "filename": "before-rav03-missing-intent-390.png",
+          "sourceCommit": "0729b70acc480a4703f3968cdde2f7d6322eac5a",
+          "sourceTree": "2b41a41548a4404965f7e0d41a4452dce0f055fe",
+          "baselineApplicationCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+          "browser": "155.0.8059.39",
+          "viewport": {
+            "width": 390,
+            "height": 1000
+          },
+          "width": 390,
+          "height": 2213,
+          "bytes": 137554,
+          "sha256": "ef0ba551f9f498d5213f878d6a330cbeb3dd1ac3284d3b20e7fc4ee8c2ccbb75"
+        },
+        {
+          "filename": "before-rav15-focus-replacement-1440.png",
+          "sourceCommit": "0729b70acc480a4703f3968cdde2f7d6322eac5a",
+          "sourceTree": "2b41a41548a4404965f7e0d41a4452dce0f055fe",
+          "baselineApplicationCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+          "browser": "155.0.8059.39",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "width": 1440,
+          "height": 1660,
+          "bytes": 191883,
+          "sha256": "768bb14718fb18bbd2ffe3bbbbde7a17c7e716dd787d3755f2f0a954aab19761"
+        },
+        {
+          "filename": "before-rav15-pending-replaced-1440.png",
+          "sourceCommit": "0729b70acc480a4703f3968cdde2f7d6322eac5a",
+          "sourceTree": "2b41a41548a4404965f7e0d41a4452dce0f055fe",
+          "baselineApplicationCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+          "browser": "155.0.8059.39",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "width": 1440,
+          "height": 1660,
+          "bytes": 191883,
+          "sha256": "768bb14718fb18bbd2ffe3bbbbde7a17c7e716dd787d3755f2f0a954aab19761"
+        },
+        {
+          "filename": "before-rav06-uncertain-sending-390.png",
+          "sourceCommit": "0729b70acc480a4703f3968cdde2f7d6322eac5a",
+          "sourceTree": "2b41a41548a4404965f7e0d41a4452dce0f055fe",
+          "baselineApplicationCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+          "browser": "155.0.8059.39",
+          "viewport": {
+            "width": 390,
+            "height": 1000
+          },
+          "width": 390,
+          "height": 2341,
+          "bytes": 154281,
+          "sha256": "1df52c35907492f434b88f85c87bc3e720575a3403ae3b125439b23c22401bea"
+        }
+      ]
+    }
+  },
+  "itemResults": {
+    "RAV03": {
+      "baselineReproduced": true,
+      "acceptance": "PASS",
+      "cases": 7
+    },
+    "RAV15": {
+      "baselineReproduced": true,
+      "acceptance": "PASS",
+      "cases": 7
+    },
+    "RAV06": {
+      "baselineReproduced": true,
+      "acceptance": "PASS",
+      "cases": 14
+    }
+  },
+  "isolation": {
+    "stage": "A",
+    "applicationFixturesOpened": 0,
+    "productionRequests": 0,
+    "status": "PASS",
+    "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+    "negativeControls": [
+      {
+        "name": "fetchIPv4",
+        "result": "blocked"
+      },
+      {
+        "name": "fetchIPv6",
+        "result": "blocked"
+      },
+      {
+        "name": "dns",
+        "result": "blocked"
+      },
+      {
+        "name": "image",
+        "result": "blocked"
+      },
+      {
+        "name": "redirect",
+        "result": "blocked"
+      },
+      {
+        "name": "websocket",
+        "result": "blocked"
+      },
+      {
+        "name": "script",
+        "result": "blocked"
+      },
+      {
+        "name": "worker",
+        "result": "blocked"
+      },
+      {
+        "name": "frame",
+        "result": "blocked"
+      },
+      {
+        "name": "navigation",
+        "result": "blocked"
+      }
+    ],
+    "requests": [
+      {
+        "url": "http://127.0.0.1:35653/",
+        "resource": "document"
+      },
+      {
+        "url": "http://192.0.2.1/probe",
+        "resource": "fetch"
+      },
+      {
+        "url": "http://[2001:db8::1]/probe",
+        "resource": "fetch"
+      },
+      {
+        "url": "http://command01-negative.invalid/probe",
+        "resource": "fetch"
+      },
+      {
+        "url": "http://127.0.0.1:35653/redirect",
+        "resource": "fetch"
+      },
+      {
+        "url": "http://192.0.2.3/probe.js",
+        "resource": "script"
+      },
+      {
+        "url": "http://198.51.100.1/probe-frame",
+        "resource": "document"
+      },
+      {
+        "url": "http://127.0.0.1:35653/worker.js",
+        "resource": "script"
+      },
+      {
+        "url": "http://192.0.2.2/probe.png",
+        "resource": "image"
+      },
+      {
+        "url": "http://198.51.100.3/probe",
+        "resource": "fetch"
+      },
+      {
+        "url": "http://203.0.113.1/worker-probe",
+        "resource": "fetch"
+      },
+      {
+        "url": "http://203.0.113.2/navigation-probe",
+        "resource": "document"
+      }
+    ],
+    "responses": [
+      {
+        "url": "http://127.0.0.1:35653/",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:35653/redirect",
+        "status": 302
+      },
+      {
+        "url": "http://127.0.0.1:35653/worker.js",
+        "status": 200
+      }
+    ],
+    "failures": [
+      {
+        "url": "http://192.0.2.2/probe.png",
+        "resource": "image",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://198.51.100.1/probe-frame",
+        "resource": "document",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://192.0.2.1/probe",
+        "resource": "fetch",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://[2001:db8::1]/probe",
+        "resource": "fetch",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://command01-negative.invalid/probe",
+        "resource": "fetch",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://192.0.2.3/probe.js",
+        "resource": "script",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://198.51.100.3/probe",
+        "resource": "fetch",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://203.0.113.1/worker-probe",
+        "resource": "fetch",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://203.0.113.2/navigation-probe",
+        "resource": "document",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      }
+    ],
+    "node": "v22.20.0",
+    "namespace": "net:[4026532270]",
+    "processProof": {
+      "connections": [
+        {
+          "family": 2,
+          "destination": "192.0.2.1",
+          "errno": 101,
+          "blocked": true
+        },
+        {
+          "family": 10,
+          "destination": "2001:db8::1",
+          "errno": 101,
+          "blocked": true
+        }
+      ],
+      "childNamespace": "net:[4026532270]"
+    },
+    "browser": "155.0.8059.39",
+    "chromiumSandbox": true,
+    "disposableBrowser": true,
+    "browserProof": {
+      "fetchIPv4": "blocked",
+      "fetchIPv6": "blocked",
+      "dns": "blocked",
+      "image": "blocked",
+      "redirect": "blocked",
+      "websocket": "blocked",
+      "script": "blocked",
+      "worker": "blocked"
+    },
+    "localOriginReachable": true,
+    "nextStageAuthorised": true
+  },
+  "nodeResults": {
+    "offline": {
+      "status": "PASS",
+      "scope": "offline Node/VM and test-double acceptance; NOT Chrome",
+      "node": "v22.20.0",
+      "isolation": {
+        "direct": [
+          {
+            "family": 2,
+            "kind": 1,
+            "errno": 1
+          },
+          {
+            "family": 2,
+            "kind": 2,
+            "errno": 1
+          },
+          {
+            "family": 10,
+            "kind": 1,
+            "errno": 1
+          },
+          {
+            "family": 10,
+            "kind": 2,
+            "errno": 1
+          }
+        ],
+        "child": "DENIED",
+        "noNewPrivs": true,
+        "applicationModulesOpened": 0
+      },
+      "results": [
+        {
+          "command": [
+            "/opt/hostedtoolcache/node/22.20.0/x64/bin/node",
+            "--experimental-vm-modules",
+            "--import",
+            "./tests/fixtures/offline-guard.mjs",
+            "tests/lantern/startup.mjs"
+          ],
+          "exitCode": 0,
+          "stdout": "{\"status\":\"PASS\",\"checks\":83,\"cases\":[\"baseline-import-rejection-http401\",\"baseline-import-rejection-http402\",\"baseline-import-rejection-http500\",\"baseline-import-rejection-malformed\",\"baseline-import-rejection-invalidSchema\",\"components-success\",\"components-success-dedup\",\"components-empty\",\"components-empty-dedup\",\"components-http401\",\"components-http402\",\"components-http500\",\"components-timeout\",\"components-malformed\",\"components-invalidSchema\",\"components-invalidStock\",\"components-loading-hidden\",\"components-deadline-and-late-settlement\",\"components-unexpected-initialisation\",\"product-success\",\"product-success-dedup\",\"product-empty\",\"product-empty-dedup\",\"product-http401\",\"product-http402\",\"product-http500\",\"product-timeout\",\"product-malformed\",\"product-invalidSchema\",\"product-invalidStock\",\"product-loading-hidden\",\"product-deadline-and-late-settlement\",\"product-unexpected-initialisation\",\"basket-success\",\"basket-success-dedup\",\"basket-empty\",\"basket-empty-dedup\",\"basket-http401\",\"basket-http402\",\"basket-http500\",\"basket-timeout\",\"basket-malformed\",\"basket-invalidSchema\",\"basket-invalidStock\",\"basket-loading-hidden\",\"basket-deadline-and-late-settlement\",\"basket-unexpected-initialisation\",\"checkout-success\",\"checkout-success-dedup\",\"checkout-empty\",\"checkout-empty-dedup\",\"checkout-http401\",\"checkout-http402\",\"checkout-http500\",\"checkout-timeout\",\"checkout-malformed\",\"checkout-invalidSchema\",\"checkout-invalidStock\",\"checkout-loading-hidden\",\"checkout-deadline-and-late-settlement\",\"checkout-unexpected-initialisation\",\"entry-dist/components/index.html\",\"entry-dist/components/capacitors/index.html\",\"entry-dist/components/potentiometers/index.html\",\"entry-dist/components/treble-bleeds/index.html\",\"entry-dist/products/index.html\",\"entry-dist/products/ai-pot-ss-alphamini-a500k/index.html\",\"entry-dist/products/bleed-cap/index.html\",\"entry-dist/products/bleed-duncan/index.html\",\"entry-dist/products/bleed-premium/index.html\",\"entry-dist/products/bleed-prs/index.html\",\"entry-dist/products/cde-022/index.html\",\"entry-dist/products/pot-short-alpha-a/index.html\",\"entry-dist/products/pot-short-cts-a/index.html\",\"entry-dist/products/sbe-600/index.html\",\"entry-dist/basket/index.html\",\"entry-dist/checkout/index.html\",\"closed-route-imports\",\"copy-faq\",\"copy-components\",\"copy-basket-checkout\",\"commerce-stock-quantity-authority\",\"operations-authority\"],\"scope\":\"Node VM, real catalogue/transport, stubbed renderer/DOM; NOT Chrome\",\"productionRequests\":0}\n",
+          "stderr": "(node:171) ExperimentalWarning: VM Modules is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+        },
+        {
+          "command": [
+            "/opt/hostedtoolcache/node/22.20.0/x64/bin/node",
+            "--import",
+            "./tests/fixtures/offline-guard.mjs",
+            "tests/p07b-checkout.mjs"
+          ],
+          "exitCode": 0,
+          "stdout": "P07B.2 live Checkout: live restricted key, authoritative pricing/delivery, GB/name collection, configured/component/mixed baskets PASS\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/opt/hostedtoolcache/node/22.20.0/x64/bin/node",
+            "--import",
+            "./tests/fixtures/offline-guard.mjs",
+            "tests/p07b2-checkout-status.mjs"
+          ],
+          "exitCode": 0,
+          "stdout": "P07B.2 success status: read-only session lookup, paid only after verified fulfilment PASS\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/opt/hostedtoolcache/node/22.20.0/x64/bin/node",
+            "--import",
+            "./tests/fixtures/offline-guard.mjs",
+            "tests/operations-v1-checkout.mjs"
+          ],
+          "exitCode": 0,
+          "stdout": "Operations checkout: authoritative service guard, direct request denial, safe failures, DB/intermediate pause, no Stripe calls PASS\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/opt/hostedtoolcache/node/22.20.0/x64/bin/node",
+            "--import",
+            "./tests/fixtures/offline-guard.mjs",
+            "tests/egress-cache-browser.mjs"
+          ],
+          "exitCode": 0,
+          "stdout": "Browser cache integration PASS: large-image navigation reuse, actual authenticated Admin transport invalidation, strict persisted expiry/offline denial, optional storage and private allowlist preserved.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/opt/hostedtoolcache/node/22.20.0/x64/bin/node",
+            "--import",
+            "./tests/fixtures/offline-guard.mjs",
+            "tests/product-content.mjs"
+          ],
+          "exitCode": 0,
+          "stdout": "Product content: independent fields, paragraph preservation, add/edit/remove/reorder rows, reload persistence, validation and unchanged stock/prices/images/kit data passed.\nStorefront: title fallback, independent short/full copy, paragraph breaks, ordered specifications, technical fallback and unchanged pricing passed.\n",
+          "stderr": ""
+        }
+      ],
+      "productionRequests": 0,
+      "browser": "NOT TESTED"
+    },
+    "inheritedDOM": {
+      "node": "v22.20.0",
+      "status": "PASS",
+      "results": [
+        {
+          "suite": "native-components-success",
+          "exitCode": 0,
+          "stdout": "{\"status\":\"PASS\",\"mode\":\"success\",\"renderer\":\"native\",\"DOM\":\"happy-dom\",\"catalogueReads\":1}\n",
+          "stderr": ""
+        },
+        {
+          "suite": "native-components-empty",
+          "exitCode": 0,
+          "stdout": "{\"status\":\"PASS\",\"mode\":\"empty\",\"renderer\":\"native\",\"DOM\":\"happy-dom\",\"catalogueReads\":1}\n",
+          "stderr": ""
+        },
+        {
+          "suite": "p10c-storefront-truth",
+          "exitCode": 0,
+          "stdout": "P10C: live purchasing copy, category and basket routes, upfront guided scope, honest unsupported results PASS\n",
+          "stderr": "",
+          "error": null
+        },
+        {
+          "suite": "p10d-product-detail",
+          "exitCode": 0,
+          "stdout": "P10D: stable identity, category fields, stock, images, card links, shared basket and legacy noindex route PASS\n",
+          "stderr": "",
+          "error": null
+        },
+        {
+          "suite": "premium-storefront-v1",
+          "exitCode": 0,
+          "stdout": "{\"publicShells\":82,\"productSnapshots\":9,\"editorialGraphComparisons\":5,\"responsiveContracts\":6,\"contrastPairs\":3,\"commercePresentation\":\"PASS\",\"metadata\":\"PASS\",\"status\":\"PASS\"}\n",
+          "stderr": "",
+          "error": null
+        },
+        {
+          "suite": "holiday-checkout-basket",
+          "exitCode": 0,
+          "stdout": "Holiday checkout/basket PASS: direct effective pause creates no order/payment calls; OPEN normal initiation succeeds; prepared basket unchanged across pause/resume with stock-price revalidation messaging.\n",
+          "stderr": "",
+          "error": null
+        },
+        {
+          "suite": "p09a-contact",
+          "exitCode": 0,
+          "stdout": "P09A: validation, escaping, SMTP headers, audit isolation, idempotency, rate limit, honeypot and browser states PASS\n",
+          "stderr": "",
+          "error": null
+        },
+        {
+          "suite": "p07b4-contact",
+          "exitCode": 0,
+          "stdout": "P07B.4: trusted Stripe customer/shipping, optional line2, Admin membership, ignored browser fields, idempotent contact-only sync PASS\n",
+          "stderr": "",
+          "error": null
+        }
+      ]
+    },
+    "sentinel": {
+      "status": "PASS",
+      "node": "v22.20.0",
+      "results": [
+        {
+          "path": "tests/sentinel/basket.mjs",
+          "exitCode": 0,
+          "stdout": "{\"status\":\"PASS\",\"checks\":20,\"scope\":\"RAV03 real commerce/UI functions with fictional storage; not Chrome\"}\n",
+          "stderr": "",
+          "error": null
+        },
+        {
+          "path": "tests/sentinel/checkout.mjs",
+          "exitCode": 0,
+          "stdout": "{\"status\":\"PASS\",\"checks\":8,\"results\":[\"idle status retains form/focus and makes no checkout request\",\"one pending attempt; pause/open; definitive response; same request identity\",\"uncertain settlement never restarts on status or submit events\",\"basket progress and definitive error retained during delayed request; no automatic new submission\",\"validated fictional handoff goes only to mocked navigation sink\",\"amount mismatch prevents handoff\",\"availability change prevents late handoff and any automatic retry\",\"cancellation wording and stored basket preserved\"],\"scope\":\"Native checkout JS/happy-dom; fictional fetch and navigation sinks, not real payment or Chrome\"}\n",
+          "stderr": "",
+          "error": null
+        },
+        {
+          "path": "tests/sentinel/contact.mjs",
+          "exitCode": 0,
+          "stdout": "{\"status\":\"PASS\",\"checks\":10,\"results\":[{\"scenario\":\"sent\",\"status\":\"PASS\",\"applicationRequests\":1,\"uncertain\":false,\"originalMessagePreserved\":true},{\"scenario\":\"failed\",\"status\":\"PASS\",\"applicationRequests\":1,\"uncertain\":false,\"originalMessagePreserved\":true},{\"scenario\":\"invalid\",\"status\":\"PASS\",\"applicationRequests\":1,\"uncertain\":false,\"originalMessagePreserved\":true},{\"scenario\":\"rate_limited\",\"status\":\"PASS\",\"applicationRequests\":1,\"uncertain\":false,\"originalMessagePreserved\":true},{\"scenario\":\"timeout\",\"status\":\"PASS\",\"applicationRequests\":1,\"uncertain\":true,\"originalMessagePreserved\":true},{\"scenario\":\"lost\",\"status\":\"PASS\",\"applicationRequests\":1,\"uncertain\":true,\"originalMessagePreserved\":true},{\"scenario\":\"malformed\",\"status\":\"PASS\",\"applicationRequests\":1,\"uncertain\":true,\"originalMessagePreserved\":true},{\"scenario\":\"ambiguous\",\"status\":\"PASS\",\"applicationRequests\":1,\"uncertain\":true,\"originalMessagePreserved\":true},{\"scenario\":\"validation\",\"status\":\"PASS\",\"applicationRequests\":0,\"uncertain\":false,\"originalMessagePreserved\":true}],\"scope\":\"RAV06 real controller/DOM with fictional request callbacks; not Chrome\"}\n",
+          "stderr": "",
+          "error": null
+        },
+        {
+          "path": "tests/kit-snapshot.mjs",
+          "exitCode": 0,
+          "stdout": "Saved kit names, quantities, specifications, prices and diagram persist independently of catalogue changes; legacy snapshots preserved; no internal costing.\n",
+          "stderr": "",
+          "error": null
+        },
+        {
+          "path": "tests/p11ef-product-commerce.mjs",
+          "exitCode": 0,
+          "stdout": "P11E/F: exact semantic matching, unit equivalence, eligibility, related products, content, basket and supported kit bridge PASS\n",
+          "stderr": "",
+          "error": null
+        }
+      ]
+    }
+  },
+  "browserCases": [
+    {
+      "name": "RAV03-baseline-unavailable-intent-lost-after-unrelated-edit",
+      "status": "PASS"
+    },
+    {
+      "name": "RAV15-baseline-focus-and-active-control-replaced",
+      "status": "PASS",
+      "secondSubmissionMade": false,
+      "paymentSessions": 0
+    },
+    {
+      "name": "RAV06-baseline-settled-uncertainty-still-labelled-sending",
+      "status": "PASS",
+      "applicationFetchCalls": 1,
+      "transportAttempts": 7,
+      "stableSubmissionIdentity": true
+    },
+    {
+      "name": "RAV03-after-mixed-390",
+      "status": "PASS",
+      "unavailableQuantity": 3,
+      "validQuantity": 2,
+      "reloadPreserved": true,
+      "explicitRemoval": true,
+      "checkoutRequests": 0,
+      "catalogueAdditionalReads": 0
+    },
+    {
+      "name": "RAV03-after-mixed-768",
+      "status": "PASS",
+      "unavailableQuantity": 3,
+      "validQuantity": 2,
+      "reloadPreserved": true,
+      "explicitRemoval": true,
+      "checkoutRequests": 0,
+      "catalogueAdditionalReads": 0
+    },
+    {
+      "name": "RAV03-after-mixed-1024",
+      "status": "PASS",
+      "unavailableQuantity": 3,
+      "validQuantity": 2,
+      "reloadPreserved": true,
+      "explicitRemoval": true,
+      "checkoutRequests": 0,
+      "catalogueAdditionalReads": 0
+    },
+    {
+      "name": "RAV03-after-mixed-1440",
+      "status": "PASS",
+      "unavailableQuantity": 3,
+      "validQuantity": 2,
+      "reloadPreserved": true,
+      "explicitRemoval": true,
+      "checkoutRequests": 0,
+      "catalogueAdditionalReads": 0
+    },
+    {
+      "name": "RAV03-after-mixed-1920",
+      "status": "PASS",
+      "unavailableQuantity": 3,
+      "validQuantity": 2,
+      "reloadPreserved": true,
+      "explicitRemoval": true,
+      "checkoutRequests": 0,
+      "catalogueAdditionalReads": 0
+    },
+    {
+      "name": "RAV03-after-malicious-storage",
+      "status": "PASS",
+      "rawStorageNotRewritten": true
+    },
+    {
+      "name": "RAV03-after-mixed-kit-and-component",
+      "status": "PASS",
+      "kitSnapshotPreserved": true,
+      "version": 1
+    },
+    {
+      "name": "RAV15-after-status-and-pending-390",
+      "status": "PASS",
+      "nativeFocusPreserved": true,
+      "formIdentityPreserved": true,
+      "explicitAttempts": 2,
+      "stableRequestIdentity": true,
+      "catalogueAdditionalReads": 0
+    },
+    {
+      "name": "RAV15-after-status-and-pending-768",
+      "status": "PASS",
+      "nativeFocusPreserved": true,
+      "formIdentityPreserved": true,
+      "explicitAttempts": 2,
+      "stableRequestIdentity": true,
+      "catalogueAdditionalReads": 0
+    },
+    {
+      "name": "RAV15-after-status-and-pending-1024",
+      "status": "PASS",
+      "nativeFocusPreserved": true,
+      "formIdentityPreserved": true,
+      "explicitAttempts": 2,
+      "stableRequestIdentity": true,
+      "catalogueAdditionalReads": 0
+    },
+    {
+      "name": "RAV15-after-status-and-pending-1440",
+      "status": "PASS",
+      "nativeFocusPreserved": true,
+      "formIdentityPreserved": true,
+      "explicitAttempts": 2,
+      "stableRequestIdentity": true,
+      "catalogueAdditionalReads": 0
+    },
+    {
+      "name": "RAV15-after-status-and-pending-1920",
+      "status": "PASS",
+      "nativeFocusPreserved": true,
+      "formIdentityPreserved": true,
+      "explicitAttempts": 2,
+      "stableRequestIdentity": true,
+      "catalogueAdditionalReads": 0
+    },
+    {
+      "name": "RAV15-after-uncertain-outcome",
+      "status": "PASS",
+      "applicationAttempts": 1,
+      "transportAttempts": 7,
+      "stableRequestIdentity": true,
+      "noAutomaticApplicationRetry": true
+    },
+    {
+      "name": "RAV15-after-cancellation",
+      "status": "PASS"
+    },
+    {
+      "name": "RAV06-after-sent",
+      "status": "PASS",
+      "applicationFetchCalls": 1,
+      "transportAttempts": 1,
+      "messagePreserved": true,
+      "confirmedSuccess": true
+    },
+    {
+      "name": "RAV06-after-failed",
+      "status": "PASS",
+      "applicationFetchCalls": 1,
+      "transportAttempts": 1,
+      "messagePreserved": true,
+      "confirmedSuccess": false
+    },
+    {
+      "name": "RAV06-after-invalid",
+      "status": "PASS",
+      "applicationFetchCalls": 1,
+      "transportAttempts": 1,
+      "messagePreserved": true,
+      "confirmedSuccess": false
+    },
+    {
+      "name": "RAV06-after-rate",
+      "status": "PASS",
+      "applicationFetchCalls": 1,
+      "transportAttempts": 1,
+      "messagePreserved": true,
+      "confirmedSuccess": false
+    },
+    {
+      "name": "RAV06-after-timeout",
+      "status": "PASS",
+      "applicationFetchCalls": 1,
+      "transportAttempts": 0,
+      "messagePreserved": true,
+      "confirmedSuccess": false
+    },
+    {
+      "name": "RAV06-after-lost",
+      "status": "PASS",
+      "applicationFetchCalls": 1,
+      "transportAttempts": 7,
+      "messagePreserved": true,
+      "confirmedSuccess": false
+    },
+    {
+      "name": "RAV06-after-malformed",
+      "status": "PASS",
+      "applicationFetchCalls": 1,
+      "transportAttempts": 0,
+      "messagePreserved": true,
+      "confirmedSuccess": false
+    },
+    {
+      "name": "RAV06-after-ambiguous",
+      "status": "PASS",
+      "applicationFetchCalls": 1,
+      "transportAttempts": 1,
+      "messagePreserved": true,
+      "confirmedSuccess": false
+    },
+    {
+      "name": "RAV06-after-native-validation",
+      "status": "PASS",
+      "applicationRequests": 0
+    },
+    {
+      "name": "RAV06-after-pending-progress-390",
+      "status": "PASS",
+      "applicationRequests": 1,
+      "typedProgressPreserved": true,
+      "nativeFocusPreserved": true
+    },
+    {
+      "name": "RAV06-after-pending-progress-768",
+      "status": "PASS",
+      "applicationRequests": 1,
+      "typedProgressPreserved": true,
+      "nativeFocusPreserved": true
+    },
+    {
+      "name": "RAV06-after-pending-progress-1024",
+      "status": "PASS",
+      "applicationRequests": 1,
+      "typedProgressPreserved": true,
+      "nativeFocusPreserved": true
+    },
+    {
+      "name": "RAV06-after-pending-progress-1440",
+      "status": "PASS",
+      "applicationRequests": 1,
+      "typedProgressPreserved": true,
+      "nativeFocusPreserved": true
+    },
+    {
+      "name": "RAV06-after-pending-progress-1920",
+      "status": "PASS",
+      "applicationRequests": 1,
+      "typedProgressPreserved": true,
+      "nativeFocusPreserved": true
+    }
+  ],
+  "lighthouseRegressionCases": [
+    {
+      "name": "native-components-http401",
+      "status": "PASS"
+    },
+    {
+      "name": "native-components-http402",
+      "status": "PASS"
+    },
+    {
+      "name": "native-components-http500",
+      "status": "PASS"
+    },
+    {
+      "name": "native-components-malformed",
+      "status": "PASS"
+    },
+    {
+      "name": "native-components-invalid",
+      "status": "PASS"
+    },
+    {
+      "name": "native-unexpected-renderer-initialisation-rejection",
+      "status": "PASS"
+    },
+    {
+      "name": "native-/products/cde-022/catalogue-rejection",
+      "status": "PASS"
+    },
+    {
+      "name": "native-/products/cde-022/kit-definition-rejection",
+      "status": "PASS"
+    },
+    {
+      "name": "native-/basket/catalogue-rejection",
+      "status": "PASS"
+    },
+    {
+      "name": "native-/basket/kit-definition-rejection",
+      "status": "PASS"
+    },
+    {
+      "name": "native-/checkout/catalogue-rejection",
+      "status": "PASS"
+    },
+    {
+      "name": "native-/checkout/kit-definition-rejection",
+      "status": "PASS"
+    },
+    {
+      "name": "native-empty-distinct-from-unavailable",
+      "status": "PASS"
+    },
+    {
+      "name": "native-success-and-cache-390",
+      "status": "PASS",
+      "catalogueAdditionalReads": 0
+    },
+    {
+      "name": "unavailable-keyboard-AX-text200-390",
+      "status": "PASS",
+      "focus": {
+        "style": "solid",
+        "width": "2px"
+      },
+      "documentOverflowPx": 2,
+      "spokenAnnouncement": "NOT TESTED"
+    },
+    {
+      "name": "mobile-help-contact-navigation-and-menu-Escape",
+      "status": "PASS"
+    },
+    {
+      "name": "native-success-and-cache-768",
+      "status": "PASS",
+      "catalogueAdditionalReads": 0
+    },
+    {
+      "name": "unavailable-keyboard-AX-text200-768",
+      "status": "PASS",
+      "focus": {
+        "style": "solid",
+        "width": "2px"
+      },
+      "documentOverflowPx": 0,
+      "spokenAnnouncement": "NOT TESTED"
+    },
+    {
+      "name": "native-success-and-cache-1024",
+      "status": "PASS",
+      "catalogueAdditionalReads": 0
+    },
+    {
+      "name": "unavailable-keyboard-AX-text200-1024",
+      "status": "PASS",
+      "focus": {
+        "style": "solid",
+        "width": "2px"
+      },
+      "documentOverflowPx": 0,
+      "spokenAnnouncement": "NOT TESTED"
+    },
+    {
+      "name": "native-success-and-cache-1440",
+      "status": "PASS",
+      "catalogueAdditionalReads": 0
+    },
+    {
+      "name": "unavailable-keyboard-AX-text200-1440",
+      "status": "PASS",
+      "focus": {
+        "style": "solid",
+        "width": "2px"
+      },
+      "documentOverflowPx": 0,
+      "spokenAnnouncement": "NOT TESTED"
+    },
+    {
+      "name": "explicit-reload-one-new-catalogue-request",
+      "status": "PASS"
+    },
+    {
+      "name": "native-success-and-cache-1920",
+      "status": "PASS",
+      "catalogueAdditionalReads": 0
+    },
+    {
+      "name": "unavailable-keyboard-AX-text200-1920",
+      "status": "PASS",
+      "focus": {
+        "style": "solid",
+        "width": "2px"
+      },
+      "documentOverflowPx": 0,
+      "spokenAnnouncement": "NOT TESTED"
+    },
+    {
+      "name": "native-deadline-late-fulfilment-remains-unavailable",
+      "status": "PASS",
+      "uiDeadlineMs": 15000,
+      "fixtureResponseDelayMs": 18000
+    },
+    {
+      "name": "native-timeout-bounded-UI",
+      "status": "PASS"
+    },
+    {
+      "name": "native-focus-restoration-after-main-replacement",
+      "status": "PASS"
+    },
+    {
+      "name": "independent-handoff-keeps-scoped-product-identity",
+      "status": "PASS"
+    },
+    {
+      "name": "native-product-long-text",
+      "status": "PASS",
+      "documentOverflowPx": 0
+    },
+    {
+      "name": "native-add-basket-checkout-preparation-no-session",
+      "status": "PASS"
+    },
+    {
+      "name": "CDP-visual-scale-200",
+      "status": "PASS",
+      "limitation": "Visual page scale, not desktop browser-chrome zoom"
+    },
+    {
+      "name": "native-Operations-pause-denies-checkout",
+      "status": "PASS"
+    }
+  ],
+  "externalAttempts": [],
+  "pageErrors": [],
+  "fixtureErrors": [],
+  "artifactReadBack": {
+    "status": "PASS",
+    "readBackAt": "2026-10-23T16:42:08.803633+00:00",
+    "artifact": {
+      "id": 12516277976,
+      "name": "raven-sentinel-evidence",
+      "size_in_bytes": 9037932,
+      "url": "https://api.github.com/repos/lukewilliamsat-glitch/apparition-instruments/actions/artifacts/12516277976",
+      "archive_download_url": "https://api.github.com/repos/lukewilliamsat-glitch/apparition-instruments/actions/artifacts/12516277976/zip",
+      "expired": false,
+      "created_at": "2026-10-23T16:41:05Z",
+      "expires_at": "2026-11-22T16:41:03Z",
+      "updated_at": "2026-10-23T16:41:05Z",
+      "digest": "sha256:fe07a605f10910793b2c0c44323b6382c05f540376b1d99467dc83a4192a7115",
+      "workflow_run": {
+        "id": 39988495190,
+        "repository_id": 1383011149,
+        "head_repository_id": 1383011149,
+        "head_branch": "engineering/raven-sentinel",
+        "head_sha": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4"
+      }
+    },
+    "zipBytes": 9037932,
+    "zipSHA256": "fe07a605f10910793b2c0c44323b6382c05f540376b1d99467dc83a4192a7115",
+    "pngCount": 38,
+    "screenshots": [
+      {
+        "filename": "before-rav03-missing-intent-390.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "baselineApplicationCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 390,
+          "height": 1000
+        },
+        "width": 390,
+        "height": 2213,
+        "bytes": 137554,
+        "sha256": "ef0ba551f9f498d5213f878d6a330cbeb3dd1ac3284d3b20e7fc4ee8c2ccbb75"
+      },
+      {
+        "filename": "before-rav15-focus-replacement-1440.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "baselineApplicationCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "width": 1440,
+        "height": 1660,
+        "bytes": 191883,
+        "sha256": "768bb14718fb18bbd2ffe3bbbbde7a17c7e716dd787d3755f2f0a954aab19761"
+      },
+      {
+        "filename": "before-rav15-pending-replaced-1440.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "baselineApplicationCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "width": 1440,
+        "height": 1660,
+        "bytes": 191883,
+        "sha256": "768bb14718fb18bbd2ffe3bbbbde7a17c7e716dd787d3755f2f0a954aab19761"
+      },
+      {
+        "filename": "before-rav06-uncertain-sending-390.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "baselineApplicationCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 390,
+          "height": 1000
+        },
+        "width": 390,
+        "height": 2341,
+        "bytes": 154281,
+        "sha256": "1df52c35907492f434b88f85c87bc3e720575a3403ae3b125439b23c22401bea"
+      },
+      {
+        "filename": "after-rav03-retained-390.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "baselineApplicationCommit": null,
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 390,
+          "height": 1000
+        },
+        "width": 390,
+        "height": 2394,
+        "bytes": 147557,
+        "sha256": "421ed4601c94512ca171f31e5b0d4b393364c271491a8f2d2cc63eddfd6e09f1"
+      },
+      {
+        "filename": "after-rav03-retained-768.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "baselineApplicationCommit": null,
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 768,
+          "height": 1000
+        },
+        "width": 768,
+        "height": 1819,
+        "bytes": 160152,
+        "sha256": "4257f83d1ceb624854e526ff411be0720a19f0dde78a6ca7689bda723561fe98"
+      },
+      {
+        "filename": "after-rav03-retained-1024.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "baselineApplicationCommit": null,
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1024,
+          "height": 1000
+        },
+        "width": 1024,
+        "height": 1470,
+        "bytes": 165112,
+        "sha256": "0e8e209a9dbb08ad05981a19f280a0513bf25ba30d1166a4cf023d1006a4452f"
+      },
+      {
+        "filename": "after-rav03-retained-1440.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "baselineApplicationCommit": null,
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "width": 1440,
+        "height": 1443,
+        "bytes": 182388,
+        "sha256": "895b68214b2c5147387ee96200a67c206d5747fce3a031bc338fdf3b4e784539"
+      },
+      {
+        "filename": "after-rav03-retained-1920.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "baselineApplicationCommit": null,
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1920,
+          "height": 1000
+        },
+        "width": 1920,
+        "height": 1448,
+        "bytes": 186563,
+        "sha256": "5fe1fca3da49acfe21ab91eddfac37b0ab738faedf2db70fd7da4a1a9a6e3fad"
+      },
+      {
+        "filename": "after-rav15-stable-390.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "baselineApplicationCommit": null,
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 390,
+          "height": 1000
+        },
+        "width": 390,
+        "height": 2684,
+        "bytes": 169948,
+        "sha256": "b090cb8b8369e6e3ecc6868337d089dbe016da5ca634f575017f4b72b7809cdd"
+      },
+      {
+        "filename": "after-rav15-stable-768.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "baselineApplicationCommit": null,
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 768,
+          "height": 1000
+        },
+        "width": 768,
+        "height": 2181,
+        "bytes": 183240,
+        "sha256": "cb7c8de5be82dc7114024d1169d2cb43e72cad6135581baeb1de9f6ae1c6e669"
+      },
+      {
+        "filename": "after-rav15-stable-1024.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "baselineApplicationCommit": null,
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1024,
+          "height": 1000
+        },
+        "width": 1024,
+        "height": 1800,
+        "bytes": 186805,
+        "sha256": "2378b4b6fa789c299938f88cfe1e043d8d66ab2307a11d1c231f2e0f27bd0014"
+      },
+      {
+        "filename": "after-rav15-stable-1440.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "baselineApplicationCommit": null,
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "width": 1440,
+        "height": 1737,
+        "bytes": 204122,
+        "sha256": "a9e882c2892010e20dd7df69571a8d900ff904eabf42ae66947498e5cc539221"
+      },
+      {
+        "filename": "after-rav15-stable-1920.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "baselineApplicationCommit": null,
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1920,
+          "height": 1000
+        },
+        "width": 1920,
+        "height": 1741,
+        "bytes": 208885,
+        "sha256": "2d0cb8700f5df57da141b05c3fef98ca9b080916c344d42c38633e93b8f8529d"
+      },
+      {
+        "filename": "after-rav15-unconfirmed-390.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "baselineApplicationCommit": null,
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 390,
+          "height": 1000
+        },
+        "width": 390,
+        "height": 2668,
+        "bytes": 168898,
+        "sha256": "7f8ba8ba4074d3d3b6c0f34f2e5ce1e6336e331ff5b72c9bc02136de05c8edcb"
+      },
+      {
+        "filename": "after-rav06-lost-390.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "baselineApplicationCommit": null,
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 390,
+          "height": 1000
+        },
+        "width": 390,
+        "height": 2341,
+        "bytes": 154505,
+        "sha256": "08726cee88cd736405f2f599b554febe97c5d873eaba6d96103df36f37badf5c"
+      },
+      {
+        "filename": "after-rav06-ambiguous-390.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "baselineApplicationCommit": null,
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 390,
+          "height": 1000
+        },
+        "width": 390,
+        "height": 2341,
+        "bytes": 154505,
+        "sha256": "08726cee88cd736405f2f599b554febe97c5d873eaba6d96103df36f37badf5c"
+      },
+      {
+        "filename": "after-rav06-uncertain-390.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "baselineApplicationCommit": null,
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 390,
+          "height": 1000
+        },
+        "width": 390,
+        "height": 2341,
+        "bytes": 154130,
+        "sha256": "6b86060fc4cb42ad3856ee4b097b91ca62c3dd5066d6f14ce7178b827da8999a"
+      },
+      {
+        "filename": "after-rav06-uncertain-768.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "baselineApplicationCommit": null,
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 768,
+          "height": 1000
+        },
+        "width": 768,
+        "height": 1970,
+        "bytes": 167706,
+        "sha256": "89651a16f14fbfa05730a895332af7058b9094775dbb5bb2e584dab2e12984ed"
+      },
+      {
+        "filename": "after-rav06-uncertain-1024.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "baselineApplicationCommit": null,
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1024,
+          "height": 1000
+        },
+        "width": 1024,
+        "height": 1750,
+        "bytes": 179873,
+        "sha256": "6dd19e0ebb8615c0e131bfc302ab4f387241e4e51e19e69efc2cc9cc71e6010f"
+      },
+      {
+        "filename": "after-rav06-uncertain-1440.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "baselineApplicationCommit": null,
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "width": 1440,
+        "height": 1675,
+        "bytes": 194084,
+        "sha256": "7b7d0569e6b742d6f90919b78a3f660d8bdd76d203d4bf3c5cd0a51849a7097a"
+      },
+      {
+        "filename": "after-rav06-uncertain-1920.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "baselineApplicationCommit": null,
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1920,
+          "height": 1000
+        },
+        "width": 1920,
+        "height": 1679,
+        "bytes": 199032,
+        "sha256": "4700302a768ac39ef33f6caca8156b0e19b55d39cc962d633ea20ada0ef8a4d6"
+      },
+      {
+        "filename": "catalogue-390.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 390,
+          "height": 1000
+        },
+        "width": 390,
+        "height": 21293,
+        "bytes": 975809,
+        "sha256": "24a4fd3bd4d154d05aff195d148ff006f7351a23725938af255ddf77a7e94309"
+      },
+      {
+        "filename": "unavailable-390.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 390,
+          "height": 1000
+        },
+        "width": 390,
+        "height": 1000,
+        "bytes": 81652,
+        "sha256": "05c28234520fe8c51080f621a9fa7b9f4ee135f5ac1b462fd330e168db54922a"
+      },
+      {
+        "filename": "text-200-390.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 390,
+          "height": 1000
+        },
+        "width": 392,
+        "height": 2202,
+        "bytes": 171804,
+        "sha256": "4196ae6ac1dc499655b520dbf4985a33adb0f61357f0ffbe254e66d5489f7d93"
+      },
+      {
+        "filename": "catalogue-768.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 768,
+          "height": 1000
+        },
+        "width": 768,
+        "height": 13345,
+        "bytes": 945094,
+        "sha256": "d6260b37f4df738ffaf6b5df2d63232b3a8b75074add43d0c79cbc175c72d8d4"
+      },
+      {
+        "filename": "unavailable-768.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 768,
+          "height": 1000
+        },
+        "width": 768,
+        "height": 1000,
+        "bytes": 96063,
+        "sha256": "c0d69984f4ebe13a524ba2d66b00ce927563c8c325947794c3cd10c21e4ea5a0"
+      },
+      {
+        "filename": "catalogue-1024.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1024,
+          "height": 1000
+        },
+        "width": 1024,
+        "height": 12585,
+        "bytes": 942767,
+        "sha256": "d370dd96e71abd5283d01d32d5b21c189f1ba986a5a271fe27a879b81045dfd5"
+      },
+      {
+        "filename": "unavailable-1024.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1024,
+          "height": 1000
+        },
+        "width": 1024,
+        "height": 1000,
+        "bytes": 97918,
+        "sha256": "ac682283dbc57ed5614706548c73df06331f49db97e7e86fdddd0ef6fb7ca07b"
+      },
+      {
+        "filename": "text-200-1024.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1024,
+          "height": 1000
+        },
+        "width": 1024,
+        "height": 1221,
+        "bytes": 173373,
+        "sha256": "f9827996f11a3f3c7c384570a67b2e0f92dfb324428cf667305fe0a307cf095b"
+      },
+      {
+        "filename": "catalogue-1440.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "width": 1440,
+        "height": 10026,
+        "bytes": 700091,
+        "sha256": "189b24ae9d5658f0d4412a0054e320dd7cce521e27f1d44f95a5151cc7b35c5d"
+      },
+      {
+        "filename": "unavailable-1440.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "width": 1440,
+        "height": 1000,
+        "bytes": 110032,
+        "sha256": "13797149b7e18dcdcf8303a95b7b01d17121d916a4128e466a3e8da18c3597d5"
+      },
+      {
+        "filename": "catalogue-1920.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1920,
+          "height": 1000
+        },
+        "width": 1920,
+        "height": 10035,
+        "bytes": 724519,
+        "sha256": "33ffad12fcef8d803feea5be9ed60c4aa046dc59c6ff75f6a10a2f022daf019e"
+      },
+      {
+        "filename": "unavailable-1920.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1920,
+          "height": 1000
+        },
+        "width": 1920,
+        "height": 1000,
+        "bytes": 113434,
+        "sha256": "c5fefe4aa82b14a230f78d39d4407e466c496ea40ae6b367d8286f2f6a047066"
+      },
+      {
+        "filename": "pending-390.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 390,
+          "height": 1000
+        },
+        "width": 390,
+        "height": 1000,
+        "bytes": 47615,
+        "sha256": "d182575faa5c63c3c7f50e5c074363400976b1cc677b0fbd867ba0b2a1d89552"
+      },
+      {
+        "filename": "product-long-390.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 390,
+          "height": 1000
+        },
+        "width": 390,
+        "height": 5246,
+        "bytes": 397275,
+        "sha256": "64a23fcff6a4776ff0d66b2c0a3c9dd48cee4195636d38315085bbc18bb0a9f8"
+      },
+      {
+        "filename": "basket-ready-1440.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "width": 1440,
+        "height": 1248,
+        "bytes": 169043,
+        "sha256": "5142eaa6349aa7256c422129bea29ca3871cc26b41297da7a1e630a20a391ffc"
+      },
+      {
+        "filename": "checkout-prepared-1440.png",
+        "sourceCommit": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "sourceTree": "95ffc5e561d5dd1429618f9c8cb940778e5fe56b",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "width": 1440,
+        "height": 1660,
+        "bytes": 191883,
+        "sha256": "768bb14718fb18bbd2ffe3bbbbde7a17c7e716dd787d3755f2f0a954aab19761"
+      }
+    ],
+    "sourceBeforeEqualsAfter": true
+  },
+  "historicalRuns": [
+    {
+      "id": 39982971323,
+      "accepted": false,
+      "reason": "baseline harness incorrectly assumed one wire POST after connection reset"
+    },
+    {
+      "id": 39988007497,
+      "accepted": false,
+      "reason": "contact browser selector matched submit and hidden context-removal buttons; fixed harness only"
+    }
+  ],
+  "limits": [
+    "All data fictional; no email or real payment session",
+    "Baseline modules are exact pinned LIGHTHOUSE source; native browser execution",
+    "No full WCAG, screen-reader or physical-device certification",
+    "Checkout uncertainty is per-document, not durable reconciliation",
+    "Contact timeout is a simulated native ERR_TIMED_OUT; no measured production timeout",
+    "No actual browser-chrome zoom or physical device/AT certification"
+  ],
+  "production": {
+    "mainUnchanged": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+    "liveServicesAccessed": false,
+    "deploymentExecuted": false,
+    "recoveryExecuted": false
+  }
+}

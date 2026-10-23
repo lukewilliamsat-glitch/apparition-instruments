@@ -1,0 +1,11 @@
+# Preserved authority and isolation
+
+Saved storage is customer intent, never authoritative price, stock or purchasing permission. Unknown components cannot reach the checkout mapping or a complete checkout total. Known components still use current catalogue values. Kit snapshot validation, quantity bounds, component stock checks and kit additions remain intact; exact source checks protect these functions and the original subtotal/delivery calculation.
+
+Checkout backend repositories, payment validation, server-authoritative amounts, receipt checks, cancellation wording, inventory, Supabase policies/functions and every pre-existing workflow remain byte-identical to LIGHTHOUSE. Contact's request body, identity, repository, duplicate protection and response semantics remain unchanged; its source check allows only the two explicit busy/settled-label transformations. No credentials or production data enter the fixtures.
+
+The new workflow runs only on pushes affecting SENTINEL's allowed paths on `engineering/raven-sentinel`. It has contents-read permission, no schedule, dispatch, production environment, Pages deployment, secret reference or persisted checkout credentials. Official actions and disposable tools use the verified LIGHTHOUSE pins and SRI lock. Tool preparation precedes isolation; no application fixture starts until the inherited process/browser negative controls pass.
+
+Applications and Chrome run in a new network namespace with loopback only, no external IPv4/IPv6 routes, a disposable empty environment and unprivileged sandboxed browser. Negative controls cover fetch IPv4/IPv6, DNS, image, redirect, WebSocket, script, worker, frame and navigation before fixture launch. LANTERN's separate seccomp offline runner denies sockets even to descendants. Route rejection is an additional browser check, not the isolation boundary. All backend-shaped URLs resolve to fictional loopback handlers; no proxy fallback exists. External fonts are removed only from the fixture response, with local fallback fonts retained.
+
+Browser transport replay is possible after a reset. Stable request identity and existing backend idempotency remain essential; this frontend candidate does not promise exactly-once network delivery or establish live backend compatibility.
