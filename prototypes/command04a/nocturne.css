@@ -167,6 +167,6 @@ body[data-nocturne]{--admin-bg:#101113;--admin-surface:#1a1c1f;--admin-line:#383
 @media(min-width:1301px){
  [data-nocturne] #bridge-protected{display:grid;grid-template-columns:176px minmax(0,1fr)}
  [data-nocturne] .admin-app-topbar{grid-column:1/-1}
- [data-nocturne] .command-sidebar{position:sticky;grid-column:1;grid-row:2;align-self:start;top:4.5rem;width:auto;height:calc(100dvh - 4.5rem);z-index:40}
+ [data-nocturne] .command-sidebar{position:sticky;grid-column:1;grid-row:2;align-self:start;top:4.5rem;bottom:auto;left:auto;width:auto;height:calc(100dvh - 4.5rem);z-index:40}
  [data-nocturne] .admin-main{grid-column:2;grid-row:2;margin-left:0}
 }
