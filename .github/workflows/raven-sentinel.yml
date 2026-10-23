@@ -1,0 +1,64 @@
+name: RAVEN SENTINEL isolated acceptance
+on:
+  push:
+    branches: ['engineering/raven-sentinel']
+    paths:
+      - '.github/workflows/raven-sentinel.yml'
+      - 'tests/sentinel/**'
+      - 'dist/commerce.mjs'
+      - 'dist/basket-ui.mjs'
+      - 'dist/basket/basket.mjs'
+      - 'dist/checkout/checkout.mjs'
+      - 'dist/contact/contact.mjs'
+permissions:
+  contents: read
+concurrency:
+  group: raven-sentinel
+  cancel-in-progress: false
+jobs:
+  acceptance:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/raven-sentinel'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Prepare verified disposable test tools; never build the site
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = refs/heads/engineering/raven-sentinel
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          mkdir -p "$RUNNER_TEMP/lighthouse-tools" "$RUNNER_TEMP/sentinel-evidence"
+          cp tests/lighthouse/tools/package*.json "$RUNNER_TEMP/lighthouse-tools/"
+          npm ci --prefix "$RUNNER_TEMP/lighthouse-tools" --ignore-scripts --no-audit --no-fund
+          ln -s "$RUNNER_TEMP/lighthouse-tools/node_modules" node_modules
+          browser=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || true)
+          test -n "$browser"
+          printf '%s\n' "$browser" > "$RUNNER_TEMP/lighthouse-tools/browser-path"
+          "$browser" --version > "$RUNNER_TEMP/sentinel-evidence/browser-version.txt"
+          node --version > "$RUNNER_TEMP/sentinel-evidence/node-version.txt"
+          python3 tests/sentinel/source-integrity.py "$RUNNER_TEMP/sentinel-evidence" "$GITHUB_SHA"
+      - name: Prove isolation before running native fixtures
+        shell: bash
+        run: |
+          set -euo pipefail
+          browser=$(cat "$RUNNER_TEMP/lighthouse-tools/browser-path")
+          sudo unshare --net --mount --pid --fork --mount-proc /bin/bash tests/sentinel/run-isolated.sh \
+            "$GITHUB_WORKSPACE" "$RUNNER_TEMP/sentinel-evidence" "$(command -v node)" "$browser" \
+            "$RUNNER_TEMP/lighthouse-tools/node_modules/playwright-core/index.mjs" "$(id -un)" "$(readlink /proc/self/ns/net)" "$GITHUB_SHA"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: raven-sentinel-evidence
+          path: |
+            ${{ runner.temp }}/sentinel-evidence/*.json
+            ${{ runner.temp }}/sentinel-evidence/*.txt
+            ${{ runner.temp }}/sentinel-evidence/SCREENSHOTS/*.png
+          if-no-files-found: error
+          retention-days: 30
