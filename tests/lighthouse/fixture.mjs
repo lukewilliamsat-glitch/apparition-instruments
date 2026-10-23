@@ -65,7 +65,7 @@ export async function createFixture(){
    else{
     const file=resolve(root,'.'+decodeURIComponent(filePath));assert(file.startsWith(root+'/'));
     body=await readFile(file);
-    if(extname(file)==='.css')body=Buffer.from(body.toString().replace(/@import\s+[^;]*fonts\.googleapis\.com[^;]*;/g,''));
+    if(extname(file)==='.css')body=Buffer.from(body.toString().replace(/@import\s+url\(['"]https:\/\/fonts\.googleapis\.com[^'"]+['"]\)\s*;/g,''));
     if(path==='/storefront/entry.mjs'&&state.entryDelay)await pause(state.entryDelay);
    }
    res.writeHead(200,{'content-type':mime[extname(filePath)]||'application/octet-stream','cache-control':'no-store','content-security-policy':"default-src 'self' data: blob:; connect-src 'self'; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; frame-src 'none'"});res.end(body);
