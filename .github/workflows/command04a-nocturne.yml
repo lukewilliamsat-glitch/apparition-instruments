@@ -1,0 +1,104 @@
+name: COMMAND 04A NOCTURNE isolated visual acceptance
+on:
+  push:
+    branches: ['engineering/command04a-nocturne']
+    paths:
+      - '.github/workflows/command04a-nocturne.yml'
+      - 'tests/command04a/**'
+      - 'prototypes/command04a/**'
+permissions:
+  contents: read
+concurrency:
+  group: command04a-nocturne
+  cancel-in-progress: false
+jobs:
+  acceptance:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/command04a-nocturne'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.20.0'
+      - name: Verify frozen source and prepare existing browser controller
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/command04a-evidence" "$RUNNER_TEMP/command04a-tools"
+          python3 tests/command04a/source-integrity.py "$RUNNER_TEMP/command04a-evidence" "$GITHUB_SHA"
+          browser=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || true)
+          test -n "$browser"
+          printf '%s\n' "$browser" > "$RUNNER_TEMP/command04a-tools/browser-path"
+          "$browser" --version > "$RUNNER_TEMP/command04a-evidence/browser-version.txt"
+          node --version > "$RUNNER_TEMP/command04a-evidence/node-version.txt"
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install --prefix "$RUNNER_TEMP/command04a-tools" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false playwright-core@1.56.1
+          npm view playwright-core@1.56.1 dist.integrity > "$RUNNER_TEMP/command04a-evidence/controller-integrity.txt"
+          test "$(cat "$RUNNER_TEMP/command04a-evidence/controller-integrity.txt")" = 'sha512-hutraynyn31F+Bifme+Ps9Vq59hKuUCz7H1kDOcBs+2oGguKkWTU50bBWrtz34OUWmIwpBTWDxaRPXrIXkgvmQ=='
+      - name: Prove isolation then run presentation and inherited acceptance
+        shell: bash
+        run: |
+          set -euo pipefail
+          browser=$(cat "$RUNNER_TEMP/command04a-tools/browser-path")
+          sudo unshare --net --mount --pid --fork --mount-proc /bin/bash tests/command04a/run-isolated.sh \
+            "$GITHUB_WORKSPACE" "$RUNNER_TEMP/command04a-evidence" "$(command -v node)" "$browser" \
+            "$RUNNER_TEMP/command04a-tools/node_modules/playwright-core/index.mjs" "$(id -un)" "$(readlink /proc/self/ns/net)" "$GITHUB_SHA"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: command04a-nocturne-text-evidence
+          # Owner-authorised original PNG retention; never publish screenshots in Git.
+          path: |
+            ${{ runner.temp }}/command04a-evidence/NOCTURNE_SOURCE.json
+            ${{ runner.temp }}/command04a-evidence/SOURCE_IDENTITY.json
+            ${{ runner.temp }}/command04a-evidence/SOURCE_AFTER.json
+            ${{ runner.temp }}/command04a-evidence/BROWSER_RESULTS.json
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOT_CAPTURE_MANIFEST.json
+            ${{ runner.temp }}/command04a-evidence/STAGE_A_RESULTS.json
+            ${{ runner.temp }}/command04a-evidence/namespace-addresses.json
+            ${{ runner.temp }}/command04a-evidence/namespace-routes.json
+            ${{ runner.temp }}/command04a-evidence/namespace-id.txt
+            ${{ runner.temp }}/command04a-evidence/browser-version.txt
+            ${{ runner.temp }}/command04a-evidence/node-version.txt
+            ${{ runner.temp }}/command04a-evidence/controller-integrity.txt
+            ${{ runner.temp }}/command04a-evidence/C01/NODE_RESULTS.json
+            ${{ runner.temp }}/command04a-evidence/C01/BROWSER_RESULTS.json
+            ${{ runner.temp }}/command04a-evidence/C02/NODE_RESULTS.json
+            ${{ runner.temp }}/command04a-evidence/C02/BROWSER_RESULTS.json
+            ${{ runner.temp }}/command04a-evidence/C03/NODE_RESULTS.json
+            ${{ runner.temp }}/command04a-evidence/C03/BROWSER_RESULTS.json
+            ${{ runner.temp }}/command04a-evidence/C04/NODE_RESULTS.json
+            ${{ runner.temp }}/command04a-evidence/C04/BROWSER_RESULTS.json
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/before-01-catalogue.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/before-02-selected.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/before-03-desktop-editor.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/before-04-tablet-editor.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/before-05-mobile-editor.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/before-06-dirty-draft.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/before-07-change-review.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/before-08-validation.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/before-09-saved.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/before-10-conflict.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/before-11-permission-denied.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/before-12-session-expired.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/before-13-uncertain.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/before-14-auth-required.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/after-01-catalogue.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/after-02-selected.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/after-03-desktop-editor.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/after-04-tablet-editor.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/after-05-mobile-editor.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/after-06-dirty-draft.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/after-07-change-review.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/after-08-validation.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/after-09-saved.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/after-10-conflict.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/after-11-permission-denied.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/after-12-session-expired.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/after-13-uncertain.png
+            ${{ runner.temp }}/command04a-evidence/SCREENSHOTS/after-14-auth-required.png
+          if-no-files-found: error
+          retention-days: 30
