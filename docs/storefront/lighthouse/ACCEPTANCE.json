@@ -1,0 +1,901 @@
+{
+  "mission": "AUTHORISATION 46 / ECLIPSE / LIGHTHOUSE",
+  "scopeResult": "PASS \u2014 isolated RAV01/RAV02 only",
+  "ownerDesignApproved": false,
+  "branch": "engineering/raven-lighthouse",
+  "source": {
+    "status": "PASS",
+    "baseCommit": "b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+    "sourceCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+    "sourceTree": "fcbcdf9e76f42c81e5c2b10cbb4a1169c27efd4c",
+    "inheritedFiles": 912,
+    "unchanged": 911,
+    "changes": [
+      "tests/lantern/startup.mjs"
+    ],
+    "added": [
+      ".github/workflows/raven-lighthouse.yml",
+      "tests/lighthouse/browser.mjs",
+      "tests/lighthouse/fixture.mjs",
+      "tests/lighthouse/isolation.mjs",
+      "tests/lighthouse/native-components.mjs",
+      "tests/lighthouse/regressions.mjs",
+      "tests/lighthouse/run-isolated.sh",
+      "tests/lighthouse/source-integrity.py",
+      "tests/lighthouse/tools/package-lock.json",
+      "tests/lighthouse/tools/package.json"
+    ],
+    "productionWorkflowUnchanged": true,
+    "isolationSource": "993108aa7d65ac204ef54a7018a85f5c783813fd:tests/command01/isolation.mjs",
+    "toolLockSHA256": "04ad2801e9b4285b901b8bff853866b0202bbf4fe1dc1c6cc167de04fdc4b550"
+  },
+  "sourceAfter": {
+    "status": "PASS",
+    "baseCommit": "b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+    "sourceCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+    "sourceTree": "fcbcdf9e76f42c81e5c2b10cbb4a1169c27efd4c",
+    "inheritedFiles": 912,
+    "unchanged": 911,
+    "changes": [
+      "tests/lantern/startup.mjs"
+    ],
+    "added": [
+      ".github/workflows/raven-lighthouse.yml",
+      "tests/lighthouse/browser.mjs",
+      "tests/lighthouse/fixture.mjs",
+      "tests/lighthouse/isolation.mjs",
+      "tests/lighthouse/native-components.mjs",
+      "tests/lighthouse/regressions.mjs",
+      "tests/lighthouse/run-isolated.sh",
+      "tests/lighthouse/source-integrity.py",
+      "tests/lighthouse/tools/package-lock.json",
+      "tests/lighthouse/tools/package.json"
+    ],
+    "productionWorkflowUnchanged": true,
+    "isolationSource": "993108aa7d65ac204ef54a7018a85f5c783813fd:tests/command01/isolation.mjs",
+    "toolLockSHA256": "04ad2801e9b4285b901b8bff853866b0202bbf4fe1dc1c6cc167de04fdc4b550"
+  },
+  "runtime": {
+    "node": "v22.20.0",
+    "Chrome": "155.0.8059.39",
+    "happy-dom": "20.14.5",
+    "playwright-core": "1.56.1"
+  },
+  "ci": {
+    "id": 39981284222,
+    "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/39981284222",
+    "conclusion": "success"
+  },
+  "isolation": {
+    "stage": "A",
+    "applicationFixturesOpened": 0,
+    "productionRequests": 0,
+    "status": "PASS",
+    "sourceCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+    "negativeControls": [
+      {
+        "name": "fetchIPv4",
+        "result": "blocked"
+      },
+      {
+        "name": "fetchIPv6",
+        "result": "blocked"
+      },
+      {
+        "name": "dns",
+        "result": "blocked"
+      },
+      {
+        "name": "image",
+        "result": "blocked"
+      },
+      {
+        "name": "redirect",
+        "result": "blocked"
+      },
+      {
+        "name": "websocket",
+        "result": "blocked"
+      },
+      {
+        "name": "script",
+        "result": "blocked"
+      },
+      {
+        "name": "worker",
+        "result": "blocked"
+      },
+      {
+        "name": "frame",
+        "result": "blocked"
+      },
+      {
+        "name": "navigation",
+        "result": "blocked"
+      }
+    ],
+    "requests": [
+      {
+        "url": "http://127.0.0.1:34189/",
+        "resource": "document"
+      },
+      {
+        "url": "http://192.0.2.1/probe",
+        "resource": "fetch"
+      },
+      {
+        "url": "http://[2001:db8::1]/probe",
+        "resource": "fetch"
+      },
+      {
+        "url": "http://command01-negative.invalid/probe",
+        "resource": "fetch"
+      },
+      {
+        "url": "http://127.0.0.1:34189/redirect",
+        "resource": "fetch"
+      },
+      {
+        "url": "http://192.0.2.3/probe.js",
+        "resource": "script"
+      },
+      {
+        "url": "http://198.51.100.1/probe-frame",
+        "resource": "document"
+      },
+      {
+        "url": "http://192.0.2.2/probe.png",
+        "resource": "image"
+      },
+      {
+        "url": "http://127.0.0.1:34189/worker.js",
+        "resource": "script"
+      },
+      {
+        "url": "http://198.51.100.3/probe",
+        "resource": "fetch"
+      },
+      {
+        "url": "http://203.0.113.1/worker-probe",
+        "resource": "fetch"
+      },
+      {
+        "url": "http://203.0.113.2/navigation-probe",
+        "resource": "document"
+      }
+    ],
+    "responses": [
+      {
+        "url": "http://127.0.0.1:34189/",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:34189/redirect",
+        "status": 302
+      },
+      {
+        "url": "http://127.0.0.1:34189/worker.js",
+        "status": 200
+      }
+    ],
+    "failures": [
+      {
+        "url": "http://198.51.100.1/probe-frame",
+        "resource": "document",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://192.0.2.2/probe.png",
+        "resource": "image",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://192.0.2.1/probe",
+        "resource": "fetch",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://[2001:db8::1]/probe",
+        "resource": "fetch",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://command01-negative.invalid/probe",
+        "resource": "fetch",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://192.0.2.3/probe.js",
+        "resource": "script",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://198.51.100.3/probe",
+        "resource": "fetch",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://203.0.113.1/worker-probe",
+        "resource": "fetch",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      },
+      {
+        "url": "http://203.0.113.2/navigation-probe",
+        "resource": "document",
+        "error": "net::ERR_INTERNET_DISCONNECTED"
+      }
+    ],
+    "node": "v22.20.0",
+    "namespace": "net:[4026532270]",
+    "processProof": {
+      "connections": [
+        {
+          "family": 2,
+          "destination": "192.0.2.1",
+          "errno": 101,
+          "blocked": true
+        },
+        {
+          "family": 10,
+          "destination": "2001:db8::1",
+          "errno": 101,
+          "blocked": true
+        }
+      ],
+      "childNamespace": "net:[4026532270]"
+    },
+    "browser": "155.0.8059.39",
+    "chromiumSandbox": true,
+    "disposableBrowser": true,
+    "browserProof": {
+      "fetchIPv4": "blocked",
+      "fetchIPv6": "blocked",
+      "dns": "blocked",
+      "image": "blocked",
+      "redirect": "blocked",
+      "websocket": "blocked",
+      "script": "blocked",
+      "worker": "blocked"
+    },
+    "localOriginReachable": true,
+    "nextStageAuthorised": true
+  },
+  "offline": {
+    "status": "PASS",
+    "scope": "offline Node/VM and test-double acceptance; NOT Chrome",
+    "node": "v22.20.0",
+    "isolation": {
+      "direct": [
+        {
+          "family": 2,
+          "kind": 1,
+          "errno": 1
+        },
+        {
+          "family": 2,
+          "kind": 2,
+          "errno": 1
+        },
+        {
+          "family": 10,
+          "kind": 1,
+          "errno": 1
+        },
+        {
+          "family": 10,
+          "kind": 2,
+          "errno": 1
+        }
+      ],
+      "child": "DENIED",
+      "noNewPrivs": true,
+      "applicationModulesOpened": 0
+    },
+    "results": [
+      {
+        "command": [
+          "/opt/hostedtoolcache/node/22.20.0/x64/bin/node",
+          "--experimental-vm-modules",
+          "--import",
+          "./tests/fixtures/offline-guard.mjs",
+          "tests/lantern/startup.mjs"
+        ],
+        "exitCode": 0,
+        "stdout": "{\"status\":\"PASS\",\"checks\":83,\"cases\":[\"baseline-import-rejection-http401\",\"baseline-import-rejection-http402\",\"baseline-import-rejection-http500\",\"baseline-import-rejection-malformed\",\"baseline-import-rejection-invalidSchema\",\"components-success\",\"components-success-dedup\",\"components-empty\",\"components-empty-dedup\",\"components-http401\",\"components-http402\",\"components-http500\",\"components-timeout\",\"components-malformed\",\"components-invalidSchema\",\"components-invalidStock\",\"components-loading-hidden\",\"components-deadline-and-late-settlement\",\"components-unexpected-initialisation\",\"product-success\",\"product-success-dedup\",\"product-empty\",\"product-empty-dedup\",\"product-http401\",\"product-http402\",\"product-http500\",\"product-timeout\",\"product-malformed\",\"product-invalidSchema\",\"product-invalidStock\",\"product-loading-hidden\",\"product-deadline-and-late-settlement\",\"product-unexpected-initialisation\",\"basket-success\",\"basket-success-dedup\",\"basket-empty\",\"basket-empty-dedup\",\"basket-http401\",\"basket-http402\",\"basket-http500\",\"basket-timeout\",\"basket-malformed\",\"basket-invalidSchema\",\"basket-invalidStock\",\"basket-loading-hidden\",\"basket-deadline-and-late-settlement\",\"basket-unexpected-initialisation\",\"checkout-success\",\"checkout-success-dedup\",\"checkout-empty\",\"checkout-empty-dedup\",\"checkout-http401\",\"checkout-http402\",\"checkout-http500\",\"checkout-timeout\",\"checkout-malformed\",\"checkout-invalidSchema\",\"checkout-invalidStock\",\"checkout-loading-hidden\",\"checkout-deadline-and-late-settlement\",\"checkout-unexpected-initialisation\",\"entry-dist/components/index.html\",\"entry-dist/components/capacitors/index.html\",\"entry-dist/components/potentiometers/index.html\",\"entry-dist/components/treble-bleeds/index.html\",\"entry-dist/products/index.html\",\"entry-dist/products/ai-pot-ss-alphamini-a500k/index.html\",\"entry-dist/products/bleed-cap/index.html\",\"entry-dist/products/bleed-duncan/index.html\",\"entry-dist/products/bleed-premium/index.html\",\"entry-dist/products/bleed-prs/index.html\",\"entry-dist/products/cde-022/index.html\",\"entry-dist/products/pot-short-alpha-a/index.html\",\"entry-dist/products/pot-short-cts-a/index.html\",\"entry-dist/products/sbe-600/index.html\",\"entry-dist/basket/index.html\",\"entry-dist/checkout/index.html\",\"closed-route-imports\",\"copy-faq\",\"copy-components\",\"copy-basket-checkout\",\"commerce-stock-quantity-authority\",\"operations-authority\"],\"scope\":\"Node VM, real catalogue/transport, stubbed renderer/DOM; NOT Chrome\",\"productionRequests\":0}\n",
+        "stderr": "(node:172) ExperimentalWarning: VM Modules is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+      },
+      {
+        "command": [
+          "/opt/hostedtoolcache/node/22.20.0/x64/bin/node",
+          "--import",
+          "./tests/fixtures/offline-guard.mjs",
+          "tests/p07b-checkout.mjs"
+        ],
+        "exitCode": 0,
+        "stdout": "P07B.2 live Checkout: live restricted key, authoritative pricing/delivery, GB/name collection, configured/component/mixed baskets PASS\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/opt/hostedtoolcache/node/22.20.0/x64/bin/node",
+          "--import",
+          "./tests/fixtures/offline-guard.mjs",
+          "tests/p07b2-checkout-status.mjs"
+        ],
+        "exitCode": 0,
+        "stdout": "P07B.2 success status: read-only session lookup, paid only after verified fulfilment PASS\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/opt/hostedtoolcache/node/22.20.0/x64/bin/node",
+          "--import",
+          "./tests/fixtures/offline-guard.mjs",
+          "tests/operations-v1-checkout.mjs"
+        ],
+        "exitCode": 0,
+        "stdout": "Operations checkout: authoritative service guard, direct request denial, safe failures, DB/intermediate pause, no Stripe calls PASS\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/opt/hostedtoolcache/node/22.20.0/x64/bin/node",
+          "--import",
+          "./tests/fixtures/offline-guard.mjs",
+          "tests/egress-cache-browser.mjs"
+        ],
+        "exitCode": 0,
+        "stdout": "Browser cache integration PASS: large-image navigation reuse, actual authenticated Admin transport invalidation, strict persisted expiry/offline denial, optional storage and private allowlist preserved.\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/opt/hostedtoolcache/node/22.20.0/x64/bin/node",
+          "--import",
+          "./tests/fixtures/offline-guard.mjs",
+          "tests/product-content.mjs"
+        ],
+        "exitCode": 0,
+        "stdout": "Product content: independent fields, paragraph preservation, add/edit/remove/reorder rows, reload persistence, validation and unchanged stock/prices/images/kit data passed.\nStorefront: title fallback, independent short/full copy, paragraph breaks, ordered specifications, technical fallback and unchanged pricing passed.\n",
+        "stderr": ""
+      }
+    ],
+    "productionRequests": 0,
+    "browser": "NOT TESTED"
+  },
+  "regressions": {
+    "node": "v22.20.0",
+    "status": "PASS",
+    "results": [
+      {
+        "suite": "native-components-success",
+        "exitCode": 0,
+        "stdout": "{\"status\":\"PASS\",\"mode\":\"success\",\"renderer\":\"native\",\"DOM\":\"happy-dom\",\"catalogueReads\":1}\n",
+        "stderr": ""
+      },
+      {
+        "suite": "native-components-empty",
+        "exitCode": 0,
+        "stdout": "{\"status\":\"PASS\",\"mode\":\"empty\",\"renderer\":\"native\",\"DOM\":\"happy-dom\",\"catalogueReads\":1}\n",
+        "stderr": ""
+      },
+      {
+        "suite": "p10c-storefront-truth",
+        "exitCode": 0,
+        "stdout": "P10C: live purchasing copy, category and basket routes, upfront guided scope, honest unsupported results PASS\n",
+        "stderr": "",
+        "error": null
+      },
+      {
+        "suite": "p10d-product-detail",
+        "exitCode": 0,
+        "stdout": "P10D: stable identity, category fields, stock, images, card links, shared basket and legacy noindex route PASS\n",
+        "stderr": "",
+        "error": null
+      },
+      {
+        "suite": "premium-storefront-v1",
+        "exitCode": 0,
+        "stdout": "{\"publicShells\":82,\"productSnapshots\":9,\"editorialGraphComparisons\":5,\"responsiveContracts\":6,\"contrastPairs\":3,\"commercePresentation\":\"PASS\",\"metadata\":\"PASS\",\"status\":\"PASS\"}\n",
+        "stderr": "",
+        "error": null
+      },
+      {
+        "suite": "holiday-checkout-basket",
+        "exitCode": 0,
+        "stdout": "Holiday checkout/basket PASS: direct effective pause creates no order/payment calls; OPEN normal initiation succeeds; prepared basket unchanged across pause/resume with stock-price revalidation messaging.\n",
+        "stderr": "",
+        "error": null
+      },
+      {
+        "suite": "p09a-contact",
+        "exitCode": 0,
+        "stdout": "P09A: validation, escaping, SMTP headers, audit isolation, idempotency, rate limit, honeypot and browser states PASS\n",
+        "stderr": "",
+        "error": null
+      },
+      {
+        "suite": "p07b4-contact",
+        "exitCode": 0,
+        "stdout": "P07B.4: trusted Stripe customer/shipping, optional line2, Admin membership, ignored browser fields, idempotent contact-only sync PASS\n",
+        "stderr": "",
+        "error": null
+      }
+    ]
+  },
+  "browser": {
+    "status": "PASS",
+    "cases": [
+      {
+        "name": "native-components-http401",
+        "status": "PASS"
+      },
+      {
+        "name": "native-components-http402",
+        "status": "PASS"
+      },
+      {
+        "name": "native-components-http500",
+        "status": "PASS"
+      },
+      {
+        "name": "native-components-malformed",
+        "status": "PASS"
+      },
+      {
+        "name": "native-components-invalid",
+        "status": "PASS"
+      },
+      {
+        "name": "native-unexpected-renderer-initialisation-rejection",
+        "status": "PASS"
+      },
+      {
+        "name": "native-/products/cde-022/catalogue-rejection",
+        "status": "PASS"
+      },
+      {
+        "name": "native-/products/cde-022/kit-definition-rejection",
+        "status": "PASS"
+      },
+      {
+        "name": "native-/basket/catalogue-rejection",
+        "status": "PASS"
+      },
+      {
+        "name": "native-/basket/kit-definition-rejection",
+        "status": "PASS"
+      },
+      {
+        "name": "native-/checkout/catalogue-rejection",
+        "status": "PASS"
+      },
+      {
+        "name": "native-/checkout/kit-definition-rejection",
+        "status": "PASS"
+      },
+      {
+        "name": "native-empty-distinct-from-unavailable",
+        "status": "PASS"
+      },
+      {
+        "name": "native-success-and-cache-390",
+        "status": "PASS",
+        "catalogueAdditionalReads": 0
+      },
+      {
+        "name": "unavailable-keyboard-AX-text200-390",
+        "status": "PASS",
+        "focus": {
+          "style": "solid",
+          "width": "2px"
+        },
+        "documentOverflowPx": 2,
+        "spokenAnnouncement": "NOT TESTED"
+      },
+      {
+        "name": "mobile-help-contact-navigation-and-menu-Escape",
+        "status": "PASS"
+      },
+      {
+        "name": "native-success-and-cache-768",
+        "status": "PASS",
+        "catalogueAdditionalReads": 0
+      },
+      {
+        "name": "unavailable-keyboard-AX-text200-768",
+        "status": "PASS",
+        "focus": {
+          "style": "solid",
+          "width": "2px"
+        },
+        "documentOverflowPx": 0,
+        "spokenAnnouncement": "NOT TESTED"
+      },
+      {
+        "name": "native-success-and-cache-1024",
+        "status": "PASS",
+        "catalogueAdditionalReads": 0
+      },
+      {
+        "name": "unavailable-keyboard-AX-text200-1024",
+        "status": "PASS",
+        "focus": {
+          "style": "solid",
+          "width": "2px"
+        },
+        "documentOverflowPx": 0,
+        "spokenAnnouncement": "NOT TESTED"
+      },
+      {
+        "name": "native-success-and-cache-1440",
+        "status": "PASS",
+        "catalogueAdditionalReads": 0
+      },
+      {
+        "name": "unavailable-keyboard-AX-text200-1440",
+        "status": "PASS",
+        "focus": {
+          "style": "solid",
+          "width": "2px"
+        },
+        "documentOverflowPx": 0,
+        "spokenAnnouncement": "NOT TESTED"
+      },
+      {
+        "name": "explicit-reload-one-new-catalogue-request",
+        "status": "PASS"
+      },
+      {
+        "name": "native-success-and-cache-1920",
+        "status": "PASS",
+        "catalogueAdditionalReads": 0
+      },
+      {
+        "name": "unavailable-keyboard-AX-text200-1920",
+        "status": "PASS",
+        "focus": {
+          "style": "solid",
+          "width": "2px"
+        },
+        "documentOverflowPx": 0,
+        "spokenAnnouncement": "NOT TESTED"
+      },
+      {
+        "name": "native-deadline-late-fulfilment-remains-unavailable",
+        "status": "PASS",
+        "uiDeadlineMs": 15000,
+        "fixtureResponseDelayMs": 18000
+      },
+      {
+        "name": "native-timeout-bounded-UI",
+        "status": "PASS"
+      },
+      {
+        "name": "native-focus-restoration-after-main-replacement",
+        "status": "PASS"
+      },
+      {
+        "name": "independent-handoff-keeps-scoped-product-identity",
+        "status": "PASS"
+      },
+      {
+        "name": "native-product-long-text",
+        "status": "PASS",
+        "documentOverflowPx": 0
+      },
+      {
+        "name": "native-add-basket-checkout-preparation-no-session",
+        "status": "PASS"
+      },
+      {
+        "name": "CDP-visual-scale-200",
+        "status": "PASS",
+        "limitation": "Visual page scale, not desktop browser-chrome zoom"
+      },
+      {
+        "name": "native-Operations-pause-denies-checkout",
+        "status": "PASS"
+      }
+    ],
+    "pageErrors": [],
+    "externalAttempts": [],
+    "fixtureErrors": [],
+    "fixtureOverrides": [
+      "Public URL/key replaced with loopback fictional configuration",
+      "Public operations, components, kit definitions, permissions, options and shipping supplied by loopback server",
+      "Google Fonts CSS imports omitted; existing local fallback typography",
+      "Fresh disposable browser/storage; no real account or payment session"
+    ],
+    "limitations": [
+      "Accessibility tree/status semantics, not spoken screen-reader or WCAG certification",
+      "Text enlargement and CDP visual scale are reported separately from browser-chrome zoom",
+      "No physical device or production acceptance"
+    ]
+  },
+  "screenshotManifest": {
+    "sourceCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+    "sourceTree": "fcbcdf9e76f42c81e5c2b10cbb4a1169c27efd4c",
+    "browser": "155.0.8059.39",
+    "screenshots": [
+      {
+        "filename": "catalogue-390.png",
+        "sourceCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+        "sourceTree": "fcbcdf9e76f42c81e5c2b10cbb4a1169c27efd4c",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 390,
+          "height": 1000
+        },
+        "width": 390,
+        "height": 21293,
+        "bytes": 975809,
+        "sha256": "24a4fd3bd4d154d05aff195d148ff006f7351a23725938af255ddf77a7e94309"
+      },
+      {
+        "filename": "unavailable-390.png",
+        "sourceCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+        "sourceTree": "fcbcdf9e76f42c81e5c2b10cbb4a1169c27efd4c",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 390,
+          "height": 1000
+        },
+        "width": 390,
+        "height": 1000,
+        "bytes": 81652,
+        "sha256": "05c28234520fe8c51080f621a9fa7b9f4ee135f5ac1b462fd330e168db54922a"
+      },
+      {
+        "filename": "text-200-390.png",
+        "sourceCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+        "sourceTree": "fcbcdf9e76f42c81e5c2b10cbb4a1169c27efd4c",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 390,
+          "height": 1000
+        },
+        "width": 392,
+        "height": 2202,
+        "bytes": 171804,
+        "sha256": "4196ae6ac1dc499655b520dbf4985a33adb0f61357f0ffbe254e66d5489f7d93"
+      },
+      {
+        "filename": "catalogue-768.png",
+        "sourceCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+        "sourceTree": "fcbcdf9e76f42c81e5c2b10cbb4a1169c27efd4c",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 768,
+          "height": 1000
+        },
+        "width": 768,
+        "height": 13345,
+        "bytes": 945094,
+        "sha256": "d6260b37f4df738ffaf6b5df2d63232b3a8b75074add43d0c79cbc175c72d8d4"
+      },
+      {
+        "filename": "unavailable-768.png",
+        "sourceCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+        "sourceTree": "fcbcdf9e76f42c81e5c2b10cbb4a1169c27efd4c",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 768,
+          "height": 1000
+        },
+        "width": 768,
+        "height": 1000,
+        "bytes": 96063,
+        "sha256": "c0d69984f4ebe13a524ba2d66b00ce927563c8c325947794c3cd10c21e4ea5a0"
+      },
+      {
+        "filename": "catalogue-1024.png",
+        "sourceCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+        "sourceTree": "fcbcdf9e76f42c81e5c2b10cbb4a1169c27efd4c",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1024,
+          "height": 1000
+        },
+        "width": 1024,
+        "height": 12585,
+        "bytes": 942767,
+        "sha256": "d370dd96e71abd5283d01d32d5b21c189f1ba986a5a271fe27a879b81045dfd5"
+      },
+      {
+        "filename": "unavailable-1024.png",
+        "sourceCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+        "sourceTree": "fcbcdf9e76f42c81e5c2b10cbb4a1169c27efd4c",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1024,
+          "height": 1000
+        },
+        "width": 1024,
+        "height": 1000,
+        "bytes": 97918,
+        "sha256": "ac682283dbc57ed5614706548c73df06331f49db97e7e86fdddd0ef6fb7ca07b"
+      },
+      {
+        "filename": "text-200-1024.png",
+        "sourceCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+        "sourceTree": "fcbcdf9e76f42c81e5c2b10cbb4a1169c27efd4c",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1024,
+          "height": 1000
+        },
+        "width": 1024,
+        "height": 1221,
+        "bytes": 173373,
+        "sha256": "f9827996f11a3f3c7c384570a67b2e0f92dfb324428cf667305fe0a307cf095b"
+      },
+      {
+        "filename": "catalogue-1440.png",
+        "sourceCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+        "sourceTree": "fcbcdf9e76f42c81e5c2b10cbb4a1169c27efd4c",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "width": 1440,
+        "height": 10026,
+        "bytes": 700091,
+        "sha256": "189b24ae9d5658f0d4412a0054e320dd7cce521e27f1d44f95a5151cc7b35c5d"
+      },
+      {
+        "filename": "unavailable-1440.png",
+        "sourceCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+        "sourceTree": "fcbcdf9e76f42c81e5c2b10cbb4a1169c27efd4c",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "width": 1440,
+        "height": 1000,
+        "bytes": 110032,
+        "sha256": "13797149b7e18dcdcf8303a95b7b01d17121d916a4128e466a3e8da18c3597d5"
+      },
+      {
+        "filename": "catalogue-1920.png",
+        "sourceCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+        "sourceTree": "fcbcdf9e76f42c81e5c2b10cbb4a1169c27efd4c",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1920,
+          "height": 1000
+        },
+        "width": 1920,
+        "height": 10035,
+        "bytes": 724519,
+        "sha256": "33ffad12fcef8d803feea5be9ed60c4aa046dc59c6ff75f6a10a2f022daf019e"
+      },
+      {
+        "filename": "unavailable-1920.png",
+        "sourceCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+        "sourceTree": "fcbcdf9e76f42c81e5c2b10cbb4a1169c27efd4c",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1920,
+          "height": 1000
+        },
+        "width": 1920,
+        "height": 1000,
+        "bytes": 113434,
+        "sha256": "c5fefe4aa82b14a230f78d39d4407e466c496ea40ae6b367d8286f2f6a047066"
+      },
+      {
+        "filename": "pending-390.png",
+        "sourceCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+        "sourceTree": "fcbcdf9e76f42c81e5c2b10cbb4a1169c27efd4c",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 390,
+          "height": 1000
+        },
+        "width": 390,
+        "height": 1000,
+        "bytes": 47615,
+        "sha256": "d182575faa5c63c3c7f50e5c074363400976b1cc677b0fbd867ba0b2a1d89552"
+      },
+      {
+        "filename": "product-long-390.png",
+        "sourceCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+        "sourceTree": "fcbcdf9e76f42c81e5c2b10cbb4a1169c27efd4c",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 390,
+          "height": 1000
+        },
+        "width": 390,
+        "height": 5246,
+        "bytes": 397275,
+        "sha256": "64a23fcff6a4776ff0d66b2c0a3c9dd48cee4195636d38315085bbc18bb0a9f8"
+      },
+      {
+        "filename": "basket-ready-1440.png",
+        "sourceCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+        "sourceTree": "fcbcdf9e76f42c81e5c2b10cbb4a1169c27efd4c",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "width": 1440,
+        "height": 1248,
+        "bytes": 169043,
+        "sha256": "5142eaa6349aa7256c422129bea29ca3871cc26b41297da7a1e630a20a391ffc"
+      },
+      {
+        "filename": "checkout-prepared-1440.png",
+        "sourceCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+        "sourceTree": "fcbcdf9e76f42c81e5c2b10cbb4a1169c27efd4c",
+        "browser": "155.0.8059.39",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "width": 1440,
+        "height": 1660,
+        "bytes": 191883,
+        "sha256": "768bb14718fb18bbd2ffe3bbbbde7a17c7e716dd787d3755f2f0a954aab19761"
+      }
+    ]
+  },
+  "artifact": {
+    "id": 12512828995,
+    "runId": 39981284222,
+    "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/39981284222/artifacts/12512828995",
+    "bytes": 5426475,
+    "zipSHA256": "00465964bc645bb508877b9cf2f6924a65ed1b0a7cd997062c3eaf9383e98753",
+    "expiresAt": "2026-11-22T15:49:00Z"
+  },
+  "readback": {
+    "artifactId": 12512828995,
+    "zipBytes": 5426475,
+    "zipSHA256": "00465964bc645bb508877b9cf2f6924a65ed1b0a7cd997062c3eaf9383e98753",
+    "pngCount": 16,
+    "originalPNGsVerified": true,
+    "sourceBeforeAfterEqual": true,
+    "verifiedAt": "2026-10-23T15:50:49.832514+00:00",
+    "source": {
+      "status": "PASS",
+      "baseCommit": "b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+      "sourceCommit": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+      "sourceTree": "fcbcdf9e76f42c81e5c2b10cbb4a1169c27efd4c",
+      "inheritedFiles": 912,
+      "unchanged": 911,
+      "changes": [
+        "tests/lantern/startup.mjs"
+      ],
+      "added": [
+        ".github/workflows/raven-lighthouse.yml",
+        "tests/lighthouse/browser.mjs",
+        "tests/lighthouse/fixture.mjs",
+        "tests/lighthouse/isolation.mjs",
+        "tests/lighthouse/native-components.mjs",
+        "tests/lighthouse/regressions.mjs",
+        "tests/lighthouse/run-isolated.sh",
+        "tests/lighthouse/source-integrity.py",
+        "tests/lighthouse/tools/package-lock.json",
+        "tests/lighthouse/tools/package.json"
+      ],
+      "productionWorkflowUnchanged": true,
+      "isolationSource": "993108aa7d65ac204ef54a7018a85f5c783813fd:tests/command01/isolation.mjs",
+      "toolLockSHA256": "04ad2801e9b4285b901b8bff853866b0202bbf4fe1dc1c6cc167de04fdc4b550"
+    }
+  },
+  "invariants": {
+    "storefrontFilesChanged": 0,
+    "productionWorkflowChanged": false,
+    "liveRequests": 0,
+    "emailsSent": 0,
+    "paymentSessionsCreated": 0,
+    "deployed": false,
+    "phaseA": "ON HOLD",
+    "providerRecovery": "UNKNOWN",
+    "publicCatalogue": "UNTESTED"
+  }
+}
