@@ -163,3 +163,10 @@ body[data-nocturne]{--admin-bg:#101113;--admin-surface:#1a1c1f;--admin-line:#383
  [data-nocturne] .command-table td:nth-child(2)::before,[data-nocturne] .command-table td:nth-child(3)::before{font-size:.625rem;color:#b7beca}
 }
 @media(prefers-reduced-motion:reduce){[data-nocturne] *,[data-nocturne] *::before,[data-nocturne] *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+/* Keep the navigation below the header's natural and sticky positions. */
+@media(min-width:1301px){
+ [data-nocturne] #bridge-protected{display:grid;grid-template-columns:176px minmax(0,1fr)}
+ [data-nocturne] .admin-app-topbar{grid-column:1/-1}
+ [data-nocturne] .command-sidebar{position:sticky;grid-column:1;grid-row:2;align-self:start;top:4.5rem;width:auto;height:calc(100dvh - 4.5rem);z-index:40}
+ [data-nocturne] .admin-main{grid-column:2;grid-row:2;margin-left:0}
+}

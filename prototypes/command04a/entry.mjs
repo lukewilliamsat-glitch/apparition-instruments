@@ -40,7 +40,8 @@ function render(){
  if(justOpened&&protectedVisible)$('editor-workspace').scrollIntoView({block:'start',behavior:'auto'});
  // Only generic guidance is rendered outside the protected subtree.
  let title='Authentication required',description='Start a fictional session to inspect the catalogue. Product data stays concealed until access is authorised.';
- if(session.status==='authorized'&&protectedVisible){title=session.capabilities.productWrite?'Preview session active':'Read-only access';description=session.capabilities.productWrite?'Synthetic catalogue · changes apply only to this temporary preview.':'This session can inspect products. Saving needs product write permission; local proposals remain unsaved.';}
+ if(session.status==='authorized'&&!session.capabilities.catalogueRead){title='Access denied';description='This session does not have catalogue permission. Product records remain concealed. Restore a session with catalogue read access.';}
+ else if(session.status==='authorized'&&protectedVisible){title=session.capabilities.productWrite?'Preview session active':'Read-only access';description=session.capabilities.productWrite?'Synthetic catalogue · changes apply only to this temporary preview.':'This session can inspect products. Saving needs product write permission; local proposals remain unsaved.';}
  else if(session.status==='authorized'&&draft.needsProtection){title='Restore the original session';description='A retained draft belongs to an earlier identity. Restore that session to continue; its product details remain concealed.';}
  else if(session.status==='authorized'||session.status==='checking'){title='Opening catalogue';description='Checking this session and loading the synthetic catalogue.';}
  else if(session.status==='expired'){title='Session expired';description='Restore authentication to continue. Any retained local draft is unsaved and remains concealed until the original identity returns.';}
