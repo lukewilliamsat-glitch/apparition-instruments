@@ -1,0 +1,185 @@
+{
+  "mission": "Authorisation 46 Phase III documentation only",
+  "status": "PASS \u2014 preparation, not recovery",
+  "branch": "engineering/dawnbreaker-final-readiness",
+  "reviewedSourceCommit": "542cc90cf9c301b4571d246ce9ae105bddefc2d0",
+  "reviewedSourceTree": "c1e02d0a64f13692e577da2f1342f0dc65421c10",
+  "inheritedFiles": 908,
+  "unchangedInheritedFiles": 908,
+  "applicationTestsExecuted": false,
+  "browserExecuted": false,
+  "ciTriggered": false,
+  "allowedAdditions": "docs/operations/dawnbreaker-final/",
+  "originalRunbookBlob": "e9ea4dd0f45faaf5979743b36d0e659a4eb271be",
+  "staticWorkflowBlob": "a43d31b3d7371d02fe016a57a19a2690ceb0ea86",
+  "observedAt": "2026-10-23T16:45:55.048Z",
+  "main": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+  "latestPagesRun": {
+    "id": 39922853022,
+    "head_sha": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+    "event": "schedule",
+    "status": "completed",
+    "conclusion": "failure",
+    "created_at": "2026-10-23T08:10:58Z",
+    "updated_at": "2026-10-23T08:11:13Z",
+    "path": ".github/workflows/static.yml"
+  },
+  "latestPagesJob": {
+    "id": 120312000218,
+    "name": "deploy",
+    "status": "completed",
+    "conclusion": "failure",
+    "run_id": 39922853022,
+    "logs_url": null,
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1
+      },
+      {
+        "name": "Checkout",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2
+      },
+      {
+        "name": "Set up Node",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3
+      },
+      {
+        "name": "Install build dependencies",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4
+      },
+      {
+        "name": "Generate public product pages from Supabase",
+        "status": "completed",
+        "conclusion": "failure",
+        "number": 5
+      },
+      {
+        "name": "Generate public News and Operations presentation",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 6
+      },
+      {
+        "name": "Generate CMS published articles",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 7
+      },
+      {
+        "name": "Prepare Search Console verification",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 8
+      },
+      {
+        "name": "Stamp first-party static asset URLs",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 9
+      },
+      {
+        "name": "Setup Pages",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 10
+      },
+      {
+        "name": "Upload artifact",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 11
+      },
+      {
+        "name": "Deploy to GitHub Pages",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 12
+      },
+      {
+        "name": "Post Set up Node",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 23
+      },
+      {
+        "name": "Post Checkout",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 24
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 25
+      }
+    ]
+  },
+  "queuedRunCount": 0,
+  "inProgressRunCount": 0,
+  "phaseA": "ON HOLD",
+  "providerRecovery": "UNKNOWN",
+  "publicCatalogue": "UNTESTED",
+  "providerFigures": "UNKNOWN \u2014 no owner report assessed",
+  "backendRequests": 0,
+  "recoveryPhasesExecuted": [],
+  "productionWorkflowChanges": false,
+  "deploymentExecuted": false,
+  "plan": {
+    "scope": "BLACKBOX34_READ_ONLY_PREFLIGHT",
+    "sha256": "bd9aca0efc68e8921150fbd0aefbce97059919f34d066d6b59c2cec9191e4f44",
+    "bytes": 1234,
+    "verification": "offline textual reconstruction; no imported module or transport"
+  },
+  "sourceHashes": {
+    ".github/workflows/static.yml": {
+      "blob": "a43d31b3d7371d02fe016a57a19a2690ceb0ea86",
+      "sha256": "1700476525864d242d30c7e2c14909e5feabe41148337f2550a57e62a256934b"
+    },
+    "docs/operations/dawnbreaker/COMMAND_COMPATIBILITY.md": {
+      "blob": "e9a13fc5ca3d0f3df72e744368ea251e1e3e3a49",
+      "sha256": "9ada1c46b63eeb65a8a0a97b5b2418b842882dd8aaa195c56c013adfbdcde1f2"
+    },
+    "docs/operations/dawnbreaker/EGRESS_RISK.md": {
+      "blob": "bbfc7ff875557e8c5bc1158812d7b6f77efa9b9c",
+      "sha256": "d76fd82c0de3554fcc2626d5bd320e232a8fa08719e6d459988c6f401aff77a6"
+    },
+    "docs/operations/dawnbreaker/EVIDENCE_INDEX.md": {
+      "blob": "b591c54640f626d57081da8ebea3b7c5827cfa96",
+      "sha256": "ef5c7e72989b36dfd70787f8d331f0643b1519f3df21ce7f7a23af24673c9036"
+    },
+    "docs/operations/dawnbreaker/HOMECOMING_GATES.md": {
+      "blob": "48654a3d84d59b860aaf9b1585a3a3ca657d8b10",
+      "sha256": "ad212eb37201e31b03bff86b69e5017781881188741502d8fe996e8a11943dc1"
+    },
+    "docs/operations/dawnbreaker/NIGHTFALL_PREFLIGHT.md": {
+      "blob": "717b3248c084bc2582c5e6af2911acefbba98627",
+      "sha256": "3e67023870db54d0db913e0260b4b33ec0b517d9581e4265afd63ccc7614b979"
+    },
+    "docs/operations/dawnbreaker/PRODUCTION_PIPELINE.md": {
+      "blob": "96fb70eb1436112e2deeaaec5a06ade59735586d",
+      "sha256": "188004b75a9ef870dcc27e80cb85bd7f934a5c370c53c5819f1df6ced67cf16f"
+    },
+    "docs/operations/dawnbreaker/README.md": {
+      "blob": "6e7cc98ea32b0755dde7bd3123a7d3799b898d57",
+      "sha256": "b1be5f4d7967a0afcac024c53e217e75601b65f886397f1b7c60e04f18dcf6cf"
+    },
+    "docs/operations/dawnbreaker/RECOVERY_RUNBOOK.md": {
+      "blob": "e9ea4dd0f45faaf5979743b36d0e659a4eb271be",
+      "sha256": "7d0f2e8307aff422a210ca62b05a962b1cb0d67d8fd3e2e07c039244bd61031b"
+    },
+    "docs/operations/dawnbreaker/RESET_VERIFICATION.md": {
+      "blob": "6bf24496a9c10b4dcb09d8a808e0734c4e88de1d",
+      "sha256": "f7bdf712326545d64556c4a6bd2c98b360b3fb62f6c4253f0ecf5c7a7d55da04"
+    }
+  }
+}

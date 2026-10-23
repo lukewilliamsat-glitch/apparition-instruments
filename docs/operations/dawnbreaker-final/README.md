@@ -1,0 +1,11 @@
+# DAWNBREAKER final readiness — preparation only
+
+**PASS for Authorisation 46 documentation scope. Recovery Phase A remains ON HOLD; provider recovery UNKNOWN; public catalogue UNTESTED.** No A/B/C execution, backend request, browser/storefront visit, build or deployment occurred in this phase. The expected 24 October 2026 reset is not evidence that a new billing cycle has begun.
+
+Branch: `engineering/dawnbreaker-final-readiness`, based exactly on preserved DAWNBREAKER `542cc90cf9c301b4571d246ce9ae105bddefc2d0` / tree `c1e02d0a64f13692e577da2f1342f0dc65421c10`. This is the reviewed application/source checkpoint; application tests and browser execution are intentionally NOT RUN for a documentation-only phase. The final documentation commit/tree are reported in the ECLIPSE handover. SOURCE_INTEGRITY.json verifies all 908 inherited files and the original runbook remain unchanged.
+
+GitHub metadata refreshed at **2026-10-23T16:45:55.048Z**: main remains `2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f`; all 34 original branch checkpoints remain unchanged. Latest Pages run is still [39922853022](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/39922853022), scheduled 23 October 08:10:58 UTC, failed 08:11:13 UTC. Job metadata reconfirms product generation failed and upload/deployment were skipped. This is the same run recorded in the original DAWNBREAKER investigation, not a new failure since that checkpoint. No newer Pages run was observed. Global queued/in-progress run queries each returned zero at this observation.
+
+The actual production workflow still specifies daily `0 3 * * *`, despite its stale fifteen-minute comment. Possible background egress remains unquantified. No workflow was triggered, disabled, cancelled, rerun or edited by Phase III. Metadata snapshots expire as operational evidence; recheck under the next separately scoped authority.
+
+Use NEXT_DAY_CHECKLIST for decisions, PHASE_A_REPORT_TEMPLATE for the owner's future redacted facts, EGRESS_EXPOSURE for workflow/concurrency uncertainty, RELEASE_DEPENDENCIES for separate gates, and DECISION_LOG for exact source/evidence identities. Original [runbook](../dawnbreaker/RECOVERY_RUNBOOK.md), [reset criteria](../dawnbreaker/RESET_VERIFICATION.md) and [preflight](../dawnbreaker/NIGHTFALL_PREFLIGHT.md) remain authoritative and unmodified.
