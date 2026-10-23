@@ -1,0 +1,578 @@
+{
+  "schemaVersion": 1,
+  "mission": "AUTHORISATION 44 / RAVEN / BLACKWING",
+  "date": "2026-10-23",
+  "status": "PARTIAL",
+  "branch": "engineering/raven-blackwing-audit",
+  "baselineCommit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+  "baselineTree": "eb2c9f1824602d19ed27f010cf080190a06c713e",
+  "authority": {
+    "implementation": "AUDIT ONLY",
+    "production": false,
+    "backend": false,
+    "deployment": false,
+    "workflowTriggered": false,
+    "phaseA": "ON HOLD",
+    "providerRecovery": "UNKNOWN",
+    "publicCatalogue": "UNTESTED"
+  },
+  "freshChecks": {
+    "type": "source-only",
+    "runtime": "Python 3.12.14; existing Pillow image metadata reader",
+    "applicationModulesExecuted": 0,
+    "applicationFixturesOpened": 0,
+    "browserJourneys": "NOT TESTED",
+    "chromeExecutable": "not found in checked runtime locations",
+    "networkNamespace": "unshare -n -- true: Operation not permitted",
+    "baselineFiles": 899,
+    "coreHTMLPages": 22,
+    "nonAdminIndexPagesCounted": 80,
+    "coreDuplicateIDs": 0,
+    "coreUnlabelledStaticFields": 0,
+    "coreH1Exception": "products/index.html is dynamic shell with no initial H1",
+    "productSnapshots": 9,
+    "genericDescriptions": 8,
+    "physicalSections": 0,
+    "installationSections": 0,
+    "includedSections": 0,
+    "qcSections": 0,
+    "toleranceTextSnapshots": 5,
+    "photoElements": 4,
+    "photoPathsPresentInGit": 0,
+    "contrastAgainst171a17": {
+      "e8e2d4": 13.589,
+      "b4b3a6": 8.307,
+      "c4a66a": 7.53,
+      "separator42463d": 1.818
+    }
+  },
+  "assets": [
+    {
+      "path": "dist/assets/apparition-logo.png",
+      "bytes": 2201238,
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "dist/assets/angel.png",
+      "bytes": 4233738,
+      "width": 1365,
+      "height": 2048
+    },
+    {
+      "path": "dist/assets/the-violinist.png",
+      "bytes": 2299680,
+      "width": 1024,
+      "height": 1536
+    },
+    {
+      "path": "dist/assets/les-paul-modern.png",
+      "bytes": 1669102,
+      "width": 1584,
+      "height": 2048
+    },
+    {
+      "path": "dist/assets/guitar.webp",
+      "bytes": 146330,
+      "width": 1536,
+      "height": 1024
+    }
+  ],
+  "historicalEvidence": {
+    "source": "4f09bd5b4d5109df6028a8dc0d00468512d9af1c",
+    "ciRun": 39583250290,
+    "testedApplication": "232017a80fd6c5f2a3083d99cd9f647d8f4db27e",
+    "chrome": "155.0.8059.84",
+    "node": "22.20.0",
+    "newRun": false,
+    "screenshotsReviewed": [
+      {
+        "file": "docs/engineering/spectre-hero-fix/SCREENSHOTS/before-390.png",
+        "width": 390,
+        "height": 900,
+        "bytes": 374663,
+        "sha256": "e35821dca53ae70d2bb362c44038419d24e9a74f25fab682fc5ce36ef1bd5c18"
+      },
+      {
+        "file": "docs/engineering/spectre-hero-fix/SCREENSHOTS/before-768.png",
+        "width": 768,
+        "height": 1024,
+        "bytes": 815822,
+        "sha256": "853867a5f8e12f6c5238e18f87f1a24cb40b3c93c2e95ebc405f970f8fa90ce7"
+      }
+    ],
+    "limitations": [
+      "Homepage only; fallback fonts; synthetic backend substitutions.",
+      "Wider screenshot bytes not recovered via tested connector; historical metrics inspected.",
+      "No fresh shopping, 200% text, screen-reader, physical-device or production acceptance."
+    ]
+  },
+  "findings": [
+    {
+      "id": "RAV01",
+      "rank": 1,
+      "priority": "P0",
+      "classification": "SOURCE_VERIFIED_CONDITIONAL_FAILURE",
+      "phase": "1",
+      "source": [
+        "dist/components/catalogue.mjs",
+        "dist/components/components.mjs",
+        "dist/products/app.mjs",
+        "dist/basket/basket.mjs",
+        "dist/checkout/checkout.mjs"
+      ],
+      "evidence": [
+        "E03"
+      ],
+      "problem": "Initial catalogue top-level await can reject before downstream page catches execute.",
+      "customerImpact": "Missing or unresolved purchasing-state feedback; basket/checkout content depends on successful module startup.",
+      "complexity": "M",
+      "dependencies": [
+        "Reviewed import/bootstrap boundary",
+        "Existing safely isolated fixture harness"
+      ],
+      "securityEgress": "Preserve fail-closed store/stock/server authority; no stale purchase or image-bearing fallback; no extra reads.",
+      "acceptance": [
+        "Initial 401/402/500/timeout/malformed response yields accessible unavailable state on each affected route.",
+        "Local basket intent preserved; safe navigation remains reachable.",
+        "Success and empty states work without new backend reads or production requests."
+      ],
+      "sourceCommit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f"
+    },
+    {
+      "id": "RAV02",
+      "rank": 2,
+      "priority": "P1",
+      "classification": "SOURCE_VERIFIED_CONTENT_CONTRADICTION",
+      "phase": "1",
+      "source": [
+        "dist/faq/index.html",
+        "dist/components/index.html",
+        "dist/basket/index.html",
+        "dist/checkout/checkout.mjs"
+      ],
+      "evidence": [
+        "E04",
+        "E05"
+      ],
+      "problem": "FAQ says checkout/payment are not enabled while purchase surfaces describe secure checkout.",
+      "customerImpact": "Conflicting ordering guidance undermines trust.",
+      "complexity": "S",
+      "dependencies": [
+        "Owner-approved capability/current-state wording"
+      ],
+      "securityEgress": "No assumption of current OPEN or provider recovery; no business-rule change.",
+      "acceptance": [
+        "Ordering copy agrees across FAQ/catalogue/basket/checkout.",
+        "Basket is not represented as an order; paid status remains independently confirmed.",
+        "No false permanent availability or unconditional disabled-checkout claim."
+      ],
+      "sourceCommit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f"
+    },
+    {
+      "id": "RAV03",
+      "rank": 3,
+      "priority": "P1",
+      "classification": "SOURCE_VERIFIED_SAVED_INTENT_FILTERING",
+      "phase": "2",
+      "source": [
+        "dist/commerce.mjs",
+        "dist/basket-ui.mjs",
+        "dist/basket/basket.mjs"
+      ],
+      "evidence": [
+        "E03",
+        "E04"
+      ],
+      "problem": "Absent catalogue SKU is filtered from readBasket and can be omitted by a later save.",
+      "customerImpact": "Saved selection disappears without a reason or explicit removal.",
+      "complexity": "M",
+      "dependencies": [
+        "Version-1 basket compatibility",
+        "Safe untrusted local-data validation"
+      ],
+      "securityEgress": "Unavailable entries cannot authorise checkout or trust stale prices; no private data lookup.",
+      "acceptance": [
+        "Missing SKU stays visibly unavailable through unrelated changes and reload.",
+        "Identity/quantity preserved safely until explicit removal.",
+        "Malformed data remains rejected and unknown SKU cannot be checked out."
+      ],
+      "sourceCommit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f"
+    },
+    {
+      "id": "RAV15",
+      "rank": 4,
+      "priority": "P1",
+      "classification": "LIKELY_CONCERN_FROM_SOURCE",
+      "phase": "2",
+      "source": [
+        "dist/checkout/checkout.mjs",
+        "dist/operations/public.mjs"
+      ],
+      "evidence": [
+        "E04",
+        "E12"
+      ],
+      "problem": "Store-status events replace checkout form without focus or shared submitting-state preservation.",
+      "customerImpact": "Focus/progress may disappear during an in-flight request; duplicate charging is not established.",
+      "complexity": "M",
+      "dependencies": [
+        "Delayed synthetic checkout response",
+        "Periodic store-status fixture"
+      ],
+      "securityEgress": "Preserve request identity/server repricing; no automatic payment retries.",
+      "acceptance": [
+        "Focused/submitting form survives unchanged status update coherently.",
+        "Availability changes announced and duplicate active submission prevented.",
+        "Cancel/error/slow response recovery works without a real session."
+      ],
+      "sourceCommit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f"
+    },
+    {
+      "id": "RAV04",
+      "rank": 5,
+      "priority": "P1",
+      "classification": "SOURCE_MEASURED_CONTENT_GAP_AND_RECOMMENDATION",
+      "phase": "3",
+      "source": [
+        "dist/products/ai-pot-ss-alphamini-a500k/index.html",
+        "dist/products/bleed-cap/index.html",
+        "dist/products/bleed-duncan/index.html",
+        "dist/products/bleed-premium/index.html",
+        "dist/products/bleed-prs/index.html",
+        "dist/products/cde-022/index.html",
+        "dist/products/pot-short-alpha-a/index.html",
+        "dist/products/pot-short-cts-a/index.html",
+        "dist/products/sbe-600/index.html",
+        "dist/products/model.mjs",
+        "dist/products/presentation.mjs"
+      ],
+      "evidence": [
+        "E02",
+        "E10"
+      ],
+      "problem": "Eight of nine committed snapshots have generic descriptions; optional physical/install/contents/QC sections are absent.",
+      "customerImpact": "Less practical information for evaluating fit and product differences.",
+      "complexity": "M",
+      "dependencies": [
+        "Owner/manufacturer evidence",
+        "Separate catalogue/content-edit authority"
+      ],
+      "securityEgress": "No invented specs, origin, measurements, certification or audible guarantees; live content unknown.",
+      "acceptance": [
+        "Every supported SKU reviewed for purpose, nominal values/tolerance, known dimensions, quantity and actual QC.",
+        "Unknown facts remain explicit/absent.",
+        "Structured, dynamic and static presentations agree on approved content."
+      ],
+      "sourceCommit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f"
+    },
+    {
+      "id": "RAV10",
+      "rank": 6,
+      "priority": "P1",
+      "classification": "SOURCE_VERIFIED_HELP_DESTINATION_GAP",
+      "phase": "3",
+      "source": [
+        "dist/products/presentation.mjs",
+        "dist/faq/index.html",
+        "dist/terms/index.html"
+      ],
+      "evidence": [
+        "E05",
+        "E10"
+      ],
+      "problem": "Product delivery-help link targets FAQ with no delivery answers.",
+      "customerImpact": "Additional effort to find purchase reassurance.",
+      "complexity": "S",
+      "dependencies": [
+        "Owner-approved delivery/returns/support facts"
+      ],
+      "securityEgress": "Current delivery charges remain authoritative at checkout; no legal-compliance judgement or invented promise.",
+      "acceptance": [
+        "Delivery-help destination contains relevant approved answers and policy links.",
+        "No guessed charges, lead time or free-delivery promise."
+      ],
+      "sourceCommit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f"
+    },
+    {
+      "id": "RAV06",
+      "rank": 7,
+      "priority": "P1",
+      "classification": "SOURCE_VERIFIED_UNCERTAIN_STATE_LABEL",
+      "phase": "2",
+      "source": [
+        "dist/contact/contact.mjs",
+        "dist/contact/index.html"
+      ],
+      "evidence": [
+        "E12"
+      ],
+      "problem": "Uncertain submission disables button but leaves its Sending enquiry label.",
+      "customerImpact": "Settled uncertainty looks like ongoing activity despite the notice.",
+      "complexity": "S/M",
+      "dependencies": [
+        "Approved recovery/support wording"
+      ],
+      "securityEgress": "Retain duplicate prevention and submission identity; no automatic resend.",
+      "acceptance": [
+        "Lost response leaves text retained and outcome clearly uncertain.",
+        "Notice/control do not claim sending or success.",
+        "Sent/failed/invalid/rate-limited outcomes remain distinct without extra POST."
+      ],
+      "sourceCommit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f"
+    },
+    {
+      "id": "RAV08",
+      "rank": 8,
+      "priority": "P1",
+      "classification": "HISTORICAL_VERIFIED_DEFECT_AND_FRESH_TEST_GAP",
+      "phase": "4",
+      "source": [
+        "dist/customer-ui.css",
+        "dist/brand.css",
+        "dist/site.mjs"
+      ],
+      "evidence": [
+        "E06",
+        "E07",
+        "E11"
+      ],
+      "problem": "Historical unchanged header exceeds 320px document width at 150% text; fresh 200% shopping matrix unavailable.",
+      "customerImpact": "Potential navigation/action reachability and horizontal scrolling.",
+      "complexity": "M",
+      "dependencies": [
+        "Unchanged namespace isolation and disposable Chrome",
+        "Physical-device owner review"
+      ],
+      "securityEgress": "Do not weaken isolation or rewrite frozen SPECTRE hero correction.",
+      "acceptance": [
+        "Required five widths plus 320/150% regression and actual 200% text/layout pass.",
+        "Keyboard/focus/Escape, long content, reduced motion and action reachability measured."
+      ],
+      "sourceCommit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f"
+    },
+    {
+      "id": "RAV12",
+      "rank": 9,
+      "priority": "P1",
+      "classification": "SOURCE_AMBIGUITY_OWNER_DECISION",
+      "phase": "3",
+      "source": [
+        "dist/index.html",
+        "dist/products/presentation.mjs"
+      ],
+      "evidence": [
+        "E05",
+        "E10"
+      ],
+      "problem": "Broad assembly/testing wording may be read more broadly than product-specific practice.",
+      "customerImpact": "Unclear craftsmanship/testing scope; not a finding that claims are false.",
+      "complexity": "S",
+      "dependencies": [
+        "Owner confirmation of actual assembly/QC scope"
+      ],
+      "securityEgress": "Do not imply bought-in parts are UK-manufactured or invent certificates.",
+      "acceptance": [
+        "Each claim maps to confirmed practice/product scope.",
+        "Nominal, tolerance and measured values distinguished."
+      ],
+      "sourceCommit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f"
+    },
+    {
+      "id": "RAV07",
+      "rank": 10,
+      "priority": "P1",
+      "classification": "MEASURED_ASSET_SIZE_WITH_UNMEASURED_SPEED_IMPACT",
+      "phase": "4",
+      "source": [
+        "dist/assets/apparition-logo.png",
+        "dist/index.html",
+        "scripts/navigation.json"
+      ],
+      "evidence": [
+        "E08"
+      ],
+      "problem": "Shared 2048-square logo PNG is 2201238 bytes for a small display role.",
+      "customerImpact": "Potential static delivery/decode overhead; browser performance unmeasured.",
+      "complexity": "S/M",
+      "dependencies": [
+        "Approved derivative-asset scope",
+        "Original retention and visual review"
+      ],
+      "securityEgress": "Static-host bytes are not billed Supabase traffic; same URL twice does not prove two transfers.",
+      "acceptance": [
+        "Smaller measured display variants meet agreed dimensions/byte/quality budget.",
+        "Transparency, geometry and readability preserved.",
+        "Safe browser measures caching, transfer and layout across required widths."
+      ],
+      "sourceCommit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f"
+    },
+    {
+      "id": "RAV11",
+      "rank": 11,
+      "priority": "P2",
+      "classification": "SOURCE_DISCOVERY_GAP_AND_OPTIONAL_ENHANCEMENT",
+      "phase": "5",
+      "source": [
+        "dist/components/index.html",
+        "dist/components/potentiometers/index.html",
+        "dist/components/components.mjs"
+      ],
+      "evidence": [
+        "E02",
+        "E03"
+      ],
+      "problem": "Type choices omit Mini; text search and sorting are absent.",
+      "customerImpact": "Limited discovery controls; no evidence of a critical search blocker at current source size.",
+      "complexity": "S/M",
+      "dependencies": [
+        "Canonical option/spec labels",
+        "Owner discovery requirements"
+      ],
+      "securityEgress": "Filter locally; no query per keystroke or full-image expedient.",
+      "acceptance": [
+        "Mini/Standard/Push-pull and long-name fixtures remain discoverable.",
+        "Filter/count/empty state consistent.",
+        "Optional search/sort accessible, deterministic and read-neutral."
+      ],
+      "sourceCommit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f"
+    },
+    {
+      "id": "RAV13",
+      "rank": 12,
+      "priority": "P2",
+      "classification": "SOURCE_MAINTENANCE_RECOMMENDATION",
+      "phase": "5",
+      "source": [
+        "dist/style.css",
+        "dist/brand.css",
+        "dist/customer-ui.css",
+        "dist/homepage.css"
+      ],
+      "evidence": [
+        "E06",
+        "E08"
+      ],
+      "problem": "Layered selector ownership and external font dependency complicate parity/change review.",
+      "customerImpact": "Potential regression/fallback risk, not universal observed layout failure.",
+      "complexity": "M",
+      "dependencies": [
+        "Style ownership inventory",
+        "Licensing decision for any font delivery change"
+      ],
+      "securityEgress": "No new external dependency/framework replacement or frozen-fix rewrite.",
+      "acceptance": [
+        "Selector ownership documented and customer/technical surfaces preserved.",
+        "Fallback/delayed font/reduced-motion checks pass.",
+        "Font changes explicitly licensed and measured."
+      ],
+      "sourceCommit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f"
+    },
+    {
+      "id": "RAV14",
+      "rank": 13,
+      "priority": "P2",
+      "classification": "OPTIONAL_PRODUCT_IMAGERY_RECOMMENDATION",
+      "phase": "5",
+      "source": [
+        "dist/products/app.mjs",
+        "dist/products/product.css",
+        "scripts/generate-product-pages.mjs"
+      ],
+      "evidence": [
+        "E10",
+        "E14"
+      ],
+      "problem": "Single image/fallback contract may limit physical fit inspection; actual live photo quality unknown.",
+      "customerImpact": "Potentially fewer visual cues for markings/scale/fit.",
+      "complexity": "M/L",
+      "dependencies": [
+        "Original owner-approved photos",
+        "Explicit NIGHTFALL contract extension if multiple images"
+      ],
+      "securityEgress": "No generated substitutes, eager gallery, real-image capture or verification bypass.",
+      "acceptance": [
+        "Technical part identity/markings preserved.",
+        "Keyboard/zoom/touch/alt and byte budgets measured.",
+        "Any multiple-image model preserves provenance, verification and retention."
+      ],
+      "sourceCommit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f"
+    },
+    {
+      "id": "RAV05",
+      "rank": null,
+      "priority": "P1",
+      "classification": "EXISTING_FIX_RELEASE_BLOCKED",
+      "phase": "separate HOMECOMING release",
+      "source": [
+        "dist/customer-ui.css"
+      ],
+      "evidence": [
+        "E07",
+        "E14"
+      ],
+      "problem": "Known wide hero layout defect in unchanged main; isolated correction already exists.",
+      "customerImpact": "Heading collapses at wide viewports.",
+      "complexity": "code complete; release L",
+      "dependencies": [
+        "Complete authentic active payload/inventory/association",
+        "Durable complete rollback",
+        "Tested publication-only route",
+        "Separate owner release approval"
+      ],
+      "securityEgress": "No main push, backend-dependent build or frozen-fix rewrite.",
+      "acceptance": [
+        "Existing exact reviewed CSS correction released only after HOMECOMING gates.",
+        "Bounded responsive/live acceptance and complete-payload rollback proven."
+      ],
+      "sourceCommit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+      "existingFixCommit": "ee2ca60616c61304d26b7a2f7b9ff04555337cd0",
+      "existingEvidenceCommit": "4f09bd5b4d5109df6028a8dc0d00468512d9af1c"
+    },
+    {
+      "id": "RAV09",
+      "rank": null,
+      "priority": "P1",
+      "classification": "EXISTING_ISOLATED_SOLUTION_INTEGRATION_GATED",
+      "phase": "separate NIGHTFALL integration",
+      "source": [
+        "dist/backend/image-delivery-config.mjs",
+        "dist/backend/catalogue-image-delivery.mjs"
+      ],
+      "evidence": [
+        "E09",
+        "E14"
+      ],
+      "problem": "Main still carries embedded images; NIGHTFALL solution remains disabled/unintegrated.",
+      "customerImpact": "Potential unnecessary data/decode load.",
+      "complexity": "L integration",
+      "dependencies": [
+        "Owner-confirmed recovery",
+        "Separate compatibility approvals",
+        "Real inventory/capture",
+        "Trusted publisher/archive/host",
+        "Complete payload/rollback",
+        "Activation approval"
+      ],
+      "securityEgress": "Phase A HOLD; no B/C, image retrieval, publication, activation or billed-savings extrapolation.",
+      "acceptance": [
+        "NIGHTFALL's documented production gates satisfied in separate missions.",
+        "No image-bearing fallback or unverified asset display."
+      ],
+      "sourceCommit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+      "existingCandidateCommit": "c3003c6a56075964f5036ea57507aed8f431b64e"
+    }
+  ],
+  "firstProposedImplementation": [
+    "RAV01",
+    "RAV02"
+  ],
+  "freshRequiredWidths": [
+    390,
+    768,
+    1024,
+    1440,
+    1920
+  ],
+  "nextPhaseAutomaticallyAuthorised": false
+}
