@@ -1,7 +1,7 @@
 import {generatorURL,installationGuideURL} from './wiring-generator/session.mjs';
 import {productById,money} from './components/catalogue.mjs';
 import {specLabels} from './les-paul-kits/config.mjs';
-import {basketCount} from './commerce.mjs';
+import {basketCount,hasUnavailableItems} from './commerce.mjs';
 import {deploymentPath} from './deployment.mjs';
 export function el(tag,cls,text){const node=document.createElement(tag);if(cls)node.className=cls;if(text!==undefined)node.textContent=text;return node;}
 export function link(text,href,cls='text-link'){const a=el('a',cls,text);a.href=deploymentPath(href);return a;}
@@ -9,6 +9,12 @@ export function emptyBasket(){const box=el('section','empty-basket');box.append(
 export function itemCard(item,{editable=false,onQuantity,onRemove}={}){
  const product=item.product==='component'?productById(item.sku):null;
  const article=el('article','basket-item');article.dataset.itemId=item.id;
+ if(item.product==='component'&&!product){
+  article.dataset.unavailable='true';article.append(el('h2','','Unavailable component'));
+  const note=el('p','status-message','This saved component cannot currently be checked against the catalogue. Your selection is retained; no price, stock or reservation is assumed.');note.setAttribute('role','status');article.append(note);
+  const details=el('dl','basket-specs');for(const [label,value]of [['Saved reference',item.sku],['Saved quantity',String(item.quantity)]]){const row=el('div');row.append(el('dt','',label),el('dd','',value));details.append(row);}article.append(details);
+  if(editable){const actions=el('div','basket-actions'),remove=el('button','','Remove unavailable item');remove.type='button';remove.setAttribute('aria-label','Remove unavailable component '+item.sku);remove.addEventListener('click',()=>onRemove(item.id));actions.append(remove);article.append(actions);}return article;
+ }
  const header=el('div','basket-item-header');header.append(el('h2','',product?product.name:(item.record.kitName||'Les Paul Style Wiring Kit')),el('span','item-price',money((product?product.price:item.record.pricing.total)*item.quantity)));article.append(header);
  const dl=el('dl','basket-specs');
  for(const [key,value] of Object.entries(product?{...product.specs,'Unit price':money(product.price)}:item.record.specification)){const row=el('div');row.append(el('dt','',product?key:specLabels[key]),el('dd','',value));dl.append(row);}
@@ -21,6 +27,7 @@ export function itemCard(item,{editable=false,onQuantity,onRemove}={}){
 }
 export function totalCard(items,checkout=false,shipping=null,store=globalThis.window?.apparitionStoreState){
  const box=el('aside',`basket-total${checkout?' checkout-total':''}`);box.setAttribute('aria-label','Basket summary');box.append(el('p','eyebrow','THE COMPLETE PICTURE'),el('h2','','Your basket summary'));
+ if(hasUnavailableItems(items)){const note=el('p','','Some saved items are temporarily unavailable. Remove those items deliberately or return later before checkout. Your selections stay saved; a complete checkout total cannot be confirmed.');note.setAttribute('role','status');box.append(el('p','','Saved quantity: '+basketCount(items)),note,link(checkout?'Return to your basket':'Continue exploring',checkout?'/basket/':'/components/'));return box;}
  const count=basketCount(items),parts=items.filter(x=>x.product==='component'),kits=items.filter(x=>x.product==='les-paul'),partTotal=parts.reduce((sum,x)=>sum+productById(x.sku).price*x.quantity,0),kitTotal=kits.reduce((sum,x)=>sum+x.record.pricing.total*x.quantity,0),subtotal=partTotal+kitTotal,delivery=checkout&&shipping?(subtotal>=shipping.free_delivery_threshold_pence?0:shipping.standard_delivery_pence):null,lines=[['Items',String(count)],...(parts.length?[['Components',money(partTotal)]]:[]),...(kits.length?[['Configured wiring kits',money(kitTotal)]]:[]),['Basket subtotal',money(subtotal)],['Delivery',delivery===null?'Calculated at checkout':delivery===0?'FREE':money(delivery)],...(delivery!==null?[['Estimated payable total',money(subtotal+delivery)]]:[])];
  lines.forEach(([label,value])=>{const row=el('div','total-line');row.append(el('span','',label),el('span','',value));box.append(row);});
  box.append(el('p','',checkout?'The final amount is verified on the server before Stripe checkout. Your order remains Pending and Unpaid until payment is independently confirmed.':'Your selections are saved in this browser; they are not an order or a stock reservation. Checkout is available only when current prices, stock and delivery charges can be checked. Editing a kit applies current options and prices.'));

@@ -1,4 +1,4 @@
-import {readBasket,resetBasket} from '../commerce.mjs';
+import {readBasket,resetBasket,hasUnavailableItems} from '../commerce.mjs';
 import {el,itemCard,totalCard,emptyBasket,errorBasket} from '../basket-ui.mjs';
 import {createSecureCheckoutRepository} from '../backend/order-data.mjs';
 import {publicBackendConfig} from '../backend/public-config.mjs';
@@ -21,7 +21,7 @@ function orderForm(items){
  form.addEventListener('submit',async event=>{event.preventDefault();if(button.disabled)return;button.disabled=true;status.textContent='Preparing secure checkout…';
   try{
    if(window.apparitionStoreState?.state!=='OPEN')throw new Error(window.apparitionStoreState?.customer_message||'Checkout availability could not be checked. Please retry shortly.');
-   const current=readBasket();if(JSON.stringify(current)!==JSON.stringify(items))throw new Error('Your basket changed. Review it and reload before submitting.');
+   const current=readBasket();if(hasUnavailableItems(current))throw new Error('Some saved items are unavailable. Review your basket before checkout.');if(JSON.stringify(current)!==JSON.stringify(items))throw new Error('Your basket changed. Review it and reload before submitting.');
    const {data:session,error:sessionError}=await customerAuth.getSession();
    if(sessionError)throw new Error('Your account session could not be checked. Please reload and try again.');
    const result=await repository.create({requestId,items:current.map(item=>item.product==='component'?{product:'component',sku:item.sku,quantity:item.quantity}:{product:item.product,quantity:item.quantity,record:item.record})},{accessToken:session?.session?.access_token||null});
@@ -36,6 +36,7 @@ function render(){try{
  if(outcome==='cancel')content.append(el('p','status-message','Checkout was cancelled. Your basket is still here; your Order remains Pending and Unpaid.'));
  if(!items.length){content.append(emptyBasket());return;}
  const layout=el('div','basket-layout'),list=el('div','basket-items');items.forEach(item=>list.append(itemCard(item)));layout.append(list,totalCard(items,true,shipping));content.append(layout);
+ if(hasUnavailableItems(items)){const note=el('p','status-message','Some saved items are unavailable. Review your basket before checkout.');note.setAttribute('role','alert');content.append(note);return;}
  if(items.some(item=>item.product==='les-paul'&&item.record?.legacyReconstructed)){content.append(el('p','status-message','Review and resave older kit configurations in the Builder before secure checkout.'));return;}
  if(!shipping){content.append(el('p','status-message','Loading current UK delivery pricing…'));return;}
  if(window.apparitionStoreState?.state!=='OPEN')return;
