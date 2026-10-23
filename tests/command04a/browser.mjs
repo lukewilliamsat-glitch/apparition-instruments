@@ -14,7 +14,7 @@ const allowed=new Set(['dist/admin/application.css','dist/admin/application.mjs'
  ...['schema.mjs','session.mjs','persistence.mjs','editor-view.mjs','editor.css'].map(p=>'prototypes/command02/'+p),
  ...['contracts.mjs','identity.mjs','bridge.mjs','fixture-wire.mjs','bridge.css','fixture-exit.html'].map(p=>'prototypes/command03/'+p),
  ...['index.html','entry.mjs','contract.mjs','server.mjs','wire.mjs'].map(p=>'prototypes/command04/'+p),
- ...['index.html','entry.mjs','compose.mjs','nocturne.css'].map(p=>'prototypes/command04a/'+p)]);
+ ...['index.html','entry.mjs','compose.mjs','nocturne.css','fixture-exit.html'].map(p=>'prototypes/command04a/'+p)]);
 let scaleCSS='';const requests=[],responses=[],errors=[],results=[],captures=[],observations=[],benchmarks=[];
 const server=createServer(async(req,res)=>{
  const path=new URL(req.url,'http://fixture.invalid').pathname.slice(1);

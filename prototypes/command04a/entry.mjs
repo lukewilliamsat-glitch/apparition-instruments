@@ -45,10 +45,10 @@ function render(){
  setText($('draft-context'),draft.baseline?draft.baseline.name:'Reading product…');
  $('editor-workspace').dataset.phase=draft.phase;
  const errors=Object.entries(draft.validation.errors),key=JSON.stringify(errors);
- $('validation-summary').hidden=errors.length===0;
+ if($('validation-summary').hidden!==(errors.length===0))$('validation-summary').hidden=errors.length===0;
  if(key!==lastValidation){lastValidation=key;const list=$('validation-links');list.replaceChildren();for(const [name,message]of errors){const li=document.createElement('li'),button=document.createElement('button');button.type='button';button.textContent=fields[name].label+': '+message;button.addEventListener('click',()=>{app.view.selectSection(fields[name].section);const control=$('editor-field-'+name);control.focus();control.scrollIntoView({block:'center',behavior:'auto'});});li.append(button);list.append(li);}}
  const guidance=draft.phase==='unknown'?'Save outcome unresolved. A response may have been lost after commitment. Check the outcome before retrying; review and discard stay blocked.':draft.phase==='checking'?'Checking the original operation. No new save is being submitted.':draft.phase==='saving'?'Saving the reviewed changes. Wait for confirmation before leaving.':draft.phase==='conflict'?'Revision conflict. Your draft is preserved. Compare the current values and reload before saving.':draft.phase==='saved'?(draft.dirty?'Submitted changes confirmed. Newer local edits remain unsaved.':'Save confirmed. The authority accepted the reviewed changes.'):draft.phase==='error'&&draft.operation===null?'Save or review failed. Read the authority message below before reviewing again.':'';
- $('outcome-guidance').hidden=!guidance;setText($('outcome-guidance'),guidance);$('outcome-guidance').dataset.tone=draft.phase;
+ if($('outcome-guidance').hidden!==!guidance)$('outcome-guidance').hidden=!guidance;setText($('outcome-guidance'),guidance);$('outcome-guidance').dataset.tone=draft.phase;
  for(const table of document.querySelectorAll('.review-table,.conflict-table')){
   const labels=[...table.querySelectorAll('thead th')].map(th=>th.textContent);
   for(const th of table.querySelectorAll('thead th'))th.scope='col';

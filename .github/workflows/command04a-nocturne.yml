@@ -10,7 +10,7 @@ permissions:
   contents: read
 concurrency:
   group: command04a-nocturne
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   acceptance:
     if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/command04a-nocturne'
