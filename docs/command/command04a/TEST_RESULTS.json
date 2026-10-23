@@ -1,0 +1,1360 @@
+{
+  "mission": "Authorisation 41 \u2014 COMMAND 04A \u2014 NOCTURNE",
+  "date": "2026-10-23",
+  "status": "PASS \u2014 isolated automated acceptance; owner design approval pending",
+  "repository": "lukewilliamsat-glitch/apparition-instruments",
+  "branch": "engineering/command04a-nocturne",
+  "base": {
+    "commit": "20002c45933a7f24b08f6d5f0199a7fc8fa1a282",
+    "tree": "e7025f7ee95eb4389910848dc66122e53ce37dfb"
+  },
+  "testedSource": {
+    "commit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+    "tree": "7a0ff98a10165b113e09cf9341d1fbe02d8f8bd1",
+    "manifest": {
+      ".github/workflows/command04a-nocturne.yml": {
+        "gitBlob": "4bdbda4a72d4f152d866d36f34354657df5f6052",
+        "sha256": "02388cb355a2d446fab17a478bc7b2b857ff3aeea1f6664a234686285167c1fc",
+        "bytes": 7312
+      },
+      "prototypes/command04a/compose.mjs": {
+        "gitBlob": "6b594fe817c6ddad81ad1b5ad36bc7d0eb4973ba",
+        "sha256": "57c4fb57991865ade35a5e0bbc69e3bdf6eeec9cd10a87ee9460c2ec2f9f15fe",
+        "bytes": 4503
+      },
+      "prototypes/command04a/entry.mjs": {
+        "gitBlob": "0ff4e4fbc283329b3f0d4445c36b77c52399417e",
+        "sha256": "c087214d8908aecdfe7ad9fbc6477e626f750433fd7272d7745a96b23c6d364a",
+        "bytes": 8835
+      },
+      "prototypes/command04a/fixture-exit.html": {
+        "gitBlob": "91a9843dbcdcf69997ca2ad3aaaff4808a56b316",
+        "sha256": "e894e8332b412f2d8f0439f9bf970bef8a3ab97bd260283b198ac2e1145cd06f",
+        "bytes": 242
+      },
+      "prototypes/command04a/index.html": {
+        "gitBlob": "c15fb22142a968113fc99d85a5d6356a6d0e0c81",
+        "sha256": "222d995e2f4c31fb175b8392ed5c2f000bd0245bcd9e557f2745e85860c63ae4",
+        "bytes": 10574
+      },
+      "prototypes/command04a/nocturne.css": {
+        "gitBlob": "e78eacb48a8501480d91aa7c9f1483ee72eb2bad",
+        "sha256": "cf9f3fe1c40030b763cf1084a098321571e36953f32fc84d1eb651e3da9127df",
+        "bytes": 19337
+      },
+      "tests/command04a/browser.mjs": {
+        "gitBlob": "df51408f6d42dbe0a2d4fa0c7842d20d3e9acbf3",
+        "sha256": "e3963b5f33ea74aa62bfc9ac1c1809149b6881fd00fd776710f44894fc3cd079",
+        "bytes": 24008
+      },
+      "tests/command04a/run-isolated.sh": {
+        "gitBlob": "ae1d60b77866051aef2e64aa6d894fefeb48fb82",
+        "sha256": "4618c3e4004596b96f4ab0b081db85bcdd482b4317e6a4834fb1a514a8f3a25e",
+        "bytes": 1812
+      },
+      "tests/command04a/source-integrity.py": {
+        "gitBlob": "145c60ffcf2ee0dc69334f1bc024c62226969897",
+        "sha256": "e722e892b1cf7038840a55ef70647dfeafb6d69caa3ba996e199d90e946e50d4",
+        "bytes": 2609
+      }
+    }
+  },
+  "ci": {
+    "run": 39930046308,
+    "job": 120335780760,
+    "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/39930046308",
+    "conclusion": "success",
+    "attempt": 1
+  },
+  "runtime": {
+    "node": "v22.20.0",
+    "chrome": "155.0.8059.39",
+    "controller": "playwright-core@1.56.1",
+    "browserProvenance": "Preinstalled GitHub-hosted Chrome; no independent browser binary signature claim"
+  },
+  "results": {
+    "inherited": {
+      "COMMAND01": {
+        "node": {
+          "passed": 42,
+          "total": 42
+        },
+        "chrome": {
+          "passed": 32,
+          "total": 32
+        }
+      },
+      "COMMAND02": {
+        "node": {
+          "passed": 54,
+          "total": 54
+        },
+        "chrome": {
+          "passed": 39,
+          "total": 39
+        }
+      },
+      "COMMAND03": {
+        "node": {
+          "passed": 59,
+          "total": 59
+        },
+        "chrome": {
+          "passed": 35,
+          "total": 35
+        }
+      },
+      "COMMAND04": {
+        "node": {
+          "passed": 64,
+          "total": 64
+        },
+        "chrome": {
+          "passed": 13,
+          "total": 13
+        }
+      }
+    },
+    "combinedNode": 219,
+    "inheritedChrome": 119,
+    "nocturneChrome": {
+      "passed": 47,
+      "total": 47,
+      "failed": 0,
+      "results": [
+        {
+          "mode": "before",
+          "name": "01-catalogue",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "before",
+          "name": "02-selected",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "before",
+          "name": "03-desktop-editor",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "before",
+          "name": "04-tablet-editor",
+          "width": 768,
+          "status": "PASS"
+        },
+        {
+          "mode": "before",
+          "name": "05-mobile-editor",
+          "width": 390,
+          "status": "PASS"
+        },
+        {
+          "mode": "before",
+          "name": "06-dirty-draft",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "before",
+          "name": "07-change-review",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "before",
+          "name": "08-validation",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "before",
+          "name": "09-saved",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "before",
+          "name": "10-conflict",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "before",
+          "name": "11-permission-denied",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "before",
+          "name": "12-session-expired",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "before",
+          "name": "13-uncertain",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "before",
+          "name": "14-auth-required",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "01-catalogue",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "02-selected",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "03-desktop-editor",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "04-tablet-editor",
+          "width": 768,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "05-mobile-editor",
+          "width": 390,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "06-dirty-draft",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "07-change-review",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "08-validation",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "09-saved",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "10-conflict",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "11-permission-denied",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "12-session-expired",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "13-uncertain",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "14-auth-required",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "responsive fields, sections and actions 390",
+          "width": 390,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "responsive fields, sections and actions 768",
+          "width": 768,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "responsive fields, sections and actions 1024",
+          "width": 1024,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "responsive fields, sections and actions 1440",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "responsive fields, sections and actions 1920",
+          "width": 1920,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "200 percent text, long values and reduced motion 390",
+          "width": 390,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "200 percent text, long values and reduced motion 1024",
+          "width": 1024,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "phone review and conflict comparisons remain readable",
+          "width": 390,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "keyboard tabs, visible focus, labels, error links and discard Escape",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "mobile catalogue shortcut preserves a dirty draft and search stays local",
+          "width": 390,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "unknown outcome stays unresolved, pending check, then same-operation commit",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "confirmed failure permits explicit review without false success",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "session concealment and original-owner draft recovery",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "read-only fields and denied access remain explicit",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "catalogue permission denial conceals protected records",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "fictional workload 14",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "fictional workload 100",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "after",
+          "name": "fictional workload 500",
+          "width": 1440,
+          "status": "PASS"
+        },
+        {
+          "mode": "evidence",
+          "name": "all required original PNGs retained for upload",
+          "status": "PASS",
+          "actual": 34,
+          "expected": 34
+        }
+      ]
+    },
+    "totalChromeGroups": 166,
+    "benchmarks": [
+      {
+        "fictionalProducts": 14,
+        "searchSequenceMs": 6.699999999953434,
+        "selectedId": "fx-pot-01",
+        "rows": 14,
+        "editingCatalogueReads": 0,
+        "editingRowMutations": 0,
+        "productionMeasurement": false
+      },
+      {
+        "fictionalProducts": 100,
+        "searchSequenceMs": 32.79999999993015,
+        "selectedId": "fx-pot-01",
+        "rows": 100,
+        "editingCatalogueReads": 0,
+        "editingRowMutations": 0,
+        "productionMeasurement": false
+      },
+      {
+        "fictionalProducts": 500,
+        "searchSequenceMs": 133.30000000004657,
+        "selectedId": "fx-pot-01",
+        "rows": 500,
+        "editingCatalogueReads": 0,
+        "editingRowMutations": 0,
+        "productionMeasurement": false
+      }
+    ]
+  },
+  "isolation": {
+    "status": "PASS",
+    "negativeControls": [
+      {
+        "name": "fetchIPv4",
+        "result": "blocked"
+      },
+      {
+        "name": "fetchIPv6",
+        "result": "blocked"
+      },
+      {
+        "name": "dns",
+        "result": "blocked"
+      },
+      {
+        "name": "image",
+        "result": "blocked"
+      },
+      {
+        "name": "redirect",
+        "result": "blocked"
+      },
+      {
+        "name": "websocket",
+        "result": "blocked"
+      },
+      {
+        "name": "script",
+        "result": "blocked"
+      },
+      {
+        "name": "worker",
+        "result": "blocked"
+      },
+      {
+        "name": "frame",
+        "result": "blocked"
+      },
+      {
+        "name": "navigation",
+        "result": "blocked"
+      }
+    ],
+    "processProof": {
+      "connections": [
+        {
+          "family": 2,
+          "destination": "192.0.2.1",
+          "errno": 101,
+          "blocked": true
+        },
+        {
+          "family": 10,
+          "destination": "2001:db8::1",
+          "errno": 101,
+          "blocked": true
+        }
+      ],
+      "childNamespace": "net:[4026532269]"
+    },
+    "namespace": "net:[4026532269]",
+    "sandbox": true,
+    "applicationFixturesOpenedBeforeGate": 0,
+    "applicationRequests": 1216,
+    "applicationOrigins": 1,
+    "externalApplicationRequests": 0,
+    "apiImageFontWebSocketRequests": 0,
+    "consoleOrPageErrors": []
+  },
+  "sourcePreservation": {
+    "inheritedBlobs": 993,
+    "beforeAndAfterEqual": true,
+    "allInheritedCOMMANDModulesTestsSQLAndScreenshotsUnchanged": true,
+    "existingWorkflowsChanged": false,
+    "main": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+    "mainTree": "eb2c9f1824602d19ed27f010cf080190a06c713e",
+    "all30PreexistingRemoteBranchHeadsUnchangedAtPostRunVerification": true
+  },
+  "artifact": {
+    "id": 12490998340,
+    "name": "command04a-nocturne-evidence",
+    "size_in_bytes": 4402591,
+    "url": "https://api.github.com/repos/lukewilliamsat-glitch/apparition-instruments/actions/artifacts/12490998340",
+    "archive_download_url": "https://api.github.com/repos/lukewilliamsat-glitch/apparition-instruments/actions/artifacts/12490998340/zip",
+    "expired": false,
+    "created_at": "2026-10-23T09:14:01Z",
+    "expires_at": "2026-11-22T09:14:00Z",
+    "updated_at": "2026-10-23T09:14:01Z",
+    "digest": "sha256:8a185092679e46110f066ef09e656ac44ef7214117b45e42f6bcbab3abde3fe7",
+    "workflow_run": {
+      "id": 39930046308,
+      "repository_id": 1383011149,
+      "head_repository_id": 1383011149,
+      "head_branch": "engineering/command04a-nocturne",
+      "head_sha": "1bbe60fd216a412eed7349c8d79acdd50a94931e"
+    },
+    "ownerReviewURL": "https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/39930046308/artifacts/12490998340",
+    "requestedRetentionDays": 30,
+    "verification": {
+      "status": "PASS",
+      "artifactId": 12490998340,
+      "archiveBytes": 4402591,
+      "archiveSHA256": "8a185092679e46110f066ef09e656ac44ef7214117b45e42f6bcbab3abde3fe7",
+      "exactFiles": 54,
+      "originalPNGs": 34,
+      "expiresAt": "2026-11-22T09:14:00Z",
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "tree": "7a0ff98a10165b113e09cf9341d1fbe02d8f8bd1",
+      "inheritedBlobs": 993,
+      "nodePassed": 219,
+      "inheritedChromePassed": 119,
+      "nocturneChromePassed": 47,
+      "isolationPassed": 10,
+      "originalContentsVerified": true,
+      "checks": [
+        "GitHub digest/byte length",
+        "ZIP CRC",
+        "safe unique unencrypted non-symlink paths",
+        "exact file allowlist",
+        "all 34 PNG hashes and lengths",
+        "full PNG decode/dimensions",
+        "source identity",
+        "before/after source equality",
+        "all suite statuses",
+        "loopback namespace/routes",
+        "no application API/image/font/WebSocket requests"
+      ],
+      "all34OriginalPNGsVisuallyReviewed": true
+    }
+  },
+  "screenshots": [
+    {
+      "file": "before-01-catalogue.png",
+      "scenario": "01-catalogue",
+      "mode": "before",
+      "bytes": 130600,
+      "sha256": "49a506de6d993a9094054ffee0a5c5bf9f9f2a6db6a514c27ec9f2ae1b77c12a",
+      "width": 1440,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "20002c45933a7f24b08f6d5f0199a7fc8fa1a282",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 0
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "before-02-selected.png",
+      "scenario": "02-selected",
+      "mode": "before",
+      "bytes": 186931,
+      "sha256": "22af3edffd200dd63c5b0f74e8bdc4302be5e188fe3e77b23f71c4ef75b9a788",
+      "width": 1440,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "20002c45933a7f24b08f6d5f0199a7fc8fa1a282",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 1065
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "before-03-desktop-editor.png",
+      "scenario": "03-desktop-editor",
+      "mode": "before",
+      "bytes": 176966,
+      "sha256": "f4c326466d5af173ac9d12597ba65ff10a80d6a37cdd6cc0d96d1f1fb78a55a6",
+      "width": 1440,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "20002c45933a7f24b08f6d5f0199a7fc8fa1a282",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 689
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "before-04-tablet-editor.png",
+      "scenario": "04-tablet-editor",
+      "mode": "before",
+      "bytes": 73908,
+      "sha256": "2f4479fdf0be415a44a222fcd730eda973eadc33ad2778102d98469ea0c3b279",
+      "width": 768,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "20002c45933a7f24b08f6d5f0199a7fc8fa1a282",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 2082
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "before-05-mobile-editor.png",
+      "scenario": "05-mobile-editor",
+      "mode": "before",
+      "bytes": 60241,
+      "sha256": "f271ada15cfc1a86708cea210874b2514dced0347acdc327c5a82f2e6cbf435a",
+      "width": 390,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "20002c45933a7f24b08f6d5f0199a7fc8fa1a282",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 3916
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "before-06-dirty-draft.png",
+      "scenario": "06-dirty-draft",
+      "mode": "before",
+      "bytes": 176455,
+      "sha256": "202f81d107af291f1712f13bb1beca4b8554fc1f011c02f736d6664e756f24bd",
+      "width": 1440,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "20002c45933a7f24b08f6d5f0199a7fc8fa1a282",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 689
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "before-07-change-review.png",
+      "scenario": "07-change-review",
+      "mode": "before",
+      "bytes": 140090,
+      "sha256": "92c906c5bceee7d36599ab49c0dcbdd97cd76eb80256b1ea5ad3027607c8dc23",
+      "width": 1440,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "20002c45933a7f24b08f6d5f0199a7fc8fa1a282",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 689
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "before-08-validation.png",
+      "scenario": "08-validation",
+      "mode": "before",
+      "bytes": 177527,
+      "sha256": "f340b756fc17b2afd44efe401b3e4ef1f3ae03ddbe77c6f739148be01e1d8cac",
+      "width": 1440,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "20002c45933a7f24b08f6d5f0199a7fc8fa1a282",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 689
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "before-09-saved.png",
+      "scenario": "09-saved",
+      "mode": "before",
+      "bytes": 179171,
+      "sha256": "059773bd63f0fa12537e48549aedeead3b7d10870b7460c0a9ff80fdb40b6981",
+      "width": 1440,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "20002c45933a7f24b08f6d5f0199a7fc8fa1a282",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 689
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "before-10-conflict.png",
+      "scenario": "10-conflict",
+      "mode": "before",
+      "bytes": 191900,
+      "sha256": "16b199b656f3635556e30c5ad76db3d1d1bb134025522c128717bd1cd1b94935",
+      "width": 1440,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "20002c45933a7f24b08f6d5f0199a7fc8fa1a282",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 805
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "before-11-permission-denied.png",
+      "scenario": "11-permission-denied",
+      "mode": "before",
+      "bytes": 141560,
+      "sha256": "700eeb16422ef863f9ad88560967b7065d71e323d5e02f9dae05e2681798eeb5",
+      "width": 1440,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "20002c45933a7f24b08f6d5f0199a7fc8fa1a282",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 0
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "before-12-session-expired.png",
+      "scenario": "12-session-expired",
+      "mode": "before",
+      "bytes": 26844,
+      "sha256": "be42e4626b424703880373489065cff164d99c08401cabd10c698b7b513239d9",
+      "width": 1440,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "20002c45933a7f24b08f6d5f0199a7fc8fa1a282",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 0
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "before-13-uncertain.png",
+      "scenario": "13-uncertain",
+      "mode": "before",
+      "bytes": 178060,
+      "sha256": "e2bf566c4a38bc0730462917b10233573f931a230252a343c83ef27a4ba098fb",
+      "width": 1440,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "20002c45933a7f24b08f6d5f0199a7fc8fa1a282",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 689
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "before-14-auth-required.png",
+      "scenario": "14-auth-required",
+      "mode": "before",
+      "bytes": 27727,
+      "sha256": "0a3ceda655a73d5f68ea9d1b7a88d7acd114be00945d9730dfb1b3c69e667d82",
+      "width": 1440,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "20002c45933a7f24b08f6d5f0199a7fc8fa1a282",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 0
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "after-01-catalogue.png",
+      "scenario": "01-catalogue",
+      "mode": "after",
+      "bytes": 144881,
+      "sha256": "4364d2abfffb432fbeb4a5ec065ab8bdbfd36511b68ec4c6edaa17c3463c7bf9",
+      "width": 1440,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 0
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "after-02-selected.png",
+      "scenario": "02-selected",
+      "mode": "after",
+      "bytes": 194671,
+      "sha256": "0593b903ad8b1623952380695422e537fbace01875ab16022aee1c4c33f135d1",
+      "width": 1440,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 1214
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "after-03-desktop-editor.png",
+      "scenario": "03-desktop-editor",
+      "mode": "after",
+      "bytes": 186451,
+      "sha256": "00f53b5e6b3ae9070ad9d46b8e0cffcb64780c7e1fa5f767a347f0a4f58161b5",
+      "width": 1440,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 464
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "after-04-tablet-editor.png",
+      "scenario": "04-tablet-editor",
+      "mode": "after",
+      "bytes": 86896,
+      "sha256": "a1e01fe5a0060899a1d148cab062b16bf7c1ea759b0ed0e861073d8ea115d912",
+      "width": 768,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 690
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "after-05-mobile-editor.png",
+      "scenario": "05-mobile-editor",
+      "mode": "after",
+      "bytes": 73569,
+      "sha256": "4919850639550e5d4f4ffc8d1a1c10f46113817186191a91b85bd6268ba24362",
+      "width": 390,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 882
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "after-06-dirty-draft.png",
+      "scenario": "06-dirty-draft",
+      "mode": "after",
+      "bytes": 180722,
+      "sha256": "40004e42dec1cbd0675bf28021928dfc03701f545cd41c76d94d37e6b6b9ba3b",
+      "width": 1440,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 464
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "after-07-change-review.png",
+      "scenario": "07-change-review",
+      "mode": "after",
+      "bytes": 142030,
+      "sha256": "7e75ee8c5e0da6691314d464cdc9cdd0faee876f3ec256000c0f8f7c988d7412",
+      "width": 1440,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 708
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "after-08-validation.png",
+      "scenario": "08-validation",
+      "mode": "after",
+      "bytes": 185652,
+      "sha256": "e8226a409c5efce8929362909e3c7a1b25462d329979db59e6f32c5afb0ea4db",
+      "width": 1440,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 464
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "after-09-saved.png",
+      "scenario": "09-saved",
+      "mode": "after",
+      "bytes": 186618,
+      "sha256": "6d7c67d5fa231f4ffbb9e85889b0e8b3327a4a68adf386a35b1f6f65aafb3bcb",
+      "width": 1440,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 708
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "after-10-conflict.png",
+      "scenario": "10-conflict",
+      "mode": "after",
+      "bytes": 170865,
+      "sha256": "28f52fd0582e8ed42cc49126e296df4a8a62ec393fd81b60e90617c33eeb744a",
+      "width": 1440,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 930
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "after-11-permission-denied.png",
+      "scenario": "11-permission-denied",
+      "mode": "after",
+      "bytes": 143349,
+      "sha256": "11ee429d22c17cb43e1e6850f0016b3da5c00544a1dce9e04366fc9344641bac",
+      "width": 1440,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 0
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "after-12-session-expired.png",
+      "scenario": "12-session-expired",
+      "mode": "after",
+      "bytes": 42725,
+      "sha256": "22a4649819c1e176e1ec1a02f0e8e4cf17ca7ae58bd70845ae99f463fb2067c8",
+      "width": 1440,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 0
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "after-13-uncertain.png",
+      "scenario": "13-uncertain",
+      "mode": "after",
+      "bytes": 193126,
+      "sha256": "c7c7999580fde8c8b58d32426763e017ff2e0beedaed8796e8d63895a42a6428",
+      "width": 1440,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 711
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "after-14-auth-required.png",
+      "scenario": "14-auth-required",
+      "mode": "after",
+      "bytes": 42844,
+      "sha256": "65d468da98880c58acc9dee093573c3eb1420d617063699ebf25f5cf513195fa",
+      "width": 1440,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 0
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "after-15-editor-1024.png",
+      "scenario": "15-editor-1024",
+      "mode": "after",
+      "bytes": 106449,
+      "sha256": "45978eb865ebdb09f8eed1b0608d670bb2d6bc3b2a5b225762f1aea0a8c81265",
+      "width": 1024,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 624
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "after-16-editor-1920.png",
+      "scenario": "16-editor-1920",
+      "mode": "after",
+      "bytes": 208927,
+      "sha256": "f2a58b339035ec26ad38665229c2d153403f1d29134fce853b095f34b5ed0e29",
+      "width": 1920,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 683
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "after-17-text-200-390.png",
+      "scenario": "17-text-200-390",
+      "mode": "after",
+      "bytes": 58817,
+      "sha256": "984f7a90df3be3204e38e152c73f0a6383334ee3eebd04ec16904c081992a3b1",
+      "width": 390,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 1009
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "after-18-text-200-1024.png",
+      "scenario": "18-text-200-1024",
+      "mode": "after",
+      "bytes": 110767,
+      "sha256": "b70c4ca6f8e2d92e627bcbc22bd49e3d311f68367c7774ceca250f8aacc5f1a0",
+      "width": 1024,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 1892
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "after-19-mobile-review.png",
+      "scenario": "19-mobile-review",
+      "mode": "after",
+      "bytes": 59661,
+      "sha256": "924cf699e2d5acb93e627458a8b658fa455d4835f5fe9b1735f94f1749508a38",
+      "width": 390,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 1009
+      },
+      "originalPNG": true
+    },
+    {
+      "file": "after-20-mobile-conflict.png",
+      "scenario": "20-mobile-conflict",
+      "mode": "after",
+      "bytes": 60539,
+      "sha256": "ca2f7c377f3c2adc6c9287a693309743ab95379a5374b866be2dad9ac86d58ea",
+      "width": 390,
+      "height": 1100,
+      "executionCommit": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "application": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+      "browser": "155.0.8059.39",
+      "node": "v22.20.0",
+      "scroll": {
+        "x": 0,
+        "y": 2007
+      },
+      "originalPNG": true
+    }
+  ],
+  "observations": [
+    {
+      "mode": "before",
+      "width": 1440,
+      "documentWidth": 1440,
+      "viewport": 1440,
+      "editor": {
+        "top": 93.59375,
+        "bottom": 961.453125,
+        "width": 655,
+        "overflow": "hidden"
+      },
+      "actions": {
+        "top": 904.453125,
+        "bottom": 944.453125,
+        "width": 136.890625,
+        "overflow": "visible"
+      },
+      "tabFont": "11px",
+      "identityFont": "10px"
+    },
+    {
+      "mode": "before",
+      "width": 768,
+      "documentWidth": 768,
+      "viewport": 768,
+      "editor": {
+        "top": 157.96875,
+        "bottom": 1008.9375,
+        "width": 724,
+        "overflow": "hidden"
+      },
+      "actions": {
+        "top": 951.9375,
+        "bottom": 991.9375,
+        "width": 136.890625,
+        "overflow": "visible"
+      },
+      "tabFont": "11px",
+      "identityFont": "10px"
+    },
+    {
+      "mode": "before",
+      "width": 390,
+      "documentWidth": 390,
+      "viewport": 390,
+      "editor": {
+        "top": 94.03125,
+        "bottom": 1120.90625,
+        "width": 358,
+        "overflow": "hidden"
+      },
+      "actions": {
+        "top": 1016.90625,
+        "bottom": 1056.90625,
+        "width": 328,
+        "overflow": "visible"
+      },
+      "tabFont": "11px",
+      "identityFont": "10px"
+    },
+    {
+      "kind": "navigation-clearance",
+      "display": "flex",
+      "position": "sticky",
+      "top": 200.890625,
+      "headerBottom": 144.390625,
+      "bottomConstraint": "auto"
+    },
+    {
+      "mode": "after",
+      "width": 1440,
+      "documentWidth": 1440,
+      "viewport": 1440,
+      "editor": {
+        "top": 192.4375,
+        "bottom": 1077.953125,
+        "width": 676.578125,
+        "overflow": "visible"
+      },
+      "actions": {
+        "top": 1016.953125,
+        "bottom": 1062.953125,
+        "width": 145.96875,
+        "overflow": "visible"
+      },
+      "tabFont": "13px",
+      "identityFont": "12px"
+    },
+    {
+      "mode": "after",
+      "width": 768,
+      "documentWidth": 768,
+      "viewport": 768,
+      "editor": {
+        "top": 191.84375,
+        "bottom": 1077.359375,
+        "width": 736,
+        "overflow": "visible"
+      },
+      "actions": {
+        "top": 1016.359375,
+        "bottom": 1062.359375,
+        "width": 145.96875,
+        "overflow": "visible"
+      },
+      "tabFont": "13px",
+      "identityFont": "12px"
+    },
+    {
+      "mode": "after",
+      "width": 390,
+      "documentWidth": 390,
+      "viewport": 390,
+      "editor": {
+        "top": 192.21875,
+        "bottom": 1364.359375,
+        "width": 358,
+        "overflow": "visible"
+      },
+      "actions": {
+        "top": 984,
+        "bottom": 1030,
+        "width": 358,
+        "overflow": "visible"
+      },
+      "tabFont": "13px",
+      "identityFont": "12px"
+    }
+  ],
+  "ownerDesignApproved": false,
+  "historicalPostgreSQL": {
+    "passed": 61,
+    "total": 61,
+    "run": 39788439046,
+    "reexecutedInNocturne": false,
+    "reason": "All original SQL/security modules remain byte-identical; no SQL execution authorised or performed in this presentation mission"
+  },
+  "productionServicesAccessed": [],
+  "productionChanges": [],
+  "deployments": 0,
+  "newPNGsCommittedToGit": 0,
+  "history": [
+    {
+      "run": 39926041094,
+      "source": "f802adbbca14c2b41baa6ba2ea0b0fb3d4bacf01",
+      "outcome": "success",
+      "scope": "14 baseline journeys before styling"
+    },
+    {
+      "run": 39927368511,
+      "source": "b77f2f9db7032d7467dcffa251afa8af141a1913",
+      "outcome": "cancelled",
+      "reason": "Presentation observer repeatedly wrote unchanged hidden attributes; corrected before replacement run"
+    },
+    {
+      "run": 39927766406,
+      "source": "ef38b2d293e9b14c3a9aaace1b8b3caeafcb31e8",
+      "outcome": "failure",
+      "reason": "Review Escape focus defect and pending-request test synchronisation; 32/34 PNGs; inherited acceptance passed"
+    },
+    {
+      "run": 39928631267,
+      "source": "fcb204002cbe354b63e88824216b36bbf48c16c2",
+      "outcome": "failure",
+      "reason": "46/47 new checks; capability-denial expectation did not match existing authorised-but-no-read contract; all 34 PNGs retained"
+    },
+    {
+      "run": 39929435984,
+      "source": "0e355a414263fd320bf2664c09f743268890a3b0",
+      "outcome": "failure",
+      "reason": "Navigation-clearance regression caught inherited bottom constraint on sticky sidebar; 33/34 PNGs; other functional checks passed"
+    }
+  ]
+}
