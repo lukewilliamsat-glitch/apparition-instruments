@@ -34,7 +34,7 @@ await mkdir(join(output,'SCREENSHOTS'),{recursive:true});
 const field=(p,name)=>p.locator('[name="'+name+'"]');
 const login=async p=>{await p.locator('#bridge-start').click();await p.locator('#bridge-protected').waitFor({state:'visible'});await p.waitForFunction(()=>window.command04.workbench.snapshot().status==='ready');};
 const select=async(p,id='fx-pot-01')=>{await p.locator('[data-product="'+id+'"]').click();await p.waitForFunction(id=>window.command04.workbench.snapshot().detail?.id===id,id);};
-const open=async p=>{await login(p);await select(p);await p.locator('[data-enter-editor]').click();await p.waitForFunction(()=>window.command04.editor.snapshot().phase==='editing');await p.locator('#editor-workspace').scrollIntoViewIfNeeded();};
+const open=async p=>{await login(p);await select(p);await p.locator('[data-enter-editor]').click();await p.waitForFunction(()=>window.command04.editor.snapshot().phase==='editing');await p.locator('#editor-workspace').evaluate(e=>e.scrollIntoView({block:'start',behavior:'auto'}));};
 const review=async p=>{await p.locator('#review-changes').click();await p.locator('#change-review').waitFor({state:'visible'});};
 const save=async p=>{await review(p);await p.locator('#save-fixture').click();await p.waitForFunction(()=>!['saving','review','reviewing'].includes(window.command04.editor.snapshot().phase));};
 async function shot(p,mode,name){
@@ -73,7 +73,7 @@ try{
   },width);
   for(const width of [390,1024])await test('after','200 percent text, long values and reduced motion '+width,async p=>{
    await open(p);await field(p,'name').fill('Workshop component with unusually long descriptive text '.repeat(5));await field(p,'sku').fill('LONG-COMPONENT-REFERENCE-'.repeat(3));await field(p,'description').fill('A long, unbroken technical reference: '+('ABCDEF'.repeat(600)));
-   scaleCSS=await p.evaluate(()=>[...document.querySelectorAll('body,body *')].map((e,i)=>{e.dataset.textScale=String(i);return '[data-text-scale="'+i+'"]{font-size:'+parseFloat(getComputedStyle(e).fontSize)*2+'px!important}';}).join('\n'));
+   scaleCSS='html{font-size:200%!important}\n'+await p.evaluate(()=>[...document.querySelectorAll('body,body *')].map((e,i)=>{e.dataset.textScale=String(i);return '[data-text-scale="'+i+'"]{font-size:'+parseFloat(getComputedStyle(e).fontSize)*2+'px!important}';}).join('\n'));
    await p.addStyleTag({url:origin+'/text-scale.css'});await noOverflow(p);await hit(p,'review-changes');await review(p);await noOverflow(p);await hit(p,'save-fixture');
    assert(await p.evaluate(()=>matchMedia('(prefers-reduced-motion: reduce)').matches));
    assert(await p.locator('#review-changes').evaluate(e=>getComputedStyle(e).transitionDuration.split(',').every(x=>parseFloat(x)===0)));

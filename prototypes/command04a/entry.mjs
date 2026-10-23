@@ -36,7 +36,8 @@ function render(){
  document.body.dataset.workspace=protectedVisible?'authorised':'locked';
  const open=draft.phase!=='closed';
  if(open&&!wasOpen){document.body.classList.remove('nocturne-browse');$('catalogue-toggle').setAttribute('aria-expanded','false');setText($('catalogue-toggle'),'Browse catalogue');}
- wasOpen=open;$('catalogue-toggle').hidden=!open;
+ const justOpened=open&&!wasOpen;wasOpen=open;$('catalogue-toggle').hidden=!open;
+ if(justOpened&&protectedVisible)$('editor-workspace').scrollIntoView({block:'start',behavior:'auto'});
  // Only generic guidance is rendered outside the protected subtree.
  let title='Authentication required',description='Start a fictional session to inspect the catalogue. Product data stays concealed until access is authorised.';
  if(session.status==='authorized'&&protectedVisible){title=session.capabilities.productWrite?'Preview session active':'Read-only access';description=session.capabilities.productWrite?'Synthetic catalogue · changes apply only to this temporary preview.':'This session can inspect products. Saving needs product write permission; local proposals remain unsaved.';}
