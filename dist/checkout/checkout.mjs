@@ -47,7 +47,7 @@ function orderForm(items){
    if(uncertain)button.textContent='Checkout outcome unconfirmed';
   }finally{
    submitting=false;updateAvailability();
-   if(queued&&!uncertain){queued=false;render();}
+   if(queued&&!uncertain){const feedback=status.textContent;queued=false;render();if(mounted&&feedback)mounted.status.textContent=feedback;}
    if(ownedFocus&&document.activeElement===document.body){const target=mounted?.button.disabled?mounted.status:mounted?.button;if(target){if(target!==mounted.button)target.tabIndex=-1;target.focus();}}
   }
  });return form;

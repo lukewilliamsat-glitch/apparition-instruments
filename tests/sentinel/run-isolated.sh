@@ -16,6 +16,8 @@ run_isolated tests/lighthouse/isolation.mjs "$output" "$browser" "$controller" "
 failed=0
 runuser -u "$owner" -- env -i HOME="$fixture_home" PATH="$(dirname "$node"):/usr/bin:/bin" LANG=C.UTF-8 TZ=UTC /usr/bin/python3 tests/lantern/run-offline.py "$output/OFFLINE_RESULTS.json" || failed=1
 run_isolated tests/lighthouse/regressions.mjs "$output" || failed=1
-run_isolated tests/sentinel/browser.mjs "$output" "$browser" "$controller" "$commit" --baseline-only || failed=1
+run_isolated tests/sentinel/regressions.mjs "$output" || failed=1
+run_isolated tests/lighthouse/browser.mjs "$output" "$browser" "$controller" "$commit" || failed=1
+run_isolated tests/sentinel/browser.mjs "$output" "$browser" "$controller" "$commit" || failed=1
 runuser -u "$owner" -- env -i HOME="$fixture_home" PATH=/usr/bin:/bin LANG=C.UTF-8 /usr/bin/python3 tests/sentinel/source-integrity.py "$output" "$commit" --after
 exit "$failed"
