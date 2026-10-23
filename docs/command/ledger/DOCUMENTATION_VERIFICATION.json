@@ -1,0 +1,277 @@
+{
+  "programme": "PROJECT LEDGER \u2014 inventory costing and sales profitability",
+  "ownerRequestDate": "2026-10-23",
+  "authority": "requirements and architecture only",
+  "status": "proposal recorded; implementation not authorised",
+  "branch": "engineering/command-ledger-requirements",
+  "baseCommit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+  "baseTree": "eb2c9f1824602d19ed27f010cf080190a06c713e",
+  "inheritedFiles": 899,
+  "unchangedInheritedFiles": 899,
+  "changedInheritedFiles": [],
+  "allowedAdditions": "docs/command/ledger/",
+  "reviewedSources": [
+    {
+      "commit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+      "path": "dist/backend/component-data.mjs",
+      "gitBlob": "a0bbf8f3c4a2301b8650ab7f95f813d925ffec8a",
+      "sha256": "cb6944833025bd38dc566a518ee81c6d4a861383ec3a8afef5dd19b1968ddc9b",
+      "review": "relevant source sections and contracts; not deployed verification",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f/dist/backend/component-data.mjs"
+    },
+    {
+      "commit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+      "path": "dist/backend/assembly-data.mjs",
+      "gitBlob": "26703305a27d9136c543e0a308bef1ec3300194c",
+      "sha256": "af746d5cb81b3579ee00e20c53efb1259f976de6fda0db9f4a20b97e97b345d1",
+      "review": "relevant source sections and contracts; not deployed verification",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f/dist/backend/assembly-data.mjs"
+    },
+    {
+      "commit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+      "path": "dist/backend/order-data.mjs",
+      "gitBlob": "2f1429e71c0ba3910602258c0d114e6938283986",
+      "sha256": "6e77043b3987dd4be6af00bf1af9c5db938b09530592e4105138b939a994998a",
+      "review": "relevant source sections and contracts; not deployed verification",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f/dist/backend/order-data.mjs"
+    },
+    {
+      "commit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+      "path": "dist/backend/providers.mjs",
+      "gitBlob": "b9078fa9e465c65bb21bd41f95f3ece6879904d0",
+      "sha256": "6cd3fcfea3d0ad7c798c90b11aaf2f5a190b7952d8b66690d24838adfc54d45a",
+      "review": "relevant source sections and contracts; not deployed verification",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f/dist/backend/providers.mjs"
+    },
+    {
+      "commit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+      "path": "dist/admin/orders/external-order.mjs",
+      "gitBlob": "3f52a2bf874469f0f04b45fb812265bc6d8b2fff",
+      "sha256": "00b4b4f374f1fd6e962a8cc50d2e3831e6fcf1e4d7a1d8fa11be34a18f0ec11e",
+      "review": "relevant source sections and contracts; not deployed verification",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f/dist/admin/orders/external-order.mjs"
+    },
+    {
+      "commit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+      "path": "dist/admin/admin-auth.mjs",
+      "gitBlob": "844ba8558afaea9a4004062ce9fa1508b0269689",
+      "sha256": "cdd57b1818ccee6ed096e91438c65fda1f02195506cfe6239893c93e4d469a6d",
+      "review": "relevant source sections and contracts; not deployed verification",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f/dist/admin/admin-auth.mjs"
+    },
+    {
+      "commit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+      "path": "dist/admin/admin-gate.mjs",
+      "gitBlob": "9941539063d29ee8695b8b18d3ac9735dec24c99",
+      "sha256": "e504323872f0546affcf599d8c159a82e2d1c2ff567cb80f74e9ffa42e77e77a",
+      "review": "relevant source sections and contracts; not deployed verification",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f/dist/admin/admin-gate.mjs"
+    },
+    {
+      "commit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+      "path": "supabase/migrations/20260924131615_p05a_backend_foundation.sql",
+      "gitBlob": "ca6d9820ba10ff96fd80593c3d84194164f86ec9",
+      "sha256": "2e3a893ea6297445186e0829a11663c4bd8e16ea1e33ab939ef88c3839278e63",
+      "review": "relevant source sections and contracts; not deployed verification",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f/supabase/migrations/20260924131615_p05a_backend_foundation.sql"
+    },
+    {
+      "commit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+      "path": "supabase/migrations/20260925083000_p07a_guest_orders.sql",
+      "gitBlob": "fcddf17c27c31e75f2bc2fb6ecc5be76b64f1e8f",
+      "sha256": "361677a9ed3ff06e8590e5fc07f0371c876b2985eaab5a997122e61b277d409c",
+      "review": "relevant source sections and contracts; not deployed verification",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f/supabase/migrations/20260925083000_p07a_guest_orders.sql"
+    },
+    {
+      "commit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+      "path": "supabase/migrations/20260925150000_p07b2a_paid_order_fulfilment.sql",
+      "gitBlob": "f7828a5f546abf74a4315790970973a29eff5a13",
+      "sha256": "c470d315741013a97c6f29cfd09f8dcd4d479c50c270ac0e4084449764d59714",
+      "review": "relevant source sections and contracts; not deployed verification",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f/supabase/migrations/20260925150000_p07b2a_paid_order_fulfilment.sql"
+    },
+    {
+      "commit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+      "path": "supabase/migrations/20260930114021_external_orders_v1.sql",
+      "gitBlob": "e7b289d0151dace2f6b2aea0909ee6df631e4aa0",
+      "sha256": "d5efb9dcc305b34e92736d89818b048b71f7c7639678b80d7e183f6cc7e2e772",
+      "review": "relevant source sections and contracts; not deployed verification",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f/supabase/migrations/20260930114021_external_orders_v1.sql"
+    },
+    {
+      "commit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+      "path": "supabase/migrations/20261008075917_external_order_editing_v1.sql",
+      "gitBlob": "7b691abf287cb53d691e04a77d8255d2cb31445d",
+      "sha256": "6edadffdc6a324e048bf85c5418ded41af2db4af280f4c74e7016943b090a550",
+      "review": "relevant source sections and contracts; not deployed verification",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f/supabase/migrations/20261008075917_external_order_editing_v1.sql"
+    },
+    {
+      "commit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+      "path": "supabase/migrations/20260926124503_p08a1_refund_lifecycle.sql",
+      "gitBlob": "b3a173c1d3b797ccb3b819c21f36ff72d9703877",
+      "sha256": "c00d51d0ee2a0f990b3428b26bd5875b79a5d1d89caa61d2a3d702918bb3584a",
+      "review": "relevant source sections and contracts; not deployed verification",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f/supabase/migrations/20260926124503_p08a1_refund_lifecycle.sql"
+    },
+    {
+      "commit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+      "path": "supabase/migrations/20261009110115_forge_instrument_workspace_v3.sql",
+      "gitBlob": "c890c5aa0b9d2e2b170cc966c914e0d06df29283",
+      "sha256": "e6cf59cc281d42563fb2f9fb09aea4bbe90d636ed5dbd9bbd92c21fc4f5c2fb2",
+      "review": "relevant source sections and contracts; not deployed verification",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f/supabase/migrations/20261009110115_forge_instrument_workspace_v3.sql"
+    },
+    {
+      "commit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+      "path": "docs/external-orders-v1.md",
+      "gitBlob": "5970a55b0f7bb6d72f27fa2820e7c9fccba37346",
+      "sha256": "313bb9a1c3fa5599df32ff52054ef7b0a4d636908dfb6e2f98286632d53d8533",
+      "review": "relevant source sections and contracts; not deployed verification",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f/docs/external-orders-v1.md"
+    },
+    {
+      "commit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+      "path": "docs/external-order-editing-v1.md",
+      "gitBlob": "cefd3247d907ebdbdc48730a60fa8f8da32c3c3e",
+      "sha256": "67995d7f8966ea43a385dbae64ff28374ccbd4405db2b489bbac8a4b6b3da2f9",
+      "review": "relevant source sections and contracts; not deployed verification",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f/docs/external-order-editing-v1.md"
+    },
+    {
+      "commit": "993108aa7d65ac204ef54a7018a85f5c783813fd",
+      "path": "docs/command/command01/DATA_CONTRACT.md",
+      "gitBlob": "77888f6abe69675baf76355cb6c25369f8aaaccf",
+      "sha256": "ce1ea52bb4518c8468abd7cd6a51d0a213fc3782374c7ff7142ac052b2b10307",
+      "review": "relevant source sections and contracts; not deployed verification",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/993108aa7d65ac204ef54a7018a85f5c783813fd/docs/command/command01/DATA_CONTRACT.md"
+    },
+    {
+      "commit": "993108aa7d65ac204ef54a7018a85f5c783813fd",
+      "path": "docs/command/command02/FIELD_AUTHORITY.md",
+      "gitBlob": "3baa404acf18b5a1edcbd50f71b35295aeb97a2c",
+      "sha256": "b577a2f1c05092e88e368cda4727e86f43258812a7946a968fa90d38cdd52bf5",
+      "review": "relevant source sections and contracts; not deployed verification",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/993108aa7d65ac204ef54a7018a85f5c783813fd/docs/command/command02/FIELD_AUTHORITY.md"
+    },
+    {
+      "commit": "993108aa7d65ac204ef54a7018a85f5c783813fd",
+      "path": "docs/command/command03/VERSIONING_AND_WRITES.md",
+      "gitBlob": "74510740c03b404ac08ef06f7585c2d072c3b06e",
+      "sha256": "918a7b90cec0b3a0f96e9d4afd270ab1b4d2d625fd2aa48b65d528e4ccf50b45",
+      "review": "relevant source sections and contracts; not deployed verification",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/993108aa7d65ac204ef54a7018a85f5c783813fd/docs/command/command03/VERSIONING_AND_WRITES.md"
+    },
+    {
+      "commit": "993108aa7d65ac204ef54a7018a85f5c783813fd",
+      "path": "prototypes/command03/bridge.mjs",
+      "gitBlob": "ac8437118d19e7b323cf2eea9711600265d5f057",
+      "sha256": "0e1eaecc3bab329d672cb21ed84bdf2825284dae1eb4ce3ab549ef0a89a3a76f",
+      "review": "relevant source sections and contracts; not deployed verification",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/993108aa7d65ac204ef54a7018a85f5c783813fd/prototypes/command03/bridge.mjs"
+    },
+    {
+      "commit": "993108aa7d65ac204ef54a7018a85f5c783813fd",
+      "path": "docs/command/command04a/RELEASE_GATES.md",
+      "gitBlob": "5e09a9c8481076142157f071a25048e3e192c8ed",
+      "sha256": "55d5f98b080d4d3c1841de5a849ee2633494b9c2866ed2733433f620a7fdf4f1",
+      "review": "relevant source sections and contracts; not deployed verification",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/993108aa7d65ac204ef54a7018a85f5c783813fd/docs/command/command04a/RELEASE_GATES.md"
+    },
+    {
+      "commit": "20002c45933a7f24b08f6d5f0199a7fc8fa1a282",
+      "path": "docs/command/command04/README.md",
+      "gitBlob": "bb69c514ccf4ac0a419aa9f42721b57ef8e9e614",
+      "sha256": "d0028ee3abb2af8afda03899db29d16b432336eed3497a425e0bf46c66591077",
+      "review": "relevant source sections and contracts; not deployed verification",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/20002c45933a7f24b08f6d5f0199a7fc8fa1a282/docs/command/command04/README.md"
+    },
+    {
+      "commit": "20002c45933a7f24b08f6d5f0199a7fc8fa1a282",
+      "path": "docs/command/command04/ACCEPTANCE.md",
+      "gitBlob": "abe4080096d34d01d30884e77ae4c96909307a33",
+      "sha256": "ba39ffd5af7e6da3fc4383dfcbfe1acd87203d19e7604bd10adade8d18ccce2b",
+      "review": "relevant source sections and contracts; not deployed verification",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/20002c45933a7f24b08f6d5f0199a7fc8fa1a282/docs/command/command04/ACCEPTANCE.md"
+    },
+    {
+      "commit": "20002c45933a7f24b08f6d5f0199a7fc8fa1a282",
+      "path": "prototypes/command04/contract.mjs",
+      "gitBlob": "4fecab48bc16047bc2f2e1507eee783a5bc972df",
+      "sha256": "d65a8394040d7c12bbb174607d58633822ff7cccd9f47ca899fad703ce8a6db8",
+      "review": "relevant source sections and contracts; not deployed verification",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/20002c45933a7f24b08f6d5f0199a7fc8fa1a282/prototypes/command04/contract.mjs"
+    },
+    {
+      "commit": "20002c45933a7f24b08f6d5f0199a7fc8fa1a282",
+      "path": "prototypes/command04/server.mjs",
+      "gitBlob": "91c4cb6d79bb43574ad593aedf447cbf740a968c",
+      "sha256": "4df4c92351be7275035f8ebe8bcef32207e26f5efca43023a8790381460b5dd7",
+      "review": "relevant source sections and contracts; not deployed verification",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/20002c45933a7f24b08f6d5f0199a7fc8fa1a282/prototypes/command04/server.mjs"
+    }
+  ],
+  "checks": {
+    "documentationLinks": "PASS",
+    "sourceBlobs": "PASS",
+    "fictionalWACExample": {
+      "status": "PASS",
+      "issueCostGBP": "16",
+      "closingQuantity": 37,
+      "closingValueGBP": "174",
+      "historicalIssueUnchanged": true
+    },
+    "fictionalOrderExample": {
+      "status": "PASS",
+      "customerPaymentGBP": "33",
+      "contributionGBP": "8",
+      "marketplacePayoutGBP": "28"
+    },
+    "scope": "Documentation integrity and fictional arithmetic only; not an implemented-system test"
+  },
+  "execution": {
+    "implementationStarted": false,
+    "applicationTestsRun": false,
+    "browserRun": false,
+    "SQLExecuted": false,
+    "SupabaseAccessed": false,
+    "marketplaceAccessed": false,
+    "financialRecordsReadOrChanged": false,
+    "workflowTriggered": false,
+    "deploymentExecuted": false
+  },
+  "recovery": {
+    "phaseA": "ON HOLD",
+    "providerRecovery": "UNKNOWN",
+    "publicCatalogue": "UNTESTED",
+    "phaseBExecuted": false,
+    "phaseCExecuted": false
+  },
+  "documents": {
+    "ARCHITECTURE.md": {
+      "bytes": 11201,
+      "sha256": "61c3e4da9e314245365d0aaea845b42350b4724f39e5f602c96631e188483c2f"
+    },
+    "FINANCIAL_RULES.md": {
+      "bytes": 14707,
+      "sha256": "507ebcdd6d30e4511a15820a59c14c9580fbe2ad04793348d7b08ab089b05dfd"
+    },
+    "IMPLEMENTATION_PHASES.md": {
+      "bytes": 7245,
+      "sha256": "0c3561232b71cb2c93672975eaf964dd2bd2abc473039578c20d48f51810f93f"
+    },
+    "README.md": {
+      "bytes": 5335,
+      "sha256": "e9ba6360cb9ae3081257981245d90bcf29fae86ec20ccdf702df0d6d8e677d00"
+    },
+    "SOURCE_REVIEW.md": {
+      "bytes": 9951,
+      "sha256": "8d118c0494455ffc7cba9d39c44117c3f2702f0cca3c52e9797b7f54c946c344"
+    },
+    "WORKFLOWS_AND_UI.md": {
+      "bytes": 15159,
+      "sha256": "6a38922a3ea9dec9199541bb3835ccb8bfa6cb43e7f3d5ba19a5a739bf3741bb"
+    }
+  }
+}
