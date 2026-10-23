@@ -21,7 +21,7 @@ export function createContactController({form,notice,success,request=globalThis.
  form.elements.orderReference?.addEventListener('input',()=>{if(contextReference&&form.elements.orderReference.value.toUpperCase()!==contextReference){contextReference='';const panel=form.querySelector('#order-context');if(panel)panel.hidden=true;}});
  async function submit(event){
   event.preventDefault();if(sending||settled||!form.reportValidity())return;
-  sending=true;button.disabled=true;button.textContent='Sending enquiry…';status('Sending your enquiry…','sending');
+  sending=true;button.disabled=true;form.setAttribute('aria-busy','true');button.textContent='Sending enquiry…';status('Sending your enquiry…','sending');
   const fields=new FormData(form);
   const body={submissionId,name:String(fields.get('name')||''),email:String(fields.get('email')||''),category:String(fields.get('category')||''),orderReference:String(fields.get('orderReference')||''),message:String(fields.get('message')||''),website:String(fields.get('website')||'')};
   const linked=contextReference&&body.orderReference.toUpperCase()===contextReference;
@@ -38,7 +38,7 @@ export function createContactController({form,notice,success,request=globalThis.
    else if(result.state==='failed'){status('Your enquiry could not be sent. Your message is still here so you can try again.','error');submissionId=id();}
    else{status('We could not confirm whether your enquiry arrived. Please avoid sending it again straight away.','uncertain');settled=true;}
   }catch{status('We could not confirm whether your enquiry arrived. Please avoid sending it again straight away.','uncertain');settled=true;}
-  finally{sending=false;if(!settled){button.disabled=false;button.textContent='Send enquiry';}}
+  finally{sending=false;form.setAttribute('aria-busy','false');if(!settled){button.disabled=false;button.textContent='Send enquiry';}else if(notice.dataset.state==='uncertain'){button.textContent='Delivery not confirmed';}}
  }
  form.addEventListener('submit',submit);
  return {submit,initialiseContext};
