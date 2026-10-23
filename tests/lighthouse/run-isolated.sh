@@ -13,7 +13,9 @@ cd "$root"
 run_isolated(){ runuser -u "$owner" -- env -i HOME="$fixture_home" TMPDIR="$fixture_home" PATH="$(dirname "$node"):/usr/bin:/bin" LANG=C.UTF-8 TZ=UTC "$node" "$@"; }
 # Exact frozen COMMAND negative controls; no application import before PASS.
 run_isolated tests/lighthouse/isolation.mjs "$output" "$browser" "$controller" "$parent_namespace" "$commit"
-runuser -u "$owner" -- env -i HOME="$fixture_home" PATH="$(dirname "$node"):/usr/bin:/bin" LANG=C.UTF-8 TZ=UTC /usr/bin/python3 tests/lantern/run-offline.py "$output/OFFLINE_RESULTS.json"
-run_isolated tests/lighthouse/regressions.mjs "$output"
-run_isolated tests/lighthouse/browser.mjs "$output" "$browser" "$controller" "$commit"
+failed=0
+runuser -u "$owner" -- env -i HOME="$fixture_home" PATH="$(dirname "$node"):/usr/bin:/bin" LANG=C.UTF-8 TZ=UTC /usr/bin/python3 tests/lantern/run-offline.py "$output/OFFLINE_RESULTS.json" || failed=1
+run_isolated tests/lighthouse/regressions.mjs "$output" || failed=1
+run_isolated tests/lighthouse/browser.mjs "$output" "$browser" "$controller" "$commit" || failed=1
 runuser -u "$owner" -- env -i HOME="$fixture_home" PATH=/usr/bin:/bin LANG=C.UTF-8 /usr/bin/python3 tests/lighthouse/source-integrity.py "$output" "$commit" --after
+exit "$failed"
