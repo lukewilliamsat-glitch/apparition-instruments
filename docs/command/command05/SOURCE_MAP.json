@@ -1,0 +1,26 @@
+[
+  {
+    "source": "prototypes/command01/model.mjs",
+    "target": "dist/admin/command/command01/model.mjs",
+    "sourceSHA256": "1d6efcc47242ec9829a2a9a270a71dff18293e044f35d65e400de2f27bac30ed",
+    "adoptedSHA256": "1d6efcc47242ec9829a2a9a270a71dff18293e044f35d65e400de2f27bac30ed"
+  },
+  {
+    "source": "prototypes/command01/controller.mjs",
+    "target": "dist/admin/command/command01/controller.mjs",
+    "sourceSHA256": "e406d20122c21aae765519b6937a6142bee3d565552269d47521d957c36b0e44",
+    "adoptedSHA256": "2c50b400ff4a8372b593a9c5253349d7ad8b03dbe10f8dad548b1068de61f0f1"
+  },
+  {
+    "source": "prototypes/command01/view.mjs",
+    "target": "dist/admin/command/command01/view.mjs",
+    "sourceSHA256": "56844dc7852e382648d22851b6fadddd459580676814e79970faaedcf5caf109",
+    "adoptedSHA256": "374170b8bec97173a422cb7e792ddd01f27206b9a901564597093a9973a4deff"
+  },
+  {
+    "source": "prototypes/command01/workbench.css",
+    "target": "dist/admin/command/command01/workbench.css",
+    "sourceSHA256": "07bab5c4f7917546d3f1a5398ed465701c6c68fb42dc92a5de2a330a6c031f3d",
+    "adoptedSHA256": "587330ab8ad048550976039e4e59718f3e3e7465befdc03d9a3f021240b66808"
+  }
+]

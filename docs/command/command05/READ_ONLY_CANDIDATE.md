@@ -1,0 +1,11 @@
+# First read-only COMMAND composition
+
+`/admin/command/` uses the real existing gate/shell and adopted COMMAND01 workbench. One controller owns search, category/manufacturer/individual/kit/stock filters, stable selection and on-demand inspection. Price remains integer GBP pence and is labelled selling price. Existing component/stock editors are neither imported nor called by COMMAND.
+
+`read-boundary.mjs` has no endpoint, fetch, credential storage or fixture fallback. Default production composition is inactive and requests zero catalogue data. An explicit synthetic contract service can be injected by tests only; the executable rejects non-synthetic adapters pending deployed compatibility acceptance. It separately verifies the existing Admin membership boundary and a synthetic read-capability grant. This is not proof of live JWT/role security.
+
+List projection excludes image and private internal cost. Inventory is requested only for inventoryRead; otherwise quantity is unavailable, never zero-substituted. ProductRead controls inspection. Finance-only/nonmember/anonymous synthetic roles cannot read the catalogue. Original images remain unloaded with explicit metadata guidance. Unknown/private fields, mismatched inventory, malformed prices, duplicate IDs, partial responses, stale read evidence and responses after revocation are rejected. Error bodies are not displayed. Detail cache is15 seconds and scoped to the current identity/session generation; local filters cause no transport reads. Refresh is explicit and list bound500 is enforced without silent truncation.
+
+Read hashes are display/cache identities derived from source values, updated_at and permitted inventory. They are not database revisions or atomic snapshots; separate component/inventory reads can race in a future adapter. New deployed capability mapping, projection/grants/RLS, bounded response/body budgets and coherent freshness must be approved before real activation. Existing eager Admin repository list uses images/private costs and is deliberately not reused.
+
+Local verification:27 new read cases plus actual gate/shell/catalogue DOM acceptance and inherited gate tests. Fictional14/100/500 workload only. No production latency, egress or authentication claim. All production mutation methods reject before IO.

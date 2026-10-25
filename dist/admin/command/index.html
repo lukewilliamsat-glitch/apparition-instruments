@@ -1,3 +1,30 @@
-<!doctype html>
-<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>COMMAND | Apparition Admin</title><link rel="stylesheet" href="../admin.css"><link rel="stylesheet" href="./command.css"><script type="module" src="../admin-gate.mjs" data-admin-entry="./entry.mjs"></script></head>
-<body class="admin-page" data-command-admin><a class="skip" href="#main">Skip to COMMAND</a><main id="main" class="admin-main"><div class="admin-title"><h1>COMMAND</h1><span class="command-mode">Read only</span></div><section id="command-status" role="status" aria-live="polite" tabindex="-1"></section><div id="command-content" hidden></div><noscript>JavaScript is required. Catalogue data is available only after authorised Admin access.</noscript></main></body></html>
+<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>COMMAND | Apparition Admin</title><link rel="stylesheet" href="../admin.css"><link rel="stylesheet" href="./command01/workbench.css"><link rel="stylesheet" href="./command.css"><script type="module" src="../admin-gate.mjs" data-admin-entry="./entry.mjs"></script></head><body class="admin-page" data-command-admin><a class="skip" href="#main">Skip to COMMAND</a><main id="main" class="admin-main"><section id="command-status" role="status" aria-live="polite" tabindex="-1"></section><button id="command-reconnect" type="button">Recheck access</button><div id="command-content" hidden>
+  <div class="page-breadcrumb">WORKSPACE <span aria-hidden="true">/</span> CATALOGUE</div>
+  <div class="admin-page-header"><div><div class="heading-line"><h1>COMMAND Catalogue</h1><span class="read-only">READ ONLY</span></div><p class="admin-page-description">Components, pricing and product details.</p></div><button id="refresh" class="secondary-button" type="button"><span aria-hidden="true">↻</span> Refresh catalogue</button></div>
+  <p id="data-source" class="fixture-notice"></p><p id="data-freshness" role="status"></p><span id="nav-count" hidden></span>
+  <section class="catalogue-metrics" aria-label="Catalogue summary" id="metrics"></section>
+  <section class="filter-panel" aria-label="Find and filter products">
+    <div class="search-row"><label class="search-control"><span class="sr-only">Search catalogue</span><span aria-hidden="true" class="search-icon">⌕</span><input id="search" type="search" placeholder="Search products, SKUs or specifications…" autocomplete="off" maxlength="200"></label><span class="search-hint">Search stays local</span></div>
+    <div class="filter-grid">
+      <label>Category<select id="filter-category"><option value="">All categories</option></select></label>
+      <label>Manufacturer<select id="filter-manufacturer"><option value="">All manufacturers</option></select></label>
+      <label>Individual sale<select id="filter-individual"><option value="">Any eligibility</option><option value="yes">Eligible</option><option value="no">Not eligible</option></select></label>
+      <label>Kit use<select id="filter-kit"><option value="">Any eligibility</option><option value="yes">Eligible</option><option value="no">Not eligible</option></select></label>
+      <label>Stock status<select id="filter-stock"><option value="">All stock states</option><option value="in">In stock</option><option value="low">Low stock (1–3)</option><option value="out">Out of stock</option><option value="unknown">Not supplied</option></select></label>
+    </div>
+    <div id="active-filters" class="active-filters" hidden></div>
+  </section>
+  <div class="nocturne-context"><button id="catalogue-toggle" type="button" aria-controls="catalogue-list" aria-expanded="false" hidden>Browse catalogue</button><span id="draft-context"></span></div>
+  <div class="workbench-grid">
+    <section class="catalogue-list" id="catalogue-list" aria-labelledby="list-heading">
+      <div class="section-toolbar"><div><h2 id="list-heading">Components <span id="result-count">—</span></h2><p id="result-note">Waiting for catalogue…</p></div><button type="button" id="clear-filters">Clear filters</button></div>
+      <p id="feedback" class="admin-feedback" role="status" aria-live="polite"></p>
+      <div id="error-panel" class="error-panel" role="alert" hidden><div><strong>Catalogue unavailable</strong><p id="error-message"></p></div><button type="button" id="retry">Retry catalogue</button></div>
+      <div id="table-wrap" class="command-table-wrap" hidden><table class="command-table"><caption class="sr-only">Read-only component catalogue. Select a product name to inspect its details.</caption><thead><tr><th scope="col">Product</th><th scope="col">Selling price</th><th scope="col">Stock</th><th scope="col">Eligibility</th></tr></thead><tbody id="rows"></tbody></table></div>
+      <div id="empty" class="command-empty" hidden><span class="empty-symbol" aria-hidden="true">⌕</span><h3 id="empty-heading">No matching components</h3><p id="empty-message">Try a broader search or clear your filters.</p><button type="button" id="empty-clear">Clear all filters</button></div>
+      <p class="list-footnote">Prices in GBP · Stock visibility follows the session grant, not a delivery promise.<br>“Low stock” uses a display threshold of 3; it is not a reorder rule.</p>
+    </section>
+    <aside class="product-inspector" id="inspector" aria-label="Read-only product inspector"></aside>
+
+  </div>
+</div><noscript>JavaScript and authorised Admin access are required.</noscript></main></body></html>
