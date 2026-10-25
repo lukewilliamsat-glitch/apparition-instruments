@@ -27,6 +27,5 @@ export function mountPresentation(document,view){
  }
  const schedule=()=>{if(!pending&&!closed){pending=true;queueMicrotask(render);}};
  const observer=new document.defaultView.MutationObserver(schedule);observer.observe($('editor-workspace'),{subtree:true,childList:true,attributes:true,attributeFilter:['hidden','aria-selected']});observer.observe($('review-rows'),{childList:true});
- listen($('change-review'),'close',()=>{if(!$('command-content').hidden&&view.session.snapshot().phase==='review')$('review-changes').focus({preventScroll:true});});
  render();return {render,destroy(){closed=true;observer.disconnect();cleanups.forEach(f=>f());}};
 }

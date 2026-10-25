@@ -20,6 +20,7 @@ run_isolated --require ./tests/command05/network-guard.cjs tests/command05/synth
 run_isolated --import ./tests/fixtures/admin-offline.mjs tests/command05/shell.mjs > "$output/shell-log.txt"
 run_isolated --import ./tests/fixtures/admin-offline.mjs tests/command05/dom.mjs > "$output/dom-log.txt"
 run_isolated --import ./tests/fixtures/admin-offline.mjs tests/command05/editor.mjs > "$output/editor-log.txt"
+run_isolated --import ./tests/fixtures/admin-offline.mjs tests/command05/focus.mjs > "$output/focus-log.txt"
 run_isolated --import ./tests/fixtures/admin-offline.mjs tests/command05/preservation.mjs > "$output/preservation-log.txt"
 for test in admin-gate admin-v2-shell admin-v2-catalogue admin-v2-c-workspaces aftercare-admin; do
  run_isolated --import ./tests/fixtures/admin-offline.mjs "tests/$test.mjs" > "$output/$test-log.txt"

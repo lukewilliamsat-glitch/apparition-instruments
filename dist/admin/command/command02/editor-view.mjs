@@ -5,6 +5,7 @@ import {createEditorSession} from './session.mjs';
 export function createEditorView(document,{persistence,onSaved=()=>{},timeoutMs=8000,canSave=()=>false,onState=()=>{},getSelectedId=()=>null}){
  const $=id=>document.getElementById(id),root=$('editor-workspace'),form=$('product-form');
  let session,renderedId=null,section='general',savedRevision=null,confirmPending=null,confirmInvoker=null,closed=false;
+ let reviewReturnTarget=null,returnFromReview=false;
  const controls=new Map(),errors=new Map(),cleanups=[];
  const listen=(element,event,handler)=>{element.addEventListener(event,handler);cleanups.push(()=>element.removeEventListener(event,handler));};
  const add=(parent,tag,text,cls)=>{const e=node(document,tag,text,cls);parent.append(e);return e;};
@@ -135,10 +136,11 @@ export function createEditorView(document,{persistence,onSaved=()=>{},timeoutMs=
   const s=session.snapshot(),body=$('review-rows');body.replaceChildren();
   for(const change of s.changes){const row=add(body,'tr');for(const value of [change.label,displayValue(change.key,change.before),displayValue(change.key,change.after)])add(row,'td',value);}
   $('review-version').textContent='Reviewed against '+s.baseline.revision+'. This is a comparison identity, not a write revision. Production saving is disabled.';
+  reviewReturnTarget=$('review-changes');returnFromReview=true;
   $('change-review').showModal();$('cancel-review').focus();
  });
- listen($('cancel-review'),'click',()=>{$('change-review').close();$('review-changes').focus();});
- listen($('save-fixture'),'click',()=>{if(!canSave())return;const task=session.save();$('change-review').close();$('editor-heading').focus({preventScroll:true});void task;});
+ listen($('cancel-review'),'click',()=>{$('change-review').close();});
+ listen($('save-fixture'),'click',()=>{if(!canSave())return;returnFromReview=false;const task=session.save();$('change-review').close();$('editor-heading').focus({preventScroll:true});void task;});
  listen($('discard-changes'),'click',()=>void discard());
  listen($('reload-conflict'),'click',()=>void discard('Discard local edits and load the newer current read identity?'));
  listen($('continue-reviewing'),'click',()=>{selectSection('general');controls.get('name').focus();});
@@ -146,9 +148,13 @@ export function createEditorView(document,{persistence,onSaved=()=>{},timeoutMs=
  listen($('close-editor'),'click',async()=>{const s=session.snapshot();if(s.needsProtection&&!await discard('Discard local edits and close the editor?'))return;session.close();document.querySelector('[data-enter-editor]')?.focus();});
  listen($('keep-editing'),'click',()=>finishConfirm(false));listen($('confirm-discard'),'click',()=>finishConfirm(true));
  listen($('discard-confirm'),'cancel',event=>{event.preventDefault();finishConfirm(false);});
- listen($('change-review'),'cancel',()=>{$('review-changes').focus();});
+ // Native Escape keeps its default dismissal. Restore only after the modal closes.
+ listen($('change-review'),'close',()=>{
+  const target=reviewReturnTarget,restore=returnFromReview;reviewReturnTarget=null;returnFromReview=false;
+  if(!closed&&restore&&!$('change-review').open&&target?.isConnected&&!target.disabled&&!target.closest('[hidden],[inert]')&&document.body.classList.contains('admin-authorized')&&['review','editing','error'].includes(session.snapshot().phase))target.focus({preventScroll:true});
+ });
  listen(form,'submit',event=>event.preventDefault());
- listen(document,'keydown',event=>{if(event.key==='Escape'&&root.contains(document.activeElement)&&!document.querySelector('dialog[open]')){event.preventDefault();$('close-editor').click();}});
+ listen(document,'keydown',event=>{if(event.key==='Escape'&&root.contains(event.target)&&!event.target.closest('dialog')&&!document.querySelector('dialog[open]')){event.preventDefault();$('close-editor').click();}});
  listen(document.defaultView,'beforeunload',event=>{if(session.snapshot().needsProtection){event.preventDefault();event.returnValue='';}});
  listen(document.defaultView,'pagehide',()=>session.destroy());
  // Shared Admin navigation is guarded by the owning workspace composition.
