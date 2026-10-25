@@ -1,0 +1,51 @@
+{
+  "status": "PROPOSED_ONLY_NOT_AUTHORISED_NOT_EXECUTED",
+  "authorityRequired": "Separate exact owner approval under Authorisation 53 section 5; no permission is inferred from this file.",
+  "transport": "Owner-operated Supabase SQL Editor only, in the already associated production project. No assistant Supabase connector call, automatic project discovery, login, credential sharing or alternative transport.",
+  "projectAssociation": {
+    "ownerMustConfirm": "The selected project matches the existing deployed Admin publicBackendConfig.url. Do not paste keys, tokens, credentials or private configuration. Stop on any mismatch.",
+    "sourceConfigPath": "dist/backend/public-config.mjs",
+    "sourceConfigCommit": "31b469707066a89b0ea3fc83ad81e79149523192",
+    "sourceConfigSHA256": "725ad31203309532397adef75cf67abe182420cefb0de99bc8a45aa4277bb019"
+  },
+  "limits": {
+    "executionsEach": 1,
+    "totalExecutions": 2,
+    "statementTimeoutSeconds": 5,
+    "lockTimeoutSeconds": 1,
+    "acceptedUTF8BytesEach": 8192,
+    "acceptedUTF8BytesAggregate": 16384,
+    "rowsEach": 50,
+    "limitReached": "HOLD; no pagination/retry/alternate query",
+    "report": "One dated owner-confirmed report; preserve query hashes and OK/HOLD status. No tokens, membership identities, product rows, inventory values, customer/order/cost data or function bodies."
+  },
+  "expectedColumnRows": 18,
+  "queries": [
+    {
+      "id": "required_columns_and_select_grants",
+      "sql": "BEGIN READ ONLY;\nSET LOCAL statement_timeout = '5s';\nSET LOCAL lock_timeout = '1s';\nWITH expected(table_name,column_name) AS (VALUES ('components','id'),('components','sku'),('components','name'),('components','category'),('components','manufacturer'),('components','active'),('components','individually'),('components','in_kits'),('components','sale_price'),('components','kit_price'),('components','kit_price_quantity'),('components','updated_at'),('components','description'),('components','specs'),('inventory','component_id'),('inventory','quantity'),('inventory','stock_unit'),('admin_members','user_id')), evidence AS (SELECT e.table_name,e.column_name,c.data_type,c.udt_name,c.is_nullable,(c.column_name IS NOT NULL) AS present,CASE WHEN c.column_name IS NOT NULL THEN has_column_privilege('anon',format('%I.%I','public',e.table_name),e.column_name,'SELECT') ELSE false END AS anon_select,CASE WHEN c.column_name IS NOT NULL THEN has_column_privilege('authenticated',format('%I.%I','public',e.table_name),e.column_name,'SELECT') ELSE false END AS authenticated_select FROM expected e LEFT JOIN information_schema.columns c ON c.table_schema='public' AND c.table_name=e.table_name AND c.column_name=e.column_name ORDER BY e.table_name,e.column_name LIMIT 50), packed AS (SELECT count(*) AS row_count,coalesce(jsonb_agg(to_jsonb(evidence)),'[]'::jsonb) AS rows FROM evidence), result AS (SELECT row_count,jsonb_build_object('status','OK','rows',rows) AS report FROM packed) SELECT CASE WHEN row_count>=50 OR octet_length(report::text)>8192 THEN jsonb_build_object('status','HOLD_LIMIT') ELSE report END AS evidence FROM result;\nROLLBACK;\n",
+      "sha256": "3f3829e7e3533d321f3df47eadb5c071901a070355b9cf9accf15777ab6e5946"
+    },
+    {
+      "id": "select_rls_policies",
+      "sql": "BEGIN READ ONLY;\nSET LOCAL statement_timeout = '5s';\nSET LOCAL lock_timeout = '1s';\nWITH evidence AS (SELECT c.relname,c.relkind,c.relrowsecurity,c.relforcerowsecurity,p.polname,p.polcmd,p.polpermissive,p.polroles,CASE WHEN p.oid IS NULL THEN false ELSE (0=ANY(p.polroles) OR EXISTS(SELECT 1 FROM pg_roles r WHERE r.oid=ANY(p.polroles) AND pg_has_role('authenticated',r.oid,'USAGE'))) END AS applies_authenticated,CASE WHEN p.oid IS NULL THEN false ELSE (0=ANY(p.polroles) OR EXISTS(SELECT 1 FROM pg_roles r WHERE r.oid=ANY(p.polroles) AND pg_has_role('anon',r.oid,'USAGE'))) END AS applies_anon,pg_get_expr(p.polqual,p.polrelid) AS using_expression,md5(coalesce(pg_get_expr(p.polqual,p.polrelid),'')) AS using_md5 FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace LEFT JOIN pg_policy p ON p.polrelid=c.oid AND p.polcmd IN ('r','*') WHERE n.nspname='public' AND c.relname IN ('components','inventory','admin_members') ORDER BY c.relname,p.polname LIMIT 50), packed AS (SELECT count(*) AS row_count,coalesce(jsonb_agg(to_jsonb(evidence)),'[]'::jsonb) AS rows FROM evidence), result AS (SELECT row_count,jsonb_build_object('status','OK','rows',rows) AS report FROM packed) SELECT CASE WHEN row_count>=50 OR octet_length(report::text)>8192 THEN jsonb_build_object('status','HOLD_LIMIT') ELSE report END AS evidence FROM result;\nROLLBACK;\n",
+      "sha256": "54f4574c55d311c511e9dde55e1dcfcf09e0ab19eca45c070ec0c95a58e76e51"
+    }
+  ],
+  "assessment": [
+    "Inspect only metadata for the exact 18 required columns and SELECT/ALL policies on public.components, public.inventory and public.admin_members. No business table rows are selected.",
+    "Compare actual column types and effective SELECT grants against the source adapter requirements; missing/unknown values are HOLD.",
+    "Compare actual RLS expressions, permissive/restrictive combinations and role applicability against reviewed source definitions. Hashes alone do not prove policy equivalence. No migration or policy repair is permitted.",
+    "Keep raw policy metadata private. If an expression contains a personal identifier, credential or private literal, redact it in the owner report and mark that policy UNKNOWN; do not publish it or infer semantic equivalence.",
+    "Owner supplies project association and report timestamp; those facts remain owner-confirmed. These queries do not independently establish project status, quota, reporting delay or browser JWT behaviour.",
+    "The following step remains separately bounded: finish the source adapter, then verify actual owner-controlled Auth/membership, exact list/detail reads, expiry/sign-out and failure handling without exporting credentials or modifying records.",
+    "This proposal excludes optional catalogue views, unrelated schema/writers, all mutations, catalogue/CMS generation and any production deployment."
+  ],
+  "sourceReferences": [
+    "dist/admin/admin-auth.mjs",
+    "dist/admin/command/read-boundary.mjs",
+    "supabase/migrations/20260924131615_p05a_backend_foundation.sql",
+    "supabase/migrations/20260924183910_p05b_public_component_availability.sql"
+  ],
+  "supersedesForThisRelease": "The broader unexecuted BACKEND_INSPECTION_CONTRACT.json proposal: optional view metadata and unrelated write grants are deferred. Required column grants and actual read-policy expressions are included here."
+}

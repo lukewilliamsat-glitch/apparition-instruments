@@ -1,0 +1,43 @@
+# COMMAND05 / NOCTURNE — Authorisation 53 release gate
+
+**Status: HOLD — production publication blocked.** The accepted application is preserved. This checkpoint contains release evidence and an exact inspection proposal; it does not activate a production adapter or change application code.
+
+## Candidate and owner review
+
+Tested application `31b469707066a89b0ea3fc83ad81e79149523192`, tree `1b39c7607cafb7246900ace7ca44d2b9cb0aadd9`; accepted documentation `eed71c5d19be43008a85ad3a53150c0e3c968502`. Their application, test, script and workflow content is identical. Remote COMMAND05, NIGHTWATCH and main heads were reverified on 25 October 2026 without unexpected movement.
+
+[Run 40227070614](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/40227070614) remains successful: Chrome 155.0.8059.39, 47/47 native groups, 10/10 process isolation controls, 124 Node cases and six dialog lifecycle cases. Reused, not rerun. No new CI attempt was triggered for this documentation checkpoint.
+
+[Original visual evidence](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/40227070614/artifacts/12611551620): 19 genuine PNGs, archive 2,119,316 bytes, SHA-256 `b65724af9b6a264a646fe45ed3b20436a9eac84398aaebc042ebf2895f701833`, expiry 8 November 2026 at 19:40:22 UTC. The retained ZIP CRC and all PNG bytes, sizes, SHA-256 values and dimensions were rechecked locally; no new download or captures. See OWNER_REVIEW_52B.md for the complete screenshot index. Desktop catalogue, inspector and 320px mobile catalogue are the primary read-only review views. Draft/save/conflict captures describe synthetic acceptance coverage and are not launch capabilities.
+
+The intended release adds COMMAND Catalogue to the existing Admin navigation: charcoal/brass catalogue, local search and filters, product inspection and responsive layouts. Existing specialist routes remain. Production product/stock/cost writes, IRONCLAD and synthetic saves stay inactive; the launch grant must set `draftPreview=false`. Owner visual acceptance of this exact tested presentation is **PENDING**, separate from automated acceptance. No preview deployment is claimed. Existing evidence covers CSS text scaling, not browser-UI zoom, physical devices or screen-reader certification; some specialist-route checks are explicitly structural only.
+
+## Source-grounded compatibility result
+
+* `admin-auth.mjs` restores the existing stored session, verifies `/auth/v1/user`, checks the current user's `admin_members` row and refreshes expiring tokens. It returns an authorised/denied status, not the verified identity/session/capability object required by COMMAND's read boundary. Actual deployed behaviour remains unverified.
+* `admin-gate.mjs` mounts COMMAND after membership succeeds and locks the workspace before sign-out. It does not inject a production read adapter. `read-boundary.mjs` expressly accepts synthetic adapters only. Publishing this source unchanged would show **adapter inactive**, rather than a working real catalogue.
+* The legacy Admin component repository uses `select=*` on components, inventory and private component costs, eagerly including images. It must not be substituted as COMMAND's read path. The shared transport also exposes write/RPC methods and is not itself a read-only capability boundary.
+* Source migrations describe a narrow authenticated component/inventory projection and membership-based policies. Their installed state is unknown. Column grants matter: table-level SELECT checks alone cannot prove the required column access. No live provider, Auth, REST, RPC or SQL request was made.
+* `PROVIDER_READ_GATE_53.json` proposes only two bounded metadata inspections, including column SELECT grants and the three tables' SELECT/ALL policies. It requires separate approval. Policy definitions must be compared with source, not accepted merely because they have hashes. Operator metadata success does not establish actual JWT/RLS behaviour.
+
+After this metadata gate, finish only the real read adapter and the existing Auth identity/lifecycle seam, under source-backed permissions. Use explicit field projections; exclude private costs, supplier values, images and customer records; restrict requests, bytes, catalogue completeness and cancellation. Existing 500-product and 15-second detail-cache bounds must not silently truncate production. Local search must remain local. An actual owner-controlled authenticated read check needs its own exact request/response budget; no token or credential sharing is required. Failure/expiry/revocation/sign-out behaviour must be checked without mutating business records. No new privileged endpoint or database migration is proposed.
+
+## Complete payload, holiday mode and publisher
+
+Main remains `2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f`. GitHub's latest main run metadata identifies successful Pages run `40175066908` and artifact `12590914632`, 20,301,705 bytes, SHA-256 `d358efe91b5db0b0845505afd91a3eaa079c4bc0aeaa9a331fe5916d4266e349`. This is the already preserved ANCHOR identity, not a newly retrieved archive. It is not independent proof of currently served bytes or absence of a competing deployment. No private archive was materialised or processed under Authorisation 53.
+
+Previously established archive evidence contains Operations OPEN state dated 5 October. The owner instead confirms holiday mode, 17 October–15 November 2026, tools available and physical fulfilment suspended. Runtime state may differ from archived state; neither possibility is assumed. A fresh association of current deployment, complete payload and authoritative holiday behaviour is required. The archived OPEN payload is **not accepted as the launch rollback**. Never infer holiday protection from an Admin-only source diff or overwrite newer Operations data to reconcile an old archive.
+
+`CROWNING_SOURCE_MANIFEST.json` inventories the 17 existing dist changes relative to main: two shared Admin integration files and 15 new COMMAND files. It is a **source overlay**, not a complete website payload or production digest. All unrelated generated pages/assets must come from the verified current baseline. No SPECTRE or other programme is included.
+
+The installed `.github/workflows/static.yml` unconditionally runs `generate-hub-cms.mjs`; that script makes a backend RPC even for `[static-only]` pushes. This route cannot satisfy publication-only delivery. It also retains a daily schedule, creating possible background publication/backend exposure; nothing was changed or dispatched. Latest workflow success does not establish that current publisher/environment/concurrency/served state is acceptable.
+
+Reuse NIGHTWATCH's bounded complete-inventory/package verification and release coordinator. Its SPECTRE overlay verifier permits CSS/cache edits only and cannot validate this additive Admin overlay. Its Pages publication-only template is uninstalled, and actual complete-payload deployment/restoration is unverified. Neither is production authority. Installing or enabling the exact publisher, scheduling/concurrency safeguards and live read-back route requires a separate concrete approval. No live request or alternate browser session was used to work around the GitHub connector's unavailable Pages/deployment metadata endpoints.
+
+## Next decisions and stop boundary
+
+1. Owner visually accepts or rejects the presented original catalogue/inspector/responsive views against tested source `31b4697…`. Adapter/source changes will be recorded and tested before final release approval.
+2. Approve the exact two-query, metadata-only owner-operated report in `PROVIDER_READ_GATE_53.json`; no automatic SQL execution, login or wider inspection follows from this checkpoint. This opens the minimum source-backed read integration work, not deployment.
+3. Establish fresh current payload/holiday evidence and approve exact access to the needed baseline if it requires a private archive. Then prepare the complete COMMAND release and holiday-safe rollback and validate a publication-only mechanism. Do not use the historical OPEN archive or backend build as shortcuts.
+
+The final production approval packet cannot yet contain a truthful complete payload/rollback digest, real Auth/read outcome or verified publisher. It has therefore not been requested. This is the existing release's blocked gate, not a request to restart engineering. No main merge, deployment, production workflow change, Supabase request, business-data access or mutation occurred. All non-COMMAND05 branch heads are protected and must remain unchanged after publication/read-back.

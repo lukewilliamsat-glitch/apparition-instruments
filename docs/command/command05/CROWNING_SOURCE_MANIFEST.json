@@ -1,0 +1,136 @@
+{
+  "kind": "SOURCE_OVERLAY_NOT_COMPLETE_RELEASE_PAYLOAD",
+  "sourceCommit": "31b469707066a89b0ea3fc83ad81e79149523192",
+  "sourceTree": "1b39c7607cafb7246900ace7ca44d2b9cb0aadd9",
+  "baseSourceCommit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+  "entriesSHA256": "fd8e7c8eb2890917b5df4f856eb6bcf9734d05942fa5450a0757e95e169733db",
+  "fileCount": 17,
+  "modified": 2,
+  "added": 15,
+  "deleted": 0,
+  "completePayloadSHA256": null,
+  "rollbackSHA256": null,
+  "ownerVisualAcceptance": "PENDING",
+  "productionPublication": "BLOCKED",
+  "entries": [
+    {
+      "path": "dist/admin/admin-gate.mjs",
+      "operation": "modify",
+      "beforeSHA256": "e504323872f0546affcf599d8c159a82e2d1c2ff567cb80f74e9ffa42e77e77a",
+      "afterSHA256": "e70ffd270cadb7226cc1c2976ffd894d36cf807e2c1997aa2f7fba4e45191b36",
+      "bytes": 7513
+    },
+    {
+      "path": "dist/admin/application.mjs",
+      "operation": "modify",
+      "beforeSHA256": "44ac219049d57e981146c464907cf6007cca9ba6be4d298005588a63f8b59a2c",
+      "afterSHA256": "6c11aadbdd1eb6b19975fbe0b29962b085635085eac882865bd6a1a94904a004",
+      "bytes": 7990
+    },
+    {
+      "path": "dist/admin/command/command.css",
+      "operation": "add",
+      "beforeSHA256": null,
+      "afterSHA256": "a776596e9e2eb92c832fb73c7015372dfd5230c89d79ec4d33f7d4db16b0da25",
+      "bytes": 6563
+    },
+    {
+      "path": "dist/admin/command/command01/controller.mjs",
+      "operation": "add",
+      "beforeSHA256": null,
+      "afterSHA256": "2c50b400ff4a8372b593a9c5253349d7ad8b03dbe10f8dad548b1068de61f0f1",
+      "bytes": 4276
+    },
+    {
+      "path": "dist/admin/command/command01/model.mjs",
+      "operation": "add",
+      "beforeSHA256": null,
+      "afterSHA256": "1d6efcc47242ec9829a2a9a270a71dff18293e044f35d65e400de2f27bac30ed",
+      "bytes": 5079
+    },
+    {
+      "path": "dist/admin/command/command01/view.mjs",
+      "operation": "add",
+      "beforeSHA256": null,
+      "afterSHA256": "5a1b211210e77f271d0fc268e708698891c66730024731441a40698da565cdbc",
+      "bytes": 14177
+    },
+    {
+      "path": "dist/admin/command/command01/workbench.css",
+      "operation": "add",
+      "beforeSHA256": null,
+      "afterSHA256": "299c86226e392fffcc58f005ca6b42c125a3b7b435f828dd9d1d5cc08178a179",
+      "bytes": 15895
+    },
+    {
+      "path": "dist/admin/command/command02/editor-view.mjs",
+      "operation": "add",
+      "beforeSHA256": null,
+      "afterSHA256": "4846488f07b18d34fd5648e8d47f9d51cffef9818a41d41dd245c23979267407",
+      "bytes": 14678
+    },
+    {
+      "path": "dist/admin/command/command02/editor.css",
+      "operation": "add",
+      "beforeSHA256": null,
+      "afterSHA256": "4967d622c2c2c22a173f71cd844f581c8d59c0e5847997b943c48ae151b1db5b",
+      "bytes": 6170
+    },
+    {
+      "path": "dist/admin/command/command02/schema.mjs",
+      "operation": "add",
+      "beforeSHA256": null,
+      "afterSHA256": "2da04affa74271f894ce7c462214404239cc196420d3c6205b2be5f1ea90369e",
+      "bytes": 5966
+    },
+    {
+      "path": "dist/admin/command/command02/session.mjs",
+      "operation": "add",
+      "beforeSHA256": null,
+      "afterSHA256": "48cee0b80eac0f3b56aef1e77d148ac5b5bac251762485eececad05a1bd57fcd",
+      "bytes": 8428
+    },
+    {
+      "path": "dist/admin/command/editor-port.mjs",
+      "operation": "add",
+      "beforeSHA256": null,
+      "afterSHA256": "31089526ea9086329f34bd52b8f50576b16ef72ed893a39e60e4c0fcad9eda1b",
+      "bytes": 897
+    },
+    {
+      "path": "dist/admin/command/entry.mjs",
+      "operation": "add",
+      "beforeSHA256": null,
+      "afterSHA256": "1af0abffc704fb76456bb0628e2ba2dc3ba4deb7cffdeadc8a5060c1f70e4425",
+      "bytes": 6015
+    },
+    {
+      "path": "dist/admin/command/index.html",
+      "operation": "add",
+      "beforeSHA256": null,
+      "afterSHA256": "dff28e2ea4a7092ac68c84953a1c7e24de9b909f5d290f791919085ce016c595",
+      "bytes": 8354
+    },
+    {
+      "path": "dist/admin/command/nocturne.css",
+      "operation": "add",
+      "beforeSHA256": null,
+      "afterSHA256": "6f7d206a7828881f0eab44757d3d3e6e7a9bb7ee510e9f2fd14f8f25b54f7b99",
+      "bytes": 20455
+    },
+    {
+      "path": "dist/admin/command/presentation.mjs",
+      "operation": "add",
+      "beforeSHA256": null,
+      "afterSHA256": "94449a728835a95a8723e8fb3ad79ded09ab1b1b2a19317b499aabb3c63c6152",
+      "bytes": 5032
+    },
+    {
+      "path": "dist/admin/command/read-boundary.mjs",
+      "operation": "add",
+      "beforeSHA256": null,
+      "afterSHA256": "3c617d8df8ce059855ee9b6a1c9506a79b9a3e7f6068fadfe7dc0b20e6a99602",
+      "bytes": 11392
+    }
+  ]
+}
