@@ -18,7 +18,7 @@ export async function mountAdminWorkspace({document,auth,services}={}){
   if(closed)return;const owner=port.owner?.(),ready=s.status==='ready'&&s.catalogueReady&&(!owner||owner===s.subject);$('command-content').hidden=!ready;$('command-content').inert=!ready;
   if(!ready){for(const dialog of document.querySelectorAll('dialog[open]')){if(dialog.id==='discard-confirm')$('keep-editing').click();else dialog.close();}}
   const messages={inactive:'Read-only COMMAND. The authenticated catalogue adapter is not activated. No product data has been requested.',checking:'Checking catalogue access. Product records remain concealed.',ready:'Read-only catalogue. Shared product, image, cost and stock changes are disabled.',expired:'Session expired. Restore authentication to continue. Local proposals have not been saved.',denied:'Access denied. This account has no catalogue-read authority.',error:'Catalogue unavailable. Retry safely; no partial or fallback data was accepted.','sign-out':'Session ended. Product data has been cleared.',closed:'Workspace closed.'};
-  $('command-status').textContent=messages[s.status]||'Access unavailable. Recheck this session.';
+  $('command-status').textContent=s.status==='ready'&&!s.catalogueReady?'Access confirmed. Loading catalogue…':messages[s.status]||'Access unavailable. Recheck this session.';
   if(owner&&s.subject&&owner!==s.subject)$('command-status').textContent='Restore the original identity to access its retained unsaved proposal. Product details remain concealed.';
   $('command-status').setAttribute('role',['denied','expired','error'].includes(s.status)?'alert':'status');
   if(!ready&&s.status!=='checking')$('command-status').focus({preventScroll:true});

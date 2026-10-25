@@ -1,0 +1,34 @@
+{
+  "status": "PROPOSED_ONLY_NOT_AUTHORISED_NOT_EXECUTED",
+  "transport": "UNSELECTED; separate exact owner approval required",
+  "limits": {
+    "executionsEach": 1,
+    "timeoutSecondsEach": 5,
+    "acceptedBytesEach": 8192,
+    "acceptedBytesAggregate": 24576,
+    "rowsEach": 50,
+    "limitReached": "HOLD; no retry/pagination"
+  },
+  "queries": [
+    {
+      "id": "columns",
+      "sql": "SELECT table_name,column_name,data_type,is_nullable FROM information_schema.columns WHERE table_schema='public' AND table_name IN ('components','inventory','admin_members') ORDER BY table_name,ordinal_position LIMIT 50",
+      "sha256": "f4c5116087a5428f3904d1e35643861eb8d463c5356085d6a62a94800d5c50ee"
+    },
+    {
+      "id": "rls_policy_fingerprints",
+      "sql": "SELECT c.relname,c.relrowsecurity,c.relforcerowsecurity,p.polname,p.polcmd,p.polpermissive,md5(coalesce(pg_get_expr(p.polqual,p.polrelid),'')) AS using_md5,md5(coalesce(pg_get_expr(p.polwithcheck,p.polrelid),'')) AS check_md5 FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace LEFT JOIN pg_policy p ON p.polrelid=c.oid WHERE n.nspname='public' AND c.relname IN ('components','inventory','admin_members') ORDER BY c.relname,p.polname LIMIT 50",
+      "sha256": "5a4eadf493cd13c9999c5a265b2abc077935d902252ef0622f1e46a65df4adad"
+    },
+    {
+      "id": "table_grants",
+      "sql": "SELECT r.role_name,c.relname,has_table_privilege(r.role_name,c.oid,'SELECT') AS can_select,has_table_privilege(r.role_name,c.oid,'INSERT') AS can_insert,has_table_privilege(r.role_name,c.oid,'UPDATE') AS can_update,has_table_privilege(r.role_name,c.oid,'DELETE') AS can_delete FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace CROSS JOIN (VALUES ('anon'),('authenticated')) AS r(role_name) WHERE n.nspname='public' AND c.relname IN ('components','inventory','admin_members') ORDER BY r.role_name,c.relname LIMIT 50",
+      "sha256": "3455789696450ec28ab360013d2aaee7a809da45802fd78602a353b50dc7b6a9"
+    },
+    {
+      "id": "catalogue_view_metadata",
+      "sql": "SELECT c.relname,c.relkind,c.reloptions,md5(pg_get_viewdef(c.oid,true)) AS definition_md5 FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relkind='v' AND c.relname IN ('catalogue_components','catalogue_delivery_v2') ORDER BY c.relname LIMIT 50",
+      "sha256": "84c9466f6f730d1bdc0bd9aeb5423992e2be7b3b8347b4f9e5f26ba1423cb623"
+    }
+  ]
+}

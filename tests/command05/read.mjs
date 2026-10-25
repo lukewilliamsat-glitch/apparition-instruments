@@ -3,6 +3,7 @@ import {writeFile} from 'node:fs/promises';
 import {createReadBoundary} from '../../dist/admin/command/read-boundary.mjs';
 import {createWorkbench} from '../../dist/admin/command/command01/controller.mjs';
 import {createFixtureServices} from './fixture-services.mjs';
+import {createPreviewPort} from '../../dist/admin/command/editor-port.mjs';
 const results=[];
 async function test(name,fn){try{await fn();results.push({name,status:'PASS'});}catch(e){results.push({name,status:'FAIL',error:String(e),stack:e.stack});}}
 const create=options=>{const f=createFixtureServices(options),b=createReadBoundary({auth:f.auth,adapter:f.commandReadAdapter,...options?.boundary});return {f,b};};
@@ -23,5 +24,6 @@ await test('expired session locks cache and data',async()=>{const {f,b}=create()
 await test('lost authority never displays raw token/error',async()=>{const {f,b}=create();f.enqueue('authorize',()=>{throw Error('secret-token-and-customer-row');});await assert.rejects(b.catalogueTransport.list(),e=>!e.message.includes('secret'));b.destroy();});
 await test('bounded timeout releases request',async()=>{const {f,b}=create({boundary:{timeoutMs:15}});f.enqueue('list',()=>new Promise(()=>{}));await assert.rejects(b.catalogueTransport.list(),{code:'TIMEOUT'});b.destroy();});
 await test('explicit empty catalogue accepted',async()=>{const {f,b}=create();f.empty();assert.deepEqual(await b.catalogueTransport.list(),[]);b.destroy();});
+await test('detail comparison detects text changes even without timestamp advance',async()=>{const {f,b}=create(),port=createPreviewPort(b);const before=await port.read('fx-pot-01');f.enqueue('detail',({normal})=>{const p=normal();p.row.description='Different source description with unchanged updated_at';return p;});const after=await port.read('fx-pot-01');assert.notEqual(before.revision,after.revision);b.destroy();});
 const report={suite:'command05-read',node:process.version,passed:results.filter(x=>x.status==='PASS').length,total:results.length,results};
 if(process.argv[2])await writeFile(process.argv[2],JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));if(report.passed!==report.total)process.exitCode=1;

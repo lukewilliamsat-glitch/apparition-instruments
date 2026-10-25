@@ -31,6 +31,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/command05-evidence" "$RUNNER_TEMP/command05-tools"
+          python3 tests/command05/module-closure.py
           python3 tests/command05/source-integrity.py "$RUNNER_TEMP/command05-evidence" "$GITHUB_SHA"
           browser=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || true)
           test -n "$browser"

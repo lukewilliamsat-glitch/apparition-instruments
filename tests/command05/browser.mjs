@@ -13,14 +13,14 @@ let aggregate=0;
 const server=createServer(async(req,res)=>{
  const pathname=new URL(req.url,'http://fixture.invalid').pathname;
  if(pathname==='/favicon.ico'||pathname.startsWith('/assets/')){res.writeHead(204);res.end();return;}
- let p=pathname.startsWith('/tests/')?pathname.slice(1):'dist'+pathname;
+ let p=pathname.startsWith('/tests/')||pathname.startsWith('/dist/')?pathname.slice(1):'dist'+pathname;
  if(p.endsWith('/'))p+='index.html';
- if(!/^(dist\/(admin|backend|commercial|circuit-forge)\/|tests\/command05\/)/.test(p)||p.includes('..')||!['.html','.mjs','.css'].includes(extname(p))){res.writeHead(404);res.end();return;}
+ if((!/^(dist\/(admin|backend|commercial|circuit-forge)\/|tests\/command05\/)/.test(p)&&!['dist/wiring-kits/kit-seed.mjs','dist/components/catalogue-seed.mjs','dist/wiring-kits/builder-options.mjs','dist/wiring-kits/kit-requirements.mjs','dist/wiring-kits/kit-component-discovery.mjs'].includes(p))||p.includes('..')||!['.html','.mjs','.css'].includes(extname(p))){res.writeHead(404);res.end();return;}
  try{
   let body=await readFile(resolve(p));
   if(extname(p)==='.html'){
    let html=body.toString(),entry=html.match(/data-admin-entry="([^"]+)"/)?.[1]||'';
-   html=html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<img\b[^>]*>/gi,'');
+   html=html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<img\b[^>]*>/gi,'').replace(/<iframe\b[^>]*>[\s\S]*?<\/iframe>/gi,'');
    // Suppress shared public storefront font/theme imports for structural legacy checks.
    html=html.replace(/<link\b[^>]*href="(?:\.\.\/|\/)*(?:style|brand|knowledge|customer-ui)\.css[^>]*>/gi,'');
    html=html.replace('</head>','<script data-admin-entry="'+entry+'"></script><script type="module" src="/tests/command05/browser-entry.mjs"></script></head>');body=Buffer.from(html);
@@ -48,7 +48,7 @@ async function shot(p,name){
  captures.push({file:name+'.png',bytes:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex'),width:bytes.readUInt32BE(16),height:bytes.readUInt32BE(20),sourceCommit:commit,browser:browser.version(),node:process.version,syntheticData:true,originalPNG:true,scroll:await p.evaluate(()=>({x:scrollX,y:scrollY}))});
 }
 async function test(name,fn,width=1440,query='',path='/admin/command/'){
- let p;try{p=await pageAt(width,query,path);await fn(p);results.push({name,width,status:'PASS'});}catch(e){results.push({name,width,status:'FAIL',error:String(e),stack:e.stack});}finally{await p?.close();}
+ let p;try{p=await pageAt(width,query,path);await fn(p);results.push({name,width,status:'PASS'});}catch(e){results.push({name,width,status:'FAIL',error:String(e),stack:e.stack});if(name==='01 desktop catalogue')throw e;}finally{await p?.close();}
 }
 const noOverflow=async p=>{const m=await p.evaluate(()=>({viewport:innerWidth,document:document.documentElement.scrollWidth}));assert(m.document<=m.viewport+1,JSON.stringify(m));return m;};
 try{

@@ -52,7 +52,11 @@ export function createReadBoundary({auth,adapter=null,now=Date.now,timeoutMs=500
   const result=summary({id:row.id,name:row.name,sku:row.sku,category:row.category,manufacturer:row.manufacturer,active:row.active,individually:row.individually,inKits:row.in_kits,salePrice:row.sale_price,kitPrice:row.kit_price,kitPriceQuantity:row.kit_price_quantity,stock:stock?.quantity??null,stockUnit:stock?.stock_unit??'item',technicalSpecs,revision});
   if(!full)return result;
   if(typeof row.description!=='string'||row.description.length>5000||!row.specs||typeof row.specs!=='object'||Array.isArray(row.specs)||Object.keys(row.specs).length>100||Object.entries(row.specs).some(([k,v])=>k.length>60||typeof v!=='string'||v.length>300))throw error('MALFORMED','Invalid description/specifications.');
-  return {...result,description:row.description,specs:structuredClone(row.specs),imageInfo:{kind:'unloaded'}};
+  // Detail comparisons include fields that an updated_at-only writer might not bump.
+  // This remains a local comparison hash, never a database compare-and-set revision.
+  const detailHash=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify([common,row.description,Object.fromEntries(Object.entries(row.specs).sort(([a],[b])=>a.localeCompare(b)))])));ensure(ctx.token);
+  const previewRevision='read-'+Array.from(new Uint8Array(detailHash),v=>v.toString(16).padStart(2,'0')).join('');
+  return {...result,description:row.description,specs:structuredClone(row.specs),previewRevision,imageInfo:{kind:'unloaded'}};
  }
  function freshness(payload){if(payload?.complete!==true||typeof payload.observedAt!=='string'||!Number.isFinite(Date.parse(payload.observedAt))||Math.abs(now()-Date.parse(payload.observedAt))>300000)throw error('INCOMPLETE','Complete, fresh read evidence is required. No partial catalogue was accepted.');state.observedAt=payload.observedAt;}
  async function list({signal}={}){

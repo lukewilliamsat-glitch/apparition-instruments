@@ -1,9 +1,9 @@
 // Served only by the loopback acceptance harness, never imported by dist.
-import {bootAdminGate} from '../../dist/admin/admin-gate.mjs';
-import {mountAdminWorkspace} from '../../dist/admin/command/entry.mjs';
+import {bootAdminGate} from '/admin/admin-gate.mjs';
+import {mountAdminWorkspace} from '/admin/command/entry.mjs';
 import {createFixtureServices} from './fixture-services.mjs';
-import {setComponentRepository} from '../../dist/admin/component-repository.mjs';
-import {setAssemblyRepository} from '../../dist/admin/assembly-repository.mjs';
+import {setComponentRepository} from '/admin/component-repository.mjs';
+import {setAssemblyRepository} from '/admin/assembly-repository.mjs';
 const params=new URLSearchParams(location.search),role=params.get('role')||'stock';
 const f=createFixtureServices({role,count:Number(params.get('size')||14)});
 // A real request is never substituted with synthetic data. Deny it before IO.
