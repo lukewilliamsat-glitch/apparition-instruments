@@ -4,7 +4,7 @@ Authorisation 49, 25 October 2026. **Overall: PARTIAL. Provider Phase A: PARTIAL
 
 This is an intermediate published checkpoint. Only the completed investigations listed below are represented; remaining investigations have no acceptance claim.
 
-Completed investigation: Phase A, egress/budget/workflow assessment, and exact immutable public preflight review.
+Completed investigation: Phase A; egress/budget/workflow; immutable preflight; bounded future privileged compatibility contracts.
 
 Base: `2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f`. Branch: `engineering/dawnbreaker-first-light`. Only Markdown documentation under this directory may change. Every coherent evidence batch is verified, published, independently read back and confirmed before the next independent investigation. Commit/tree/read-back identities are supplied in checkpoint updates and the final handover rather than embedding a self-referential final commit hash.
 
@@ -16,6 +16,7 @@ Reports available in this checkpoint:
 
 - [EGRESS_BUDGET_PROPOSAL.md](EGRESS_BUDGET_PROPOSAL.md)
 - [EGRESS_EXPOSURE.md](EGRESS_EXPOSURE.md)
+- [PRIVATE_COMPATIBILITY_PLAN.md](PRIVATE_COMPATIBILITY_PLAN.md)
 - [PROVIDER_RECOVERY_REPORT.md](PROVIDER_RECOVERY_REPORT.md)
 - [PUBLIC_PREFLIGHT_REVIEW.md](PUBLIC_PREFLIGHT_REVIEW.md)
 - [WORKFLOW_EXPOSURE.md](WORKFLOW_EXPOSURE.md)
