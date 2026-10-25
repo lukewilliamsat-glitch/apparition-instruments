@@ -1,0 +1,133 @@
+{
+  "kind": "COMMAND_READONLY_SOURCE_OVERLAY_V1",
+  "sourceCommit": "df78c5bf5144b012a7d96c628186180fa6432df3",
+  "baseSourceCommit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+  "entries": [
+    {
+      "path": "admin/admin-auth.mjs",
+      "beforeSHA256": "cdd57b1818ccee6ed096e91438c65fda1f02195506cfe6239893c93e4d469a6d",
+      "afterSHA256": "a0ebb36cacb63d90d8c6078ab7276eb9698684ace23135f0cfed1ec174cd701b",
+      "bytes": 6544
+    },
+    {
+      "path": "admin/admin-gate.mjs",
+      "beforeSHA256": "e504323872f0546affcf599d8c159a82e2d1c2ff567cb80f74e9ffa42e77e77a",
+      "afterSHA256": "e70ffd270cadb7226cc1c2976ffd894d36cf807e2c1997aa2f7fba4e45191b36",
+      "bytes": 7513
+    },
+    {
+      "path": "admin/application.mjs",
+      "beforeSHA256": "44ac219049d57e981146c464907cf6007cca9ba6be4d298005588a63f8b59a2c",
+      "afterSHA256": "6c11aadbdd1eb6b19975fbe0b29962b085635085eac882865bd6a1a94904a004",
+      "bytes": 7990
+    },
+    {
+      "path": "admin/command/bounded-json.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "b222f629be1fb294d2a3869ccda86b1c8b47238fc90461ed86ac777a9428dbca",
+      "bytes": 1880
+    },
+    {
+      "path": "admin/command/command.css",
+      "beforeSHA256": null,
+      "afterSHA256": "a776596e9e2eb92c832fb73c7015372dfd5230c89d79ec4d33f7d4db16b0da25",
+      "bytes": 6563
+    },
+    {
+      "path": "admin/command/command01/controller.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "2c50b400ff4a8372b593a9c5253349d7ad8b03dbe10f8dad548b1068de61f0f1",
+      "bytes": 4276
+    },
+    {
+      "path": "admin/command/command01/model.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "1d6efcc47242ec9829a2a9a270a71dff18293e044f35d65e400de2f27bac30ed",
+      "bytes": 5079
+    },
+    {
+      "path": "admin/command/command01/view.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "5a1b211210e77f271d0fc268e708698891c66730024731441a40698da565cdbc",
+      "bytes": 14177
+    },
+    {
+      "path": "admin/command/command01/workbench.css",
+      "beforeSHA256": null,
+      "afterSHA256": "299c86226e392fffcc58f005ca6b42c125a3b7b435f828dd9d1d5cc08178a179",
+      "bytes": 15895
+    },
+    {
+      "path": "admin/command/command02/editor-view.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "4846488f07b18d34fd5648e8d47f9d51cffef9818a41d41dd245c23979267407",
+      "bytes": 14678
+    },
+    {
+      "path": "admin/command/command02/editor.css",
+      "beforeSHA256": null,
+      "afterSHA256": "4967d622c2c2c22a173f71cd844f581c8d59c0e5847997b943c48ae151b1db5b",
+      "bytes": 6170
+    },
+    {
+      "path": "admin/command/command02/schema.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "2da04affa74271f894ce7c462214404239cc196420d3c6205b2be5f1ea90369e",
+      "bytes": 5966
+    },
+    {
+      "path": "admin/command/command02/session.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "48cee0b80eac0f3b56aef1e77d148ac5b5bac251762485eececad05a1bd57fcd",
+      "bytes": 8428
+    },
+    {
+      "path": "admin/command/editor-port.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "31089526ea9086329f34bd52b8f50576b16ef72ed893a39e60e4c0fcad9eda1b",
+      "bytes": 897
+    },
+    {
+      "path": "admin/command/entry.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "74d4c12b64722448321573a5cfc9fe3c858127d48ace96534475b87a30ed3757",
+      "bytes": 6292
+    },
+    {
+      "path": "admin/command/index.html",
+      "beforeSHA256": null,
+      "afterSHA256": "dff28e2ea4a7092ac68c84953a1c7e24de9b909f5d290f791919085ce016c595",
+      "bytes": 8354
+    },
+    {
+      "path": "admin/command/nocturne.css",
+      "beforeSHA256": null,
+      "afterSHA256": "6f7d206a7828881f0eab44757d3d3e6e7a9bb7ee510e9f2fd14f8f25b54f7b99",
+      "bytes": 20455
+    },
+    {
+      "path": "admin/command/presentation.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "94449a728835a95a8723e8fb3ad79ded09ab1b1b2a19317b499aabb3c63c6152",
+      "bytes": 5032
+    },
+    {
+      "path": "admin/command/production-read.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "929ecdc543f566d189ab2fd4fcf5aa4b373878703e3b487b241906ce42a31770",
+      "bytes": 7977
+    },
+    {
+      "path": "admin/command/read-activation.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "0982665d9fd9234fa28380ffaddee4f02d90b95b250603d0123573eb9fd4f594",
+      "bytes": 331
+    },
+    {
+      "path": "admin/command/read-boundary.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "24692914f58a5e203e52f60ee2ccee3f2aa8e00917ad562c511b1e9a26fd467f",
+      "bytes": 12059
+    }
+  ]
+}

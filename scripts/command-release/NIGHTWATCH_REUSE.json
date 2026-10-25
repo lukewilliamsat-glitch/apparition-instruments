@@ -1,0 +1,74 @@
+{
+  "sourceCommit": "0dc0902985d00524fc0465face22b7b19edc7ef8",
+  "sourceFiles": [
+    "scripts/nightwatch/payload.py",
+    "scripts/nightwatch/delivery.py"
+  ],
+  "scope": "Byte-identical generic archive/current-state functions; no publisher or SPECTRE overlay included",
+  "functions": [
+    {
+      "name": "Rejected",
+      "sha256": "46af8eff43649fdd4d6a89f98c0f05e9ff9c8eb7c70bdf630489ff184efa82de"
+    },
+    {
+      "name": "require",
+      "sha256": "69d493660f716f6fe86a6de0d648bc4271465c4fde169c32dd853d6f1d865760"
+    },
+    {
+      "name": "sha",
+      "sha256": "04336e8acf0ce65ebefb7803065e43f41f0197564eccb0eb67081b72f981d132"
+    },
+    {
+      "name": "canonical",
+      "sha256": "07646ee2c43a1b7196ed329c0695cbd78992908e62e592a009ceed9479ef6d99"
+    },
+    {
+      "name": "strict_json",
+      "sha256": "9e3fa23e556804ea59cb49049c36506faedcf2acbc12d4aac6a54904aad01423"
+    },
+    {
+      "name": "safe_path",
+      "sha256": "1c91a696a807b1f02e1f578bb524234201a16996e3da2809ca2bc70de690846a"
+    },
+    {
+      "name": "inventory",
+      "sha256": "88b41c96450f917d19d12dad69035a0da3b6fe0139c7a5222e1c163227e777b3"
+    },
+    {
+      "name": "_parents",
+      "sha256": "043a10fad70daebcadb3b5a45dbe2b2cb3d3b75bc5b9f15e814458d45b5260a7"
+    },
+    {
+      "name": "Payload",
+      "sha256": "a9946d5a6a20606dfa5e86d7bf8db278e6d1fefdbca0d43de48135da67695d17"
+    },
+    {
+      "name": "read_pages_zip",
+      "sha256": "215b82430f8d99000ddcff016ff0c47a688aa92ad123c90199d1d749d542af80"
+    },
+    {
+      "name": "_read_tar",
+      "sha256": "db2079df992b1d48b2a8399a60626802760376c8c3e1b9498979746066311656"
+    },
+    {
+      "name": "pages_zip",
+      "sha256": "78593dcb02dce0678eb0540aef68b1e06c6c3e3d674539210e215972d1bcf61a"
+    },
+    {
+      "name": "make_bundle",
+      "sha256": "d40ca303b0238d786fb6a9684cabcaf29eb0da9db3f53dd43cbe01e3cdb40625"
+    },
+    {
+      "name": "verify_bundle",
+      "sha256": "5724513915949d2f9cc21282cd0e91c4a94cbc1854191045571b7812b6b43284"
+    },
+    {
+      "name": "_snapshot",
+      "sha256": "71987b634b9d02e59eeeac9b4d9ea39b84e90c795c85ffa9c50f7c5fb8631005"
+    },
+    {
+      "name": "payload_digest",
+      "sha256": "ff816489fc7906001f72faca4ee39ba9513fc5b01ec2f1b1c9b981e3e37d4276"
+    }
+  ]
+}

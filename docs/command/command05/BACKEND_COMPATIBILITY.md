@@ -1,5 +1,7 @@
 # Real backend compatibility — UNKNOWN, no calls authorised
 
+Authorisation54 update: the bounded production adapter and existing-Auth proof are now implemented and fixture-accepted; see FINAL_ASCENSION.md and FINAL_ACCEPTANCE_54.json. Activation stays disabled pending the exact owner-operated metadata outputs and separately approved live request acceptance. Older implementation-gap descriptions below are historical; no actual provider compatibility is inferred from the new code.
+
 Owner reports allowance reset and active webstore/holiday mode; current quota figures, reporting lag and backend access contracts are not independently established here. No Supabase request, SQL, Auth session, business row, credential or migration was used. Synthetic acceptance proves the integration under its declared fixture contract only.
 
 ## Source-known vs deployed-unknown

@@ -1,0 +1,194 @@
+{
+  "status": "ENGINEERING_PASS_PRODUCTION_HOLD",
+  "readOnlyRelease": "NOT_DEPLOYED",
+  "ironcladWriteActivation": "PENDING / INACTIVE",
+  "applicationCommit": "df78c5bf5144b012a7d96c628186180fa6432df3",
+  "applicationDistTree": "98b47d2ab3afe4f2cac543b01129606774955f20",
+  "recoveryTestCommit": "72c143a45993adf9f524aad94cce5da6ad3349b3",
+  "productionActivation": false,
+  "providerMetadataReport": "PENDING_OWNER_SQL_EDITOR_OUTPUTS",
+  "liveAuthReadCompatibility": "UNKNOWN",
+  "ownerVisualAcceptance": "PENDING",
+  "completeReleasePayloadSHA256": null,
+  "approvedCurrentRollbackSHA256": null,
+  "currentHolidayEvidence": "PENDING / OLD_OPEN_SNAPSHOT_REJECTED",
+  "publisher": "UNINSTALLED / SEPARATE_EXACT_APPROVAL_REQUIRED",
+  "liveProviderRequests": 0,
+  "privateProductionArchivesOpened": 0,
+  "productionChanges": false,
+  "evidenceReuse": {
+    "originalRun": 40227070614,
+    "logicCasesReused": 96,
+    "dialogLifecycleCasesReused": 6,
+    "byteComparison": "PASS"
+  },
+  "localAcceptance": {
+    "newReadCases": 32,
+    "changedBoundaryCases": 28,
+    "productionDOMJourneys": 4,
+    "nodeVersions": [
+      "v22.20.0",
+      "v24.22.1"
+    ],
+    "legacyAuthAndAdminRegressions": "PASS",
+    "releaseCompositionCases": 14,
+    "nightwatchFunctionsReusedWithoutModification": 16
+  },
+  "nativeAcceptance": {
+    "combinedPassed": 54,
+    "combinedTotal": 54,
+    "aggregation": "53 individually passing journeys from the composed run plus targeted logout PASS; not a single 54/54 CI run",
+    "composedRun": 40242794782,
+    "composedRunResult": "FAIL 53/54: test checked token removal before asynchronous logout completed",
+    "targetedRun": 40243379865,
+    "targetedRunResult": "PASS 1/1",
+    "freshIsolationControlsEachRun": 10,
+    "successfulSourceBeforeAfter": "IDENTICAL",
+    "successfulSourceDigest": "70697128a4c3455b349da39608edd094ab998874f6bef4f81058a153cf2d1080",
+    "successfulSourceHashesVerified": 48,
+    "applicationBytesUnchangedAcrossRuns": true
+  },
+  "visualArtifact": {
+    "id": 12617148442,
+    "run": 40242794782,
+    "bytes": 2345649,
+    "sha256": "42b124984a1e3d6d82ff597ebfc94bb352f06a26c3e282a297011e24a53ea115",
+    "expiresAt": "2026-11-08T23:01:37Z",
+    "originalPNGs": 22,
+    "newProductionShapedPNGs": 3,
+    "pngReadback": "ALL_BYTES_SHA256_DIMENSIONS_PASS",
+    "sourceCommit": "df78c5bf5144b012a7d96c628186180fa6432df3",
+    "syntheticData": true,
+    "newCaptures": [
+      {
+        "file": "20-production-shaped-desktop.png",
+        "bytes": 169194,
+        "sha256": "caf93536750872bee1c681cd6d928d025437afff5ff0ad94ac725acbf6fb958a",
+        "width": 1440,
+        "height": 1050,
+        "sourceCommit": "df78c5bf5144b012a7d96c628186180fa6432df3",
+        "browser": "155.0.8059.39",
+        "node": "v22.20.0",
+        "syntheticData": true,
+        "originalPNG": true,
+        "scroll": {
+          "x": 0,
+          "y": 408
+        }
+      },
+      {
+        "file": "21-production-shaped-mobile.png",
+        "bytes": 55498,
+        "sha256": "42b62904a855f1dab3848c6014e08422c23924d364e936d04e0044fafc33cf1d",
+        "width": 390,
+        "height": 950,
+        "sourceCommit": "df78c5bf5144b012a7d96c628186180fa6432df3",
+        "browser": "155.0.8059.39",
+        "node": "v22.20.0",
+        "syntheticData": true,
+        "originalPNG": true,
+        "scroll": {
+          "x": 0,
+          "y": 4703
+        }
+      },
+      {
+        "file": "22-production-shaped-denied.png",
+        "bytes": 17151,
+        "sha256": "8233abd57ce6dce2344256b63dafe8c2985330cf06fd42b7264b7019301b0f8a",
+        "width": 390,
+        "height": 950,
+        "sourceCommit": "df78c5bf5144b012a7d96c628186180fa6432df3",
+        "browser": "155.0.8059.39",
+        "node": "v22.20.0",
+        "syntheticData": true,
+        "originalPNG": true,
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    ]
+  },
+  "targetedArtifact": {
+    "id": 12618135714,
+    "run": 40243379865,
+    "bytes": 11478,
+    "sha256": "2d8fffe9b4c9339168ef4e8e882eeb96b6e598bdd174e94136d9877c5e9d9c14",
+    "expiresAt": "2026-11-08T23:08:39Z",
+    "originalZipAndSourceReadback": "PASS",
+    "screenshots": 0
+  },
+  "syntheticMeasurements": [
+    {
+      "products": 14,
+      "catalogueRequests": 2,
+      "detailRequests": 2,
+      "decodedBytes": 7267,
+      "responseBytes": [
+        45,
+        52,
+        5622,
+        885,
+        45,
+        52,
+        502,
+        64
+      ],
+      "syntheticMeasurement": true
+    },
+    {
+      "products": 100,
+      "catalogueRequests": 2,
+      "detailRequests": 2,
+      "decodedBytes": 48011,
+      "responseBytes": [
+        45,
+        52,
+        40679,
+        6572,
+        45,
+        52,
+        502,
+        64
+      ],
+      "syntheticMeasurement": true
+    },
+    {
+      "products": 500,
+      "catalogueRequests": 2,
+      "detailRequests": 2,
+      "decodedBytes": 238652,
+      "responseBytes": [
+        45,
+        52,
+        204459,
+        33433,
+        45,
+        52,
+        502,
+        64
+      ],
+      "syntheticMeasurement": true
+    }
+  ],
+  "ownerReportedBilling": {
+    "date": "2026-10-25",
+    "periodEgressGBApprox": 0.66,
+    "includedAllowanceGB": 5,
+    "dailyPostgRESTMBApprox": 624.495,
+    "minimalAuthAndEdge": true,
+    "independentVerification": false,
+    "endpointResponsible": "UNKNOWN",
+    "remainingAllowance": "NOT_INFERRED"
+  },
+  "productionMain": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+  "limitations": [
+    "No actual Supabase/Auth/JWT/RLS/column/CORS/egress acceptance yet.",
+    "No current complete served payload/deployment/holiday proof or accepted rollback.",
+    "CSS text enlargement is not browser-UI zoom or screen-reader certification.",
+    "The first composed run produced source-before evidence but no source-after because its browser step failed; its published source hashes and every PNG were independently checked. The successful targeted run includes identical source-before/after.",
+    "Specialist implementations/source/DOM navigation preserved; no claim of full live backend compatibility."
+  ],
+  "syntheticMeasurementScope": "Adapter decoded JSON including strict read-proof responses; excludes initial existing Admin gate/login, HTTP headers and transport overhead. Not production egress."
+}
