@@ -1,0 +1,31 @@
+{
+  "authorisation":52,
+  "date":"2026-10-25",
+  "main":"2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+  "mainTree":"eb2c9f1824602d19ed27f010cf080190a06c713e",
+  "release01":{
+    "programme":"SPECTRE / HOMECOMING",
+    "status":"BLOCKED",
+    "attempted":false,
+    "candidateZipSHA256":"28806c27208bbc5cdb5f92b880f2b3c2c3c7e51f6a770fc5ae6d6f9dc0d9ca34",
+    "rollbackZipSHA256":"d358efe91b5db0b0845505afd91a3eaa079c4bc0aeaa9a331fe5916d4266e349",
+    "packageIntegrity":"PASS from immutable NIGHTWATCH50A evidence",
+    "visualAcceptance":"MISSING",
+    "currentHolidayPreservation":"UNVERIFIED; historic snapshot OPEN",
+    "activeServedPayload":"UNKNOWN",
+    "publisherAndRestoration":"UNVERIFIED; template uninstalled",
+    "latestReportedSuccessfulRun":40175066908,
+    "competingPublisherExclusion":"INCOMPLETE",
+    "newArchiveProcessingPasses":0,
+    "newBackendRequests":0
+  },
+  "release02":{
+    "programme":"COMMAND + NOCTURNE read-only",
+    "status":"PREPARATION",
+    "initialLocalCheckpoint":"51c41d75ebed92ffd24e08b7ba280c81b4a0c982",
+    "liveAuthenticationCompatibility":"UNKNOWN",
+    "deployed":false
+  },
+  "productionChanges":false,
+  "workflowDispatches":0
+}
