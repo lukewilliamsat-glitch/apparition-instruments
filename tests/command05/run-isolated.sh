@@ -13,6 +13,13 @@ cd "$root"
 run_isolated(){ runuser -u "$owner" -- env -i HOME="$fixture_home" TMPDIR="$fixture_home" PATH="$(dirname "$node"):/usr/bin:/bin" LANG=C.UTF-8 "$node" "$@"; }
 # Existing kernel/browser negative controls must pass before any Admin fixture opens.
 run_isolated tests/command05/isolation.mjs "$output" "$browser" "$controller" "$parent_namespace" "$commit"
+if run_isolated tests/command05/native-reuse.mjs "$output/NATIVE_REUSE.json" > "$output/native-reuse-log.txt" 2>&1; then
+ run_isolated --import ./tests/fixtures/admin-offline.mjs tests/command05/production-dom.mjs signed-out > "$output/production-dom-log.txt"
+ browser_result=0
+ run_isolated tests/command05/browser.mjs "$output" "$browser" "$controller" "$commit" 54G || browser_result=$?
+ runuser -u "$owner" -- env -i HOME="$fixture_home" PATH=/usr/bin:/bin LANG=C.UTF-8 /usr/bin/python3 tests/command05/source-integrity.py "$output" "$commit" --after
+ exit "$browser_result"
+fi
 run_isolated tests/command05/reuse.mjs > "$output/reuse-log.txt"
 run_isolated --require ./tests/command05/network-guard.cjs tests/command05/read.mjs "$output/READ_RESULTS.json" > "$output/read-log.txt"
 run_isolated --require ./tests/command05/network-guard.cjs tests/command05/production-read.mjs "$output/PRODUCTION_READ_RESULTS.json" > "$output/production-read-log.txt"

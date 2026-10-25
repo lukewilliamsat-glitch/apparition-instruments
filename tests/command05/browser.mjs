@@ -5,7 +5,8 @@ import {createHash} from 'node:crypto';
 import {resolve,join,extname} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {createProductionFixture,fixtureConfig,jsonReply} from './production-fixture.mjs';
-const [output,chromePath,controller,commit]=process.argv.slice(2);
+const [output,chromePath,controller,commit,onlyJourney]=process.argv.slice(2);
+if(onlyJourney)assert.equal(onlyJourney,'54G','Only the source-pinned logout recovery may use targeted mode.');
 const stage=JSON.parse(await readFile(join(output,'STAGE_A_RESULTS.json'),'utf8'));
 assert.equal(stage.status,'PASS');assert.equal(stage.sourceCommit,commit);
 const source=JSON.parse(await readFile(join(output,'SOURCE_IDENTITY.json'),'utf8'));assert.equal(source.executionCommit,commit);assert.equal(source.unchangedInheritedBlobs,896);
@@ -59,6 +60,7 @@ async function shot(p,name){
  captures.push({file:name+'.png',bytes:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex'),width:bytes.readUInt32BE(16),height:bytes.readUInt32BE(20),sourceCommit:commit,browser:browser.version(),node:process.version,syntheticData:true,originalPNG:true,scroll:await p.evaluate(()=>({x:scrollX,y:scrollY}))});
 }
 async function test(name,fn,width=1440,query='',path='/admin/command/'){
+ if(onlyJourney&&!name.startsWith(onlyJourney+' '))return;
  let p;try{p=await pageAt(width,query,path);await fn(p);results.push({name,width,status:'PASS'});}catch(e){results.push({name,width,status:'FAIL',error:String(e),stack:e.stack});if(name==='01 desktop catalogue')throw e;}finally{await p?.close();}
 }
 const noOverflow=async p=>{const m=await p.evaluate(()=>({viewport:innerWidth,document:document.documentElement.scrollWidth}));assert(m.document<=m.viewport+1,JSON.stringify(m));return m;};
@@ -98,7 +100,7 @@ try{
  await test('54D membership revocation conceals catalogue and focuses status',async p=>{await p.evaluate(()=>window.ascensionFixture.setMode('denied'));await p.locator('[data-product="fx-pot-01"]').click();await p.waitForFunction(()=>window.ascensionFixture.app.boundary.snapshot().status==='denied');assert(await p.locator('#command-content').isHidden());assert.equal(await p.evaluate(()=>document.activeElement.id),'command-status');},1440,'?production-read=yes');
  await test('54E service failure has no automatic retry; explicit recovery',async p=>{await p.evaluate(()=>window.ascensionFixture.setMode('failure'));await p.locator('#refresh').click();await p.waitForFunction(()=>window.ascensionFixture.app.boundary.snapshot().status==='error');const count=await p.evaluate(()=>window.ascensionFixture.services.calls.length);await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));assert.equal(await p.evaluate(()=>window.ascensionFixture.services.calls.length),count);await p.evaluate(()=>window.ascensionFixture.setMode('ok'));await p.locator('#command-reconnect').click();await p.waitForFunction(()=>window.ascensionFixture.app.workbench.snapshot().status==='ready');},1440,'?production-read=yes');
  await test('54F production-shaped expiry conceals cached data without request',async p=>{await select(p);const count=await p.evaluate(()=>window.ascensionFixture.services.calls.length);await p.evaluate(async()=>{window.ascensionFixture.expire();try{await window.ascensionFixture.app.boundary.readProduct('fx-pot-01');}catch{}});assert(await p.locator('#command-content').isHidden());assert.equal(await p.evaluate(()=>window.ascensionFixture.app.boundary.snapshot().status),'expired');assert.equal(await p.evaluate(()=>window.ascensionFixture.services.calls.length),count);},1440,'?production-read=yes');
- await test('54G existing sign-out locks read workspace and clears session',async p=>{await select(p);await p.locator('.admin-lock').click();await p.waitForFunction(()=>!document.body.classList.contains('admin-authorized'));assert.equal(await p.evaluate(()=>localStorage.getItem('apparition.admin.supabase-session.v1')),null);assert.equal(await p.evaluate(()=>window.ascensionFixture.app.boundary.snapshot().catalogueReady),false);assert.equal(await p.locator('#rows tr').count(),0);},1440,'?production-read=yes');
+ await test('54G existing sign-out locks read workspace and clears session',async p=>{await select(p);await p.locator('.admin-lock').click();await p.waitForFunction(()=>!document.body.classList.contains('admin-authorized'));assert.equal(await p.evaluate(()=>window.ascensionFixture.app.boundary.snapshot().catalogueReady),false);assert.equal(await p.locator('#rows tr').count(),0);await p.waitForFunction(()=>localStorage.getItem('apparition.admin.supabase-session.v1')===null);assert.equal(await p.evaluate(()=>localStorage.getItem('apparition.admin.supabase-session.v1')),null);},1440,'?production-read=yes');
  assert(requests.every(r=>new URL(r.url).origin===origin),'All application requests remain loopback');assert(responses.every(r=>new URL(r.url).origin===origin));assert.equal(errors.length,0,JSON.stringify(errors));
 }catch(e){results.push({name:'harness/security',status:'FAIL',error:String(e),stack:e.stack});}
 finally{
