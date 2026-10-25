@@ -15,6 +15,7 @@ app.editor.set('name','');assert(!app.editor.snapshot().canReview);assert.equal(
 f.actorModify('fx-pot-01',{name:'A competing source name'});assert.equal(await app.editor.review(),false);assert(app.editor.snapshot().conflict);assert.equal(d.activeElement.id,'conflict-panel');
 f.expire();assert(d.getElementById('command-content').hidden);assert(app.editor.snapshot().dirty);assert.match(d.getElementById('command-status').textContent,/Checking|expired/);
 f.restore();await app.workbench.refresh({supersede:true});assert(!d.getElementById('command-content').hidden);assert(app.editor.snapshot().dirty);
+f.setSubject('fictional-admin-2');await app.workbench.refresh({supersede:true});assert(d.getElementById('command-content').hidden);assert.match(d.getElementById('command-status').textContent,/original identity/);f.setSubject('fictional-admin-1');await app.workbench.refresh({supersede:true});assert(!d.getElementById('command-content').hidden);
 await assert.rejects(app.previewPort.save({}),{code:'UNSUPPORTED'});
 d.querySelector('.admin-lock').click();await new Promise(r=>setTimeout(r,0));assert.equal(app.editor.snapshot().phase,'closed');assert(!d.body.classList.contains('admin-authorized'));
 app.destroy();await w.happyDOM.close();console.log('COMMAND05 integrated draft/review, disabled production save, field validation, conflict focus, retained expiry draft and sign-out clearing PASS.');

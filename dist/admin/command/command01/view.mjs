@@ -97,9 +97,9 @@ export function mountWorkbench(document,{transport,extension={}}={}) {
   }
   function render(state){
     if(disposed)return;
-    const counts=[['Components',state.rows.length,'authorised records'],['Individual sale',state.rows.filter(r=>r.individually).length,'eligible'],['Kit use',state.rows.filter(r=>r.inKits).length,'eligible'],['Out of stock',state.rows.filter(r=>r.stock===0).length,'zero quantity']];
+    const counts=[['Components',state.rows.length,'authorised records'],['Individual sale',state.rows.filter(r=>r.individually).length,'eligible'],['Kit use',state.rows.filter(r=>r.inKits).length,'eligible'],['Out of stock',state.rows.some(r=>r.stock!==null)?state.rows.filter(r=>r.stock===0).length:null,state.rows.some(r=>r.stock!==null)?'zero quantity':'Inventory unavailable']];
     byId('metrics').replaceChildren();
-    for(const [label,value,note]of counts){const metric=add(byId('metrics'),'div',undefined,'metric');add(metric,'span',label,'metric-label');add(metric,'span',state.status==='idle'||(state.status==='loading'&&!state.rows.length)?'—':String(value),'metric-value');add(metric,'span',note,'metric-note');}
+    for(const [label,value,note]of counts){const metric=add(byId('metrics'),'div',undefined,'metric');add(metric,'span',label,'metric-label');add(metric,'span',state.status==='idle'||(state.status==='loading'&&!state.rows.length)?'—':value===null?'—':String(value),'metric-value');add(metric,'span',note,'metric-note');}
     byId('nav-count').textContent=String(state.rows.length);
     const manufacturers=[...new Set(state.rows.map(r=>r.manufacturer))].sort();
     if(JSON.stringify(manufacturers)!==lastManufacturers){lastManufacturers=JSON.stringify(manufacturers);options(byId('filter-manufacturer'),manufacturers.map(m=>[m,m]),'All manufacturers');}

@@ -1,7 +1,7 @@
 {
   "mission": "AUTHORISATION 51 / THE ASCENSION",
-  "checkpoint": 4,
-  "status": "CHECKPOINT4_LOCAL_PASS",
+  "checkpoint": 5,
+  "status": "LOCAL_PASS_NATIVE_CI_PENDING",
   "baseCommit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
   "remoteSourcesVerified": {
     "command01": "3b84871ccb338296b52b4fe3fe350be17284d235",
@@ -54,7 +54,7 @@
   "remoteBranchCreated": true,
   "publicationReadback": "Recorded after publication in subsequent checkpoint",
   "approvalBlocker": "Historical rejection resolved by Authorisation52; same connector accepted branch creation",
-  "nextGate": "Publish/read back responsive workspace; native Chrome/security acceptance",
+  "nextGate": "Native Chrome and artifact verification; no production activation",
   "readCases": {
     "passed": 27,
     "total": 27,
@@ -72,5 +72,16 @@
     "path": "tests/admin-v21.mjs",
     "result": "FAIL at historical mission scope guard",
     "reason": "Guard compares to6c833dbc, which already differs from main in static workflow and other files. Original test left unchanged. New preservation test compares to exact production main and passes897 protected blobs. Functional assertions before guard passed."
+  },
+  "inheritedLogic": {
+    "command01": {
+      "passed": 42,
+      "total": 42
+    },
+    "command02": {
+      "passed": 54,
+      "total": 54
+    },
+    "adaptations": "Imports/source-audit locations and explicit-port error message wording only; behavioural assertions preserved"
   }
 }

@@ -11,7 +11,7 @@ export async function mountAdminWorkspace({document,auth,services}={}){
  const resizeObserver=typeof document.defaultView.ResizeObserver==='function'?new document.defaultView.ResizeObserver(resize):null;
  if(document.querySelector('[data-admin-topbar]'))resizeObserver?.observe(document.querySelector('[data-admin-topbar]'));resize();
  const previewPort=createPreviewPort(boundary);
- const synthetic=services?.commandReadAdapter?.environment==='synthetic'&&services?.syntheticEditorPersistence?.syntheticOnly===true?services.syntheticEditorPersistence:null;
+ const synthetic=services?.syntheticWriteTesting===true&&services?.commandReadAdapter?.environment==='synthetic'&&services?.syntheticEditorPersistence?.syntheticOnly===true?services.syntheticEditorPersistence:null;
  const canSave=()=>Boolean(synthetic&&services.syntheticWriteTesting===true&&boundary.snapshot().status==='ready');
  const port=synthetic||previewPort;
  const paint=s=>{
