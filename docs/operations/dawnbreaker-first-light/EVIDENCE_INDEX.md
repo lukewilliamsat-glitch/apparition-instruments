@@ -1,0 +1,25 @@
+# Evidence index
+
+Authorisation: owner-supplied AUTHORISATION 49. Engineering publication only; no production or backend execution authority. Assessment date: 25 October 2026, UTC.
+
+| Source | Immutable identity / scope |
+| --- | --- |
+| Production source | [`2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f`](https://github.com/lukewilliamsat-glitch/apparition-instruments/commit/2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f) |
+| ARCHIVIST | [evidence index](https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/faa860df58901a1c4ebbf7cba5b3677b3fd6bafc/docs/engineering/archivist/EVIDENCE_INDEX.md); source-grounded audit, historical measurements remain attributed |
+| ANCHOR | [README](https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/c1100c77f22a9ee85fbe1ffbc663d092838af6ad/docs/operations/anchor/README.md); exact archive integrity/retention verified, active served bytes and rollback execution not verified |
+| Original recovery runbook | [RECOVERY_RUNBOOK.md](https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/542cc90cf9c301b4571d246ce9ae105bddefc2d0/docs/operations/dawnbreaker/RECOVERY_RUNBOOK.md) |
+| Provider evidence contract | [RESET_VERIFICATION.md](https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/542cc90cf9c301b4571d246ce9ae105bddefc2d0/docs/operations/dawnbreaker/RESET_VERIFICATION.md) |
+| Historical owner evidence assessment | [POST_RESET_READINESS.md](https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/faa860df58901a1c4ebbf7cba5b3677b3fd6bafc/docs/engineering/archivist/POST_RESET_READINESS.md); dated earlier screenshot transcription/metadata, not a current dashboard read |
+
+Additional exact primary-source paths and commits are cited in each report. Git source identity verifies committed code, not deployed schema, runtime policy or current account state. Owner confirmation is labelled separately from independent GitHub observations. No private provider screenshot, raw record, credential, opaque storage identifier or signed URL is published. No new provider evidence has been invented.
+
+The final handover records the observed commit/tree, independent full-document GitHub read-back and unchanged original branch heads. An intermediate checkpoint is not acceptance of later unpublished investigations. The fixed production workflow triggers only main pushes, manual dispatch and schedule; this engineering-branch documentation publication does not invoke that production workflow.
+
+## Companion document SHA-256
+
+These digests cover exact UTF-8 bytes including final newlines. The index excludes its own hash. Git tree identity and independent read-back bind all files.
+
+| Report | Bytes | SHA-256 |
+| --- | ---: | --- |
+| [PROVIDER_RECOVERY_REPORT.md](PROVIDER_RECOVERY_REPORT.md) | 5068 | `313b5f727a997e3b5fb9520e73ada86f17fc89c8c0d3f94b3ca99a9a8038881c` |
+| [README.md](README.md) | 2082 | `6dd54c5989dde6d116fbb919913274215d1ed816c3ae5850a7c51ec275801b76` |
