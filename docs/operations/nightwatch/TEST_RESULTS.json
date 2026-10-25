@@ -1,0 +1,479 @@
+{
+  "scope": "synthetic_only",
+  "runtime": "3.12.14",
+  "platform": "Linux",
+  "testedCode": {
+    "scripts/nightwatch/delivery.py": "c6afd2e4a68b2313a8ab40bb15d1fbc2e95da3a72bb2f9ba800a1eef5bfaf726",
+    "scripts/nightwatch/handoff.py": "31b8222008048c6085cdad627d29868900651c99fe042694e9ffd51748f544f9",
+    "scripts/nightwatch/payload.py": "e37519e76aee9f91d04fc14431ba04f3f7298939bd75ed31b700ed2e09051f07",
+    "scripts/nightwatch/prepare.py": "b1874a799da6022e03fbfc80d38c6cfc30d4f91ccc0deb91c965c35a20b5b12f",
+    "scripts/nightwatch/spectre.css": "16d6ebbd2372d54e32565a7999edfd1bc9152c785b77f1bcbf79ee47bba1794a",
+    "scripts/nightwatch/verify_uploaded_tar.py": "19d4cf8d78168ecdf66994b8b7d56fe76377c93cec39c2e99c3a9347a465eee6",
+    "tests/nightwatch/run-isolated.sh": "3137f4eee451bcee71ccc4f569e8f8f51a2ea7e1afaba5e7c5e980cbe27c99ca",
+    "tests/nightwatch/run_tests.py": "4d5864ac10eca79f7db8fa3e7fe8080665fcab0d97c904f3c8a906414ee32360",
+    "tests/nightwatch/test_release.py": "cd2434f308eb6f709203059e2e4b3f5e527e27ae476604340bba4c6c98702059"
+  },
+  "testsRun": 112,
+  "passed": 112,
+  "failures": 0,
+  "errors": 0,
+  "unexpectedSocketAttempts": 0,
+  "processIsolation": {
+    "required": false,
+    "negativeControls": []
+  },
+  "originalArchiveReads": 0,
+  "realDeploymentCalls": 0,
+  "imageDecodes": 0,
+  "recordedAtUTC": "2026-10-25T15:05:26.942069+00:00",
+  "cases": [
+    {
+      "case": "nightwatch_tests.DeliveryTests.test_closure_window_drift_blocks",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.DeliveryTests.test_competing_publisher_blocks",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.DeliveryTests.test_expired_approval_blocks",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.DeliveryTests.test_future_observation_blocks",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.DeliveryTests.test_holiday_digest_drift_blocks",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.DeliveryTests.test_local_lock_blocks",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.DeliveryTests.test_missing_production_approval_blocks",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.DeliveryTests.test_missing_visual_approval_blocks",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.DeliveryTests.test_no_default_port",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.DeliveryTests.test_orders_unpaused_blocks",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.DeliveryTests.test_postpublication_holiday_drift_is_uncertain",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.DeliveryTests.test_receipt_tampering_blocks",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.DeliveryTests.test_release_and_complete_payload_restore",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.DeliveryTests.test_route_mismatch_blocks",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.DeliveryTests.test_second_observation_drift_blocks",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.DeliveryTests.test_stale_current_state_blocks",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.DeliveryTests.test_tools_unavailable_blocks",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.DeliveryTests.test_uncertain_attempt_not_retried",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.DeliveryTests.test_unknown_holiday_blocks",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.DeliveryTests.test_unrelated_candidate_scope_blocks",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.DeliveryTests.test_wrong_active_deployment_blocks",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.DeliveryTests.test_wrong_active_payload_blocks",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.DeliveryTests.test_wrong_active_source_blocks",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.FileToolsTests.test_export_preserves_empty_directories",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.FileToolsTests.test_export_roundtrip_and_no_overwrite",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.FileToolsTests.test_oversized_approval",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.FileToolsTests.test_prepare_missing_approval_does_not_open_baseline",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.FileToolsTests.test_refuse_input_symlink",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.FileToolsTests.test_wrong_receipt_cannot_export",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.HandoffTests.test_owner_pinned_digest_required",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.HandoffTests.test_reject_extra_handoff_file",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.HandoffTests.test_reject_missing_durable_rollback",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.HandoffTests.test_reject_missing_postdeploy_plan",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.HandoffTests.test_reject_missing_restore_acceptance",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.HandoffTests.test_reject_stale_holiday",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.HandoffTests.test_reject_unshared_concurrency",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.HandoffTests.test_reject_unverified_holiday",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.HandoffTests.test_reject_wrong_tooling_commit",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.HandoffTests.test_staging_not_equated_to_publication",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.HandoffTests.test_valid_handoff_exports_exact_candidate",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.OverlayTests.test_baseline_css_drift",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.OverlayTests.test_external_css_reference_requires_review",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.OverlayTests.test_no_added_or_missing_files",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.OverlayTests.test_no_arbitrary_html_change",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.OverlayTests.test_no_duplicate_cache_marker",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.OverlayTests.test_only_exact_css_and_cache_links_change",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.OverlayTests.test_script_and_comment_literals_unchanged",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.OverlayTests.test_unapproved_holiday_edit_rejected",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.OverlayTests.test_unquoted_css_link_requires_review",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.OverlayTests.test_uppercase_and_self_closing_link",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.OverlayTests.test_wrong_css_rejected",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_bundle_receipt_and_inner_hash",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_case_collision",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_count_bound",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_crc_corruption",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_deterministic_packaging",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_duplicate_json_key",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_duplicate_path",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_expansion_ratio",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_file_bound",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_file_directory_collision",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_fixture_round_trip_and_exact_file_manifest",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_global_bound",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_manifest_digest_binds_all_paths_and_bytes",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_multiple_outer_members",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_nonfinite_json",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_nonzero_file_padding",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_original_digest_and_size_both_required",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_source_and_bundle_role",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_tar_checksum",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_tar_end_markers",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_tar_trailing_content",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_tar_truncation",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_unsafe_path_29",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_unsafe_path_30",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_unsafe_path_31",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_unsafe_path_32",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_unsafe_path_33",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_unsafe_path_34",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_unsafe_path_35",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_unsafe_path_36",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_unsafe_path_37",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_unsafe_path_38",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_unsafe_path_39",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_unsafe_path_40",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_unsafe_path_41",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_unsafe_path_42",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_unsafe_tar_type_43",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_unsafe_tar_type_44",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_unsafe_tar_type_45",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_unsafe_tar_type_46",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_unsafe_tar_type_47",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_unsafe_tar_type_48",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_unsafe_tar_type_49",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_unsupported_zip_structure",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_zip_symlink",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_zip_unsupported_compression",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PreparationTests.test_archive_approval_does_not_authorise_publication",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PreparationTests.test_changed_archive_read_budget_rejected",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PreparationTests.test_changed_artifact_identity_rejected",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PreparationTests.test_complete_synthetic_handoff_and_full_rollback_bytes",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PreparationTests.test_expired_archive_approval_cannot_read_payload",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PreparationTests.test_image_decoding_not_part_of_package_preparation",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PreparationTests.test_owner_confirmation_required",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PreparationTests.test_package_output_no_overwrite",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PreparationTests.test_read_budget_is_checked_on_file_open",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.UploadTarTests.test_original_upload_tar_verified",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.UploadTarTests.test_pages_root_required",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.UploadTarTests.test_pages_upload_gnu_tar_repack_preserves_complete_payload",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.UploadTarTests.test_repacked_changed_file_rejected",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.UploadTarTests.test_repacked_missing_empty_directory_rejected",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.UploadTarTests.test_unpinned_tar_receipt_rejected",
+      "result": "PASS"
+    }
+  ]
+}

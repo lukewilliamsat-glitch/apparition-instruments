@@ -1,0 +1,130 @@
+# UNINSTALLED CANDIDATE TEMPLATE. Authorisation 50 does NOT permit installing,
+# dispatching or deploying this workflow. Its route/environment protections,
+# exact approval packet and live verification must be separately accepted.
+name: NIGHTWATCH exact approved Pages payload
+on:
+  workflow_dispatch:
+    inputs:
+      artifact_id:
+        required: true
+        type: string
+      artifact_run_id:
+        required: true
+        type: string
+      artifact_sha256:
+        required: true
+        type: string
+      approval_sha256:
+        required: true
+        type: string
+      operation:
+        required: true
+        type: choice
+        options: [release, restore]
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  exact-payload:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Verify exact approved handoff artifact metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXACT_ARTIFACT_ID: ${{ inputs.artifact_id }}
+          EXACT_RUN_ID: ${{ inputs.artifact_run_id }}
+          EXACT_DIGEST: ${{ inputs.artifact_sha256 }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$EXACT_ARTIFACT_ID" =~ ^[0-9]+$ ]]
+          [[ "$EXACT_RUN_ID" =~ ^[0-9]+$ ]]
+          [[ "$EXACT_DIGEST" =~ ^[a-f0-9]{64}$ ]]
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$EXACT_ARTIFACT_ID" > "$RUNNER_TEMP/handoff-metadata.json"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          x=json.loads((Path(os.environ['RUNNER_TEMP'])/'handoff-metadata.json').read_text())
+          assert x['id']==int(os.environ['EXACT_ARTIFACT_ID']) and not x['expired']
+          assert x['workflow_run']['id']==int(os.environ['EXACT_RUN_ID'])
+          assert 0<x['size_in_bytes']<=48*1024*1024
+          assert x['digest']=='sha256:'+os.environ['EXACT_DIGEST']
+          PY
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          artifact-ids: ${{ inputs.artifact_id }}
+          run-id: ${{ inputs.artifact_run_id }}
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/nightwatch-handoff
+          merge-multiple: true
+      - name: Stage only the complete, owner-approved, current-state-compatible payload
+        env:
+          APPROVAL_SHA256: ${{ inputs.approval_sha256 }}
+          EXACT_OPERATION: ${{ inputs.operation }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/nightwatch/handoff.py --handoff "$RUNNER_TEMP/nightwatch-handoff" \
+            --approval-sha256 "$APPROVAL_SHA256" --operation "$EXACT_OPERATION" \
+            --tooling-commit "$GITHUB_SHA" --out-new "$RUNNER_TEMP/nightwatch-site"
+      - name: Reuse and verify the approved inner Pages TAR; never regenerate website
+        env:
+          EXACT_OPERATION: ${{ inputs.operation }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PYCODE'
+          import io,os,sys,zipfile
+          from pathlib import Path
+          sys.path.insert(0,'scripts/nightwatch')
+          from payload import strict_json,verify_bundle,MAX_ZIP,MAX_TAR
+          from prepare import bounded_file,runtime_bounds
+          from verify_uploaded_tar import verify_tar
+          runtime_bounds()
+          root=Path(os.environ['RUNNER_TEMP']);handoff=root/'nightwatch-handoff'
+          a=strict_json(bounded_file(handoff/'approval.json',16384))
+          name='release' if os.environ['EXACT_OPERATION']=='release' else 'rollback'
+          key=name+'ReceiptSHA256'
+          receipt=strict_json(bounded_file(handoff/(name+'-receipt.json'),2*1024*1024))
+          raw=bounded_file(handoff/(name+'.zip'),MAX_ZIP)
+          verify_bundle(raw,receipt,a[key])
+          with zipfile.ZipFile(io.BytesIO(raw)) as z:
+            data=z.read('artifact.tar')
+            assert len(data)<=MAX_TAR
+          (root/'artifact.tar').write_bytes(data)
+          print(verify_tar(root/'artifact.tar',handoff/(name+'-receipt.json'),a[key]))
+          PYCODE
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: nightwatch-approved-pages
+          path: ${{ runner.temp }}/artifact.tar
+          if-no-files-found: error
+          retention-days: 14
+      - name: Deploy only this exact verified Pages artifact
+        id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346
+        with:
+          artifact_name: nightwatch-approved-pages
+          timeout: '120000'
+          error_count: '1'
+          preview: 'false'
+      # Reported API success is not full live verification. The separately
+      # approved bounded read-back/rollback plan must now be performed by the
+      # authorised operator; never auto-retry or restore on an ambiguous result.

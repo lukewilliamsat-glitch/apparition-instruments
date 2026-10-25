@@ -1,0 +1,11 @@
+# Remaining release and owner review gates
+
+1. Complete synthetic CI acceptance and read back the engineering checkpoint. Local unit PASS is not a real Pages deployment/restore test.
+2. Obtain the separate [exact archive-access decision](ARCHIVE_ACCESS_GATE.md). Only then prepare the authentic complete candidate, original rollback, inventories and exact difference manifest; no original bytes are accessed now.
+3. Run genuine isolated Chrome on the actual candidate or a proved byte-equivalent relevant page/asset fixture at320/390/768/1024/1440/1920, plus enlarged text, keyboard focus/Escape, header and CTA checks. No Chrome/application testing has yet occurred in NIGHTWATCH. The local host lacks Chrome and cannot create the required namespace; an isolated hosted runner is the available test approach, subject to a safe payload/fixture handoff.
+4. Deliver actual rendered screenshots privately, package/source/browser identities, checks, limitations and holiday preservation findings. Do not substitute the older SPECTRE images or a generated mock-up for this new evidence. No preview URL is claimed. Any preview-host deployment requires separate exact hosting/publication authority.
+5. Establish fresh current payload/holiday evidence. If it cannot be established, keep production blocked even if isolated hero screenshots look correct.
+6. Stop for explicit owner visual approval. Tests do not provide it. Known prior SPECTRE limitations include true browser-UI zoom/physical-device/screen-reader coverage and enlarged320px header overflow; re-evaluate, do not silently waive them.
+7. Only after visual approval request a separate exact production decision naming complete payload/source/candidate/rollback identities, accepted tested-or-appropriately-accepted restoration, route/permissions/concurrency/environment, schedule implications, holiday protection and bounded live verification/stop conditions. No current authority to install/dispatch the future deployment workflow, merge main, upload real handoff archives or deploy.
+
+No bundled COMMAND/NOCTURNE/NIGHTFALL/LANTERN/SENTINEL or redesign. No automatic second release. A complete visual preview currently remains blocked by the user-required archive-access approval; current live holiday preservation and actual production-route acceptance are additional deployment gates.

@@ -1,0 +1,18 @@
+# Exact owner archive-access gate — NOT YET APPROVED
+
+Authorisation 50 explicitly requires a separate exact owner decision before using the retained original archive. No original bytes, locally present copy or retained backing file has been opened by NIGHTWATCH. This gate is separate from visual sign-off and production approval.
+
+## Requested next scope
+
+- One read-only materialization/access to the already privately retained original from run40175066908 /artifact12590914632, **20,301,705 bytes**, SHA-256 **d358efe91b5db0b0845505afd91a3eaa079c4bc0aeaa9a331fe5916d4266e349**. No new GitHub artifact retrieval, alternate archive search or provider/backend request.
+- Verify size/hash before processing; reject >22MiB or mismatch. One initial private-storage transfer; no retry without a new decision. At most ten bounded offline passes over the approved local copy (<=220MiB original-archive bytes read). The private original and earlier evidence package remain unchanged.
+- Offline inspection/assembly bounds: <=64MiB expanded TAR/file total; <=8MiB/file; <=4,096 files /8,192 total TAR entries; 512-byte paths /32 components; 1,000:1 ratio; Python512MiB address-space,120 CPU seconds,180-second operation alarm. Private working/evidence disk budget <=512MiB. No extraction until full validation; no image decoding during preparation.
+- Build the complete SPECTRE candidate and byte-identical original rollback ZIP privately. Permit only the pinned CSS and reviewed stylesheet cache-reference adjustments; produce full inventories, difference manifest and package digests. No catalogue/content regeneration or private archive contents in Git.
+- For the expressly requested subsequent visual review, allow isolated native Chrome to render the before/after homepage and its original graphics, with process-level outbound denial, fictional loopback backend responses and no remote fonts/images. Decoding for rendering is distinct from preparation; no original asset transformation or republication is permitted.
+- Prefer a byte-verified reconstruction from already-public repository homepage/CSS/graphics for the isolated CI browser harness, proved locally against the private candidate's relevant bytes before claiming equivalence. Do not upload the original/private archive or private contents to public Git/CI. If exact relevant-page equivalence or a safe renderer handoff cannot be proved, stop that part and request a concrete additional transfer scope rather than exposing the archive.
+- Capture the six required widths320/390/768/1024/1440/1920 plus enlarged-text/keyboard/header/CTA checks: <=24 genuine PNGs, <=16MiB each /128MiB total. Preserve the review package privately and verify retained bytes. No public Git screenshot publication. Any CI-artifact screenshot retention, if needed, must be named in the approval and not described as owner-only storage.
+- No preview hosting, live state probes, production publication, Supabase access, stock/payment/order changes or follow-on release authority. Stop for actual owner visual approval once the candidate evidence exists.
+
+The preparation CLI independently checks an explicit scope/reference, exact original identity, maximum read size and expiry before opening its input. An approval JSON is an accidental-use guard, not permission by itself. The owner-facing decision must precede its creation/use. Preparation approval keeps image decoding disabled; any later browser rendering needs the separately explicit rendering scope above.
+
+Private destination names, account/access identifiers and retrieval URLs are intentionally omitted. The public artifact identity and full SHA-256 identify the exact original unambiguously to the owner.
