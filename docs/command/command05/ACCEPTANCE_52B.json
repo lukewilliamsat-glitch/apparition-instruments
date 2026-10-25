@@ -1,0 +1,336 @@
+{
+  "status": "ISOLATED_ACCEPTANCE_PASS",
+  "authorisation": "52B",
+  "testedCommit": "31b469707066a89b0ea3fc83ad81e79149523192",
+  "testedTree": "1b39c7607cafb7246900ace7ca44d2b9cb0aadd9",
+  "run": 40227070614,
+  "ciAttemptsUsed": 1,
+  "ciAttemptBudget": 1,
+  "browser": "155.0.8059.39",
+  "node": "v22.20.0",
+  "nativePassed": 47,
+  "nativeTotal": 47,
+  "nodeCases": 124,
+  "dialogLifecycleCases": 6,
+  "isolationControls": 10,
+  "protectedInheritedBlobs": 897,
+  "sourceDigest": "12dec737f4556eabc193b21b3876326e8bf40acb5e8a66dd48b22c822be6174d",
+  "artifact": {
+    "id": 12611551620,
+    "bytes": 2119316,
+    "sha256": "b65724af9b6a264a646fe45ed3b20436a9eac84398aaebc042ebf2895f701833",
+    "expiresAt": "2026-11-08T19:40:22Z",
+    "originalZipAndPngReadback": "PASS",
+    "captures": [
+      {
+        "file": "01-desktop-catalogue.png",
+        "bytes": 164282,
+        "sha256": "8c2378a99316b340c86e76397c50e34ed51a30c1baa5a37f87b5b1cc45978da5",
+        "width": 1440,
+        "height": 1050,
+        "sourceCommit": "31b469707066a89b0ea3fc83ad81e79149523192",
+        "browser": "155.0.8059.39",
+        "node": "v22.20.0",
+        "syntheticData": true,
+        "originalPNG": true,
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "file": "02-product-inspector.png",
+        "bytes": 168469,
+        "sha256": "d51c53c0102730738861a4f91745d1f6edc921c78b22960703ebee4d8ec9995f",
+        "width": 1440,
+        "height": 1050,
+        "sourceCommit": "31b469707066a89b0ea3fc83ad81e79149523192",
+        "browser": "155.0.8059.39",
+        "node": "v22.20.0",
+        "syntheticData": true,
+        "originalPNG": true,
+        "scroll": {
+          "x": 0,
+          "y": 396
+        }
+      },
+      {
+        "file": "03-desktop-draft.png",
+        "bytes": 197358,
+        "sha256": "61fe1ab5469bdcc249ad2d02e59e6ad1ab3f1987d4bd50ea9d1f2840863d8450",
+        "width": 1440,
+        "height": 1050,
+        "sourceCommit": "31b469707066a89b0ea3fc83ad81e79149523192",
+        "browser": "155.0.8059.39",
+        "node": "v22.20.0",
+        "syntheticData": true,
+        "originalPNG": true,
+        "scroll": {
+          "x": 0,
+          "y": 698
+        }
+      },
+      {
+        "file": "04-change-review.png",
+        "bytes": 162175,
+        "sha256": "fdbba25f3783d8a575516fd930f77d027bb89cfbfe6b3b0a183ba1dba3160d49",
+        "width": 1440,
+        "height": 1050,
+        "sourceCommit": "31b469707066a89b0ea3fc83ad81e79149523192",
+        "browser": "155.0.8059.39",
+        "node": "v22.20.0",
+        "syntheticData": true,
+        "originalPNG": true,
+        "scroll": {
+          "x": 0,
+          "y": 698
+        }
+      },
+      {
+        "file": "05-validation.png",
+        "bytes": 194864,
+        "sha256": "b229fbcbd2c5ba6228433acf4b1c320a61bdc263d283ae8f49aeed39f018fddc",
+        "width": 1440,
+        "height": 1050,
+        "sourceCommit": "31b469707066a89b0ea3fc83ad81e79149523192",
+        "browser": "155.0.8059.39",
+        "node": "v22.20.0",
+        "syntheticData": true,
+        "originalPNG": true,
+        "scroll": {
+          "x": 0,
+          "y": 813
+        }
+      },
+      {
+        "file": "06-conflict.png",
+        "bytes": 150846,
+        "sha256": "23de54cc93eb9fa593ae9be5ffb77c220ba7c6579156a3c918a881adf8f5926a",
+        "width": 1440,
+        "height": 1050,
+        "sourceCommit": "31b469707066a89b0ea3fc83ad81e79149523192",
+        "browser": "155.0.8059.39",
+        "node": "v22.20.0",
+        "syntheticData": true,
+        "originalPNG": true,
+        "scroll": {
+          "x": 0,
+          "y": 1228
+        }
+      },
+      {
+        "file": "07-synthetic-uncertain-save.png",
+        "bytes": 193405,
+        "sha256": "b8aa6c00074f36f51a60370cfcdc937d7c8a99b68732a337dfca8b791eaf86f3",
+        "width": 1440,
+        "height": 1050,
+        "sourceCommit": "31b469707066a89b0ea3fc83ad81e79149523192",
+        "browser": "155.0.8059.39",
+        "node": "v22.20.0",
+        "syntheticData": true,
+        "originalPNG": true,
+        "scroll": {
+          "x": 0,
+          "y": 768
+        }
+      },
+      {
+        "file": "08-permission-denied.png",
+        "bytes": 56516,
+        "sha256": "9e9858d130da3b9153e03d77d2382b651cb093f9263473d97db4c4b00367b8b1",
+        "width": 1440,
+        "height": 1050,
+        "sourceCommit": "31b469707066a89b0ea3fc83ad81e79149523192",
+        "browser": "155.0.8059.39",
+        "node": "v22.20.0",
+        "syntheticData": true,
+        "originalPNG": true,
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "file": "09-session-expired.png",
+        "bytes": 57951,
+        "sha256": "92c3a281f4d3741c9a90730b4d97db7900edb61a8f7b5022e4413b7335afef97",
+        "width": 1440,
+        "height": 1050,
+        "sourceCommit": "31b469707066a89b0ea3fc83ad81e79149523192",
+        "browser": "155.0.8059.39",
+        "node": "v22.20.0",
+        "syntheticData": true,
+        "originalPNG": true,
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "file": "10-authentication-required.png",
+        "bytes": 19612,
+        "sha256": "6acee7d29aa54462397e76d2cf55347d8a5e6c4d4e76ff29d21f0f775c6b905b",
+        "width": 390,
+        "height": 950,
+        "sourceCommit": "31b469707066a89b0ea3fc83ad81e79149523192",
+        "browser": "155.0.8059.39",
+        "node": "v22.20.0",
+        "syntheticData": true,
+        "originalPNG": true,
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "file": "11-mobile-320-catalogue.png",
+        "bytes": 60646,
+        "sha256": "5adc1e62bc591fe555e8fc9a6576e8e1738bb37777868222d84b022d00b4bd4b",
+        "width": 320,
+        "height": 950,
+        "sourceCommit": "31b469707066a89b0ea3fc83ad81e79149523192",
+        "browser": "155.0.8059.39",
+        "node": "v22.20.0",
+        "syntheticData": true,
+        "originalPNG": true,
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "file": "12-editor-390.png",
+        "bytes": 47395,
+        "sha256": "d79eb9f6de46712c0c09de97507e113f98eabdb12f3702790a7345480f27401e",
+        "width": 390,
+        "height": 950,
+        "sourceCommit": "31b469707066a89b0ea3fc83ad81e79149523192",
+        "browser": "155.0.8059.39",
+        "node": "v22.20.0",
+        "syntheticData": true,
+        "originalPNG": true,
+        "scroll": {
+          "x": 0,
+          "y": 1852
+        }
+      },
+      {
+        "file": "12-editor-768.png",
+        "bytes": 82136,
+        "sha256": "7d250ec131b1947efc8cb749fea3dee73253b4a5af19414c66eb10bd7f19a681",
+        "width": 768,
+        "height": 1050,
+        "sourceCommit": "31b469707066a89b0ea3fc83ad81e79149523192",
+        "browser": "155.0.8059.39",
+        "node": "v22.20.0",
+        "syntheticData": true,
+        "originalPNG": true,
+        "scroll": {
+          "x": 0,
+          "y": 953
+        }
+      },
+      {
+        "file": "12-editor-1024.png",
+        "bytes": 86367,
+        "sha256": "b861555cfbc482f28321012ee6e5215329e59d8d49d3257a83030b30256ca951",
+        "width": 1024,
+        "height": 1050,
+        "sourceCommit": "31b469707066a89b0ea3fc83ad81e79149523192",
+        "browser": "155.0.8059.39",
+        "node": "v22.20.0",
+        "syntheticData": true,
+        "originalPNG": true,
+        "scroll": {
+          "x": 0,
+          "y": 789
+        }
+      },
+      {
+        "file": "12-editor-1920.png",
+        "bytes": 205427,
+        "sha256": "9eb67c3767da4d496a02b0f865f7d07ae2a2b07e03f47c3e9a7bc525a20c7754",
+        "width": 1920,
+        "height": 1050,
+        "sourceCommit": "31b469707066a89b0ea3fc83ad81e79149523192",
+        "browser": "155.0.8059.39",
+        "node": "v22.20.0",
+        "syntheticData": true,
+        "originalPNG": true,
+        "scroll": {
+          "x": 0,
+          "y": 698
+        }
+      },
+      {
+        "file": "13-text-200-390.png",
+        "bytes": 64208,
+        "sha256": "fa6776750686fbeee1492b85eb54e27862b55b9333c74da937fef9889e6fc0b9",
+        "width": 390,
+        "height": 950,
+        "sourceCommit": "31b469707066a89b0ea3fc83ad81e79149523192",
+        "browser": "155.0.8059.39",
+        "node": "v22.20.0",
+        "syntheticData": true,
+        "originalPNG": true,
+        "scroll": {
+          "x": 0,
+          "y": 5560
+        }
+      },
+      {
+        "file": "13-text-200-1024.png",
+        "bytes": 82794,
+        "sha256": "44bd2c9fb7bab270ef62bdf30bdcaeb15e18ecea90275d0909011fd2288b23ae",
+        "width": 1024,
+        "height": 1050,
+        "sourceCommit": "31b469707066a89b0ea3fc83ad81e79149523192",
+        "browser": "155.0.8059.39",
+        "node": "v22.20.0",
+        "syntheticData": true,
+        "originalPNG": true,
+        "scroll": {
+          "x": 0,
+          "y": 3328
+        }
+      },
+      {
+        "file": "14-mobile-navigation.png",
+        "bytes": 51456,
+        "sha256": "f6b40219b4dfc5ab04a6dc1693a48117663437989254014580f4d2ff23e16c02",
+        "width": 390,
+        "height": 950,
+        "sourceCommit": "31b469707066a89b0ea3fc83ad81e79149523192",
+        "browser": "155.0.8059.39",
+        "node": "v22.20.0",
+        "syntheticData": true,
+        "originalPNG": true,
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "file": "19-before-legacy-admin.png",
+        "bytes": 151965,
+        "sha256": "e276009111d4f95df8c5be015bbb050cb1a2754a1dcd120edde7d845b7174ea7",
+        "width": 1440,
+        "height": 1050,
+        "sourceCommit": "31b469707066a89b0ea3fc83ad81e79149523192",
+        "browser": "155.0.8059.39",
+        "node": "v22.20.0",
+        "syntheticData": true,
+        "originalPNG": true,
+        "scroll": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    ]
+  },
+  "ownerVisualAcceptance": "PENDING",
+  "realBackendReadCompatibility": "UNKNOWN",
+  "realBackendWriteCompatibility": "UNKNOWN / INACTIVE",
+  "productionReleaseReadiness": "BLOCKED",
+  "productionChanges": false
+}
