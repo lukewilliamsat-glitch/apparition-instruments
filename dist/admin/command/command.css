@@ -1,0 +1,8 @@
+/* COMMAND-only baseline; existing specialist workspaces are not consumers. */
+body[data-command-admin]{margin:0;background:#101113;color:#f0eee8;font-family:system-ui,sans-serif;line-height:1.55}
+[data-command-admin] *,[data-command-admin] *::before,[data-command-admin] *::after{box-sizing:border-box}
+[data-command-admin] [hidden]{display:none!important}
+[data-command-admin] .command-mode{border:1px solid #82704b;color:#e2cca0;padding:.35rem .75rem;font-size:.8rem;border-radius:4px}
+[data-command-admin] #command-status{padding:1rem;border:1px solid #5b5040;background:#1d1d1b;border-radius:6px;margin:1rem 0}
+[data-command-admin] .admin-page-description{font-family:inherit}
+[data-command-admin] :is(a,button,input,select,textarea,[tabindex]):focus-visible{outline:3px solid #e7c988;outline-offset:3px}

@@ -14,7 +14,8 @@ import {createOperationsRepository,setOperationsRepository} from '../backend/ope
 const element=(document,tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
 const entryModules=document=>(document.querySelector('script[data-admin-entry]')?.dataset.adminEntry||'').split(',').map(value=>value.trim()).filter(Boolean);
 
-export async function bootAdminGate({document=globalThis.document,auth=createAdminAuth(),load=specifier=>import(specifier)}={}){
+export async function bootAdminGate({document=globalThis.document,auth=createAdminAuth(),load=specifier=>import(specifier),workspaceServices}={}){
+ let workspace=null;
  const body=document.body;body.classList.remove('admin-authorized');
  const main=element(document,'main');main.className='admin-access-gate';main.setAttribute('aria-labelledby','admin-access-title');body.prepend(main);
  const panel=element(document,'section');panel.className='admin-access-panel';main.append(panel);
@@ -26,6 +27,7 @@ export async function bootAdminGate({document=globalThis.document,auth=createAdm
  panel.append(eyebrow,title,note,feedback,home);
 
  const signOut=async()=>{
+  workspace?.lock?.('sign-out');
   setComponentRepository(null);
   setAdminOptionRepository(null);
   setAssemblyRepository(null);
@@ -71,7 +73,13 @@ export async function bootAdminGate({document=globalThis.document,auth=createAdm
    const navigation=document.querySelector('.admin-navigation')||document.querySelector('.admin-tabs');
    if(navigation&&!navigation.querySelector('a[href="/admin/site-operations/"]')){const group=element(document,'div'),label=element(document,'span','Operations'),link=element(document,'a','Site Operations');link.href='/admin/site-operations/';group.append(label,link);if(navigation.classList.contains('admin-navigation'))navigation.append(group);else navigation.append(link);}
    mountAdminShell(document,signOutControl);
-   for(const entry of entryModules(document))await load(new URL(entry,document.baseURI).href);
+   for(const entry of entryModules(document)){
+    const module=await load(new URL(entry,document.baseURI).href);
+    if(typeof module?.mountAdminWorkspace==='function'){
+     workspace?.destroy?.();
+     workspace=await module.mountAdminWorkspace({document,auth,services:workspaceServices});
+    }
+   }
    main.hidden=true;body.classList.add('admin-authorized');
   }catch{setComponentRepository(null);setAdminOptionRepository(null);setAssemblyRepository(null);setAdminOrderRepository(null);setOperationsRepository(null);setEmailTemplateRepository(null);signOutControl.remove();render('checking');feedback.textContent='Admin could not load. Please reload and try again.';}
  };
@@ -80,7 +88,7 @@ export async function bootAdminGate({document=globalThis.document,auth=createAdm
  catch{render('signed-out');feedback.textContent='Could not check Admin access. Please try again.';}
 }
 
-if(typeof document!=='undefined')bootAdminGate().catch(()=>{
+if(typeof document!=='undefined'&&document.querySelector('script[src*="admin-gate.mjs"][data-admin-entry]'))bootAdminGate().catch(()=>{
  document.body.classList.remove('admin-authorized');
  const gate=document.querySelector('.admin-access-gate');if(gate)gate.textContent='Admin access is unavailable. Please reload.';
 });

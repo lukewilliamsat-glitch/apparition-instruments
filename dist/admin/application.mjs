@@ -2,7 +2,7 @@ import {bindAdminDialogs} from './interaction.mjs';
 import {prepareCatalogue} from './catalogue-presentation.mjs';
 import {prepareSalesContent} from './sales-content-presentation.mjs';
 export const adminRoutes=[
- ['overview','Overview','/admin/overview/',''],['conjure','Conjure','/admin/conjure/',''],
+ ['overview','Overview','/admin/overview/',''],['command','COMMAND Catalogue','/admin/command/',''],['conjure','Conjure','/admin/conjure/',''],
  ['inventory','Inventory / Components','/admin/?view=inventory','Catalogue'],['assemblies','Products / Assemblies','/admin/?view=assemblies','Catalogue'],['kits','Wiring Kits','/admin/wiring-kit-master/','Catalogue'],['catalogue','Catalogue Settings','/admin/catalogue-settings/','Catalogue'],
  ['orders','Orders','/admin/orders/','Sales'],
  ['articles','Luthier Hub Articles','/admin/hub-cms/','Content'],['media','Article Media','/admin/hub-media/','Content'],['news','News','/admin/site-operations/#news','Content'],['announcements','Announcements','/admin/site-operations/#announcements','Content'],

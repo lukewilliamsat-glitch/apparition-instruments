@@ -1,0 +1,38 @@
+{
+  "mission": "AUTHORISATION 51 / THE ASCENSION",
+  "checkpoint": 1,
+  "status": "CHECKPOINT1_LOCAL_PASS",
+  "baseCommit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+  "remoteSourcesVerified": {
+    "command01": "3b84871ccb338296b52b4fe3fe350be17284d235",
+    "command02": "048824545c1fc3655778bc7cca22bc6f2e1bc447",
+    "command03": "2c2d629a6194506d34c2fbbcce4742fceee94488",
+    "command04": "20002c45933a7f24b08f6d5f0199a7fc8fa1a282",
+    "nocturne": "993108aa7d65ac204ef54a7018a85f5c783813fd",
+    "archivist": "faa860df58901a1c4ebbf7cba5b3677b3fd6bafc"
+  },
+  "localSuites": [
+    {
+      "path": "tests/command05/shell.mjs",
+      "result": "PASS"
+    },
+    {
+      "path": "tests/admin-gate.mjs",
+      "result": "PASS"
+    },
+    {
+      "path": "tests/admin-v2-shell.mjs",
+      "result": "PASS"
+    }
+  ],
+  "networkGuard": "tests/fixtures/admin-offline.mjs; global fetch rejects; fake Auth responses only",
+  "browserAcceptance": "NOT RUN",
+  "realBackendReadCompatibility": "UNKNOWN / NOT TESTED",
+  "realBackendWriteCompatibility": "UNKNOWN / NOT TESTED",
+  "productionWritesEnabled": false,
+  "deploymentPerformed": false,
+  "remoteBranchCreated": true,
+  "publicationReadback": "Recorded after publication in subsequent checkpoint",
+  "approvalBlocker": "Historical rejection resolved by Authorisation52; same connector accepted branch creation",
+  "nextGate": "Publish/read back shell checkpoint, then implement read-only catalogue"
+}
