@@ -1,6 +1,6 @@
 # Remaining release and owner review gates
 
-1. Complete synthetic CI acceptance and read back the engineering checkpoint. Local unit PASS is not a real Pages deployment/restore test.
+1. Synthetic acceptance PASSED116/116 locally and in hosted process isolation; original CI evidence read-back PASSED. Complete final engineering source/document read-back before requesting archive access. This remains distinct from a real Pages deployment/restore test.
 2. Obtain the separate [exact archive-access decision](ARCHIVE_ACCESS_GATE.md). Only then prepare the authentic complete candidate, original rollback, inventories and exact difference manifest; no original bytes are accessed now.
 3. Run genuine isolated Chrome on the actual candidate or a proved byte-equivalent relevant page/asset fixture at320/390/768/1024/1440/1920, plus enlarged text, keyboard focus/Escape, header and CTA checks. No Chrome/application testing has yet occurred in NIGHTWATCH. The local host lacks Chrome and cannot create the required namespace; an isolated hosted runner is the available test approach, subject to a safe payload/fixture handoff.
 4. Deliver actual rendered screenshots privately, package/source/browser identities, checks, limitations and holiday preservation findings. Do not substitute the older SPECTRE images or a generated mock-up for this new evidence. No preview URL is claimed. Any preview-host deployment requires separate exact hosting/publication authority.

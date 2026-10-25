@@ -1,6 +1,6 @@
 {
   "scope": "synthetic_only",
-  "runtime": "3.12.14",
+  "runtime": "3.12.15",
   "platform": "Linux",
   "testedCode": {
     "scripts/nightwatch/delivery.py": "5b19303fbdd9a221e5d4f135b2a2cf002965246d2adae67cd1dae3695f905ad8",
@@ -19,13 +19,24 @@
   "errors": 0,
   "unexpectedSocketAttempts": 0,
   "processIsolation": {
-    "required": false,
-    "negativeControls": []
+    "required": true,
+    "negativeControls": [
+      {
+        "family": "AF_INET",
+        "outcome": "DENIED",
+        "errno": 101
+      },
+      {
+        "family": "AF_INET6",
+        "outcome": "DENIED",
+        "errno": 101
+      }
+    ]
   },
   "originalArchiveReads": 0,
   "realDeploymentCalls": 0,
   "imageDecodes": 0,
-  "recordedAtUTC": "2026-10-25T15:20:59.469269+00:00",
+  "recordedAtUTC": "2026-10-25T15:21:27.937827+00:00",
   "cases": [
     {
       "case": "nightwatch_tests.DeliveryTests.test_closure_window_drift_blocks",
@@ -491,5 +502,26 @@
       "case": "nightwatch_tests.UploadTarTests.test_unpinned_tar_receipt_rejected",
       "result": "PASS"
     }
-  ]
+  ],
+  "ciEvidence": {
+    "runId": 40206536274,
+    "jobId": 121208564707,
+    "testedCommit": "f614e8807dfafe07bf258954c01decd1352ce74c",
+    "testedTree": "0aa63bac17db0dfda03e30f000df62e78b29ac00",
+    "conclusion": "success",
+    "artifactId": 12603409360,
+    "artifactBytes": 4874,
+    "artifactSHA256": "8bfa0fac4e15cfdb8a64ac1ecc1a17be81f629bded7d98aa806a197f73a05d80",
+    "artifactExpiry": "2026-11-08T15:21:28Z",
+    "originalArtifactReadback": "PASS \u2014 ZIP size/SHA256/CRC and tested source hashes match",
+    "browserAvailability": "Google Chrome 155.0.8059.39",
+    "browserRenderingPerformed": false
+  },
+  "localAcceptance": {
+    "runtime": "3.12.14",
+    "testsRun": 116,
+    "passed": 116,
+    "processIsolation": false,
+    "socketConnectGuard": true
+  }
 }

@@ -17,6 +17,14 @@ The production Pages workflow and all899 inherited source blobs are preserved. E
 
 The final owner handover records exact commit/tree, independent complete-file GitHub read-back and acceptance scope. Original private archive/evidence package remain untouched. Do not label an authentic visual candidate complete until its archive approval, actual assembly and real browser review occur.
 
+## Hosted synthetic acceptance and independent read-back
+
+Final code source: `f614e8807dfafe07bf258954c01decd1352ce74c`; tree `0aa63bac17db0dfda03e30f000df62e78b29ac00`. [CI run 40206536274](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/40206536274) /job `121208564707` completed successfully:116/116, Python3.12.15, separate network namespace, zero effective capabilities and external IPv4/IPv6 negative controls returning ENETUNREACH101. Local116/116 used Python3.12.14 and socket guards; local namespace creation was unavailable.
+
+Synthetic-only [artifact 12603409360](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/40206536274/artifacts/12603409360): `4874` original ZIP bytes, SHA-256 `8bfa0fac4e15cfdb8a64ac1ecc1a17be81f629bded7d98aa806a197f73a05d80`, expiry `2026-11-08T15:21:28Z`. Independently retrieved once, bounded safe ZIP inspection/CRC, all recorded code hashes and116 outcomes matched. This is a synthetic-test artifact, not retrieval of ANCHOR's original/private archive. No image or genuine screenshot is in it. Chrome availability155.0.8059.39 is a version observation only.
+
+Earlier incremental runs40205845174 (112 cases, source651041fa311797134b410af88dd646d8a3026f7f) and40206208629 (113 cases, sourceac5175dede13b00922f3cf76830b6ffe9fd566b2) also succeeded. New source/tests added exact query-byte preservation and strict rejection of unknown active deployment identities/boolean receipt versions. No unchanged failed-job retry or silent test weakening occurred. Final documentation changes do not change the tested tooling/CSS/test hashes and do not trigger another synthetic run.
+
 ## Companion file integrity
 
 SHA-256 values include final bytes/newlines; this index excludes itself. No archive, image or private storage access information is committed.
@@ -33,11 +41,11 @@ SHA-256 values include final bytes/newlines; this index excludes itself. No arch
 | `tests/nightwatch/run-isolated.sh` | 525 | `3137f4eee451bcee71ccc4f569e8f8f51a2ea7e1afaba5e7c5e980cbe27c99ca` |
 | `tests/nightwatch/run_tests.py` | 3438 | `4d5864ac10eca79f7db8fa3e7fe8080665fcab0d97c904f3c8a906414ee32360` |
 | `tests/nightwatch/test_release.py` | 29541 | `66952bef0de58d67f05722db9e78d49714061e629e38b8ba464065f11e2a92af` |
-| `docs/operations/nightwatch/ARCHIVE_ACCESS_GATE.md` | 3704 | `9eb770a136ed7872e581bc35d50716d531b62defca0a1200b0d505020d84f09d` |
+| `docs/operations/nightwatch/ARCHIVE_ACCESS_GATE.md` | 4155 | `bc5ea47c724cd4aa43521e571bc00ef8186839f79ae71f7248f1d502f8f325fd` |
 | `docs/operations/nightwatch/HOLIDAY_GATES.md` | 2469 | `9ad11669a2f24b21a99a7110437a7c9212664ac3c1cebb9ee9fb6ab2bacb9059` |
 | `docs/operations/nightwatch/IMPLEMENTATION.md` | 5977 | `55708f5e1b2831c1b3b802187cce3c8de0070afae0d1c617aa73b5510125f853` |
 | `docs/operations/nightwatch/PUBLICATION_ROUTE.md` | 5039 | `a4919d2dc945a114bb326295d9d70f5d9d274540118feff2f3b2e6740581d1c9` |
-| `docs/operations/nightwatch/README.md` | 3220 | `e3b6b5ba0bbf23a945c4381a2f406ef24796cfbd7c0c4cc90d268e82e7986e66` |
-| `docs/operations/nightwatch/RELEASE_GATES.md` | 2342 | `e3c482a2502be7fa75f37e3c4d180d83a636fa0cda736786b4b3f753f158293b` |
-| `docs/operations/nightwatch/TEST_RESULTS.json` | 14805 | `be0c4d358fe05479d20ff327cec513087919fad0e832a38cd5ac09476090a765` |
+| `docs/operations/nightwatch/README.md` | 3513 | `d06d7056bd6f482d18965daf74b77a599af00f0341b36e9c6746137cf1713e6d` |
+| `docs/operations/nightwatch/RELEASE_GATES.md` | 2473 | `504732d78f122caf8b0f6411b1d43c44c9e8c446502799ee15187ccecc81ea2e` |
+| `docs/operations/nightwatch/TEST_RESULTS.json` | 15777 | `8d737dc150f4c2926a4ea88f6d78f1870de455decc82ae868dea8231dccea47e` |
 | `docs/operations/nightwatch/templates/publish-only.yml.example` | 5412 | `609fcecc6d422b70d131847fdd395f9b980f5ed0d62c11a5d113057672d19c5e` |
