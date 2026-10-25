@@ -1,0 +1,23 @@
+# Prioritised independently approvable roadmap
+
+Priorities reflect security/data integrity, reliability, egress, recovery, purchasing correctness, operational/financial accuracy, customer/product quality, dependencies and engineering complexity. No invented revenue/savings estimates are assigned. A smaller complete package is preferred to a universal integration authorisation.
+
+| Package / priority | Purpose | Entry gate | Exit / owner acceptance | Constraint |
+|---|---|---|---|---|
+| W0 | P0 / time-critical | Preserve available publication provenance | Read-only artifact metadata exists; 26 Oct expiry | Separate one-artifact bounded private retrieval/verification/retention, full inventory and read-back; no image publication/backend/deploy | No major DB change |
+| W1 | P0 | Phase A owner report assessment | Owner sees actual cycle; exact scoped report | Correct project/cycle/freshness/allowance/enforcement evidence; PASS/HOLD/UNKNOWN then stop | No assistant backend access |
+| W2 | P0 | Egress exposure and experiment budget | Current report + schedule/visitor/reporting uncertainty | Owner reserve/exposure decision; any schedule/control change separately approved | Workflow changes require own authority |
+| W3 | P0 | Exact public B / separate structural C | Approved transport/hash and bounded metadata contracts | Public contract MATCH/GAP/UNKNOWN; separate private schema/auth/all-writer findings, no repair | Read only, separately approved |
+| W4 | P0 | Complete payload/rollback and publisher design | Verified artifact bytes and active association evidence | Durable complete rollback and independently tested publication-only route | No DB migration inherently required |
+| W5 | P1 | Compose customer reliability release candidate | Owner UI decisions; W2/W4 and source contracts | SPECTRE CSS + LANTERN/SENTINEL selective integration, regenerated output/browser/device acceptance | Can avoid major DB changes; no automatic deployment |
+| W6 | P1 | NIGHTFALL production infrastructure candidate | Exact identity/view compatibility, inventory/capture/host decisions | Least-privilege retained archive, demand verification, generator, rollback and bounded activation acceptance | Backend/infrastructure authority required |
+| W7 | P1 | COMMAND real adapter and server contract | W3 private compatibility/all writers; Nocturne owner review | Trusted auth/capabilities, atomic revisions/receipts/audit, specialist Admin preservation and isolated composed acceptance | Exact DDL/code and release approval later |
+| W8 | P1 | Accept existing operational tools/communications | Source-to-installed parity and non-sending acceptance plan | Aftercare/Preview/Studio/Forge/CMS owner workflows verified without customer test messages or product mutations | Do not reapply historical migrations |
+| W9 | P1/P2 | Content/shipping/claims and static asset refinements | Owner/supplier facts, delivery policy and image/font choices | RAV04/10/12; asset/header/source ownership acceptance; no fabricated specs/benefit claims | Some static work independent of DB |
+| W10 | P2 | LEDGER policy and isolated phases | Opening evidence, recognition/VAT/FX, build/UOM/permission decisions | Synthetic costing→durable ledger→receipts/marketplace/returns→build/QC→reports with individual gates | No implementation authorised now |
+| W11 | P2/P3 | Optional search/gallery and authoring publication | User research, photos, licensing and document/publication contracts | Scoped measurable acceptance; no parallel state/commerce/graph systems | May require new contracts/infrastructure |
+| W12 | P2 / continuity | Recover unavailable historical checkpoints if prioritised | Trusted exact-source preservation path | Verify genuine immutable sources; do not reconstruct features from names | Separate read-only continuity scope |
+
+W0 is urgent and independent of provider health because artifact expiry is finite. W1 remains the recovery entry point. W3 public and private inspections need distinct permissions; offline design may proceed in parallel. W5 can precede full NIGHTFALL activation if its explicit current-egress/release conditions are acceptable. W6 is not a reason to block every low-risk frontend correction indefinitely. W7 must not adopt IRONCLAD alongside bypassing legacy stock writers. W8 concerns existing main features; it is not a new GIGA reimplementation. W10 may continue policy work offline but authoritative adoption waits for the transactional foundation and evidence-backed cutover.
+
+Every production package requires exact source/inputs, rollback and bounded post-release verification. Owner approval of design, backend reads, migrations, data changes and deployment are different decisions. No package here is executed automatically.
