@@ -21,7 +21,8 @@ export async function mountAdminWorkspace({document,auth,services}={}){
   $('command-status').textContent=s.status==='ready'&&!s.catalogueReady?'Access confirmed. Loading catalogue…':messages[s.status]||'Access unavailable. Recheck this session.';
   if(owner&&s.subject&&owner!==s.subject)$('command-status').textContent='Restore the original identity to access its retained unsaved proposal. Product details remain concealed.';
   $('command-status').setAttribute('role',['denied','expired','error'].includes(s.status)?'alert':'status');
-  if(!ready&&s.status!=='checking')$('command-status').focus({preventScroll:true});
+  if(['denied','expired','error','sign-out'].includes(s.status))$('command-status').focus({preventScroll:true});
+  $('command-reconnect').hidden=ready;
   $('data-source').textContent=s.source==='synthetic'?(synthetic?'SYNTHETIC WRITE TESTING · In-memory fixture only. No production data or saves.':'SYNTHETIC ACCEPTANCE DATA · Fictional products, prices, inventory and identities. No live backend.'):'Authenticated read adapter is inactive.';
   $('data-freshness').textContent=s.observedAt?'Last verified read: '+s.observedAt+' · display identity is not a write revision.':'No catalogue read completed.';
   $('filter-stock').disabled=!s.capabilities.inventoryRead;

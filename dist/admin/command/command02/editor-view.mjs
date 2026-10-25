@@ -117,7 +117,7 @@ export function createEditorView(document,{persistence,onSaved=()=>{},timeoutMs=
  function workbenchState(s){
   const state=session.snapshot();
   const current=s.rows.find(row=>row.id===state.id);
-  $('editor-context-note').textContent=state.id&&!s.visible.some(row=>row.id===state.id)?'The edited product is outside the current list. Your local edits are preserved.':current&&state.baseline&&current.revision.split('-')[0]===state.baseline.revision.split('-')[0]&&current.revision!==state.baseline.revision?'The catalogue has a newer read identity. Local values are preserved; review checks the current version.':'';
+  $('editor-context-note').textContent=state.id&&!s.visible.some(row=>row.id===state.id)?'The edited product is outside the current list. Your local edits are preserved.':current&&state.baseline&&current.revision.split('-')[0]===(state.baseline.catalogueRevision??state.baseline.revision).split('-')[0]&&current.revision!==(state.baseline.catalogueRevision??state.baseline.revision)?'The catalogue has a newer read identity. Local values are preserved; review checks the current version.':'';
   if(s.detailStatus==='ready'&&!$('inspector').querySelector('[data-enter-editor]')){
    const button=add($('inspector').querySelector('.inspector-body'),'button','Draft product changes','enter-editor');button.type='button';button.dataset.enterEditor='';
   }

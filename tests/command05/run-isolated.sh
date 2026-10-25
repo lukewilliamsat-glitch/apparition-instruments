@@ -16,6 +16,7 @@ run_isolated tests/command05/isolation.mjs "$output" "$browser" "$controller" "$
 run_isolated --require ./tests/command05/network-guard.cjs tests/command05/inherited/c01.mjs "$output/C01_RESULTS.json" > "$output/c01-log.txt"
 run_isolated --require ./tests/command05/network-guard.cjs tests/command05/inherited/c02.mjs "$output/C02_RESULTS.json" > "$output/c02-log.txt"
 run_isolated --require ./tests/command05/network-guard.cjs tests/command05/read.mjs "$output/READ_RESULTS.json" > "$output/read-log.txt"
+run_isolated --require ./tests/command05/network-guard.cjs tests/command05/synthetic-security.mjs > "$output/synthetic-security-log.txt"
 run_isolated --import ./tests/fixtures/admin-offline.mjs tests/command05/shell.mjs > "$output/shell-log.txt"
 run_isolated --import ./tests/fixtures/admin-offline.mjs tests/command05/dom.mjs > "$output/dom-log.txt"
 run_isolated --import ./tests/fixtures/admin-offline.mjs tests/command05/editor.mjs > "$output/editor-log.txt"

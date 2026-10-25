@@ -12,7 +12,7 @@ if(params.get('state')==='empty')f.empty();
 if(params.get('state')==='error')f.enqueue('list',()=>{throw Error('Fictional read failure');});
 if(params.get('synthetic-write')==='yes')f.syntheticWriteTesting=true;
 const path=location.pathname,isCommand=path==='/admin/command/',legacy=path==='/admin/';let app;
-if(legacy){const blocked=async()=>{throw Error('Legacy writes are disabled in acceptance.');};setComponentRepository({list:async()=>f.canonicalRecords().map(r=>({...r,image:null,internalUnitCost:null})),save:blocked,changeStock:blocked,remove:blocked});setAssemblyRepository({list:async()=>[],save:blocked});}
+if(legacy){const blocked=async()=>{throw Error('Legacy writes are disabled in acceptance.');};setComponentRepository({list:async()=>f.canonicalRecords().map(r=>({...r,image:null,internalUnitCost:null})),save:blocked,changeStock:blocked,remove:blocked});setAssemblyRepository({list:async()=>[],get:async()=>null,save:blocked});}
 const banner=document.createElement('p');banner.textContent='ENGINEERING ACCEPTANCE · SYNTHETIC DATA ONLY';banner.dataset.fixtureBanner='true';banner.style.cssText='margin:0;padding:.5rem 1rem;background:#272116;color:#f3d8a6;font:12px system-ui';
 // Keep evidence labels inside the protected main so the existing gate still hides it.
 document.querySelector('main')?.prepend(banner);

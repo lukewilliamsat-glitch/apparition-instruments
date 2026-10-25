@@ -21,16 +21,16 @@ export function createFixtureServices({count=14,role='readonly',now=Date.now}={}
  });
  const auth={restore:async()=>({status:role==='anonymous'?'signed-out':role==='nonadmin'?'denied':'authorized'}),signOut:async()=>{role='anonymous';generation++;listeners.forEach(f=>f());return {status:'signed-out'};},signIn:async()=>({status:'authorized'})};
  const canonical=r=>({id:r.id,sku:r.sku,name:r.name,category:r.category,manufacturer:r.manufacturer,active:r.active,individually:r.individually,inKits:r.in_kits,salePrice:r.sale_price,kitPrice:r.kit_price,kitPriceQuantity:r.kit_price_quantity,stock:r._stock,stockUnit:r._unit,description:r.description,specs:copy(r.specs),technicalSpecs:Object.fromEntries(Object.entries(labels).filter(([k,v])=>r.specs[v]).map(([k,v])=>[k,r.specs[v]])),imageInfo:{kind:'unloaded'},revision:'sim-'+r._revision});
- const receipts=new Map();let savePlan=null;
- const syntheticEditorPersistence={kind:'command02-synthetic',syntheticOnly:true,owner:()=>subject,release(){},
-  async read(id){check();return canonical(rows.find(r=>r.id===id));},
-  async save(command){check();if(role!=='editor')throw Object.assign(Error('Synthetic write denied'),{code:'PERMISSION',outcome:'not-applied'});const signature=fingerprint(command),old=receipts.get(command.operationId);if(old){if(old.signature!==signature)throw Object.assign(Error('Operation mismatch'),{outcome:'not-applied'});return copy(old.result);}
+ const receipts=new Map();let savePlan=null,editorOwner=null;
+ const syntheticEditorPersistence={kind:'command02-synthetic',syntheticOnly:true,owner:()=>editorOwner,release(){editorOwner=null;},
+  async read(id){check();if(editorOwner&&editorOwner!==subject)throw Object.assign(Error('Restore original synthetic actor'),{code:'PERMISSION',outcome:'not-applied'});editorOwner??=subject;return canonical(rows.find(r=>r.id===id));},
+  async save(command){check();if(role!=='editor'||editorOwner!==subject)throw Object.assign(Error('Synthetic write denied'),{code:'PERMISSION',outcome:'not-applied'});const signature=fingerprint(command),old=receipts.get(command.operationId);if(old){if(old.owner!==subject||old.signature!==signature)throw Object.assign(Error('Operation mismatch'),{outcome:'not-applied'});return copy(old.result);}
    const r=rows.find(r=>r.id===command.id),current=canonical(r);if(current.revision!==command.expectedRevision)throw Object.assign(Error('Synthetic conflict'),{code:'CONFLICT',outcome:'not-applied',current});
    const patch=validatePatch(command.patch,current,rows.map(canonical)),next=applyValues(current,patch);
    Object.assign(r,{name:next.name,sku:next.sku,description:next.description,specs:copy(next.specs),active:next.active,individually:next.individually,in_kits:next.inKits,sale_price:next.salePrice,kit_price:next.kitPrice,kit_price_quantity:next.kitPriceQuantity,_revision:r._revision+1,updated_at:new Date(now()+r._revision).toISOString()});
-   const result={applied:true,operationId:command.operationId,record:canonical(r)};receipts.set(command.operationId,{signature,result:copy(result)});calls.push({kind:'synthetic-save',operationId:command.operationId});
+   const result={applied:true,operationId:command.operationId,record:canonical(r)};receipts.set(command.operationId,{signature,owner:subject,result:copy(result)});calls.push({kind:'synthetic-save',operationId:command.operationId});
    if(savePlan==='disconnect-after'){savePlan=null;throw Object.assign(Error('Synthetic response lost'),{outcome:'unknown'});}return result;
-  },async status(operationId){check();const receipt=receipts.get(operationId);return receipt?{status:'committed',result:copy(receipt.result)}:{status:'unknown'};}
+  },async status(operationId){check();const receipt=receipts.get(operationId);if(receipt&&receipt.owner!==subject)throw Object.assign(Error('Synthetic receipt belongs to another actor'),{code:'PERMISSION',outcome:'not-applied'});return receipt?{status:'committed',result:copy(receipt.result)}:{status:'unknown'};}
  };
  return {auth,commandReadAdapter:adapter,calls,syntheticEditorPersistence,
   setRole(value){role=value;generation++;listeners.forEach(f=>f());},

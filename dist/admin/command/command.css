@@ -59,3 +59,4 @@ body[data-command-admin][data-admin-app]{display:grid;grid-template-columns:248p
  [data-command-admin] .review-table,[data-command-admin] .conflict-table{table-layout:auto}
 }
 @media(prefers-reduced-motion:reduce){html:has([data-command-admin]),[data-command-admin] *,[data-command-admin] *::before,[data-command-admin] *::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+@media(min-width:1301px){[data-command-admin] .product-inspector{top:calc(var(--command-topbar-height) + 1rem);max-height:calc(100dvh - var(--command-topbar-height) - 2rem);overflow:auto;scrollbar-gutter:stable}}
