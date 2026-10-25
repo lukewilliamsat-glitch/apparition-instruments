@@ -29,7 +29,7 @@ Reject absolute/traversal/drive/control paths, backslashes, noncanonical Unicode
 
 The release manifest hashes every file and binds source, complete inventory, directories, archive SHA and size. `payloadDigest` is the SHA-256 of canonical sorted file metadata; it is distinct from ZIP/TAR hashes. Changing packaging headers/ZIP compression changes archive identity even when file bytes agree. Future Pages upload reuses the approved inner TAR, with pinned upload-artifact/deploy-pages actions, avoiding a hidden website rebuild.
 
-HTML cache edits use actual stylesheet link tags via HTMLParser, retaining surrounding bytes and changing only root customer-ui.css query references to a unique `nw=<approved CSS SHA-256>` value. Script/comment literals remain unchanged; unquoted/ambiguous or absolute customer-ui.css references require review. All non-HTML files except the one verified CSS must remain identical; each HTML file must equal the original plus the exact cache-reference transformation. No wording, holiday configuration, catalogue, prices or images are changed by the assembler.
+HTML cache edits use actual stylesheet link tags via HTMLParser, retaining existing percent-escape/query bytes and surrounding HTML and changing only root customer-ui.css query references to a unique `nw=<approved CSS SHA-256>` value. Script/comment literals remain unchanged; unquoted/ambiguous or absolute customer-ui.css references require review. All non-HTML files except the one verified CSS must remain identical; each HTML file must equal the original plus the exact cache-reference transformation. No wording, holiday configuration, catalogue, prices or images are changed by the assembler.
 
 ## Honest limits
 

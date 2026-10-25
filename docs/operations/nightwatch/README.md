@@ -9,13 +9,13 @@ Authorisation 50, 25 October 2026. **Mission PARTIAL; archive-backed visual cand
 - Complete original rollback ZIP retention and verification; restore the whole payload, not a CSS inverse.
 - Injected publication/restoration coordinator: pinned complete active state, fresh holiday evidence, shared-lock contract, separate visual/production approvals, one attempted deployment, read-back and uncertain-outcome hold. No default live transport.
 - Approved-handoff staging and verification of the actual Pages TAR, with an uninstalled future Pages-only workflow template. No production workflow installation or deployment is authorised here.
-- 112 synthetic tests pass locally on Python 3.12.14. Branch-only process-isolated CI is pending this first publication; results are updated after it runs. No Node/Chrome application acceptance is claimed.
+- 113 synthetic tests pass locally on Python 3.12.14. Initial hosted process-isolated CI passed112/112 on source651041fa311797134b410af88dd646d8a3026f7f; a query-byte-preservation refinement adds one test and awaits its own CI. No Node/Chrome application acceptance is claimed.
 
 A dedicated `engineering/nightwatch-first-contact` branch was chosen because no earlier NIGHTWATCH-specific branch/path specification was recoverable. Base is verified production main `2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f`. New code is confined to `scripts/nightwatch/`, `tests/nightwatch/`, this directory and one synthetic-only CI workflow. Existing application, database and production workflow files remain unchanged.
 
 | Phase | Current state |
 | --- | --- |
-| 1 — infrastructure | Implemented and locally tested in synthetic scope; hosted CI pending; real hosted publish/restore route uninstalled/unaccepted |
+| 1 — infrastructure | Implemented and locally tested in synthetic scope; refinement CI pending; real hosted publish/restore route uninstalled/unaccepted |
 | 2 — actual visual candidate | Exact CSS and assembly machinery ready; complete authentic candidate NOT yet built |
 | 3 — real browser review | NOT RUN; no genuine NIGHTWATCH screenshots or preview yet |
 | 4 — holiday protection | Fail-closed checks implemented; current live holiday/payload preservation NOT yet established |

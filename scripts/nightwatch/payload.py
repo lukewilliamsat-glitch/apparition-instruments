@@ -3,7 +3,7 @@ from __future__ import annotations
 import hashlib,html,io,json,posixpath,re,stat,tarfile,unicodedata,zipfile
 from html.parser import HTMLParser
 from dataclasses import dataclass
-from urllib.parse import parse_qsl,urlsplit,urlunsplit,urlencode
+from urllib.parse import unquote_plus,urlsplit,urlunsplit
 
 ANCHOR_SHA='d358efe91b5db0b0845505afd91a3eaa079c4bc0aeaa9a331fe5916d4266e349'
 ANCHOR_BYTES=20301705
@@ -143,8 +143,8 @@ def stamp_css(raw:bytes,path:str,css_hash=NEW_CSS)->bytes:
                 require(posixpath.basename(u.path)!='customer-ui.css','Absolute CSS reference requires review');return
             target=posixpath.normpath(u.path.lstrip('/') if u.path.startswith('/') else posixpath.join(posixpath.dirname(path),u.path))
             if target!='customer-ui.css':return
-            query=[(k,v) for k,v in parse_qsl(u.query,keep_blank_values=True) if k!='nw'];query.append(('nw',css_hash))
-            url=urlunsplit(('', '',u.path,urlencode(query),u.fragment))
+            query=[segment for segment in u.query.split('&') if segment and unquote_plus(segment.split('=',1)[0])!='nw'];query.append('nw='+css_hash)
+            url=urlunsplit(('', '',u.path,'&'.join(query),u.fragment))
             start=self.get_starttag_text()
             matches=list(re.finditer(r"""(\bhref\s*=\s*)([\"'])([^\"']*)([\"'])""",start,re.I))
             require(len(matches)==1,'CSS reference attribute ambiguity')

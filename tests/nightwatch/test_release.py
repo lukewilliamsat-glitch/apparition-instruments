@@ -144,6 +144,9 @@ class OverlayTests(unittest.TestCase):
         with self.assertRaises(Rejected):verify_overlay(f,a,NEW)
     def test_no_duplicate_cache_marker(self):
         p=b'<link rel="stylesheet" href="/customer-ui.css?nw=old&amp;build=prior">';q=stamp_css(p,'index.html');self.assertEqual(q.count(b'nw='),1);self.assertIn(b'&amp;nw=',q);self.assertEqual(stamp_css(q,'index.html'),q)
+    def test_existing_query_escapes_remain_byte_exact(self):
+        p=b'<link rel="stylesheet" href="/customer-ui.css?v=a%20b&amp;literal=%2f#styles">'
+        q=stamp_css(p,'index.html');self.assertIn(b'v=a%20b&amp;literal=%2f&amp;nw=',q);self.assertTrue(q.endswith(b'#styles">'))
     def test_script_and_comment_literals_unchanged(self):
         p=b'<script>const a=\'<link rel="stylesheet" href="/customer-ui.css">\';</script><!-- <link rel="stylesheet" href="/customer-ui.css"> -->'
         self.assertEqual(stamp_css(p,'index.html'),p)
