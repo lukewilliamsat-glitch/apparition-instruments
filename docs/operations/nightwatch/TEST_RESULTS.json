@@ -3,18 +3,18 @@
   "runtime": "3.12.14",
   "platform": "Linux",
   "testedCode": {
-    "scripts/nightwatch/delivery.py": "c6afd2e4a68b2313a8ab40bb15d1fbc2e95da3a72bb2f9ba800a1eef5bfaf726",
+    "scripts/nightwatch/delivery.py": "5b19303fbdd9a221e5d4f135b2a2cf002965246d2adae67cd1dae3695f905ad8",
     "scripts/nightwatch/handoff.py": "31b8222008048c6085cdad627d29868900651c99fe042694e9ffd51748f544f9",
-    "scripts/nightwatch/payload.py": "4494422af0f4cc2faa70db4e4ee1b4ab7585dc57012c5feee135bbe365a8de70",
+    "scripts/nightwatch/payload.py": "819ec6d0ece2caed4b6f51a65d40e7647a9b3d3a5c8be8a203e34589f9d23677",
     "scripts/nightwatch/prepare.py": "b1874a799da6022e03fbfc80d38c6cfc30d4f91ccc0deb91c965c35a20b5b12f",
     "scripts/nightwatch/spectre.css": "16d6ebbd2372d54e32565a7999edfd1bc9152c785b77f1bcbf79ee47bba1794a",
     "scripts/nightwatch/verify_uploaded_tar.py": "19d4cf8d78168ecdf66994b8b7d56fe76377c93cec39c2e99c3a9347a465eee6",
     "tests/nightwatch/run-isolated.sh": "3137f4eee451bcee71ccc4f569e8f8f51a2ea7e1afaba5e7c5e980cbe27c99ca",
     "tests/nightwatch/run_tests.py": "4d5864ac10eca79f7db8fa3e7fe8080665fcab0d97c904f3c8a906414ee32360",
-    "tests/nightwatch/test_release.py": "4a3238c3b06a827db33fca82012a946745e073f188fc212243a8cd36e1edc53f"
+    "tests/nightwatch/test_release.py": "66952bef0de58d67f05722db9e78d49714061e629e38b8ba464065f11e2a92af"
   },
-  "testsRun": 113,
-  "passed": 113,
+  "testsRun": 116,
+  "passed": 116,
   "failures": 0,
   "errors": 0,
   "unexpectedSocketAttempts": 0,
@@ -25,7 +25,7 @@
   "originalArchiveReads": 0,
   "realDeploymentCalls": 0,
   "imageDecodes": 0,
-  "recordedAtUTC": "2026-10-25T15:16:09.950741+00:00",
+  "recordedAtUTC": "2026-10-25T15:20:59.469269+00:00",
   "cases": [
     {
       "case": "nightwatch_tests.DeliveryTests.test_closure_window_drift_blocks",
@@ -97,6 +97,10 @@
     },
     {
       "case": "nightwatch_tests.DeliveryTests.test_uncertain_attempt_not_retried",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.DeliveryTests.test_unknown_active_deployment_identity_never_authorises_publish",
       "result": "PASS"
     },
     {
@@ -184,6 +188,10 @@
       "result": "PASS"
     },
     {
+      "case": "nightwatch_tests.HandoffTests.test_unknown_current_deployment_identity_blocks_handoff",
+      "result": "PASS"
+    },
+    {
       "case": "nightwatch_tests.HandoffTests.test_valid_handoff_exports_exact_candidate",
       "result": "PASS"
     },
@@ -233,6 +241,10 @@
     },
     {
       "case": "nightwatch_tests.OverlayTests.test_wrong_css_rejected",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_boolean_receipt_version_is_not_integer_version",
       "result": "PASS"
     },
     {
@@ -324,10 +336,6 @@
       "result": "PASS"
     },
     {
-      "case": "nightwatch_tests.PayloadTests.test_unsafe_path_29",
-      "result": "PASS"
-    },
-    {
       "case": "nightwatch_tests.PayloadTests.test_unsafe_path_30",
       "result": "PASS"
     },
@@ -380,7 +388,7 @@
       "result": "PASS"
     },
     {
-      "case": "nightwatch_tests.PayloadTests.test_unsafe_tar_type_43",
+      "case": "nightwatch_tests.PayloadTests.test_unsafe_path_43",
       "result": "PASS"
     },
     {
@@ -405,6 +413,10 @@
     },
     {
       "case": "nightwatch_tests.PayloadTests.test_unsafe_tar_type_49",
+      "result": "PASS"
+    },
+    {
+      "case": "nightwatch_tests.PayloadTests.test_unsafe_tar_type_50",
       "result": "PASS"
     },
     {

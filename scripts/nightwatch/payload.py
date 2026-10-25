@@ -191,7 +191,7 @@ def make_bundle(payload:Payload,source_commit:str,kind:str):
 def verify_bundle(raw,receipt,expected_receipt_sha):
     require(sha(canonical(receipt))==expected_receipt_sha,'Receipt digest mismatch')
     require(set(receipt)=={'version','kind','sourceCommit','payloadDigest','archiveSHA256','archiveBytes','files','directories'},'Receipt schema')
-    require(receipt['version']==1 and receipt['kind'] in ('release','rollback'),'Receipt version/kind')
+    require(type(receipt['version']) is int and receipt['version']==1 and receipt['kind'] in ('release','rollback'),'Receipt version/kind')
     require(re.fullmatch(r'[a-f0-9]{40}',receipt['sourceCommit']) is not None,'Receipt source')
     payload=read_pages_zip(raw,receipt['archiveSHA256'],receipt['archiveBytes'])
     require(payload.manifest()==receipt['files'] and list(payload.directories)==receipt['directories'],'Complete inventory mismatch')

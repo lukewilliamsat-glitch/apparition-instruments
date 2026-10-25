@@ -103,6 +103,9 @@ class PayloadTests(unittest.TestCase):
         changed=copy.deepcopy(r);changed['files'][0]['sha256']='0'*64
         with self.assertRaises(Rejected):verify_bundle(raw,changed,sha(canonical(changed)))
         with self.assertRaises(Rejected):verify_bundle(raw,r,'0'*64)
+    def test_boolean_receipt_version_is_not_integer_version(self):
+        raw,r=make_bundle(fixture(),BASE,'rollback');r['version']=True
+        with self.assertRaises(Rejected):verify_bundle(raw,r,sha(canonical(r)))
     def test_duplicate_json_key(self):
         with self.assertRaises(Rejected):strict_json(b'{"a":1,"a":2}')
     def test_nonfinite_json(self):
@@ -210,6 +213,12 @@ class DeliveryTests(unittest.TestCase):
     def test_wrong_active_source_blocks(self):
         self.port.state['sourceCommit']='0'*40
         with self.assertRaises(Rejected):self.run_delivery()
+    def test_unknown_active_deployment_identity_never_authorises_publish(self):
+        for value in [None,'',0]:
+            with self.subTest(value=value):
+                self.approval['expectedActive']['deploymentId']=value;self.port.state['deploymentId']=value
+                with self.assertRaises(Rejected):self.run_delivery()
+        self.assertEqual(self.port.calls,[])
     def test_wrong_active_deployment_blocks(self):
         self.port.state['deploymentId']='other'
         with self.assertRaises(Rejected):self.run_delivery()
@@ -349,6 +358,10 @@ class HandoffTests(unittest.TestCase):
     def test_reject_extra_handoff_file(self):
         (self.h/'surprise').write_bytes(b'new')
         with self.assertRaises(Rejected):self.stage()
+    def test_unknown_current_deployment_identity_blocks_handoff(self):
+        self.approval['expectedActive']['deploymentId']=None;self.approval['currentEvidence']['deploymentId']=None
+        with self.assertRaises(Rejected):self.stage()
+        self.assertFalse((self.p/'site').exists())
     def test_reject_missing_restore_acceptance(self):
         self.approval['restorationProcedureAccepted']=False
         with self.assertRaises(Rejected):self.stage()

@@ -24,6 +24,9 @@ def replace_json(path:Path,value):
 
 def _snapshot(value,expected,holiday,now):
     require(isinstance(value,dict),'Snapshot missing')
+    require(isinstance(expected.get('deploymentId'),str) and 0<len(expected['deploymentId'])<=200,'Active deployment identity missing')
+    require(isinstance(expected.get('sourceCommit'),str) and re.fullmatch('[a-f0-9]{40}',expected['sourceCommit']),'Active source identity missing')
+    require(isinstance(expected.get('payloadDigest'),str) and re.fullmatch('[a-f0-9]{64}',expected['payloadDigest']),'Active payload identity missing')
     require(value.get('deploymentId')==expected['deploymentId'],'Active deployment drift')
     require(value.get('sourceCommit')==expected['sourceCommit'],'Active source drift')
     require(value.get('payloadDigest')==expected['payloadDigest'],'Complete active-payload association missing/drifted')
