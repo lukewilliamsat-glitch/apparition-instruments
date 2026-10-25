@@ -1,8 +1,8 @@
-# Exact owner archive-access gate — NOT YET APPROVED
+# Archive gate — approved by50A with modified screenshot restrictions
 
-Authorisation 50 explicitly requires a separate exact owner decision before using the retained original archive. No original bytes, locally present copy or retained backing file has been opened by NIGHTWATCH. This gate is separate from visual sign-off and production approval.
+Authorisation50A grants one exact private materialisation and assembly, now completed. It explicitly rejects the proposed GitHub Actions screenshot artifact. Original graphics may be decoded only for authorised isolated visual review; no such rendering has occurred. This gate grants neither owner visual sign-off nor production release authority. The historical proposal below is superseded wherever it permits screenshot CI retention.
 
-## Requested next scope
+## Historical proposed scope — screenshot CI clause NOT APPROVED
 
 - One read-only materialization/access to the already privately retained original from run40175066908 /artifact12590914632, **20,301,705 bytes**, SHA-256 **d358efe91b5db0b0845505afd91a3eaa079c4bc0aeaa9a331fe5916d4266e349**. No new GitHub artifact retrieval, alternate archive search or provider/backend request.
 - Verify size/hash before processing; reject >22MiB or mismatch. One initial private-storage transfer; no retry without a new decision. At most ten bounded offline passes over the approved local copy (<=220MiB original-archive bytes read). The private original and earlier evidence package remain unchanged.

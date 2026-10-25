@@ -1,6 +1,6 @@
 # NIGHTWATCH — First Contact
 
-Authorisation 50, 25 October 2026. **Mission PARTIAL; archive-backed visual candidate awaits the explicitly required owner archive-access approval.** This is working release tooling, not a website deployment or an owner-approved design.
+Authorisations50/50A,25 October2026. **Mission PARTIAL. Authentic complete candidate and rollback are now privately assembled, independently verified and retained.** Native Chrome visual review remains blocked by the lack of an approved private isolated rendering/return path. Production is blocked, including a concrete stale holiday-snapshot conflict. See [50A assembly](ASSEMBLY_50A.md). This is an actual complete payload handoff, not a deployment or owner-approved design.
 
 ## Implemented checkpoint
 
@@ -16,12 +16,12 @@ A dedicated `engineering/nightwatch-first-contact` branch was chosen because no 
 | Phase | Current state |
 | --- | --- |
 | 1 — infrastructure | Synthetic local/hosted acceptance PASS; real hosted publish/restore route uninstalled/unaccepted |
-| 2 — actual visual candidate | Exact CSS and assembly machinery ready; complete authentic candidate NOT yet built |
-| 3 — real browser review | NOT RUN; no genuine NIGHTWATCH screenshots or preview yet |
-| 4 — holiday protection | Fail-closed checks implemented; current live holiday/payload preservation NOT yet established |
+| 2 — actual visual candidate | Complete authentic423-file candidate privately built and verified under50A |
+| 3 — real browser review | BLOCKED; no approved private isolated Chrome return route, no screenshots/preview |
+| 4 — holiday protection | Archived snapshot OPEN conflicts with reported holiday mode; production BLOCKED |
 | 5 — owner visual sign-off | NOT REQUESTED; requires genuine candidate and evidence |
 | 6 — production | NOT AUTHORISED; requires separate exact release decision after visual approval |
 
 See [implementation](IMPLEMENTATION.md), [publication route](PUBLICATION_ROUTE.md), [archive access gate](ARCHIVE_ACCESS_GATE.md), [holiday gates](HOLIDAY_GATES.md), [test evidence](TEST_RESULTS.json) and [release gates](RELEASE_GATES.md).
 
-No private archive bytes were opened, retrieved, decoded or uploaded. No Supabase/Auth/REST/RPC/SQL, live storefront, payment, order/stock mutation, production build/deployment, main merge or preview hosting occurred. The synthetic CI workflow has contents:read only, targets this engineering branch and has no Pages/OIDC permission. The future publication template is outside `.github/workflows` and cannot run.
+Under50A the exact original was materialised once, integrity checked and assembled privately. Original graphics were not decoded and no private bytes were uploaded to public Git/CI. The prior private originals remain unchanged. No Supabase/Auth/REST/RPC/SQL, live storefront, payment, order/stock mutation, production build/deployment, main merge or preview hosting occurred. The synthetic CI workflow has contents:read only, targets this engineering branch and has no Pages/OIDC permission. The future publication template is outside `.github/workflows` and cannot run.
