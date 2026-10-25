@@ -4,14 +4,25 @@ import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {resolve,join,extname} from 'node:path';
 import {pathToFileURL} from 'node:url';
+import {createProductionFixture,fixtureConfig,jsonReply} from './production-fixture.mjs';
 const [output,chromePath,controller,commit]=process.argv.slice(2);
 const stage=JSON.parse(await readFile(join(output,'STAGE_A_RESULTS.json'),'utf8'));
 assert.equal(stage.status,'PASS');assert.equal(stage.sourceCommit,commit);
-const source=JSON.parse(await readFile(join(output,'SOURCE_IDENTITY.json'),'utf8'));assert.equal(source.executionCommit,commit);assert.equal(source.unchangedInheritedBlobs,897);
+const source=JSON.parse(await readFile(join(output,'SOURCE_IDENTITY.json'),'utf8'));assert.equal(source.executionCommit,commit);assert.equal(source.unchangedInheritedBlobs,896);
 const results=[],captures=[],requests=[],responses=[],errors=[],measurements=[];
 let aggregate=0;
+const httpFixture=createProductionFixture();
 const server=createServer(async(req,res)=>{
  const pathname=new URL(req.url,'http://fixture.invalid').pathname;
+ if(pathname.startsWith('/tests/command05/backend/')){
+  const u=new URL(req.url,'http://fixture.invalid'),mode=u.searchParams.get('__fixture_mode');u.searchParams.delete('__fixture_mode');
+  const target=fixtureConfig.url+pathname.slice('/tests/command05/backend'.length)+u.search;
+  let response;
+  if(mode==='denied'&&pathname.endsWith('/admin_members'))response=jsonReply([]);
+  else if(mode==='failure'&&pathname.endsWith('/components'))response=jsonReply({error:'fictional unavailable'},{status:503});
+  else response=httpFixture.normal(target,{method:req.method});
+  const body=Buffer.from(await response.arrayBuffer());res.writeHead(response.status,Object.fromEntries(response.headers));res.end(body);return;
+ }
  if(pathname==='/favicon.ico'||pathname.startsWith('/assets/')){res.writeHead(204);res.end();return;}
  let p=pathname.startsWith('/tests/')||pathname.startsWith('/dist/')?pathname.slice(1):'dist'+pathname;
  if(p.endsWith('/'))p+='index.html';
@@ -74,6 +85,20 @@ try{
  await test('19 legacy Admin before comparison using same fictional catalogue',async p=>{await p.waitForFunction(()=>document.querySelectorAll('#table-body tr').length===14);assert(await p.locator('[data-admin-topbar]').isVisible());await shot(p,'19-before-legacy-admin');},1440,'','/admin/');
  const paths=['/admin/overview/','/admin/?view=assemblies','/admin/?view=maintenance','/admin/catalogue-settings/','/admin/wiring-kit-master/','/admin/orders/','/admin/orders/?view=aftercare','/admin/orders/build-sheet/','/admin/orders/invoice/','/admin/hub-cms/','/admin/hub-media/','/admin/site-operations/','/admin/site-operations/#news','/admin/site-operations/#announcements','/admin/site-operations/#commercial-destinations','/admin/email-preview/','/admin/email-templates/','/admin/conjure/','/circuit-forge/','/circuit-forge/projects/'];
  for(const path of paths)await test('specialist structural reachability '+path,async p=>{assert(await p.locator('main').count()>0);assert.equal(await p.evaluate(()=>window.ascensionFixture.structuralOnly),!path.startsWith('/admin/?'));},1024,'',path);
+ await test('54A real Auth/read adapter over fictional loopback HTTP',async p=>{
+  await select(p);assert(await p.locator('[data-enter-editor]').isDisabled());
+  const before=await p.evaluate(()=>window.ascensionFixture.services.calls.length);await p.locator('#search').fill('audio');await p.locator('#search').fill('');
+  await p.evaluate(()=>window.ascensionFixture.app.boundary.readProduct('fx-pot-01'));assert.equal(await p.evaluate(()=>window.ascensionFixture.services.calls.length),before);
+  assert.equal(await p.evaluate(()=>window.ascensionFixture.app.editor.save()),false);
+  const calls=await p.evaluate(()=>window.ascensionFixture.services.calls.map(({method,path,query})=>({method,path,query})));assert(!calls.some(c=>c.path.includes('component_internal')));assert(calls.filter(c=>c.path.endsWith('/components')||c.path.endsWith('/inventory')).every(c=>c.method==='GET'));
+  await shot(p,'20-production-shaped-desktop');
+ },1440,'?production-read=yes');
+ await test('54B production-shaped mobile inspector and navigation',async p=>{await select(p);assert(await p.locator('[data-enter-editor]').isDisabled());await p.locator('#inspector').scrollIntoViewIfNeeded();assert(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));await shot(p,'21-production-shaped-mobile');},390,'?production-read=yes');
+ await test('54C current membership denial through existing Auth gate',async p=>{assert.equal(await p.locator('body.admin-authorized').count(),0);assert.match(await p.locator('.admin-access-note').textContent(),/not authorised/);assert.equal(await p.evaluate(()=>window.ascensionFixture.services.calls.filter(c=>c.path.endsWith('/components')).length),0);await shot(p,'22-production-shaped-denied');},390,'?production-read=yes&role=nonadmin');
+ await test('54D membership revocation conceals catalogue and focuses status',async p=>{await p.evaluate(()=>window.ascensionFixture.setMode('denied'));await p.locator('[data-product="fx-pot-01"]').click();await p.waitForFunction(()=>window.ascensionFixture.app.boundary.snapshot().status==='denied');assert(await p.locator('#command-content').isHidden());assert.equal(await p.evaluate(()=>document.activeElement.id),'command-status');},1440,'?production-read=yes');
+ await test('54E service failure has no automatic retry; explicit recovery',async p=>{await p.evaluate(()=>window.ascensionFixture.setMode('failure'));await p.locator('#refresh').click();await p.waitForFunction(()=>window.ascensionFixture.app.boundary.snapshot().status==='error');const count=await p.evaluate(()=>window.ascensionFixture.services.calls.length);await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));assert.equal(await p.evaluate(()=>window.ascensionFixture.services.calls.length),count);await p.evaluate(()=>window.ascensionFixture.setMode('ok'));await p.locator('#command-reconnect').click();await p.waitForFunction(()=>window.ascensionFixture.app.workbench.snapshot().status==='ready');},1440,'?production-read=yes');
+ await test('54F production-shaped expiry conceals cached data without request',async p=>{await select(p);const count=await p.evaluate(()=>window.ascensionFixture.services.calls.length);await p.evaluate(async()=>{window.ascensionFixture.expire();try{await window.ascensionFixture.app.boundary.readProduct('fx-pot-01');}catch{}});assert(await p.locator('#command-content').isHidden());assert.equal(await p.evaluate(()=>window.ascensionFixture.app.boundary.snapshot().status),'expired');assert.equal(await p.evaluate(()=>window.ascensionFixture.services.calls.length),count);},1440,'?production-read=yes');
+ await test('54G existing sign-out locks read workspace and clears session',async p=>{await select(p);await p.locator('.admin-lock').click();await p.waitForFunction(()=>!document.body.classList.contains('admin-authorized'));assert.equal(await p.evaluate(()=>localStorage.getItem('apparition.admin.supabase-session.v1')),null);assert.equal(await p.evaluate(()=>window.ascensionFixture.app.boundary.snapshot().catalogueReady),false);assert.equal(await p.locator('#rows tr').count(),0);},1440,'?production-read=yes');
  assert(requests.every(r=>new URL(r.url).origin===origin),'All application requests remain loopback');assert(responses.every(r=>new URL(r.url).origin===origin));assert.equal(errors.length,0,JSON.stringify(errors));
 }catch(e){results.push({name:'harness/security',status:'FAIL',error:String(e),stack:e.stack});}
 finally{

@@ -11,6 +11,6 @@ def walk(p):
  for imp in re.findall(r'(?:from\s*|import\s*)[\'\"]([^\'\"]+)[\'\"]',Path(p).read_text()):
   if imp.startswith('.'):walk(posixpath.normpath(posixpath.join(posixpath.dirname(p),imp.split('?')[0])))
   elif imp.startswith('/'):walk('dist'+imp.split('?')[0])
-for root in ['tests/command05/browser-entry.mjs','dist/admin/admin.mjs']:walk(root)
+for root in ['tests/command05/browser-entry.mjs','tests/command05/production-browser-entry.mjs','dist/admin/admin.mjs']:walk(root)
 assert not blocked,blocked
 print(json.dumps({'fixtureModuleClosure':'PASS','modules':len(seen),'additionalReviewedSeedDependencies':sorted(extra)}))

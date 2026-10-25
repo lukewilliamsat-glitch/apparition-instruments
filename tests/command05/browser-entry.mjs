@@ -5,6 +5,9 @@ import {createFixtureServices} from './fixture-services.mjs';
 import {setComponentRepository} from '/admin/component-repository.mjs';
 import {setAssemblyRepository} from '/admin/assembly-repository.mjs';
 const params=new URLSearchParams(location.search),role=params.get('role')||'stock';
+if(params.get('production-read')==='yes'){
+ await import('./production-browser-entry.mjs');
+}else{
 const f=createFixtureServices({role,count:Number(params.get('size')||14)});
 // A real request is never substituted with synthetic data. Deny it before IO.
 globalThis.fetch=async()=>{throw Error('Live/backend fetch forbidden by this synthetic harness.');};
@@ -23,3 +26,4 @@ if(!path.startsWith('/circuit-forge/'))await bootAdminGate({document,auth:f.auth
  return {};
 }});
 window.ascensionFixture=Object.freeze({services:f,app,structuralOnly:!isCommand&&!legacy});
+}

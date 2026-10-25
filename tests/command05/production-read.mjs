@@ -1,0 +1,53 @@
+import assert from 'node:assert/strict';
+import {writeFile} from 'node:fs/promises';
+import {createProductionReadAdapter,productionReadLimits} from '../../dist/admin/command/production-read.mjs';
+import {createReadBoundary} from '../../dist/admin/command/read-boundary.mjs';
+import {createWorkbench} from '../../dist/admin/command/command01/controller.mjs';
+import {createPreviewPort} from '../../dist/admin/command/editor-port.mjs';
+import {createProductionFixture,jsonReply,fixtureConfig} from './production-fixture.mjs';
+const results=[],measurements=[];
+async function test(name,run){try{await run();results.push({name,status:'PASS'});}catch(e){results.push({name,status:'FAIL',error:String(e),stack:e.stack});}}
+function setup(options={}){const f=createProductionFixture(options),b=createReadBoundary({auth:f.auth,adapter:f.adapter,now:options.now,timeoutMs:options.timeoutMs??5000});return {f,b};}
+await test('default production activation performs zero IO',async()=>{let calls=0;const adapter=createProductionReadAdapter({auth:{restore(){}},config:fixtureConfig,request:()=>{calls++;throw Error();}}),b=createReadBoundary({auth:{restore(){}},adapter});assert.equal(b.snapshot().status,'inactive');await assert.rejects(b.catalogueTransport.list(),{code:'INACTIVE'});assert.equal(calls,0);b.destroy();});
+for(const count of [14,100,500])await test(count+' production-shaped rows: real Auth proof, bounded reads and local interactions',async()=>{
+ const {f,b}=setup({count}),w=createWorkbench({transport:b.catalogueTransport});try{
+  await w.refresh();assert.equal(w.snapshot().rows.length,count);await w.select('fx-pot-01');assert.equal(w.snapshot().detailStatus,'ready');
+  const before=f.calls.length;for(let i=0;i<20;i++)w.setFilter('query',i%2?'audio':'');await w.select('fx-pot-01');await b.readProduct('fx-pot-01');assert.equal(f.calls.length,before);
+  const state=b.snapshot();assert(state.capabilities.catalogueRead);assert(state.capabilities.inventoryRead);assert.equal(state.capabilities.draftPreview,false);assert.equal(state.productionWrites,false);
+  assert(!JSON.stringify(state).includes('fixture-signature'));assert(!JSON.stringify(w.snapshot()).includes('internal_unit_cost'));
+  const business=f.calls.filter(c=>['/rest/v1/components','/rest/v1/inventory'].includes(c.path));assert.equal(business.length,4);
+  for(const c of business){const q=new URLSearchParams(c.query);assert.equal(c.method,'GET');assert(!q.get('select').includes('*'));assert(!/image|internal|supplier|customer/.test(q.get('select')));assert([2,501].includes(Number(q.get('limit'))));}
+  measurements.push({products:count,...f.adapter.metrics(),syntheticMeasurement:true});
+ }finally{w.destroy();b.destroy();}
+});
+await test('no inventory capability requests no inventory; direct scope forgery denied',async()=>{const {f,b}=setup({inventory:false});try{const rows=await b.catalogueTransport.list();assert.equal(rows[0].stock,null);const ctx=await b.authorize();const forged=structuredClone(ctx.grant);forged.capabilities.inventoryRead=true;await assert.rejects(f.adapter.list({grant:forged,inventory:true}),{code:'DENIED'});assert(!f.calls.some(c=>c.path.endsWith('/inventory')));}finally{b.destroy();}});
+await test('all write routes and direct editor entry are denied',async()=>{const {f,b}=setup();try{await b.catalogueTransport.list();const before=f.calls.length;for(const fn of Object.values(b.mutations))await assert.rejects(fn(),{code:'UNSUPPORTED'});await assert.rejects(createPreviewPort(b).read('fx-pot-01'),{code:'PERMISSION'});assert(!f.calls.slice(before).some(c=>c.method!=='GET'));}finally{b.destroy();}});
+await test('client role claims do not replace current membership',async()=>{const {f,b}=setup();try{f.setMember(false);await assert.rejects(b.catalogueTransport.list(),{code:'DENIED'});assert(!f.calls.some(c=>c.path.endsWith('/components')));assert.equal(b.snapshot().subject,null);}finally{b.destroy();}});
+await test('JWT subject must match the server-verified identity',async()=>{const {f,b}=setup();try{f.setTokenSubject('00000000-0000-4000-8000-000000000099');await assert.rejects(b.catalogueTransport.list(),{code:'EXPIRED'});assert(!f.calls.some(c=>c.path.endsWith('/components')));}finally{b.destroy();}});
+await test('server-accepted expired JWT cannot use a forged stored lifetime',async()=>{const {f,b}=setup();try{f.setExpiry(Math.floor(Date.now()/1000)-1);await assert.rejects(b.catalogueTransport.list(),{code:'EXPIRED'});}finally{b.destroy();}});
+await test('self membership projection is exact and bounded',async()=>{const {f,b}=setup();try{f.hook(({url})=>url.pathname.endsWith('/admin_members')?jsonReply([{user_id:'00000000-0000-4000-8000-000000000054',private:'unexpected'}]):undefined);await assert.rejects(b.catalogueTransport.list(),{code:'DENIED'});}finally{b.destroy();}});
+for(const [name,change,code] of [
+ ['unknown total count',r=>{r.headers.set('content-range','0-13/*');return r;},'INCOMPLETE'],
+ ['partial result',r=>{r.headers.set('content-range','0-13/15');return r;},'INCOMPLETE'],
+ ['nonzero range start',r=>{r.headers.set('content-range','1-14/14');return r;},'INCOMPLETE'],
+ ['image payload',async r=>{const rows=await r.json();rows[0].image='not-allowed';return jsonReply(rows,{range:'0-13/14'});},'PROJECTION'],
+ ['private cost payload',async r=>{const rows=await r.json();rows[0].internal_unit_cost=1;return jsonReply(rows,{range:'0-13/14'});},'PROJECTION'],
+ ['malformed JSON',()=>new Response('{',{headers:{'content-type':'application/json','content-range':'0-13/14'}}),'MALFORMED'],
+ ['wrong MIME type',()=>new Response('[]',{headers:{'content-type':'text/plain','content-range':'*/0'}}),'PROJECTION'],
+ ['401',()=>jsonReply({error:'never-show-this-body'},{status:401}),'EXPIRED'],
+ ['403',()=>jsonReply({error:'never-show-this-body'},{status:403}),'DENIED'],
+ ['429',()=>jsonReply({error:'never-show-this-body'},{status:429}),'QUOTA'],
+ ['503',()=>jsonReply({error:'never-show-this-body'},{status:503}),'READ']
+])await test('reject '+name+' without fallback/retry',async()=>{const {f,b}=setup();try{f.hook(({url,normal})=>url.pathname.endsWith('/components')?change(normal()):undefined);await assert.rejects(b.catalogueTransport.list(),{code});assert.equal(f.calls.filter(c=>c.path.endsWith('/components')).length,1);assert.equal(b.snapshot().catalogueReady,false);}finally{b.destroy();}});
+await test('501 rows are rejected rather than silently truncated',async()=>{const {b}=setup({count:501});try{await assert.rejects(b.catalogueTransport.list(),{code:'INCOMPLETE'});}finally{b.destroy();}});
+await test('empty exact-count catalogue is valid',async()=>{const {b}=setup({count:0});try{assert.deepEqual(await b.catalogueTransport.list(),[]);}finally{b.destroy();}});
+for(const declared of [true,false])await test('byte ceiling '+(declared?'from header':'on decoded stream'),async()=>{const {f,b}=setup();try{f.hook(({url})=>url.pathname.endsWith('/components')?new Response(' '.repeat(productionReadLimits.listBytes+1),{headers:{'content-type':'application/json','content-range':'*/0',...declared?{'content-length':String(productionReadLimits.listBytes+1)}:{}}}):undefined);await assert.rejects(b.catalogueTransport.list(),{code:'BOUNDS'});}finally{b.destroy();}});
+await test('network failure performs one request and exposes a generic message',async()=>{const {f,b}=setup();try{f.hook(({url})=>{if(url.pathname.endsWith('/components'))throw Error('secret-value-not-for-UI');});await assert.rejects(b.catalogueTransport.list(),e=>e.code==='READ'&&!e.message.includes('secret-value'));assert.equal(f.calls.filter(c=>c.path.endsWith('/components')).length,1);}finally{b.destroy();}});
+await test('lost membership is checked before a new detail network read',async()=>{const {f,b}=setup();try{await b.catalogueTransport.list();f.setMember(false);await assert.rejects(b.readProduct('fx-pot-01'),{code:'DENIED'});assert.equal(f.calls.filter(c=>c.path.endsWith('/components')).length,1);}finally{b.destroy();}});
+await test('sign-out aborts delayed data, clears authority and cached records',async()=>{const {f,b}=setup();let release,entered;const started=new Promise(r=>entered=r);try{await b.catalogueTransport.list();f.hook(async({url,normal})=>{if(url.pathname.endsWith('/components')){const response=normal();entered();await new Promise(r=>release=r);return response;}});const work=b.readProduct('fx-pot-01');await started;const settled=assert.rejects(work,{code:'STALE'});await f.auth.signOut();release();await settled;assert.equal(b.snapshot().subject,null);assert.equal(b.snapshot().catalogueReady,false);}finally{b.destroy();}});
+await test('cross-tab session change invalidates cached data without network',async()=>{const {f,b}=setup();try{await b.catalogueTransport.list();await b.readProduct('fx-pot-01');const before=f.calls.length;f.clear();assert.equal(b.snapshot().subject,null);await assert.rejects(b.readProduct('fx-pot-01'));assert.equal(f.calls.length,before);}finally{b.destroy();}});
+await test('expiry refuses a cached record without network',async()=>{let clock=Date.now();const {f,b}=setup({now:()=>clock});try{await b.catalogueTransport.list();await b.readProduct('fx-pot-01');const before=f.calls.length;clock+=3601000;await assert.rejects(b.readProduct('fx-pot-01'),{code:'EXPIRED'});assert.equal(f.calls.length,before);assert.equal(b.snapshot().subject,null);}finally{b.destroy();}});
+await test('cache expiry refreshes one product, never the full catalogue',async()=>{let clock=Date.now();const {f,b}=setup({now:()=>clock});try{await b.catalogueTransport.list();await b.readProduct('fx-pot-01');const before=f.calls.filter(c=>c.path.endsWith('/components')).length;clock+=15001;await b.readProduct('fx-pot-01');assert.equal(f.calls.filter(c=>c.path.endsWith('/components')).length,before+1);assert.equal(f.calls.filter(c=>c.path.endsWith('/components')&&new URLSearchParams(c.query).get('limit')==='501').length,1);}finally{b.destroy();}});
+await test('total request deadline aborts a stuck response without retry',async()=>{const {f,b}=setup({timeoutMs:20});try{f.hook(({url})=>url.pathname.endsWith('/components')?new Promise(()=>{}):undefined);await assert.rejects(b.catalogueTransport.list(),{code:'TIMEOUT'});assert.equal(f.calls.filter(c=>c.path.endsWith('/components')).length,1);}finally{b.destroy();}});
+const report={suite:'command54-production-shaped-read',node:process.version,liveProviderRequests:0,passed:results.filter(r=>r.status==='PASS').length,total:results.length,results,measurements};
+if(process.argv[2])await writeFile(process.argv[2],JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));if(report.passed!==report.total)process.exitCode=1;

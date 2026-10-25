@@ -3,7 +3,7 @@ from pathlib import Path
 out=Path(sys.argv[1]);commit=sys.argv[2];after='--after' in sys.argv
 base='2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f'
 assert subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==commit
-allowed={'dist/admin/admin-gate.mjs','dist/admin/application.mjs'}
+allowed={'dist/admin/admin-gate.mjs','dist/admin/application.mjs','dist/admin/admin-auth.mjs'}
 original=subprocess.check_output(['git','ls-tree','-r','--name-only',base],text=True).splitlines()
 for p in original:
  if p in allowed:continue

@@ -1,4 +1,5 @@
 import {summary} from './command01/model.mjs';
+import {isProductionReadAdapter} from './production-read.mjs';
 // No fetch, credentials, endpoint, public/local fallback or production writes.
 export const READ_CONTRACT='command05-read-v1';
 const capabilities=['catalogueRead','productRead','inventoryRead','draftPreview'];
@@ -8,10 +9,11 @@ const error=(code,message)=>Object.assign(new Error(message),{code,outcome:'not-
 const blocked=async()=>{throw error('UNSUPPORTED','Production writes are disabled. No request was submitted.');};
 export function createReadBoundary({auth,adapter=null,now=Date.now,timeoutMs=5000}={}){
  if(typeof auth?.restore!=='function')throw Error('Existing Admin authentication boundary required.');
- if(adapter&&(adapter.contract!==READ_CONTRACT||adapter.environment!=='synthetic'||['authorize','list','detail','subscribe'].some(k=>typeof adapter[k]!=='function')))throw Error('Only an explicitly injected synthetic read adapter is accepted. Real-service activation is gated.');
+ const production=isProductionReadAdapter(adapter);
+ if(adapter&&(adapter.contract!==READ_CONTRACT||(!production&&adapter.environment!=='synthetic')||['authorize','list','detail','subscribe'].some(k=>typeof adapter[k]!=='function')))throw Error('Only an explicitly injected synthetic or verified production read adapter is accepted. Real-service activation is gated.');
  let alive=true,epoch=0,grant=null,expiry=null;
  const listeners=new Set(),active=new Set(),cache=new Map();
- let state={status:adapter?'checking':'inactive',subject:null,capabilities:Object.fromEntries(capabilities.map(k=>[k,false])),observedAt:null,catalogueReady:false,source:adapter?'synthetic':'inactive',productionWrites:false};
+ let state={status:adapter&&(!production||adapter.enabled)?'checking':'inactive',subject:null,capabilities:Object.fromEntries(capabilities.map(k=>[k,false])),observedAt:null,catalogueReady:false,source:production?'production':adapter?'synthetic':'inactive',productionWrites:false};
  const snapshot=()=>structuredClone(state),emit=()=>{for(const fn of listeners)fn(snapshot());};
  function reset(status){epoch++;grant=null;cache.clear();clearTimeout(expiry);for(const c of active)c.abort();active.clear();state={...state,status,subject:null,observedAt:null,catalogueReady:false,capabilities:Object.fromEntries(capabilities.map(k=>[k,false]))};emit();}
  const off=adapter?.subscribe(()=>reset('checking'))||(()=>{});
@@ -27,8 +29,8 @@ export function createReadBoundary({auth,adapter=null,now=Date.now,timeoutMs=500
   if(!alive)throw error('CLOSED','Workspace closed.');if(!adapter)throw error('INACTIVE','Read-only COMMAND. The authenticated catalogue adapter is not activated. No product data has been requested.');
   const token=epoch;
   try{
-   const membership=await bounded(()=>auth.restore());ensure(token);
-   if(membership.status!=='authorized')throw error(membership.status==='denied'?'DENIED':'EXPIRED','An authorised Admin session is required.');
+   if(!production){const membership=await bounded(()=>auth.restore());ensure(token);
+    if(membership.status!=='authorized')throw error(membership.status==='denied'?'DENIED':'EXPIRED','An authorised Admin session is required.');}
    const next=await bounded(signal=>adapter.authorize({signal}));ensure(token);
    if(!next||typeof next.subject!=='string'||!next.subject||typeof next.sessionId!=='string'||!next.sessionId||!Number.isFinite(next.expiresAt)||next.expiresAt<=now()||next.expiresAt-now()>86400000||!next.capabilities||capabilities.some(k=>typeof next.capabilities[k]!=='boolean'))throw error('DENIED','The authority did not supply valid read capabilities.');
    if(!next.capabilities.catalogueRead)throw error('DENIED','This session has no catalogue-read authority. Product records remain concealed.');
@@ -72,6 +74,10 @@ export function createReadBoundary({auth,adapter=null,now=Date.now,timeoutMs=500
  }
  async function readProduct(id,{signal,force=false}={}){
   if(typeof id!=='string'||!/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,95}$/.test(id))throw error('IDENTITY','Invalid product ID.');
+  if(production&&grant)ensure(epoch);
+  // An already authorised local detail remains usable for at most 15s without
+  // another network call. Sign-out/storage changes/expiry clear this cache.
+  const local=cache.get(id);if(production&&!force&&local&&now()-local.at<15000&&grant&&state.status==='ready'&&grant.capabilities.productRead&&!signal?.aborted){ensure(epoch);return structuredClone(local.record);}
   const ctx=await authorize();if(!ctx.grant.capabilities.productRead)throw error('DENIED','Product inspection is not authorised for this session.');
   const hit=cache.get(id);if(hit&&!force&&now()-hit.at<15000)return structuredClone(hit.record);
   try{
@@ -83,6 +89,6 @@ export function createReadBoundary({auth,adapter=null,now=Date.now,timeoutMs=500
  return Object.freeze({snapshot,authorize,readProduct,subscribe(fn){listeners.add(fn);return()=>listeners.delete(fn);},
   catalogueTransport:Object.freeze({kind:'command05-readonly',list,detail:async(id,options)=>{const r=await readProduct(id,options);return {...r,specs:Object.entries(r.specs).map(([k,v])=>k+': '+v).join(' · ')};}}),
   mutations:Object.freeze({save:blocked,status:blocked,changeStock:blocked,writeImage:blocked}),
-  lock(reason='expired'){reset(reason);},destroy(){if(!alive)return;alive=false;off();reset('closed');listeners.clear();}
+  lock(reason='expired'){reset(reason);},destroy(){if(!alive)return;alive=false;off();if(production)adapter.dispose();reset('closed');listeners.clear();}
  });
 }

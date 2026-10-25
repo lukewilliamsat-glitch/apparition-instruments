@@ -3,8 +3,9 @@ import {createReadBoundary} from './read-boundary.mjs';
 import {createEditorView} from './command02/editor-view.mjs';
 import {createPreviewPort} from './editor-port.mjs';
 import {mountPresentation} from './presentation.mjs';
+import {createProductionReadAdapter} from './production-read.mjs';
 export async function mountAdminWorkspace({document,auth,services}={}){
- const $=id=>document.getElementById(id),boundary=createReadBoundary({auth,adapter:services?.commandReadAdapter??null});
+ const $=id=>document.getElementById(id),boundary=createReadBoundary({auth,adapter:services?.commandReadAdapter??createProductionReadAdapter({auth,events:document.defaultView})});
  let app=null,editor=null,presentation=null,closed=false;
  for(const link of document.querySelectorAll('link[rel=stylesheet]'))if(new URL(link.href,document.baseURI).pathname.includes('/admin/command/'))document.head.append(link);
  const resize=()=>{const h=document.querySelector('[data-admin-topbar]')?.getBoundingClientRect().height;if(h)document.body.style.setProperty('--command-topbar-height',h+'px');};
@@ -23,7 +24,7 @@ export async function mountAdminWorkspace({document,auth,services}={}){
   $('command-status').setAttribute('role',['denied','expired','error'].includes(s.status)?'alert':'status');
   if(['denied','expired','error','sign-out'].includes(s.status))$('command-status').focus({preventScroll:true});
   $('command-reconnect').hidden=ready;
-  $('data-source').textContent=s.source==='synthetic'?(synthetic?'SYNTHETIC WRITE TESTING · In-memory fixture only. No production data or saves.':'SYNTHETIC ACCEPTANCE DATA · Fictional products, prices, inventory and identities. No live backend.'):'Authenticated read adapter is inactive.';
+  $('data-source').textContent=s.source==='synthetic'?(synthetic?'SYNTHETIC WRITE TESTING · In-memory fixture only. No production data or saves.':'SYNTHETIC ACCEPTANCE DATA · Fictional products, prices, inventory and identities. No live backend.'):s.status==='ready'?'Authenticated catalogue · Read only. Original images and private costs are not requested.':'Production read connection awaiting verification. No catalogue data requested.';
   $('data-freshness').textContent=s.observedAt?'Last verified read: '+s.observedAt+' · display identity is not a write revision.':'No catalogue read completed.';
   $('filter-stock').disabled=!s.capabilities.inventoryRead;
   $('save-fixture').disabled=!canSave()||editor?.session.snapshot().phase!=='review';

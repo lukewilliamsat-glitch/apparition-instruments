@@ -5,7 +5,9 @@ import {Window} from 'happy-dom';
 import {adminRoutes,mountAdminShell,workspaceFor} from '../../dist/admin/application.mjs';
 const base='2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f';
 const files=execFileSync('git',['ls-tree','-r','--name-only',base],{encoding:'utf8'}).trim().split('\n');
-const allowed=new Set(['dist/admin/application.mjs','dist/admin/admin-gate.mjs']);let unchanged=0;
+// Authorisation54 adds only the reviewed, separately regression-tested read proof
+// to existing Auth; all other inherited blobs still compare exactly with main.
+const allowed=new Set(['dist/admin/application.mjs','dist/admin/admin-gate.mjs','dist/admin/admin-auth.mjs']);let unchanged=0;
 for(const p of files){if(allowed.has(p))continue;assert.deepEqual(readFileSync(p),execFileSync('git',['show',base+':'+p],{maxBuffer:20*1024*1024}),p);unchanged++;}
 const paths=new Set(adminRoutes.map(r=>new URL(r.href,'http://local').pathname));
 for(const path of paths){
