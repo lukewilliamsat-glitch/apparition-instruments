@@ -1,0 +1,7 @@
+# Integrated NOCTURNE presentation
+
+Adopted the accepted charcoal/brass workspace styling and adapted geometry to the existing248px Admin navigation. No second header/sidebar, global storefront theme change, generated graphics, external fonts or new runtime dependency. COMMAND-only styles load after the shared shell stylesheet; existing specialist pages do not load them. Header height is measured so its sticky navigation clearance follows wrapped/enlarged text.
+
+Desktop uses catalogue/inspector or catalogue/editor columns when space permits. Tablet/narrow desktop uses an explicit browse/editor switch. Mobile uses catalogue cards, one-column filters/forms, section chooser, reachable action tray and stacked review/conflict values. Focus indicators, labels/hints, validation summary, conflict focus, native dialog Escape and focus restoration follow the accepted NOCTURNE principles. Shared sidebar keyboard/Escape behaviour stays owned by the existing Admin shell. Reduced motion removes transitions/smooth scrolling.
+
+Local DOM checks pass. Genuine Chrome acceptance/screenshots are not yet claimed at checkpoint4. The later browser checkpoint must test320/390/768/1024/1440/1920,200% CSS text enlargement, long labels, keyboard and action reachability. Physical devices, real browser-UI zoom and screen-reader certification are outside current automated evidence. Owner visual sign-off remains separate.

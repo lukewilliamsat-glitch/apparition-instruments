@@ -46,5 +46,11 @@
     "target": "dist/admin/command/command02/editor.css",
     "sourceSHA256": "fb87132b61ba40252929e6257d629380f8d7d89bd9dccac8af4c4e175e5d6334",
     "adoptedSHA256": "4967d622c2c2c22a173f71cd844f581c8d59c0e5847997b943c48ae151b1db5b"
+  },
+  {
+    "source": "prototypes/command04a/nocturne.css",
+    "target": "dist/admin/command/nocturne.css",
+    "sourceSHA256": "cf9f3fe1c40030b763cf1084a098321571e36953f32fc84d1eb651e3da9127df",
+    "adoptedSHA256": "6f7d206a7828881f0eab44757d3d3e6e7a9bb7ee510e9f2fd14f8f25b54f7b99"
   }
 ]

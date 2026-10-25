@@ -2,9 +2,14 @@ import {mountWorkbench} from './command01/view.mjs';
 import {createReadBoundary} from './read-boundary.mjs';
 import {createEditorView} from './command02/editor-view.mjs';
 import {createPreviewPort} from './editor-port.mjs';
+import {mountPresentation} from './presentation.mjs';
 export async function mountAdminWorkspace({document,auth,services}={}){
  const $=id=>document.getElementById(id),boundary=createReadBoundary({auth,adapter:services?.commandReadAdapter??null});
- let app=null,editor=null,closed=false;
+ let app=null,editor=null,presentation=null,closed=false;
+ for(const link of document.querySelectorAll('link[rel=stylesheet]'))if(new URL(link.href,document.baseURI).pathname.includes('/admin/command/'))document.head.append(link);
+ const resize=()=>{const h=document.querySelector('[data-admin-topbar]')?.getBoundingClientRect().height;if(h)document.body.style.setProperty('--command-topbar-height',h+'px');};
+ const resizeObserver=typeof document.defaultView.ResizeObserver==='function'?new document.defaultView.ResizeObserver(resize):null;
+ if(document.querySelector('[data-admin-topbar]'))resizeObserver?.observe(document.querySelector('[data-admin-topbar]'));resize();
  const previewPort=createPreviewPort(boundary);
  const synthetic=services?.commandReadAdapter?.environment==='synthetic'&&services?.syntheticEditorPersistence?.syntheticOnly===true?services.syntheticEditorPersistence:null;
  const canSave=()=>Boolean(synthetic&&services.syntheticWriteTesting===true&&boundary.snapshot().status==='ready');
@@ -17,7 +22,7 @@ export async function mountAdminWorkspace({document,auth,services}={}){
   if(owner&&s.subject&&owner!==s.subject)$('command-status').textContent='Restore the original identity to access its retained unsaved proposal. Product details remain concealed.';
   $('command-status').setAttribute('role',['denied','expired','error'].includes(s.status)?'alert':'status');
   if(!ready&&s.status!=='checking')$('command-status').focus({preventScroll:true});
-  $('data-source').textContent=s.source==='synthetic'?'SYNTHETIC ACCEPTANCE DATA · Fictional products, prices, inventory and identities. No live backend.':'Authenticated read adapter is inactive.';
+  $('data-source').textContent=s.source==='synthetic'?(synthetic?'SYNTHETIC WRITE TESTING · In-memory fixture only. No production data or saves.':'SYNTHETIC ACCEPTANCE DATA · Fictional products, prices, inventory and identities. No live backend.'):'Authenticated read adapter is inactive.';
   $('data-freshness').textContent=s.observedAt?'Last verified read: '+s.observedAt+' · display identity is not a write revision.':'No catalogue read completed.';
   $('filter-stock').disabled=!s.capabilities.inventoryRead;
   $('save-fixture').disabled=!canSave()||editor?.session.snapshot().phase!=='review';
@@ -25,9 +30,11 @@ export async function mountAdminWorkspace({document,auth,services}={}){
  const off=boundary.subscribe(paint);
  editor=createEditorView(document,{persistence:port,canSave,getSelectedId:()=>app?.controller.snapshot().selectedId,
   onSaved:()=>void app?.controller.refresh({supersede:true}),onState:s=>{
+   presentation?.render();
    if(s.phase==='closed')port.release?.();
    if(s.phase==='conflict'){$('conflict-panel').tabIndex=-1;$('conflict-panel').focus({preventScroll:true});}
   }});
+ presentation=mountPresentation(document,editor);
  $('save-fixture').textContent=synthetic?'Confirm synthetic test save':'Production save disabled';
  if(synthetic)$('data-source').textContent='SYNTHETIC WRITE TESTING · No production data or writes.';
  app=mountWorkbench(document,{transport:boundary.catalogueTransport,extension:{beforeAction:action=>editor.beforeAction(action),onState:s=>{
@@ -41,5 +48,5 @@ export async function mountAdminWorkspace({document,auth,services}={}){
  document.addEventListener('click',navigation,true);
  const reconnect=()=>void app.controller.refresh({supersede:true});$('command-reconnect').addEventListener('click',reconnect);
  paint(boundary.snapshot());
- return Object.freeze({boundary,workbench:app.controller,editor:editor.session,editorView:editor,previewPort,lock(reason){boundary.lock(reason);if(reason==='sign-out'){editor.session.close();app.controller.close();$('rows').replaceChildren();$('inspector').replaceChildren();}},destroy(){if(closed)return;closed=true;off();document.removeEventListener('click',navigation,true);$('command-reconnect').removeEventListener('click',reconnect);editor.destroy();app.destroy();boundary.destroy();}});
+ return Object.freeze({boundary,workbench:app.controller,editor:editor.session,editorView:editor,previewPort,lock(reason){boundary.lock(reason);if(reason==='sign-out'){editor.session.close();app.controller.close();$('rows').replaceChildren();$('inspector').replaceChildren();}},destroy(){if(closed)return;closed=true;off();resizeObserver?.disconnect();presentation.destroy();document.removeEventListener('click',navigation,true);$('command-reconnect').removeEventListener('click',reconnect);editor.destroy();app.destroy();boundary.destroy();}});
 }
