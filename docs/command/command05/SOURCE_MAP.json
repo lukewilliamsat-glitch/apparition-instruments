@@ -21,6 +21,30 @@
     "source": "prototypes/command01/workbench.css",
     "target": "dist/admin/command/command01/workbench.css",
     "sourceSHA256": "07bab5c4f7917546d3f1a5398ed465701c6c68fb42dc92a5de2a330a6c031f3d",
-    "adoptedSHA256": "587330ab8ad048550976039e4e59718f3e3e7465befdc03d9a3f021240b66808"
+    "adoptedSHA256": "299c86226e392fffcc58f005ca6b42c125a3b7b435f828dd9d1d5cc08178a179"
+  },
+  {
+    "source": "prototypes/command02/schema.mjs",
+    "target": "dist/admin/command/command02/schema.mjs",
+    "sourceSHA256": "7f4d13f0ce23ee03a07337f0c2866c66812116187c5204ff0accc595095c75ea",
+    "adoptedSHA256": "2da04affa74271f894ce7c462214404239cc196420d3c6205b2be5f1ea90369e"
+  },
+  {
+    "source": "prototypes/command02/session.mjs",
+    "target": "dist/admin/command/command02/session.mjs",
+    "sourceSHA256": "7f41c994a276113dbf0b1dd88bb1f33823f979669acb28083f8d0ac5173408c5",
+    "adoptedSHA256": "48cee0b80eac0f3b56aef1e77d148ac5b5bac251762485eececad05a1bd57fcd"
+  },
+  {
+    "source": "prototypes/command02/editor-view.mjs",
+    "target": "dist/admin/command/command02/editor-view.mjs",
+    "sourceSHA256": "7bbdd863a886e649baa2e15c71b40dca181080c5897fd84e58a1454ef7648adb",
+    "adoptedSHA256": "d0efed29d86e2e0ebcfbcbdce071f2fe026ca60e011563b79b4e8cf2dc19c0ec"
+  },
+  {
+    "source": "prototypes/command02/editor.css",
+    "target": "dist/admin/command/command02/editor.css",
+    "sourceSHA256": "fb87132b61ba40252929e6257d629380f8d7d89bd9dccac8af4c4e175e5d6334",
+    "adoptedSHA256": "4967d622c2c2c22a173f71cd844f581c8d59c0e5847997b943c48ae151b1db5b"
   }
 ]

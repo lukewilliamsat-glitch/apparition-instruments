@@ -1,21 +1,45 @@
 import {mountWorkbench} from './command01/view.mjs';
 import {createReadBoundary} from './read-boundary.mjs';
+import {createEditorView} from './command02/editor-view.mjs';
+import {createPreviewPort} from './editor-port.mjs';
 export async function mountAdminWorkspace({document,auth,services}={}){
  const $=id=>document.getElementById(id),boundary=createReadBoundary({auth,adapter:services?.commandReadAdapter??null});
- let app=null,closed=false;
+ let app=null,editor=null,closed=false;
+ const previewPort=createPreviewPort(boundary);
+ const synthetic=services?.commandReadAdapter?.environment==='synthetic'&&services?.syntheticEditorPersistence?.syntheticOnly===true?services.syntheticEditorPersistence:null;
+ const canSave=()=>Boolean(synthetic&&services.syntheticWriteTesting===true&&boundary.snapshot().status==='ready');
+ const port=synthetic||previewPort;
  const paint=s=>{
-  if(closed)return;const ready=s.status==='ready'&&s.catalogueReady;$('command-content').hidden=!ready;$('command-content').inert=!ready;
+  if(closed)return;const owner=port.owner?.(),ready=s.status==='ready'&&s.catalogueReady&&(!owner||owner===s.subject);$('command-content').hidden=!ready;$('command-content').inert=!ready;
+  if(!ready){for(const dialog of document.querySelectorAll('dialog[open]')){if(dialog.id==='discard-confirm')$('keep-editing').click();else dialog.close();}}
   const messages={inactive:'Read-only COMMAND. The authenticated catalogue adapter is not activated. No product data has been requested.',checking:'Checking catalogue access. Product records remain concealed.',ready:'Read-only catalogue. Shared product, image, cost and stock changes are disabled.',expired:'Session expired. Restore authentication to continue. Local proposals have not been saved.',denied:'Access denied. This account has no catalogue-read authority.',error:'Catalogue unavailable. Retry safely; no partial or fallback data was accepted.','sign-out':'Session ended. Product data has been cleared.',closed:'Workspace closed.'};
   $('command-status').textContent=messages[s.status]||'Access unavailable. Recheck this session.';
+  if(owner&&s.subject&&owner!==s.subject)$('command-status').textContent='Restore the original identity to access its retained unsaved proposal. Product details remain concealed.';
   $('command-status').setAttribute('role',['denied','expired','error'].includes(s.status)?'alert':'status');
   if(!ready&&s.status!=='checking')$('command-status').focus({preventScroll:true});
   $('data-source').textContent=s.source==='synthetic'?'SYNTHETIC ACCEPTANCE DATA · Fictional products, prices, inventory and identities. No live backend.':'Authenticated read adapter is inactive.';
   $('data-freshness').textContent=s.observedAt?'Last verified read: '+s.observedAt+' · display identity is not a write revision.':'No catalogue read completed.';
   $('filter-stock').disabled=!s.capabilities.inventoryRead;
+  $('save-fixture').disabled=!canSave()||editor?.session.snapshot().phase!=='review';
  };
  const off=boundary.subscribe(paint);
- app=mountWorkbench(document,{transport:boundary.catalogueTransport});
+ editor=createEditorView(document,{persistence:port,canSave,getSelectedId:()=>app?.controller.snapshot().selectedId,
+  onSaved:()=>void app?.controller.refresh({supersede:true}),onState:s=>{
+   if(s.phase==='closed')port.release?.();
+   if(s.phase==='conflict'){$('conflict-panel').tabIndex=-1;$('conflict-panel').focus({preventScroll:true});}
+  }});
+ $('save-fixture').textContent=synthetic?'Confirm synthetic test save':'Production save disabled';
+ if(synthetic)$('data-source').textContent='SYNTHETIC WRITE TESTING · No production data or writes.';
+ app=mountWorkbench(document,{transport:boundary.catalogueTransport,extension:{beforeAction:action=>editor.beforeAction(action),onState:s=>{
+  editor.workbenchState(s);const button=$('inspector').querySelector('[data-enter-editor]');if(button)button.disabled=!boundary.snapshot().capabilities.draftPreview;
+ }}});
+ const navigation=async event=>{
+  const link=event.target.closest('a[href]');if(!link||event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||link.target==='_blank')return;
+  const url=new URL(link.href,document.baseURI);if(url.pathname===document.location.pathname||!editor.session.snapshot().needsProtection)return;
+  event.preventDefault();event.stopImmediatePropagation();if(await editor.beforeAction({type:'close'}))document.defaultView.location.assign(url.href);
+ };
+ document.addEventListener('click',navigation,true);
  const reconnect=()=>void app.controller.refresh({supersede:true});$('command-reconnect').addEventListener('click',reconnect);
  paint(boundary.snapshot());
- return Object.freeze({boundary,workbench:app.controller,lock(reason){boundary.lock(reason);app.controller.close();if(reason==='sign-out'){$('rows').replaceChildren();$('inspector').replaceChildren();}},destroy(){if(closed)return;closed=true;off();$('command-reconnect').removeEventListener('click',reconnect);app.destroy();boundary.destroy();}});
+ return Object.freeze({boundary,workbench:app.controller,editor:editor.session,editorView:editor,previewPort,lock(reason){boundary.lock(reason);if(reason==='sign-out'){editor.session.close();app.controller.close();$('rows').replaceChildren();$('inspector').replaceChildren();}},destroy(){if(closed)return;closed=true;off();document.removeEventListener('click',navigation,true);$('command-reconnect').removeEventListener('click',reconnect);editor.destroy();app.destroy();boundary.destroy();}});
 }

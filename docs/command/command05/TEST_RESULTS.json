@@ -1,7 +1,7 @@
 {
   "mission": "AUTHORISATION 51 / THE ASCENSION",
-  "checkpoint": 2,
-  "status": "CHECKPOINT2_LOCAL_PASS",
+  "checkpoint": 3,
+  "status": "CHECKPOINT3_LOCAL_PASS",
   "baseCommit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
   "remoteSourcesVerified": {
     "command01": "3b84871ccb338296b52b4fe3fe350be17284d235",
@@ -27,6 +27,10 @@
     {
       "path": "tests/command05/dom.mjs",
       "result": "PASS"
+    },
+    {
+      "path": "tests/command05/editor.mjs",
+      "result": "PASS"
     }
   ],
   "networkGuard": "tests/fixtures/admin-offline.mjs; global fetch rejects; fake Auth responses only",
@@ -38,7 +42,7 @@
   "remoteBranchCreated": true,
   "publicationReadback": "Recorded after publication in subsequent checkpoint",
   "approvalBlocker": "Historical rejection resolved by Authorisation52; same connector accepted branch creation",
-  "nextGate": "Publish/read back catalogue, then adopt draft editor",
+  "nextGate": "Publish/read back editor; responsive NOCTURNE and specialist preservation",
   "readCases": {
     "passed": 27,
     "total": 27,
