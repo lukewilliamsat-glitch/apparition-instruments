@@ -38,5 +38,13 @@
     "/operations/snapshot.json": "0dd3a244d2ab694730b83a985fdd69a6310d06e29aa70ab2e5e3f956d8d8c557",
     "/interactive-tools/": "d93272db6a2c4ccf5120c476e98accbc19fe827617be6df2f6f9e8bf19aa22c3",
     "/admin/admin-gate.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f": "5a39586fa81be16ad13f3dd24102b450a1d280c127a76329c2e63079ac739f0d"
-  }
+  },
+  "nonPublishingFailedRuns": [
+    {
+      "runId": 40310242181,
+      "jobId": 121529304330,
+      "sourceCommit": "ee620b5277e009d450800735f0fe4543182896aa",
+      "reason": "Concurrency preflight stopped; both Pages deployment steps were skipped"
+    }
+  ]
 }
