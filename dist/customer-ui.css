@@ -108,10 +108,13 @@
 .site-ui :is(.basket-specs dd,.item-price,.order-totals dd){font-size:var(--ui-support);overflow-wrap:anywhere}
 /* Homepage composition remains intact; shared rhythm and intentional discovery. */
 .site-ui.home-page :is(.hero-content,.section){padding-inline:max(var(--ui-gutter),calc((100% - var(--ui-width))/2))}
+/* The shared gutters use the full hero width. A narrower max-width here would
+   subtract viewport-sized padding from a capped box on wide desktop screens. */
+.site-ui.home-page .hero-content{max-width:none}
 .site-ui.home-page .section{padding-block:var(--ui-space-6)}
-.site-ui.home-page .hero h1{font-size:clamp(3.5rem,8vw,7.5rem);line-height:1.02;max-width:900px}
+.site-ui.home-page .hero h1{font-size:clamp(3.5rem,8vw,7.5rem);line-height:1.02;max-width:900px;overflow-wrap:normal}
 .site-ui.home-page .hero-bottom{gap:var(--ui-space-3)}
-.site-ui.home-page .hero-bottom p{max-width:58ch;color:var(--ui-ink);font-size:var(--ui-body)}
+.site-ui.home-page .hero-bottom p{max-width:min(100%,58ch);color:var(--ui-ink);font-size:var(--ui-body)}
 .site-ui.home-page .section-top{margin-bottom:var(--ui-space-4)}
 .site-ui.home-page .section h2{font-size:var(--ui-section);line-height:1.12}
 .site-ui.home-page :is(.ethos,.hub-preview){background:var(--ui-panel);border-color:var(--ui-rule)}
@@ -124,7 +127,7 @@
 @media (max-width:850px){.site-ui.ui-technical .generator-main{padding-top:24px}.site-ui.ui-technical :is(.forge-heading,.generator-heading){gap:16px}.site-ui.ui-technical .generator-heading{align-items:start;flex-wrap:wrap}}
 @media (max-width:800px){.site-ui.ui-editorial .article-layout{display:block}.site-ui.ui-editorial .article-contents{position:static;margin-bottom:32px}.site-ui.ui-editorial .article-copy{max-width:100%}}
 @media (max-width:760px){.site-ui{--ui-gutter:24px;--ui-space-6:64px}.site-ui.ui-technical{--ui-gutter:16px}.site-ui footer{align-items:start;flex-direction:column}.site-ui.ui-service :is(.basket-layout,.contact-layout){grid-template-columns:minmax(0,1fr)}.site-ui .basket-total{position:static}.site-ui .basket-item-header{flex-wrap:wrap}.site-ui .basket-item{padding:24px}.site-ui.home-page .hero-bottom{align-items:start;flex-direction:column}.site-ui.home-page .section-top{flex-wrap:wrap}.site-ui :is(.hub-wrap,.it-wrap){width:calc(100% - 2 * var(--ui-gutter))}}
-@media (max-width:560px){.site-ui{--ui-gutter:16px;--ui-space-5:48px;--ui-space-6:56px;--ui-display:clamp(2.5rem,10vw,3.5rem)}.site-ui .site-header{gap:10px}.site-ui .site-header .brand-logo{width:140px}.site-ui .site-header .basket-link{gap:6px}.site-ui .menu-button span{margin-left:4px}.site-ui .page-intro{margin-bottom:32px}.site-ui.ui-service .contact-fields{grid-template-columns:minmax(0,1fr)}.site-ui .basket-specs>div{grid-template-columns:minmax(0,1fr);gap:4px}.site-ui .basket-actions{gap:16px}.site-ui .basket-actions label{flex-wrap:wrap}.site-ui .basket-actions input{width:72px}.site-ui.ui-editorial .article-contents nav{grid-template-columns:minmax(0,1fr)}.site-ui :is(.article-pager,.article-actions){flex-wrap:wrap;gap:16px}.site-ui .article-pager a{max-width:100%}.site-ui.ui-editorial .hub-search{grid-template-columns:minmax(0,1fr)}.site-ui.ui-editorial .hub-search :is(label,input,select){grid-column:1;grid-row:auto}.site-ui.home-page .hero-content{padding-top:150px}.site-ui.home-page .hero h1{font-size:clamp(3.5rem,16vw,5.5rem)}.site-ui.home-page .hero-bottom .button{width:100%}}
+@media (max-width:560px){.site-ui{--ui-gutter:16px;--ui-space-5:48px;--ui-space-6:56px;--ui-display:clamp(2.5rem,10vw,3.5rem)}.site-ui .site-header{gap:10px}.site-ui .site-header .brand-logo{width:140px}.site-ui .site-header .basket-link{gap:6px}.site-ui .menu-button span{margin-left:4px}.site-ui .page-intro{margin-bottom:32px}.site-ui.ui-service .contact-fields{grid-template-columns:minmax(0,1fr)}.site-ui .basket-specs>div{grid-template-columns:minmax(0,1fr);gap:4px}.site-ui .basket-actions{gap:16px}.site-ui .basket-actions label{flex-wrap:wrap}.site-ui .basket-actions input{width:72px}.site-ui.ui-editorial .article-contents nav{grid-template-columns:minmax(0,1fr)}.site-ui :is(.article-pager,.article-actions){flex-wrap:wrap;gap:16px}.site-ui .article-pager a{max-width:100%}.site-ui.ui-editorial .hub-search{grid-template-columns:minmax(0,1fr)}.site-ui.ui-editorial .hub-search :is(label,input,select){grid-column:1;grid-row:auto}.site-ui.home-page .hero-content{padding-top:150px}.site-ui.home-page .hero h1{font-size:clamp(2rem,16vw,5.5rem)}.site-ui.home-page .hero-bottom .button{width:100%}}
 @media (max-width:380px){.site-ui .site-header{gap:8px}.site-ui .site-header .brand-logo{width:128px}.site-ui .site-header .basket-link{font-size:.8125rem}}
 /* Quick feedback only; existing informative motion remains, reduced motion always wins. */
 .site-ui :is(.button,.text-button,.account-google button){transition:background-color .16s ease,border-color .16s ease,color .16s ease}

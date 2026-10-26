@@ -1,0 +1,192 @@
+name: Verified frontend Pages publication
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      operation:
+        type: choice
+        options: [release, restore]
+        required: true
+      restore_run:
+        type: string
+        required: false
+      restore_artifact:
+        type: string
+        required: false
+permissions:
+  contents: read
+  actions: read
+  deployments: read
+  pages: write
+  id-token: write
+concurrency:
+  group: ${{ (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[frontend-exact-release]')) && 'pages' || 'pages-frontend-guard' }}
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[frontend-exact-release]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    env:
+      OPERATION: ${{ github.event_name == 'workflow_dispatch' && inputs.operation || 'release' }}
+      PLAN: docs/releases/triple-strike/current.json
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Establish exact current main, baseline and absence of competing publishers
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RESTORE_RUN: ${{ inputs.restore_run }}
+        run: |
+          python scripts/command-release/frontend_release.py preflight --plan "$PLAN" --operation "$OPERATION" --restore-run "${RESTORE_RUN:-0}" > "$RUNNER_TEMP/frontend-preflight-before.json"
+      - name: Select the exact previously verified baseline artifact
+        id: base
+        env:
+          RESTORE_RUN: ${{ inputs.restore_run }}
+          RESTORE_ARTIFACT: ${{ inputs.restore_artifact }}
+        run: |
+          python - <<'PY'
+          import json,os
+          p=json.load(open(os.environ['PLAN']))
+          if os.environ['OPERATION']=='release':run,artifact=p['baseRunId'],p['baseArtifactId']
+          else:
+            run=int(os.environ['RESTORE_RUN']);artifact=int(os.environ['RESTORE_ARTIFACT'])
+            assert run>0 and artifact>0
+          with open(os.environ['GITHUB_OUTPUT'],'a') as f:f.write(f'run={run}\nartifact={artifact}\n')
+          PY
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ steps.base.outputs.run }}
+          artifact-ids: ${{ steps.base.outputs.artifact }}
+          path: ${{ runner.temp }}/frontend-baseline
+          merge-multiple: true
+      - name: Prepare exact candidate and complete current OPEN rollback
+        if: env.OPERATION == 'release'
+        run: |
+          python scripts/command-release/frontend_release.py prepare --plan "$PLAN" --baseline "$RUNNER_TEMP/frontend-baseline" --root "$GITHUB_WORKSPACE" --out "$RUNNER_TEMP/frontend-prepared" > "$RUNNER_TEMP/frontend-prepared.json"
+      - name: Verify a manually selected complete restoration
+        if: env.OPERATION == 'restore'
+        run: |
+          python scripts/command-release/frontend_release.py verify --plan "$PLAN" --folder "$RUNNER_TEMP/frontend-baseline" --kind rollback > "$RUNNER_TEMP/frontend-restore-verified.json"
+          python - <<'PY'
+          import os,sys
+          from pathlib import Path
+          sys.path.insert(0,'scripts/command-release')
+          from archive_core import _read_tar
+          from frontend_release import write_tree
+          p=Path(os.environ['RUNNER_TEMP'])
+          write_tree(_read_tar((p/'frontend-baseline/artifact.tar').read_bytes()),p/'frontend-restore')
+          PY
+      - name: Retain complete rollback through the known-working official Pages packager
+        id: rollback
+        if: env.OPERATION == 'release'
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa
+        with:
+          name: frontend-rollback
+          path: ${{ runner.temp }}/frontend-prepared/rollback
+          retention-days: 14
+      - name: Independently read back the retained complete rollback
+        if: env.OPERATION == 'release'
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          artifact-ids: ${{ steps.rollback.outputs.artifact_id }}
+          path: ${{ runner.temp }}/frontend-rollback-readback
+          merge-multiple: true
+      - name: Verify every retained rollback file and its exact payload identity
+        if: env.OPERATION == 'release'
+        run: |
+          python scripts/command-release/frontend_release.py verify --plan "$PLAN" --folder "$RUNNER_TEMP/frontend-rollback-readback" --kind rollback > "$RUNNER_TEMP/frontend-rollback-verified.json"
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b
+        with:
+          enablement: false
+      - name: Package candidate using the same official uploader as the last successful release
+        id: upload
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa
+        with:
+          name: github-pages
+          path: ${{ env.OPERATION == 'release' && format('{0}/frontend-prepared/candidate',runner.temp) || format('{0}/frontend-restore',runner.temp) }}
+          retention-days: 14
+      - name: Independently read back the actual official Pages artifact
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          artifact-ids: ${{ steps.upload.outputs.artifact_id }}
+          path: ${{ runner.temp }}/frontend-uploaded
+          merge-multiple: true
+      - name: Check complete uploaded inventory against the immutable release digest
+        run: |
+          kind=candidate
+          if [ "$OPERATION" = restore ]; then kind=rollback; fi
+          python scripts/command-release/frontend_release.py verify --plan "$PLAN" --folder "$RUNNER_TEMP/frontend-uploaded" --kind "$kind" > "$RUNNER_TEMP/frontend-upload-verified.json"
+      - name: Recheck main, current publication, live baseline and authoritative OPEN immediately before deployment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RESTORE_RUN: ${{ inputs.restore_run }}
+        run: |
+          python scripts/command-release/frontend_release.py preflight --plan "$PLAN" --operation "$OPERATION" --restore-run "${RESTORE_RUN:-0}" --final > "$RUNNER_TEMP/frontend-preflight-final.json"
+      - name: Publish the verified complete frontend once
+        id: deploy
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346
+        with:
+          artifact_name: github-pages
+          timeout: '600000'
+          error_count: '10'
+          preview: 'false'
+      - name: Verify actual served frontend and OPEN without transactions
+        id: live
+        continue-on-error: true
+        run: |
+          kind=candidate
+          if [ "$OPERATION" = restore ]; then kind=rollback; fi
+          python scripts/command-release/frontend_release.py live --plan "$PLAN" --kind "$kind" > "$RUNNER_TEMP/frontend-live.json"
+      - name: Restore complete verified current rollback on a confirmed live verification failure
+        id: restore
+        if: steps.deploy.outcome == 'success' && steps.live.outcome == 'failure' && env.OPERATION == 'release'
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346
+        with:
+          artifact_name: frontend-rollback
+          timeout: '600000'
+          error_count: '10'
+          preview: 'false'
+      - name: Verify actual served rollback after restoration
+        if: steps.restore.outcome == 'success'
+        run: |
+          python scripts/command-release/frontend_release.py live --plan "$PLAN" --kind rollback > "$RUNNER_TEMP/frontend-rollback-live.json"
+      - name: Record actual release and restoration outcomes
+        if: always()
+        env:
+          RELEASE_ARTIFACT: ${{ steps.upload.outputs.artifact_id }}
+          ROLLBACK_ARTIFACT: ${{ steps.rollback.outputs.artifact_id }}
+          DEPLOY_OUTCOME: ${{ steps.deploy.outcome }}
+          LIVE_OUTCOME: ${{ steps.live.outcome }}
+          RESTORE_OUTCOME: ${{ steps.restore.outcome }}
+        run: |
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=json.load(open(os.environ['PLAN']))
+          r={k:os.environ.get(k) for k in ['GITHUB_SHA','GITHUB_RUN_ID','OPERATION','RELEASE_ARTIFACT','ROLLBACK_ARTIFACT','DEPLOY_OUTCOME','LIVE_OUTCOME','RESTORE_OUTCOME']}
+          r.update(feature=p['feature'],applicationSource=p['applicationSource'],candidateDigest=p['candidateDigest'],rollbackDigest=p['rollbackDigest'],commandReads=False,commandWrites=False)
+          (Path(os.environ['RUNNER_TEMP'])/'frontend-receipt.json').write_text(json.dumps(r,indent=2)+'\n')
+          PY
+      - name: Preserve release identities and verification evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: frontend-release-receipt
+          path: ${{ runner.temp }}/frontend-*.json
+          retention-days: 14
+          if-no-files-found: error
+      - name: Do not report a failed live acceptance as a successful release
+        if: steps.live.outcome == 'failure'
+        run: exit 1

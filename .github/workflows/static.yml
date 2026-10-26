@@ -5,10 +5,13 @@ on:
   # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-  # Public SEO snapshots refresh every 15 minutes. Browser stock/store checks
+  # Public SEO snapshots refresh daily at 03:00 UTC. Browser stock/store checks
   # and authoritative checkout remain live; scheduled notices refresh in-browser.
   schedule:
     - cron: '0 3 * * *'
@@ -22,22 +25,22 @@ permissions:
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
-  group: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[command-exact-release]') && 'pages-command-guard' || 'pages' }}
+  group: ${{ github.event_name == 'push' && (contains(github.event.head_commit.message, '[command-exact-release]') || contains(github.event.head_commit.message, '[frontend-exact-release]')) && 'pages-command-guard' || 'pages' }}
   cancel-in-progress: false
 
 jobs:
   # Single deploy job since we're just deploying
   deploy:
-    if: github.event_name != 'push' || !contains(github.event.head_commit.message, '[command-exact-release]')
+    if: github.event_name != 'push' || !(contains(github.event.head_commit.message, '[command-exact-release]') || contains(github.event.head_commit.message, '[frontend-exact-release]'))
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '22'
           cache: npm
@@ -52,6 +55,7 @@ jobs:
         if: github.event_name != 'push' || (!contains(github.event.head_commit.message, '[static-only]') && !contains(github.event.head_commit.message, '[cms-only]'))
         run: node scripts/generate-site-operations.mjs
       - name: Generate CMS published articles
+        if: github.event_name != 'push' || !contains(github.event.head_commit.message, '[static-only]')
         run: node scripts/generate-hub-cms.mjs
       - name: Prepare Search Console verification
         env:
@@ -60,12 +64,12 @@ jobs:
       - name: Stamp first-party static asset URLs
         run: node scripts/stamp-static-assets.mjs dist
       - name: Setup Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa
         with:
-          # Upload entire repository
+          # Upload the prepared public dist payload only
           path: './dist'
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346
