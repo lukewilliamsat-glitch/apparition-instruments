@@ -1,0 +1,49 @@
+<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>COMMAND | Apparition Admin</title><link rel="stylesheet" href="../admin.css"><link rel="stylesheet" href="./command01/workbench.css"><link rel="stylesheet" href="./command02/editor.css"><link rel="stylesheet" href="./nocturne.css"><link rel="stylesheet" href="./command.css"><script type="module" src="../admin-gate.mjs" data-admin-entry="./entry.mjs"></script></head><body class="admin-page" data-command-admin><a class="skip" href="#main">Skip to COMMAND</a><main id="main" class="admin-main"><section id="command-status" role="status" aria-live="polite" tabindex="-1"></section><button id="command-reconnect" type="button">Recheck access</button><div id="command-content" hidden>
+  <div class="page-breadcrumb">WORKSPACE <span aria-hidden="true">/</span> CATALOGUE</div>
+  <div class="admin-page-header admin-title"><div><div class="heading-line"><h1>COMMAND Catalogue</h1><span class="read-only">READ ONLY</span></div></div><button id="refresh" class="secondary-button" type="button"><span aria-hidden="true">↻</span> Refresh catalogue</button></div>
+  <p id="data-source" class="fixture-notice"></p><p id="data-freshness" role="status"></p><span id="nav-count" hidden></span>
+  <section class="catalogue-metrics" aria-label="Catalogue summary" id="metrics"></section>
+  <section class="filter-panel" aria-label="Find and filter products">
+    <div class="search-row"><label class="search-control"><span class="sr-only">Search catalogue</span><span aria-hidden="true" class="search-icon">⌕</span><input id="search" type="search" placeholder="Search products, SKUs or specifications…" autocomplete="off" maxlength="200"></label><span class="search-hint">Search stays local</span></div>
+    <div class="filter-grid">
+      <label>Category<select id="filter-category"><option value="">All categories</option></select></label>
+      <label>Manufacturer<select id="filter-manufacturer"><option value="">All manufacturers</option></select></label>
+      <label>Individual sale<select id="filter-individual"><option value="">Any eligibility</option><option value="yes">Eligible</option><option value="no">Not eligible</option></select></label>
+      <label>Kit use<select id="filter-kit"><option value="">Any eligibility</option><option value="yes">Eligible</option><option value="no">Not eligible</option></select></label>
+      <label>Stock status<select id="filter-stock"><option value="">All stock states</option><option value="in">In stock</option><option value="low">Low stock (1–3)</option><option value="out">Out of stock</option><option value="unknown">Not supplied</option></select></label>
+    </div>
+    <div id="active-filters" class="active-filters" hidden></div>
+  </section>
+  <div class="nocturne-context"><button id="catalogue-toggle" type="button" aria-controls="catalogue-list" aria-expanded="false" hidden>Browse catalogue</button><span id="draft-context"></span></div>
+  <div class="workbench-grid">
+    <section class="catalogue-list" id="catalogue-list" aria-labelledby="list-heading">
+      <div class="section-toolbar"><div><h2 id="list-heading">Components <span id="result-count">—</span></h2><p id="result-note">Waiting for catalogue…</p></div><button type="button" id="clear-filters">Clear filters</button></div>
+      <p id="feedback" class="admin-feedback" role="status" aria-live="polite"></p>
+      <div id="error-panel" class="error-panel" role="alert" hidden><div><strong>Catalogue unavailable</strong><p id="error-message"></p></div><button type="button" id="retry">Retry catalogue</button></div>
+      <div id="table-wrap" class="command-table-wrap" hidden><table class="command-table"><caption class="sr-only">Read-only component catalogue. Select a product name to inspect its details.</caption><thead><tr><th scope="col">Product</th><th scope="col">Selling price</th><th scope="col">Stock</th><th scope="col">Eligibility</th></tr></thead><tbody id="rows"></tbody></table></div>
+      <div id="empty" class="command-empty" hidden><span class="empty-symbol" aria-hidden="true">⌕</span><h3 id="empty-heading">No matching components</h3><p id="empty-message">Try a broader search or clear your filters.</p><button type="button" id="empty-clear">Clear all filters</button></div>
+      <p class="list-footnote">Prices in GBP · Stock visibility follows the session grant, not a delivery promise.<br>“Low stock” uses a display threshold of 3; it is not a reorder rule.</p>
+    </section>
+    <aside class="product-inspector" id="inspector" aria-label="Read-only product inspector"></aside>
+<section class="editor-workspace" id="editor-workspace" aria-label="Selected product editor" hidden>
+ <div class="editor-bar"><span>PRODUCT EDITOR / PREVIEW</span><button type="button" id="close-editor">Close editor</button></div>
+ <div id="editor-loading" class="editor-load"><p id="editor-load-message" role="status"></p><button id="editor-load-retry" type="button" hidden>Retry product</button></div>
+ <div id="editor-content" hidden>
+  <header class="editor-head"><span class="eyebrow">PRODUCT WORKSPACE</span><h2 id="editor-heading" tabindex="-1"><span id="editor-title"></span></h2><p class="editor-identity" id="editor-identity"></p><p class="editor-confirmed" id="editor-revision"></p><p class="editor-state" id="editor-state" role="status" aria-live="polite"></p></header>
+  <p id="editor-context-note" class="editor-context-note"></p>
+  <section id="validation-summary" class="validation-summary" role="status" aria-live="polite" hidden><h3>Check the highlighted fields</h3><ul id="validation-links"></ul></section>
+  <label class="mobile-section" for="section-select">Editor section<select id="section-select"></select></label>
+  <nav id="editor-tabs" class="editor-tabs" role="tablist" aria-label="Product editing sections"></nav>
+  <form id="product-form" novalidate></form>
+  <div class="editor-changes" id="changed-fields" aria-label="Modified fields"></div>
+  <section id="conflict-panel" class="conflict-panel" hidden><h3>A newer product revision exists</h3><p>Your edits are preserved. Review original, local and current values. Reload before saving; there is no force-save.</p><table class="conflict-table"><thead><tr><th>Field</th><th>Original</th><th>Your edit</th><th>Current confirmed</th></tr></thead><tbody id="conflict-rows"></tbody></table><div class="conflict-actions"><button type="button" id="reload-conflict">Reload current values</button><button type="button" id="continue-reviewing">Keep reviewing edits</button></div></section>
+  <div id="outcome-guidance" class="outcome-guidance" role="status" aria-live="polite" hidden></div>
+  <p id="editor-message" class="editor-message" tabindex="-1" role="status" aria-live="polite"></p>
+  <footer class="editor-actions"><button id="review-changes" type="button" class="primary-action">Review changes</button><button id="discard-changes" type="button">Discard changes</button><button id="check-outcome" type="button" hidden>Check save outcome</button></footer>
+ </div>
+</section>
+  </div>
+</div><dialog id="discard-confirm" class="command-modal" aria-labelledby="confirm-title" aria-describedby="confirm-message"><h2 id="confirm-title">Keep your changes?</h2><p id="confirm-message"></p><div class="modal-actions"><button type="button" id="keep-editing">Keep editing</button><button type="button" id="confirm-discard">Discard and continue</button></div></dialog>
+<dialog id="change-review" class="command-modal" aria-labelledby="review-title" aria-describedby="review-version"><h2 id="review-title">Review product changes</h2><p id="review-version"></p><table class="review-table"><thead><tr><th>Field</th><th>Original confirmed value</th><th>Proposed value</th></tr></thead><tbody id="review-rows"></tbody></table><p>Local preview only. Production saving is disabled. Review the values below. Inventory, images and private costs stay outside this editor.</p><div class="modal-actions"><button type="button" id="cancel-review">Continue editing</button><button type="button" id="save-fixture" class="save-fixture">Production save disabled</button></div></dialog>
+
+<noscript>JavaScript and authorised Admin access are required.</noscript></main></body></html>

@@ -1,0 +1,62 @@
+/* COMMAND-only baseline; existing specialist workspaces are not consumers. */
+body[data-command-admin]{margin:0;background:#101113;color:#f0eee8;font-family:system-ui,sans-serif;line-height:1.55}
+[data-command-admin] *,[data-command-admin] *::before,[data-command-admin] *::after{box-sizing:border-box}
+[data-command-admin] [hidden]{display:none!important}
+[data-command-admin] .command-mode{border:1px solid #82704b;color:#e2cca0;padding:.35rem .75rem;font-size:.8rem;border-radius:4px}
+[data-command-admin] #command-status{padding:1rem;border:1px solid #5b5040;background:#1d1d1b;border-radius:6px;margin:1rem 0}
+[data-command-admin] .admin-page-description{font-family:inherit}
+[data-command-admin] :is(a,button,input,select,textarea,[tabindex]):focus-visible{outline:3px solid #e7c988;outline-offset:3px}
+/* Existing shell ownership: override prototype geometry only in COMMAND. */
+html:has([data-command-admin]){scroll-behavior:auto;color-scheme:dark;scroll-padding-block:8rem 12rem}
+body[data-command-admin][data-admin-app]{display:grid;grid-template-columns:248px minmax(0,1fr);--command-topbar-height:72px;--admin-bg:#101113;--admin-surface:#1a1c1f;--admin-line:#383a3d;--admin-text:#f0eee8;--admin-muted:#b7b9bc;--admin-accent:#cfb985;font-size:1rem}
+[data-command-admin][data-admin-app] .admin-app-topbar{grid-column:1/-1;height:auto;min-height:72px;padding:1rem 1.5rem;position:sticky;top:0;gap:1rem;flex-wrap:wrap;background:#141619}
+[data-command-admin][data-admin-app] .admin-app-sidebar{grid-column:1;grid-row:2;position:sticky;top:var(--command-topbar-height);left:auto;bottom:auto;width:248px;height:calc(100dvh - var(--command-topbar-height));padding:1rem .75rem;align-self:start;background:#15171a}
+[data-command-admin][data-admin-app] .admin-main{grid-column:2;grid-row:2;margin:0;max-width:none;min-width:0;padding:1.5rem clamp(1rem,2vw,2.5rem) 3rem}
+[data-command-admin][data-admin-app] .admin-app-brand{font-family:inherit;font-size:.875rem;letter-spacing:.08em;overflow-wrap:anywhere;min-width:0}
+[data-command-admin][data-admin-app] .admin-app-session{font-size:.8125rem;gap:1rem;min-width:0;flex-wrap:wrap}
+[data-command-admin][data-admin-app] .admin-nav-item{font-size:.875rem;min-height:44px}
+[data-command-admin][data-admin-app] :is(button,input,select,textarea){font-family:inherit;font-size:.875rem;line-height:1.5;min-height:44px}
+[data-command-admin] .skip{position:fixed;top:0;left:1rem;transform:translateY(-150%);z-index:2000;background:#e3c996;color:#101113;padding:.75rem}
+[data-command-admin] .skip:focus{transform:none}
+[data-command-admin] :is(.command-table,.review-table,.conflict-table){min-width:0;width:100%;table-layout:fixed}
+[data-command-admin] :is(td,th,p,h1,h2,h3,dd,dt,.editor-confirmed){overflow-wrap:anywhere}
+[data-command-admin] #inspector{min-width:0}
+[data-command-admin] .command-table th:first-child{width:42%}
+[data-command-admin] .command-table th{font-family:inherit}
+[data-command-admin] #product-form label{font-family:inherit}
+[data-command-admin] #product-form :is(input:not([type=checkbox]),textarea){font-size:1rem;line-height:1.55}
+[data-command-admin] #data-freshness{font-size:.75rem;color:#bfc4cc}
+[data-command-admin] #command-reconnect{margin:0 0 1.25rem}
+[data-command-admin] .editor-actions{flex-wrap:wrap}
+[data-command-admin] dialog{width:min(850px,calc(100vw - 32px));max-width:calc(100vw - 32px);max-height:calc(100dvh - 32px);overflow:auto}
+[data-command-admin] .editor-confirmed{word-break:break-word}
+[data-command-admin] .field-hint{color:#b8bec8;font-size:.75rem;line-height:1.5}
+@media(max-width:1300px){[data-command-admin] .workbench-grid,[data-command-admin].command-editor-open .workbench-grid{grid-template-columns:minmax(0,1fr)}[data-command-admin].command-editor-open .nocturne-context{display:flex}[data-command-admin].command-editor-open:not(.nocturne-browse) .catalogue-list{display:none}}
+@media(max-width:1050px){
+ body[data-command-admin][data-admin-app]{grid-template-columns:minmax(0,1fr)}
+ [data-command-admin][data-admin-app] .admin-main{grid-column:1;grid-row:2;margin:0}
+ [data-command-admin][data-admin-app] .admin-app-sidebar{display:block;position:fixed;top:var(--command-topbar-height);left:0;bottom:0;height:auto;width:min(248px,86vw);z-index:800;transform:translateX(-110%)}
+ [data-command-admin][data-admin-app][data-admin-menu-open] .admin-app-sidebar{transform:translateX(0)}
+}
+@media(max-width:600px){
+ [data-command-admin][data-admin-app] .admin-main{padding:1rem 1rem 3rem}
+ [data-command-admin][data-admin-app] .admin-app-topbar{padding:.75rem 1rem;gap:.75rem}
+ [data-command-admin][data-admin-app] .admin-app-brand{flex:1 1 8rem}
+ [data-command-admin][data-admin-app] .admin-app-session{flex:1 1 100%;justify-content:flex-end;margin:0}
+ [data-command-admin] .admin-page-header{align-items:flex-start}
+ [data-command-admin] .filter-grid{grid-template-columns:minmax(0,1fr)}
+ [data-command-admin] .filter-grid label:first-child{grid-column:auto}
+ [data-command-admin] .command-table,[data-command-admin] .command-table tbody{display:block}
+ [data-command-admin] .command-table thead{position:absolute;width:1px;height:1px;clip:rect(0,0,0,0);overflow:hidden}
+ [data-command-admin] .command-table tr{display:grid;grid-template-columns:1fr 1fr;padding:.75rem;gap:.5rem;border-bottom:1px solid var(--admin-line)}
+ [data-command-admin] .command-table td{display:block;padding:.25rem;border:0;min-width:0;max-width:none}
+ [data-command-admin] .command-table td:first-child,[data-command-admin] .command-table td:last-child{grid-column:1/-1}
+ [data-command-admin] .command-table td:nth-child(2)::before{content:'Selling price';display:block;font-size:.75rem;color:#c5bdac}
+ [data-command-admin] .command-table td:nth-child(3)::before{content:'Inventory';display:block;font-size:.75rem;color:#c5bdac}
+ [data-command-admin] .command-table .product-select{font-size:1rem}
+ [data-command-admin] .editor-actions{max-height:40dvh;z-index:600}
+ [data-command-admin] .modal-actions{position:static;flex-wrap:wrap}
+ [data-command-admin] .review-table,[data-command-admin] .conflict-table{table-layout:auto}
+}
+@media(prefers-reduced-motion:reduce){html:has([data-command-admin]),[data-command-admin] *,[data-command-admin] *::before,[data-command-admin] *::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+@media(min-width:1301px){[data-command-admin] .product-inspector{top:calc(var(--command-topbar-height) + 1rem);max-height:calc(100dvh - var(--command-topbar-height) - 2rem);overflow:auto;scrollbar-gutter:stable}}
