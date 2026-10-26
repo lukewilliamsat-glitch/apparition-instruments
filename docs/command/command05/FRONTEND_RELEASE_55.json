@@ -22,20 +22,19 @@
   "productionWrites": false,
   "liveReadAcceptance": "UNVERIFIED_DISABLED",
   "metadataEvidenceSHA256": "15ec4d74c31111037cb3e1e2d0e0e1a849447cbd6ffea0cc61c7884cc4b81355",
-  "candidateTarSHA256": "01e2416a28455b77a4bb91a7b845500fdd8541c1cf293830b2793bb01b65f97d",
-  "candidatePayloadDigest": "2278e034dbdcc9385f25d0edf3504b14a4c7c4aaa46a775bcc299d8c0dd79a45",
+  "candidateTarSHA256": "3ef5fb0d80a95c6c7c7da67d1f8d642536aabf645427504b3f4f01470aabf106",
+  "candidatePayloadDigest": "a6b4e2fa657aa54a79d23fe007d342dfc9c4e24bd4b976ae94185df7ecab91ce",
   "verificationFiles": {
     "/": "acfa48ccf4a00c43040d5c0783bc6e8c6a2cb39623d1dfc3da6473558c1b1449",
-    "/operations/snapshot.json": "0dd3a244d2ab694730b83a985fdd69a6310d06e29aa70ab2e5e3f956d8d8c557",
+    "/operations/snapshot.json": "0daa8a0d6f03c9eaf746ba91d20c0728fe2b0512c10cea3796c6145358cca69f",
     "/interactive-tools/": "d93272db6a2c4ccf5120c476e98accbc19fe827617be6df2f6f9e8bf19aa22c3",
     "/admin/command/": "c04bb8b971c7443df973479bd1a2dce709cf658508d240b7deeb18381c174629",
     "/admin/command/read-activation.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3": "0982665d9fd9234fa28380ffaddee4f02d90b95b250603d0123573eb9fd4f594",
     "/admin/command/nocturne.css?build=df78c5bf5144b012a7d96c628186180fa6432df3": "6f7d206a7828881f0eab44757d3d3e6e7a9bb7ee510e9f2fd14f8f25b54f7b99"
   },
-  "candidateArchiveSHA256": "4088e314e2a3a2d511d9f929078f5e0b8585458384908e57fd2f71354850b4a0",
   "rollbackVerificationFiles": {
     "/": "acfa48ccf4a00c43040d5c0783bc6e8c6a2cb39623d1dfc3da6473558c1b1449",
-    "/operations/snapshot.json": "0dd3a244d2ab694730b83a985fdd69a6310d06e29aa70ab2e5e3f956d8d8c557",
+    "/operations/snapshot.json": "0daa8a0d6f03c9eaf746ba91d20c0728fe2b0512c10cea3796c6145358cca69f",
     "/interactive-tools/": "d93272db6a2c4ccf5120c476e98accbc19fe827617be6df2f6f9e8bf19aa22c3",
     "/admin/admin-gate.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f": "5a39586fa81be16ad13f3dd24102b450a1d280c127a76329c2e63079ac739f0d"
   },
@@ -46,5 +45,25 @@
       "sourceCommit": "ee620b5277e009d450800735f0fe4543182896aa",
       "reason": "Concurrency preflight stopped; both Pages deployment steps were skipped"
     }
-  ]
+  ],
+  "operationalCorrection": {
+    "path": "docs/command/command05/OPEN_SNAPSHOT_55.json",
+    "beforeSHA256": "0dd3a244d2ab694730b83a985fdd69a6310d06e29aa70ab2e5e3f956d8d8c557",
+    "afterSHA256": "0daa8a0d6f03c9eaf746ba91d20c0728fe2b0512c10cea3796c6145358cca69f",
+    "rpcObservedAt": "2026-10-26T12:04:43.169274+00:00",
+    "rpcStoreUpdatedAt": "2026-10-26T11:58:26.803364+00:00"
+  },
+  "terminalFailedPagesRun": {
+    "runId": 40311358554,
+    "sourceCommit": "0c102c72e63ebd5d6232803c5b9019942fd55853",
+    "originalJobId": 121533058543
+  },
+  "rollbackTarSHA256": "79828f738cff99fa0358bb263f89839e8acd50dd9e6bc19cb8514c6fc2481314",
+  "rollbackPayloadDigest": "90e52dd2e3f35aa812f94f17c3593e3db29793a577323e6890ed2e19aec805c0",
+  "baselineVerificationFiles": {
+    "/": "acfa48ccf4a00c43040d5c0783bc6e8c6a2cb39623d1dfc3da6473558c1b1449",
+    "/operations/snapshot.json": "0dd3a244d2ab694730b83a985fdd69a6310d06e29aa70ab2e5e3f956d8d8c557",
+    "/interactive-tools/": "d93272db6a2c4ccf5120c476e98accbc19fe827617be6df2f6f9e8bf19aa22c3",
+    "/admin/admin-gate.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f": "5a39586fa81be16ad13f3dd24102b450a1d280c127a76329c2e63079ac739f0d"
+  }
 }
