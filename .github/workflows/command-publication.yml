@@ -1,5 +1,4 @@
-# AUTHORISATION 55 amendment: engineering installation only until all release gates pass.
-# Main-only, exact-marker/manual publisher; no backend generators.
+# AUTHORISATION 55: accepted frontend only; production reads and writes stay off.
 name: COMMAND exact approved Pages publication
 on:
   push:
@@ -10,6 +9,14 @@ on:
         required: true
         type: choice
         options: [release, restore]
+      rollback_run_id:
+        description: Exact release run containing the verified rollback artifact
+        required: false
+        type: string
+      rollback_artifact_id:
+        description: Exact verified command55-rollback-pages artifact
+        required: false
+        type: string
 permissions:
   contents: read
   actions: read
@@ -23,59 +30,87 @@ jobs:
   exact-publication:
     if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[command-exact-release]'))
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 12
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
+    env:
+      COMMAND_OPERATION: ${{ github.event_name == 'workflow_dispatch' && inputs.operation || 'release' }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: ${{ github.sha }}
+          fetch-depth: 2
           persist-credentials: false
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.12'
-      - name: Receive only the exact private approved handoff
-        env:
-          COMMAND_HANDOFF_CAPSULE: ${{ secrets.COMMAND_HANDOFF_CAPSULE }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          python scripts/command-release/transport.py receive --tooling-commit "$GITHUB_SHA" \
-            --out-new "$RUNNER_TEMP/command-handoff" > "$RUNNER_TEMP/command-received.json"
-      - name: Pin the approved operation and response identity
-        env:
-          MANUAL_OPERATION: ${{ inputs.operation }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          python - <<'PY'
-          import json,os
-          from pathlib import Path
-          value=json.loads((Path(os.environ['RUNNER_TEMP'])/'command-received.json').read_text())
-          expected='release' if os.environ['GITHUB_EVENT_NAME']=='push' else os.environ['MANUAL_OPERATION']
-          assert value['operation']==expected and expected in ('release','restore')
-          assert len(value['approvalSHA256'])==64 and all(c in '0123456789abcdef' for c in value['approvalSHA256'])
-          with open(os.environ['GITHUB_ENV'],'a') as f:
-            f.write('COMMAND_APPROVAL_SHA256='+value['approvalSHA256']+'\n')
-            f.write('COMMAND_OPERATION='+expected+'\n')
-          PY
-      - name: Check current main, Pages target and competing publications
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        if: env.COMMAND_OPERATION == 'release'
+        with:
+          node-version: '22.20.0'
+      - name: Check current main, Pages target, holiday and competing publications
         env:
           GH_TOKEN: ${{ github.token }}
+          RESTORE_RUN: ${{ inputs.rollback_run_id }}
         shell: bash
         run: |
           set -euo pipefail
-          python scripts/command-release/transport.py preflight --handoff "$RUNNER_TEMP/command-handoff" \
-            --approval-sha256 "$COMMAND_APPROVAL_SHA256" --operation "$COMMAND_OPERATION" --tooling-commit "$GITHUB_SHA" > "$RUNNER_TEMP/command-preflight-before.json"
-      - name: Verify complete source, payload, holiday and rollback identities
+          python scripts/command-release/frontend.py preflight --plan docs/command/command05/FRONTEND_RELEASE_55.json \
+            --operation "$COMMAND_OPERATION" --restore-run "${RESTORE_RUN:-0}" > "$RUNNER_TEMP/command-preflight-before.json"
+      - name: Read the exact existing complete payload
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ env.COMMAND_OPERATION == 'restore' && inputs.rollback_run_id || '40292065655' }}
+          artifact-ids: ${{ env.COMMAND_OPERATION == 'restore' && inputs.rollback_artifact_id || '12636623182' }}
+          path: ${{ runner.temp }}/command-baseline
+          merge-multiple: true
+      - name: Compile only the reviewed cache references
+        if: env.COMMAND_OPERATION == 'release'
         shell: bash
         run: |
           set -euo pipefail
-          python scripts/command-release/handoff.py stage --handoff "$RUNNER_TEMP/command-handoff" \
-            --approval-sha256 "$COMMAND_APPROVAL_SHA256" --operation "$COMMAND_OPERATION" \
-            --tooling-commit "$GITHUB_SHA" --checkout "$GITHUB_WORKSPACE" \
-            --out-new "$RUNNER_TEMP/command-selected" > "$RUNNER_TEMP/command-staged.json"
+          node scripts/command-release/cache-overlay.mjs "$GITHUB_WORKSPACE" \
+            docs/command/command05/COMMAND_RELEASE_SOURCE.json "$RUNNER_TEMP/command-compiled"
+      - name: Verify exact complete frontend candidate or original restoration payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/command-selected"
+          if [ "$COMMAND_OPERATION" = release ]; then
+            python scripts/command-release/frontend.py stage --plan docs/command/command05/FRONTEND_RELEASE_55.json \
+              --base-dir "$RUNNER_TEMP/command-baseline" --overlay-root "$RUNNER_TEMP/command-compiled" \
+              --manifest "$RUNNER_TEMP/command-compiled/source-manifest.json" --out "$RUNNER_TEMP/command-staged" > "$RUNNER_TEMP/command-staged.json"
+            cp "$RUNNER_TEMP/command-staged/release/artifact.tar" "$RUNNER_TEMP/command-selected/artifact.tar"
+          else
+            python scripts/command-release/frontend.py verify --plan docs/command/command05/FRONTEND_RELEASE_55.json \
+              --kind rollback --directory "$RUNNER_TEMP/command-baseline" > "$RUNNER_TEMP/command-staged.json"
+            cp "$RUNNER_TEMP/command-baseline/artifact.tar" "$RUNNER_TEMP/command-selected/artifact.tar"
+          fi
+      - name: Retain the complete original rollback before publication
+        id: rollback
+        if: env.COMMAND_OPERATION == 'release'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: command55-rollback-pages
+          path: ${{ runner.temp }}/command-staged/rollback/artifact.tar
+          retention-days: 14
+          if-no-files-found: error
+      - name: Independently read back the original rollback
+        if: env.COMMAND_OPERATION == 'release'
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          artifact-ids: ${{ steps.rollback.outputs.artifact-id }}
+          path: ${{ runner.temp }}/command-rollback-readback
+          merge-multiple: true
+      - name: Verify rollback original bytes and every file
+        if: env.COMMAND_OPERATION == 'release'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/command-release/frontend.py verify --plan docs/command/command05/FRONTEND_RELEASE_55.json \
+            --kind rollback --directory "$RUNNER_TEMP/command-rollback-readback" > "$RUNNER_TEMP/command-rollback-verified.json"
       - name: Upload exact approved Pages TAR
         id: upload
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -94,18 +129,19 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python scripts/command-release/handoff.py verify-upload --handoff "$RUNNER_TEMP/command-handoff" \
-            --approval-sha256 "$COMMAND_APPROVAL_SHA256" --operation "$COMMAND_OPERATION" \
-            --tooling-commit "$GITHUB_SHA" --uploaded "$RUNNER_TEMP/command-uploaded" \
-            --staged "$RUNNER_TEMP/command-selected/staged.json" > "$RUNNER_TEMP/command-upload-verified.json"
-      - name: Recheck freshness, main and concurrent publication immediately before deploy
+          kind=release
+          if [ "$COMMAND_OPERATION" = restore ]; then kind=rollback; fi
+          python scripts/command-release/frontend.py verify --plan docs/command/command05/FRONTEND_RELEASE_55.json \
+            --kind "$kind" --directory "$RUNNER_TEMP/command-uploaded" > "$RUNNER_TEMP/command-upload-verified.json"
+      - name: Recheck current publication and holiday immediately before deployment
         env:
           GH_TOKEN: ${{ github.token }}
+          RESTORE_RUN: ${{ inputs.rollback_run_id }}
         shell: bash
         run: |
           set -euo pipefail
-          python scripts/command-release/transport.py preflight --handoff "$RUNNER_TEMP/command-handoff" \
-            --approval-sha256 "$COMMAND_APPROVAL_SHA256" --operation "$COMMAND_OPERATION" --tooling-commit "$GITHUB_SHA" > "$RUNNER_TEMP/command-preflight-final.json"
+          python scripts/command-release/frontend.py preflight --plan docs/command/command05/FRONTEND_RELEASE_55.json \
+            --operation "$COMMAND_OPERATION" --restore-run "${RESTORE_RUN:-0}" > "$RUNNER_TEMP/command-preflight-final.json"
       - name: Publish this exact verified Pages artifact once
         id: deploy
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346
@@ -114,20 +150,60 @@ jobs:
           timeout: '120000'
           error_count: '1'
           preview: 'false'
+      - name: Verify actual served frontend, public pages, tools and holiday bytes
+        id: live
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          kind=release
+          if [ "$COMMAND_OPERATION" = restore ]; then kind=rollback; fi
+          python scripts/command-release/frontend.py live --plan docs/command/command05/FRONTEND_RELEASE_55.json \
+            --kind "$kind" > "$RUNNER_TEMP/command-live-verification.json"
+      - name: Restore the verified complete rollback on confirmed live verification failure
+        id: automatic_restore
+        if: steps.deploy.outcome == 'success' && steps.live.outcome == 'failure' && env.COMMAND_OPERATION == 'release'
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346
+        with:
+          artifact_name: command55-rollback-pages
+          timeout: '120000'
+          error_count: '1'
+          preview: 'false'
+      - name: Verify the served rollback after restoration
+        if: steps.automatic_restore.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/command-release/frontend.py live --plan docs/command/command05/FRONTEND_RELEASE_55.json \
+            --kind rollback > "$RUNNER_TEMP/command-rollback-live.json"
+      - name: Record actual publication and restoration outcomes
+        if: always()
+        env:
+          LIVE_OUTCOME: ${{ steps.live.outcome }}
+          DEPLOY_OUTCOME: ${{ steps.deploy.outcome }}
+          RESTORE_OUTCOME: ${{ steps.automatic_restore.outcome }}
+          RELEASE_ARTIFACT: ${{ steps.upload.outputs.artifact-id }}
+          ROLLBACK_ARTIFACT: ${{ steps.rollback.outputs.artifact-id }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          receipt={k:os.environ.get(k) for k in ['GITHUB_SHA','GITHUB_RUN_ID','COMMAND_OPERATION','LIVE_OUTCOME','DEPLOY_OUTCOME','RESTORE_OUTCOME','RELEASE_ARTIFACT','ROLLBACK_ARTIFACT']}
+          receipt.update(scope='COMMAND_FRONTEND_ONLY_READS_DISABLED',productionReads=False,productionWrites=False,authenticatedCatalogueAcceptance='NOT_CLAIMED_DISABLED')
+          (Path(os.environ['RUNNER_TEMP'])/'command-publication-receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          PY
       - name: Preserve non-sensitive publication evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: command-publication-receipt
-          path: |
-            ${{ runner.temp }}/command-received.json
-            ${{ runner.temp }}/command-staged.json
-            ${{ runner.temp }}/command-upload-verified.json
-            ${{ runner.temp }}/command-preflight-before.json
-            ${{ runner.temp }}/command-preflight-final.json
-          if-no-files-found: warn
+          path: ${{ runner.temp }}/command-*.json
+          if-no-files-found: error
           retention-days: 14
-# API success is not live acceptance. Perform the separately pinned static and
-# owner-authenticated live plan, then record the served result. On an uncertain
-# outcome reconcile first; no blind retry/restore. Confirmed failure uses the same
-# verified route with an explicitly authorised restore capsule and current evidence.
+      - name: Do not label a failed release as production success
+        if: steps.live.outcome == 'failure'
+        shell: bash
+        run: exit 1
+# A deploy API failure can be uncertain: reconcile its actual state before retrying.
+# No automatic retry loop, backend generation or privileged read is included.
