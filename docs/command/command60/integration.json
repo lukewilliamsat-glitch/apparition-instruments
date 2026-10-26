@@ -193,10 +193,349 @@
       "Authentication is fictional in isolation; no normal live Admin JWT was available.",
       "Specialist routes are checked with actual retained markup and new CSS; unchanged business controllers/contracts reuse accepted evidence.",
       "No writes, emails, payments or content publication executed in tests."
+    ],
+    "groupResults": [
+      {
+        "name": "Specialist controls and shared shell",
+        "path": "/admin/overview/",
+        "width": 390,
+        "run": 40390818477,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "result": "PASS"
+      },
+      {
+        "name": "Specialist controls and shared shell",
+        "path": "/admin/overview/",
+        "width": 1440,
+        "run": 40390818477,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "result": "PASS"
+      },
+      {
+        "name": "Specialist controls and shared shell",
+        "path": "/admin/catalogue-settings/",
+        "width": 390,
+        "run": 40390818477,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "result": "PASS"
+      },
+      {
+        "name": "Specialist controls and shared shell",
+        "path": "/admin/catalogue-settings/",
+        "width": 1440,
+        "run": 40390818477,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "result": "PASS"
+      },
+      {
+        "name": "Specialist controls and shared shell",
+        "path": "/admin/wiring-kit-master/",
+        "width": 390,
+        "run": 40390818477,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "result": "PASS"
+      },
+      {
+        "name": "Specialist controls and shared shell",
+        "path": "/admin/wiring-kit-master/",
+        "width": 1440,
+        "run": 40390818477,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "result": "PASS"
+      },
+      {
+        "name": "Specialist controls and shared shell",
+        "path": "/admin/hub-cms/",
+        "width": 390,
+        "run": 40390818477,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "result": "PASS"
+      },
+      {
+        "name": "Specialist controls and shared shell",
+        "path": "/admin/hub-cms/",
+        "width": 1440,
+        "run": 40390818477,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "result": "PASS"
+      },
+      {
+        "name": "Specialist controls and shared shell",
+        "path": "/admin/hub-media/",
+        "width": 390,
+        "run": 40390818477,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "result": "PASS"
+      },
+      {
+        "name": "Specialist controls and shared shell",
+        "path": "/admin/hub-media/",
+        "width": 1440,
+        "run": 40390818477,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "result": "PASS"
+      },
+      {
+        "name": "Specialist controls and shared shell",
+        "path": "/admin/site-operations/",
+        "width": 390,
+        "run": 40390818477,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "result": "PASS"
+      },
+      {
+        "name": "Specialist controls and shared shell",
+        "path": "/admin/site-operations/",
+        "width": 1440,
+        "run": 40390818477,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "result": "PASS"
+      },
+      {
+        "name": "Specialist controls and shared shell",
+        "path": "/admin/site-operations/#news",
+        "width": 390,
+        "run": 40390818477,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "result": "PASS"
+      },
+      {
+        "name": "Specialist controls and shared shell",
+        "path": "/admin/site-operations/#news",
+        "width": 1440,
+        "run": 40390818477,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "result": "PASS"
+      },
+      {
+        "name": "Specialist controls and shared shell",
+        "path": "/admin/email-templates/",
+        "width": 390,
+        "run": 40390818477,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "result": "PASS"
+      },
+      {
+        "name": "Specialist controls and shared shell",
+        "path": "/admin/email-templates/",
+        "width": 1440,
+        "run": 40390818477,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "result": "PASS"
+      },
+      {
+        "name": "Specialist controls and shared shell",
+        "path": "/admin/email-preview/",
+        "width": 390,
+        "run": 40392606748,
+        "source": "74f9bc971dc9e8c540cef268828476521497b112",
+        "result": "PASS"
+      },
+      {
+        "name": "Specialist controls and shared shell",
+        "path": "/admin/email-preview/",
+        "width": 1440,
+        "run": 40392606748,
+        "source": "74f9bc971dc9e8c540cef268828476521497b112",
+        "result": "PASS"
+      },
+      {
+        "name": "Specialist controls and shared shell",
+        "path": "/admin/orders/build-sheet/",
+        "width": 390,
+        "run": 40390818477,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "result": "PASS"
+      },
+      {
+        "name": "Specialist controls and shared shell",
+        "path": "/admin/orders/build-sheet/",
+        "width": 1440,
+        "run": 40390818477,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "result": "PASS"
+      },
+      {
+        "name": "Specialist controls and shared shell",
+        "path": "/admin/conjure/",
+        "width": 390,
+        "run": 40390818477,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "result": "PASS"
+      },
+      {
+        "name": "Specialist controls and shared shell",
+        "path": "/admin/conjure/",
+        "width": 1440,
+        "run": 40390818477,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "result": "PASS"
+      },
+      {
+        "name": "Responsive primary workspace",
+        "path": "/admin/",
+        "width": 320,
+        "run": 40390818477,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "result": "PASS"
+      },
+      {
+        "name": "Responsive primary workspace",
+        "path": "/admin/",
+        "width": 768,
+        "run": 40390818477,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "result": "PASS"
+      },
+      {
+        "name": "Responsive primary workspace",
+        "path": "/admin/",
+        "width": 1024,
+        "run": 40390818477,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "result": "PASS"
+      },
+      {
+        "name": "Responsive primary workspace",
+        "path": "/admin/",
+        "width": 1920,
+        "run": 40390818477,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "result": "PASS"
+      },
+      {
+        "name": "Increased text remains reachable",
+        "path": "/admin/",
+        "width": 390,
+        "run": 40390818477,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "result": "PASS"
+      },
+      {
+        "name": "Signed-out login keeps records concealed",
+        "path": "/admin/?fixture-auth=signed-out",
+        "width": 390,
+        "run": 40392606748,
+        "source": "74f9bc971dc9e8c540cef268828476521497b112",
+        "result": "PASS"
+      },
+      {
+        "name": "Membership denial keeps records concealed",
+        "path": "/admin/?fixture-auth=denied",
+        "width": 1440,
+        "run": 40392606748,
+        "source": "74f9bc971dc9e8c540cef268828476521497b112",
+        "result": "PASS"
+      },
+      {
+        "name": "Logout closes drawer and clears authorized visibility",
+        "path": "/admin/",
+        "width": 390,
+        "run": 40392606748,
+        "source": "74f9bc971dc9e8c540cef268828476521497b112",
+        "result": "PASS"
+      },
+      {
+        "name": "Compatibility URL returns to primary Admin",
+        "path": "/admin/command/",
+        "width": 390,
+        "run": 40392606748,
+        "source": "74f9bc971dc9e8c540cef268828476521497b112",
+        "result": "PASS"
+      },
+      {
+        "name": "Mobile inventory drawer, focus and retained table",
+        "path": "/admin/",
+        "width": 390,
+        "run": 40392606748,
+        "source": "74f9bc971dc9e8c540cef268828476521497b112",
+        "result": "PASS"
+      },
+      {
+        "name": "Specialist controls and shared shell",
+        "path": "/admin/orders/invoice/",
+        "width": 390,
+        "run": 40392606748,
+        "source": "74f9bc971dc9e8c540cef268828476521497b112",
+        "result": "PASS"
+      },
+      {
+        "name": "Specialist controls and shared shell",
+        "path": "/admin/orders/invoice/",
+        "width": 1440,
+        "run": 40392606748,
+        "source": "74f9bc971dc9e8c540cef268828476521497b112",
+        "result": "PASS"
+      },
+      {
+        "name": "Service worker registration remains blocked",
+        "path": "/admin/",
+        "width": 390,
+        "run": 40392606748,
+        "source": "74f9bc971dc9e8c540cef268828476521497b112",
+        "result": "PASS"
+      },
+      {
+        "name": "Primary inventory uses original functional controller",
+        "path": "/admin/",
+        "width": 1440,
+        "run": 40393495996,
+        "source": "745251f1ce6d0a488d0d7363eca033888e00a00f",
+        "result": "PASS"
+      },
+      {
+        "name": "Orders retains search, marketplace and aftercare routes",
+        "path": "/admin/orders/",
+        "width": 1440,
+        "run": 40394191549,
+        "source": "f350de62445e8e63332c3230f48ae5c98cacc38c",
+        "result": "PASS"
+      }
+    ],
+    "screenshots": [
+      {
+        "file": "01-unified-inventory-desktop.png",
+        "bytes": 106738,
+        "sha256": "46f3d0abd5638e1dbca4b6223f365e6024f182205bdcf4310295212d24479112",
+        "width": 1440,
+        "height": 1000,
+        "source": "745251f1ce6d0a488d0d7363eca033888e00a00f",
+        "fictional": true,
+        "originalPNG": true,
+        "run": 40393495996,
+        "originalPNGReadback": "PASS",
+        "limit": "Synthetic local fixture, not an authenticated live production capture."
+      },
+      {
+        "file": "02-unified-inventory-mobile.png",
+        "bytes": 51743,
+        "sha256": "d8ee6ca4ef2248155179156ada394f6cd037abe92bc14380febf726a8a3872b5",
+        "width": 390,
+        "height": 1000,
+        "source": "74f9bc971dc9e8c540cef268828476521497b112",
+        "fictional": true,
+        "originalPNG": true,
+        "run": 40392606748,
+        "originalPNGReadback": "PASS",
+        "limit": "Synthetic local fixture, not an authenticated live production capture."
+      },
+      {
+        "file": "03-conjure-unified-desktop.png",
+        "bytes": 90792,
+        "sha256": "2d84c17262313b61677fa3354237a7de86d1e2cc9d3ec982b81484daa1576548",
+        "width": 1440,
+        "height": 1000,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "fictional": true,
+        "originalPNG": true,
+        "run": 40390818477,
+        "originalPNGReadback": "PASS",
+        "limit": "Synthetic local fixture, not an authenticated live production capture."
+      }
     ]
   },
   "release": {
-    "status": "VERIFIED_CANDIDATE_PUBLICATION_PENDING",
+    "status": "LIVE_VERIFIED_FRONTEND",
     "primaryURL": "https://apparitioninstruments.co.uk/admin/",
     "candidateDigest": "40036660628fccf87842d26ce378c1b573d46e303441d2af3afc827c622ab012",
     "rollbackDigest": "02e760d679a44a3dd95169224846f7b745f7f295e9cc16e175fda3ba911c1155",
@@ -205,11 +544,209 @@
     "unchangedBaselineFiles": 418,
     "coreFrontendFiles": 6,
     "cacheReferenceOnlyFiles": 22,
-    "newDependencies": 0
+    "newDependencies": 0,
+    "source": "84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
+    "tree": "066e0ffd5183cbf1e4f0f2af7dc294ec590b63f7",
+    "runId": 40395203994,
+    "jobId": 121826295000,
+    "artifact": {
+      "id": 12685648112,
+      "name": "github-pages",
+      "zipBytes": 20352534,
+      "zipSHA256": "00fcf753886b7b621fa48a610c0cb6e5e265ebb3e9617cb5f268ee2ca1e92226",
+      "expiresAt": "2026-11-09T20:23:50Z",
+      "independentReadback": "PASS",
+      "tarSHA256": "6fc077c5492df246a891155f7273fd808f9b12dd21ae05bc87e46d6c92d72f50",
+      "tarBytes": 25108480,
+      "payloadDigest": "40036660628fccf87842d26ce378c1b573d46e303441d2af3afc827c622ab012",
+      "files": 446
+    },
+    "rollback": {
+      "id": 12685123165,
+      "name": "frontend-rollback",
+      "zipBytes": 20349418,
+      "zipSHA256": "9670668ae473bfc3eacf8bac77d44dc161b60d21ae5272be5170a825f4ac77ec",
+      "expiresAt": "2026-11-09T20:23:47Z",
+      "independentReadback": "PASS",
+      "tarSHA256": "6236bec996bdde146fcae675c64bc80c0e839d3de2537d543cada3a5a4e959c0",
+      "tarBytes": 25098240,
+      "payloadDigest": "02e760d679a44a3dd95169224846f7b745f7f295e9cc16e175fda3ba911c1155",
+      "files": 445,
+      "source": "bc5eeef3f998c439b7cb88daeb8d6d1ecd5dd7b0",
+      "runId": 40381176219,
+      "used": false
+    },
+    "receiptArtifact": {
+      "id": 12685993296,
+      "name": "frontend-release-receipt",
+      "zipBytes": 51456,
+      "zipSHA256": "34418883901af0005cab6f53ec3c9084befab9843fcd6e64a91714652aa19532",
+      "expiresAt": "2026-11-09T20:24:05Z",
+      "independentReadback": "PASS"
+    },
+    "independentLive": {
+      "requests": 8,
+      "passed": 8,
+      "bytes": 99296,
+      "files": [
+        {
+          "path": "/admin/",
+          "status": 200,
+          "bytes": 15314,
+          "sha256": "1f31ba866e0630858450c6dd2fad518e9f559763a12da607372d0168e66ff938",
+          "match": true
+        },
+        {
+          "path": "/admin/application.css",
+          "status": 200,
+          "bytes": 34132,
+          "sha256": "e236bf64da6ab626e47e1f5894d4b01abd0d741a540a9bc83d6cc69ce9daaad2",
+          "match": true
+        },
+        {
+          "path": "/admin/application.mjs",
+          "status": 200,
+          "bytes": 12252,
+          "sha256": "f40a3768a39762a5c4983b76cf28dd12764e087294a76127d7db478c44ef1cf9",
+          "match": true
+        },
+        {
+          "path": "/admin/admin-gate.mjs",
+          "status": 200,
+          "bytes": 8213,
+          "sha256": "5e99c9747a869c873347a8f4e51d56abfdb17e91a82990f606872fa25db8ef69",
+          "match": true
+        },
+        {
+          "path": "/admin/command/",
+          "status": 200,
+          "bytes": 441,
+          "sha256": "aff5fb730ab1ff27ef8947822a612dc67b86eaa7bb4f0a8e9d68aca57335cbf2",
+          "match": true
+        },
+        {
+          "path": "/operations/snapshot.json",
+          "status": 200,
+          "bytes": 3091,
+          "sha256": "0daa8a0d6f03c9eaf746ba91d20c0728fe2b0512c10cea3796c6145358cca69f",
+          "match": true
+        },
+        {
+          "path": "/",
+          "status": 200,
+          "bytes": 15145,
+          "sha256": "370654f692fefdf6f12994ba93a2ab456dfd0eb91a5763012fc2c48bcb5a53e9",
+          "match": true
+        },
+        {
+          "path": "/components/treble-bleeds/",
+          "status": 200,
+          "bytes": 10708,
+          "sha256": "1e0043e7bce6ea1ed221aeb2c59e1b06682bcccc3ac7ccba7cf90029222aad2d",
+          "match": true
+        }
+      ]
+    },
+    "live": {
+      "operations": {
+        "bytes": 437,
+        "mutations": 0,
+        "observedAt": "2026-10-26T20:24:04.983329+00:00",
+        "pause_from": null,
+        "requests": 1,
+        "resume_at": null,
+        "sha256": "17c2360363528dbfe440e5ed7112d5c06a5bc1b84cbda23cc691602052d94c97",
+        "state": "OPEN",
+        "updated_at": "2026-10-26T11:58:26.803364+00:00"
+      },
+      "static": {
+        "bytes": 99296,
+        "feature": "COMMAND_UNIFIED_ADMIN",
+        "files": [
+          {
+            "bytes": 15314,
+            "path": "/admin/",
+            "sha256": "1f31ba866e0630858450c6dd2fad518e9f559763a12da607372d0168e66ff938"
+          },
+          {
+            "bytes": 34132,
+            "path": "/admin/application.css",
+            "sha256": "e236bf64da6ab626e47e1f5894d4b01abd0d741a540a9bc83d6cc69ce9daaad2"
+          },
+          {
+            "bytes": 12252,
+            "path": "/admin/application.mjs",
+            "sha256": "f40a3768a39762a5c4983b76cf28dd12764e087294a76127d7db478c44ef1cf9"
+          },
+          {
+            "bytes": 8213,
+            "path": "/admin/admin-gate.mjs",
+            "sha256": "5e99c9747a869c873347a8f4e51d56abfdb17e91a82990f606872fa25db8ef69"
+          },
+          {
+            "bytes": 441,
+            "path": "/admin/command/",
+            "sha256": "aff5fb730ab1ff27ef8947822a612dc67b86eaa7bb4f0a8e9d68aca57335cbf2"
+          },
+          {
+            "bytes": 3091,
+            "path": "/operations/snapshot.json",
+            "sha256": "0daa8a0d6f03c9eaf746ba91d20c0728fe2b0512c10cea3796c6145358cca69f"
+          },
+          {
+            "bytes": 15145,
+            "path": "/",
+            "sha256": "370654f692fefdf6f12994ba93a2ab456dfd0eb91a5763012fc2c48bcb5a53e9"
+          },
+          {
+            "bytes": 10708,
+            "path": "/components/treble-bleeds/",
+            "sha256": "1e0043e7bce6ea1ed221aeb2c59e1b06682bcccc3ac7ccba7cf90029222aad2d"
+          }
+        ],
+        "kind": "candidate",
+        "requests": 8,
+        "result": "PASS"
+      }
+    },
+    "deployAttempts": 1
   },
   "remainingExceptions": [
     "Circuit FORGE remains its existing specialised public/instrument workbench, reached through unified Admin navigation. No public editor or account lifecycle is replaced.",
     "Normal authenticated live-session behaviour is not claimed from fictional browser checks. Existing Auth implementation and server permission rules are unchanged.",
     "Advanced COMMAND catalogue and IRONCLAD write activation remain disabled; existing Inventory/Orders writes retain their original contracts."
-  ]
+  ],
+  "recordedAt": "2026-10-26T20:28:48.535947+00:00",
+  "liveBrowser": {
+    "verifiedURL": "https://apparitioninstruments.co.uk/admin/",
+    "legacyCommandURLRedirectsToPrimary": true,
+    "skin": "nocturne",
+    "sharedStyles": "/admin/application.css?build=745251f1ce6d0a488d0d7363eca033888e00a00f",
+    "gateCount": 1,
+    "workshopAccessVisible": true,
+    "protectedWorkspaceHiddenWhenSignedOut": true,
+    "nativeComputedPanelColor": "rgb(26, 28, 31)",
+    "authenticatedProductionSession": "UNAVAILABLE_NOT_CLAIMED",
+    "liveBusinessWrites": 0
+  },
+  "preservation": {
+    "baselineFiles": 445,
+    "candidateFiles": 446,
+    "changedPayloadFiles": 28,
+    "unchangedBaselineFiles": 418,
+    "coreFrontendFiles": 6,
+    "cacheReferenceOnlyFiles": 22,
+    "publicStorefront": "Every public file except the existing private commercial Admin controller is byte-for-byte unchanged. That Admin controller changes cache references only.",
+    "operations": "Authoritative OPEN confirmed immediately before and after publication, both pause dates null. Static snapshot and News unchanged.",
+    "auth": "Existing Auth server / membership checks and stored-session format unchanged. No live authenticated session asserted.",
+    "businessControllers": "Original controllers and repositories retained; Overview changes only its order-data ESM query identity.",
+    "sixRepositoryFamilies": "Same actual setter/getter instance across 23 Admin consumers in complete composed candidate; previous actual baseline reproduced the defect.",
+    "dataWritesInTesting": 0,
+    "schemaOrPoliciesChanged": false,
+    "backendGeneration": false,
+    "advancedCommandReads": false,
+    "ironcladWrites": false,
+    "existingStockAndOrderWriters": "Retained unchanged, governed by existing server permissions."
+  },
+  "programmeOutcome": "Releases A and B shipped together once ready. No speculative Release C created. Primary Admin is transformed; existing specialist public FORGE canvas is retained. Production-authenticated business journeys remain explicitly unverified, while original contracts and fictional acceptance are preserved."
 }
