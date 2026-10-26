@@ -1,0 +1,121 @@
+{
+  "status": "LIVE_VERIFIED",
+  "feature": "SENTINEL",
+  "authority": "AUTHORISATION_59",
+  "siteURL": "https://apparitioninstruments.co.uk/",
+  "source": "12229ba70a19ccd180c8e5bde9be09ea8e7e7c47",
+  "applicationSource": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+  "runId": 40356022691,
+  "artifact": {
+    "id": 12666071737,
+    "zipSHA256": "bb690aa41e73a73dabbbc4fc417e08fbdb15a720a6d47abecac97c2e41c3c103",
+    "tarSHA256": "792462320c54169d8f2ad2f74b0d6362f7a3c13775bdc3b6fffc5c0a1ae348de",
+    "payloadDigest": "a70fb1d8f0e18cfd9d26a166824efa1598d1afc856d6e7faefa5a2ffc337dca8",
+    "files": 427,
+    "expiresAt": "2026-11-09T16:07:37Z"
+  },
+  "rollback": {
+    "artifactId": 12663979622,
+    "zipSHA256": "cb02d2026a735fe3140c123b9d233255e1d1a2a920669f26db44fec172100285",
+    "tarSHA256": "f352904d733d869b796ebba6dc43ff628cab93513c0e6b45cee883b82f32f2bd",
+    "payloadDigest": "cbd782dbdfddfc0a617d9ed96db4bfd0f84cf876d875ae3f589db56471342a36",
+    "files": 427,
+    "readBack": "PASS",
+    "used": false,
+    "preservesRelease2": true
+  },
+  "interactionDecision": {
+    "status": "OWNER_ACCEPTED",
+    "applicationSource": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+    "preparedCandidateCommit": "3dd3739fde0325327cee5f257066fa3acf083b88",
+    "authority": "AUTHORISATION_59",
+    "choice": "Accepted safeguards (Recommended)",
+    "recordedAt": "2026-10-26T16:05:58.027248+00:00",
+    "effects": [
+      "Retain unavailable saved items without assumed stock or totals.",
+      "Keep checkout stable and hold uncertain handoffs in the current document.",
+      "Show Delivery not confirmed for an uncertain enquiry."
+    ],
+    "limit": "Reloading is not proof of failure."
+  },
+  "live": {
+    "operations": {
+      "bytes": 437,
+      "mutations": 0,
+      "observedAt": "2026-10-26T16:07:59.974137+00:00",
+      "pause_from": null,
+      "requests": 1,
+      "resume_at": null,
+      "sha256": "1040aa31f8c5c5a874c46259d08fd2c0400f6d3eac8421bd7e1529d4b0d27a25",
+      "state": "OPEN",
+      "updated_at": "2026-10-26T11:58:26.803364+00:00"
+    },
+    "static": {
+      "bytes": 63435,
+      "feature": "SENTINEL",
+      "files": [
+        {
+          "bytes": 15145,
+          "path": "/",
+          "sha256": "370654f692fefdf6f12994ba93a2ab456dfd0eb91a5763012fc2c48bcb5a53e9"
+        },
+        {
+          "bytes": 3091,
+          "path": "/operations/snapshot.json",
+          "sha256": "0daa8a0d6f03c9eaf746ba91d20c0728fe2b0512c10cea3796c6145358cca69f"
+        },
+        {
+          "bytes": 4329,
+          "path": "/basket/",
+          "sha256": "a1c55e3f487367cd2d52cdfec6b58445deb3c0bc26e832b7c38bccdda61ce42c"
+        },
+        {
+          "bytes": 4465,
+          "path": "/checkout/",
+          "sha256": "15d021de6c7ae1f0678f1ea5b5a701ab3d69c6bace31e7f00d9809de29e7f2e8"
+        },
+        {
+          "bytes": 8571,
+          "path": "/contact/",
+          "sha256": "e05a8865644127a3c4c186366656cce058e891b6c0c73ca614161f6e61bf5c4f"
+        },
+        {
+          "bytes": 4961,
+          "path": "/commerce.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "sha256": "17c727660c77f7a1c93407556a996fab1d7d3f90cdc8aea4cd297a489414e609"
+        },
+        {
+          "bytes": 7559,
+          "path": "/basket-ui.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "sha256": "774cc7590541428b64ecaf825c7b2af5b3a3c267566dfdc7c25372801e6d9f3e"
+        },
+        {
+          "bytes": 15314,
+          "path": "/admin/",
+          "sha256": "3226a5bb7acc6d35b5ce2b93f89076b513da5ea911df2fdd02e14bbc852a2c9e"
+        }
+      ],
+      "kind": "candidate",
+      "requests": 8,
+      "result": "PASS"
+    }
+  },
+  "independentBrowser": {
+    "basketPendingToReady": true,
+    "emptyCheckoutSafe": true,
+    "emptyCheckoutSubmitAbsent": true,
+    "correctSentinelEntryReference": true,
+    "contactEmptyRequiredCount": 4,
+    "invalidContactSubmitFocused": "name",
+    "invalidContactButton": "Send enquiry",
+    "contactMessageEmpty": true,
+    "messagesSent": 0,
+    "transactions": 0,
+    "applicationErrors": 0,
+    "unrelatedExtensionErrorObserved": true,
+    "uncertainFailureBranches": "Existing native 31-case acceptance reused; no live transaction or message generated to force these outcomes."
+  },
+  "knownSeparateIssue": "Nested category startup URL prevents live card rendering; AUTHORISATION 59 repairs this independently.",
+  "commandReads": false,
+  "commandWrites": false
+}
