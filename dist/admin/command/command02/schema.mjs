@@ -1,4 +1,4 @@
-import {categories,summary} from '../command01/model.mjs';
+import {categories,summary} from '../command01/model.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
 export const fields=Object.freeze({
  name:{label:'Product name',section:'general',max:300,required:true},
  sku:{label:'SKU',section:'general',max:80,required:true},

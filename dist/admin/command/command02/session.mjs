@@ -1,4 +1,4 @@
-import {fields,editable,validateDraft,changes,patchFor,fingerprint,readRecord} from './schema.mjs';
+import {fields,editable,validateDraft,changes,patchFor,fingerprint,readRecord} from './schema.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
 let sequence=0;
 export function createEditorSession({persistence,onChange=()=>{},timeoutMs=8000}={}){
  if(!['command02-synthetic','command02-read-preview'].includes(persistence?.kind)||['read','save','status'].some(m=>typeof persistence[m]!=='function'))throw Error('Explicit preview or synthetic persistence is required. Live writes are disabled.');

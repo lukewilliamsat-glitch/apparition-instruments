@@ -1,0 +1,225 @@
+{
+  "kind": "COMMAND_READONLY_SOURCE_OVERLAY_V1",
+  "sourceCommit": "df78c5bf5144b012a7d96c628186180fa6432df3",
+  "baseSourceCommit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+  "entries": [
+    {
+      "path": "admin/admin-auth.mjs",
+      "beforeSHA256": "c11bb71eec880153c5060d13ceb5b4eca3711ba054a922483c87f34694a46085",
+      "afterSHA256": "20632a519cf0591563e4b1cacd7fd39d3df3ba3b8b21b3c3032c511e8d530180",
+      "bytes": 6638
+    },
+    {
+      "path": "admin/admin-gate.mjs",
+      "beforeSHA256": "5a39586fa81be16ad13f3dd24102b450a1d280c127a76329c2e63079ac739f0d",
+      "afterSHA256": "d37da9143463e53c6f1d90c42e5a4a3c19c21414c1eb0f1e8e0f5ae738597cf3",
+      "bytes": 8077
+    },
+    {
+      "path": "admin/application.mjs",
+      "beforeSHA256": "d290d4930c16a015adf0d7e5023b429295a44957515c86065deae741ea01e638",
+      "afterSHA256": "c0af98f4330fab2b6a27e16515d5719c401686510779c987f9cbc8881a284dd3",
+      "bytes": 8178
+    },
+    {
+      "path": "admin/command/bounded-json.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "b222f629be1fb294d2a3869ccda86b1c8b47238fc90461ed86ac777a9428dbca",
+      "bytes": 1880
+    },
+    {
+      "path": "admin/command/command.css",
+      "beforeSHA256": null,
+      "afterSHA256": "a776596e9e2eb92c832fb73c7015372dfd5230c89d79ec4d33f7d4db16b0da25",
+      "bytes": 6563
+    },
+    {
+      "path": "admin/command/command01/controller.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "1fa032b5270506bbe9d91c1ef919edba5f0135a480a0ff6f2ebc7c0bbf6172ea",
+      "bytes": 4323
+    },
+    {
+      "path": "admin/command/command01/model.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "1d6efcc47242ec9829a2a9a270a71dff18293e044f35d65e400de2f27bac30ed",
+      "bytes": 5079
+    },
+    {
+      "path": "admin/command/command01/view.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "332adaa8c5329b217dcb867bdb75b0ae6edcae376c1b16add2e785a5e608d878",
+      "bytes": 14365
+    },
+    {
+      "path": "admin/command/command01/workbench.css",
+      "beforeSHA256": null,
+      "afterSHA256": "299c86226e392fffcc58f005ca6b42c125a3b7b435f828dd9d1d5cc08178a179",
+      "bytes": 15895
+    },
+    {
+      "path": "admin/command/command02/editor-view.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "f5ce937e950636a6b0ad8e86e13bc65a1a06c6bb5ccee59c0127981e34828c15",
+      "bytes": 14819
+    },
+    {
+      "path": "admin/command/command02/editor.css",
+      "beforeSHA256": null,
+      "afterSHA256": "4967d622c2c2c22a173f71cd844f581c8d59c0e5847997b943c48ae151b1db5b",
+      "bytes": 6170
+    },
+    {
+      "path": "admin/command/command02/schema.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "9e02336e98c75e220d7862c4ebbd450794ce7a32b906cb7405b06140d419548e",
+      "bytes": 6013
+    },
+    {
+      "path": "admin/command/command02/session.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "9ac36cc62d6adc63fcc8d3fc9f5a5525b5b2cac77490bd65da5aa60ab7b0f315",
+      "bytes": 8475
+    },
+    {
+      "path": "admin/command/editor-port.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "31089526ea9086329f34bd52b8f50576b16ef72ed893a39e60e4c0fcad9eda1b",
+      "bytes": 897
+    },
+    {
+      "path": "admin/command/entry.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "f379f1209080d765968b70ad0aec8823f207d4608271e15c4e185803c66dbe7b",
+      "bytes": 6574
+    },
+    {
+      "path": "admin/command/index.html",
+      "beforeSHA256": null,
+      "afterSHA256": "c04bb8b971c7443df973479bd1a2dce709cf658508d240b7deeb18381c174629",
+      "bytes": 8683
+    },
+    {
+      "path": "admin/command/nocturne.css",
+      "beforeSHA256": null,
+      "afterSHA256": "6f7d206a7828881f0eab44757d3d3e6e7a9bb7ee510e9f2fd14f8f25b54f7b99",
+      "bytes": 20455
+    },
+    {
+      "path": "admin/command/presentation.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "99a4c71207ba059aaad6783a4132dd8cdb23a5c46d96e486579ddc669c015765",
+      "bytes": 5079
+    },
+    {
+      "path": "admin/command/production-read.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "72049caf8081bf73cf75623227d7f69206631ebaa1961b718c38e625c29f37bb",
+      "bytes": 8165
+    },
+    {
+      "path": "admin/command/read-activation.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "0982665d9fd9234fa28380ffaddee4f02d90b95b250603d0123573eb9fd4f594",
+      "bytes": 331
+    },
+    {
+      "path": "admin/command/read-boundary.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "2e6a69c01e2987aa4bee3290f55d8b7ea39d6464c931566294e637b57cd19c8d",
+      "bytes": 12153
+    }
+  ],
+  "sourceProvenance": [
+    {
+      "path": "admin/admin-auth.mjs",
+      "rawSourceSHA256": "a0ebb36cacb63d90d8c6078ab7276eb9698684ace23135f0cfed1ec174cd701b"
+    },
+    {
+      "path": "admin/admin-gate.mjs",
+      "rawSourceSHA256": "e70ffd270cadb7226cc1c2976ffd894d36cf807e2c1997aa2f7fba4e45191b36"
+    },
+    {
+      "path": "admin/application.mjs",
+      "rawSourceSHA256": "6c11aadbdd1eb6b19975fbe0b29962b085635085eac882865bd6a1a94904a004"
+    },
+    {
+      "path": "admin/command/bounded-json.mjs",
+      "rawSourceSHA256": "b222f629be1fb294d2a3869ccda86b1c8b47238fc90461ed86ac777a9428dbca"
+    },
+    {
+      "path": "admin/command/command.css",
+      "rawSourceSHA256": "a776596e9e2eb92c832fb73c7015372dfd5230c89d79ec4d33f7d4db16b0da25"
+    },
+    {
+      "path": "admin/command/command01/controller.mjs",
+      "rawSourceSHA256": "2c50b400ff4a8372b593a9c5253349d7ad8b03dbe10f8dad548b1068de61f0f1"
+    },
+    {
+      "path": "admin/command/command01/model.mjs",
+      "rawSourceSHA256": "1d6efcc47242ec9829a2a9a270a71dff18293e044f35d65e400de2f27bac30ed"
+    },
+    {
+      "path": "admin/command/command01/view.mjs",
+      "rawSourceSHA256": "5a1b211210e77f271d0fc268e708698891c66730024731441a40698da565cdbc"
+    },
+    {
+      "path": "admin/command/command01/workbench.css",
+      "rawSourceSHA256": "299c86226e392fffcc58f005ca6b42c125a3b7b435f828dd9d1d5cc08178a179"
+    },
+    {
+      "path": "admin/command/command02/editor-view.mjs",
+      "rawSourceSHA256": "4846488f07b18d34fd5648e8d47f9d51cffef9818a41d41dd245c23979267407"
+    },
+    {
+      "path": "admin/command/command02/editor.css",
+      "rawSourceSHA256": "4967d622c2c2c22a173f71cd844f581c8d59c0e5847997b943c48ae151b1db5b"
+    },
+    {
+      "path": "admin/command/command02/schema.mjs",
+      "rawSourceSHA256": "2da04affa74271f894ce7c462214404239cc196420d3c6205b2be5f1ea90369e"
+    },
+    {
+      "path": "admin/command/command02/session.mjs",
+      "rawSourceSHA256": "48cee0b80eac0f3b56aef1e77d148ac5b5bac251762485eececad05a1bd57fcd"
+    },
+    {
+      "path": "admin/command/editor-port.mjs",
+      "rawSourceSHA256": "31089526ea9086329f34bd52b8f50576b16ef72ed893a39e60e4c0fcad9eda1b"
+    },
+    {
+      "path": "admin/command/entry.mjs",
+      "rawSourceSHA256": "74d4c12b64722448321573a5cfc9fe3c858127d48ace96534475b87a30ed3757"
+    },
+    {
+      "path": "admin/command/index.html",
+      "rawSourceSHA256": "dff28e2ea4a7092ac68c84953a1c7e24de9b909f5d290f791919085ce016c595"
+    },
+    {
+      "path": "admin/command/nocturne.css",
+      "rawSourceSHA256": "6f7d206a7828881f0eab44757d3d3e6e7a9bb7ee510e9f2fd14f8f25b54f7b99"
+    },
+    {
+      "path": "admin/command/presentation.mjs",
+      "rawSourceSHA256": "94449a728835a95a8723e8fb3ad79ded09ab1b1b2a19317b499aabb3c63c6152"
+    },
+    {
+      "path": "admin/command/production-read.mjs",
+      "rawSourceSHA256": "929ecdc543f566d189ab2fd4fcf5aa4b373878703e3b487b241906ce42a31770"
+    },
+    {
+      "path": "admin/command/read-activation.mjs",
+      "rawSourceSHA256": "0982665d9fd9234fa28380ffaddee4f02d90b95b250603d0123573eb9fd4f594"
+    },
+    {
+      "path": "admin/command/read-boundary.mjs",
+      "rawSourceSHA256": "24692914f58a5e203e52f60ee2ccee3f2aa8e00917ad562c511b1e9a26fd467f"
+    }
+  ],
+  "cacheIdentity": {
+    "candidateRevision": "df78c5bf5144b012a7d96c628186180fa6432df3",
+    "baseRevision": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+    "stamperSourceSHA256": "e389b2b8674ea2976886721840f3efdffd79c2fdee99a348627917a3de03d3d2",
+    "rawManifestSHA256": "b740ef12d5e0907d032dca9cdf845473b9bea6c7ea4689159cd217208ad18360"
+  }
+}

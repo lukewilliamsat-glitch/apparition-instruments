@@ -1,5 +1,5 @@
-import {publicBackendConfig} from '../backend/public-config.mjs';
-import {boundedJSON,readError} from './command/bounded-json.mjs';
+import {publicBackendConfig} from '../backend/public-config.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
+import {boundedJSON,readError} from './command/bounded-json.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
 
 const sessionKey='apparition.admin.supabase-session.v1';
 const validConfig=config=>/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(config?.url||'')&&/^sb_publishable_[A-Za-z0-9_-]+$/.test(config?.publishableKey||'');

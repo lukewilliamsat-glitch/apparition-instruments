@@ -1,5 +1,5 @@
-import {summary} from './command01/model.mjs';
-import {isProductionReadAdapter} from './production-read.mjs';
+import {summary} from './command01/model.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
+import {isProductionReadAdapter} from './production-read.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
 // No fetch, credentials, endpoint, public/local fallback or production writes.
 export const READ_CONTRACT='command05-read-v1';
 const capabilities=['catalogueRead','productRead','inventoryRead','draftPreview'];

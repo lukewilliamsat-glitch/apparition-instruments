@@ -8,16 +8,21 @@ import argparse,hashlib,json,os,re,stat,time,urllib.request,urllib.error,urllib.
 from datetime import datetime,timezone
 from pathlib import Path
 from archive_core import Payload,canonical,inventory,require,sha,strict_json,_read_tar,MAX_TAR
-from compose import bounded_file
+from compose import ALLOWED,bounded_file
 from frontend import get_bytes,NoRedirect
 from transport import REPOSITORY
 
 SITE='https://apparitioninstruments.co.uk'
-FEATURES={'SPECTRE','LANTERN','SENTINEL'}
+FEATURES={'SPECTRE','LANTERN','SENTINEL','COMMAND_FRONTEND'}
+COMMAND_SOURCE='df78c5bf5144b012a7d96c628186180fa6432df3'
+COMMAND_MANIFEST_SHA='899151248c2fe2492f198ae19bc36a975287d0edad55cf5168c2657184e17ff1'
 
 def plan_at(path):
     p=strict_json(bounded_file(path,262144))
-    require(p.get('version')==1 and p.get('authority')=='AUTHORISATION_57' and p.get('feature') in FEATURES,'Wrong frontend authority/scope')
+    require(p.get('version')==1 and p.get('feature') in FEATURES and p.get('authority')==('AUTHORISATION_58' if p['feature']=='COMMAND_FRONTEND' else 'AUTHORISATION_57'),'Wrong frontend authority/scope')
+    if p['feature']=='COMMAND_FRONTEND':
+        require(p.get('applicationSource')==p.get('visualAcceptedSource')==COMMAND_SOURCE,'COMMAND accepted source mismatch')
+        require(p.get('commandManifestSHA256')==COMMAND_MANIFEST_SHA,'COMMAND compiled source manifest mismatch')
     require(p.get('siteURL')==SITE and p.get('commandReads') is False and p.get('commandWrites') is False,'Site or COMMAND activation mismatch')
     for key in ['baseTarSHA256','basePayloadDigest','candidateDigest','rollbackDigest']:
         require(re.fullmatch('[a-f0-9]{64}',p.get(key,'')),'Missing immutable payload identity')
@@ -57,10 +62,21 @@ def prepare(p,baseline,root,out):
     require(sha(raw)==p['baseTarSHA256'],'Original baseline TAR changed')
     base=_read_tar(raw);require(base.digest()==p['basePayloadDigest'],'Complete baseline identity changed')
     files=dict(base.files);rollback=dict(base.files);changes=[]
+    command_entries={}
+    if p['feature']=='COMMAND_FRONTEND':
+        manifest=strict_json(bounded_file(Path(root)/'docs/command/command05/COMMAND_RELEASE_COMPILED_58.json',65536))
+        require(sha(canonical(manifest))==COMMAND_MANIFEST_SHA and manifest.get('sourceCommit')==COMMAND_SOURCE,'COMMAND source manifest changed')
+        command_entries={e['path']:e for e in manifest['entries']}
+        require(set(command_entries)==ALLOWED and {c['path'] for c in p['changes'] if c.get('operation')=='source'}==ALLOWED,'Exact COMMAND overlay required')
     for c in p['changes']:
         path=c['path'];before=files.get(path)
         require(not path.startswith('supabase/'),'Backend delta refused')
-        require(not path.startswith(('admin/','forge-pro/')) or cache_reference_only(c),'Unrelated privileged workspace delta refused')
+        if p['feature']=='COMMAND_FRONTEND':
+            if path in command_entries:
+                e=command_entries[path]
+                require(c.get('operation')=='source' and c.get('source')=='dist/'+path and all(c.get(k)==e[k] for k in ['beforeSHA256','afterSHA256','bytes']),'COMMAND approved source delta mismatch')
+            else:require(path.startswith('admin/') and path.endswith('.html') and cache_reference_only(c),'COMMAND unrelated delta refused')
+        else:require(not path.startswith(('admin/','forge-pro/')) or cache_reference_only(c),'Unrelated privileged workspace delta refused')
         if p['feature']=='SPECTRE':require(path in {'customer-ui.css','index.html','operations/snapshot.json'},'SPECTRE delta exceeded')
         require((sha(before) if before is not None else None)==c['beforeSHA256'],'Delta preimage mismatch: '+path)
         if c['operation']=='source':
@@ -83,6 +99,10 @@ def prepare(p,baseline,root,out):
         else:raise ValueError('Unsupported delta operation')
         require(sha(data)==c['afterSHA256'] and len(data)==c['bytes'],'Delta postimage mismatch: '+path)
         files[path]=data;changes.append({'path':path,'beforeSHA256':c['beforeSHA256'],'afterSHA256':sha(data),'bytes':len(data)})
+    if p['feature']=='COMMAND_FRONTEND':
+        activation=files['admin/command/read-activation.mjs'].decode('utf-8')
+        require(all(re.search(r'^\s*'+name+r'\s*:\s*false\s*,?\s*$',activation,re.M) for name in ['enabled','inventoryRead']),'COMMAND unverified activation refused')
+        require(all(re.search(r'^\s*'+name+r'\s*:\s*null\s*,?\s*$',activation,re.M) for name in ['metadataEvidenceSHA256','liveReadEvidenceSHA256']),'COMMAND fabricated activation evidence refused')
     candidate=Payload(files);restore=Payload(rollback)
     require(candidate.digest()==p['candidateDigest'] and restore.digest()==p['rollbackDigest'],'Complete candidate/rollback identity mismatch')
     require({k for k in set(files)|set(base.files) if files.get(k)!=base.files.get(k)}=={c['path'] for c in p['changes']},'Unexplained payload delta')

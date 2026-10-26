@@ -1,7 +1,7 @@
-import {uiNode as node,statusBadge} from '../../application.mjs';
-import {setAdminFeedback} from '../../interaction.mjs';
-import {createWorkbench} from './controller.mjs';
-import {categories,money,stockLabel,stockState,emptyFilters} from './model.mjs';
+import {uiNode as node,statusBadge} from '../../application.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
+import {setAdminFeedback} from '../../interaction.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
+import {createWorkbench} from './controller.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
+import {categories,money,stockLabel,stockState,emptyFilters} from './model.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
 
 export function mountWorkbench(document,{transport,extension={}}={}) {
   const byId=id=>document.getElementById(id);

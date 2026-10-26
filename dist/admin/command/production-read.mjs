@@ -1,7 +1,7 @@
-import {publicBackendConfig} from '../../backend/public-config.mjs';
-import {adminAuthSessionKey} from '../admin-auth.mjs';
-import {boundedJSON,readError} from './bounded-json.mjs';
-import {productionReadActivation} from './read-activation.mjs';
+import {publicBackendConfig} from '../../backend/public-config.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
+import {adminAuthSessionKey} from '../admin-auth.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
+import {boundedJSON,readError} from './bounded-json.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
+import {productionReadActivation} from './read-activation.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
 
 const branded=new WeakSet();
 const columns=['id','sku','name','category','manufacturer','active','individually','in_kits','sale_price','kit_price','kit_price_quantity','updated_at'];

@@ -1,4 +1,4 @@
-import {fields} from './command02/schema.mjs';
+import {fields} from './command02/schema.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
 // NOCTURNE labels, section chooser, mobile context and accessible recovery summary.
 export function mountPresentation(document,view){
  const $=id=>document.getElementById(id),cleanups=[];let closed=false,lastErrors='',wasOpen=false,pending=false;

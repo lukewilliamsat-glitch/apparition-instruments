@@ -1,0 +1,94 @@
+{
+  "authority": "AUTHORISATION_58",
+  "status": "ENGINEERING_VERIFIED_PRODUCTION_PUBLICATION_PENDING",
+  "applicationSource": "df78c5bf5144b012a7d96c628186180fa6432df3",
+  "baseline": {
+    "source": "865448c4e5a5cc262440772b225e6707fcb0d535",
+    "run": 40359269590,
+    "artifact": 12667702915,
+    "payloadDigest": "314b57c475fa53636acbc93ca800c477bddddbcb6543876fe57f2893ece1aa6b"
+  },
+  "audit": [
+    {
+      "subsystem": "Bootstrap / workspace lifecycle / navigation",
+      "classification": "UNCHANGED_ACCEPTED",
+      "evidence": "All 21 raw overlay files matched immutable accepted manifest before existing cache compiler. New complete-payload boundaries 8/8."
+    },
+    {
+      "subsystem": "NOCTURNE / responsive / focus / editor validation",
+      "classification": "UNCHANGED_ACCEPTED",
+      "evidence": "Owner-accepted df78c5b design; 47/47 original, 53 expanded and 1/1 corrected logout native evidence reused."
+    },
+    {
+      "subsystem": "Auth / membership / existing specialist tools",
+      "classification": "CHANGED_IMPACTED",
+      "evidence": "Only accepted shared gate/auth/shell overlay and 13 entry cache identities; existing forms, endpoints, permissions and workspace modules preserved."
+    },
+    {
+      "subsystem": "Production catalogue JWT/RLS",
+      "classification": "UNVERIFIED_PRODUCTION_CONTRACT",
+      "evidence": "Compatible metadata already accepted; ordinary authenticated live read not established. Reads disabled, no fixture fallback."
+    },
+    {
+      "subsystem": "Catalogue / editor / async / failure states",
+      "classification": "UNCHANGED_ACCEPTED",
+      "evidence": "No logic changes. Explicit request, row, time and byte bounds; stale cancellation and private-field checks retained."
+    },
+    {
+      "subsystem": "IRONCLAD",
+      "classification": "UNVERIFIED_PRODUCTION_CONTRACT",
+      "evidence": "Existing isolated transactional acceptance reused. No database cutover, writer replacement or write activation."
+    }
+  ],
+  "actionableDefects": [
+    {
+      "id": "EX58-1",
+      "severity": "release-blocking delivery gap",
+      "evidence": "Current complete production artifact contains no admin/command files despite accepted source existing in Git.",
+      "correction": "Exact 21-file accepted overlay; 13 existing Admin page cache-reference updates; scoped extension of proven publisher."
+    }
+  ],
+  "newApplicationLogicDefectsConfirmed": 0,
+  "optimisations": "No speculative optimisation. Existing local search, cached detail reads, bounded queries and no-polling implementation preserved; inactive adapter performs no product requests.",
+  "targetedAcceptance": {
+    "composedDOM": {
+      "passed": 8,
+      "total": 8,
+      "networkRequests": 0,
+      "authentication": "Fictional only"
+    },
+    "publicationBoundary": {
+      "passed": 6,
+      "total": 6
+    },
+    "inheritedPrivilegedDeltaNegativeControls": {
+      "passed": 2,
+      "total": 2
+    },
+    "resolvedModuleAndStyleReferences": 130,
+    "candidateFiles": 445,
+    "changedPayloadFiles": 34,
+    "unchangedBaselineFiles": 411,
+    "publicFilesPreserved": 322,
+    "acceptedDesignUnchanged": true,
+    "nativeAcceptance": "Existing 47/47, expanded 53 and corrected logout 1/1 reused for unchanged application; no rerun."
+  },
+  "frontend": {
+    "candidateDigest": "02e760d679a44a3dd95169224846f7b745f7f295e9cc16e175fda3ba911c1155",
+    "rollbackDigest": "314b57c475fa53636acbc93ca800c477bddddbcb6543876fe57f2893ece1aa6b",
+    "reads": false,
+    "writes": false
+  },
+  "ironcladRemaining": [
+    "Verify exact deployed schema/functions, execute grants and RLS against intended project under separate authority.",
+    "Accept compatibility and reconciliation of every existing product/stock writer.",
+    "Validate normal-session atomic transactions, revisions, receipts/idempotency, conflicts, uncertain outcomes and audit records in a separately approved cutover.",
+    "Approve exact bounded write activation and operational restoration; frontend release grants no write authority."
+  ],
+  "preservation": "Every non-Admin file unchanged; OPEN, News, checkout, Triple Strike and tools remain byte-for-byte.",
+  "limits": [
+    "Local DOM uses fictional authentication and does not establish live JWT/RLS.",
+    "Current automated browser has no signed-in Admin session; Release B remains independently gated.",
+    "No additional comprehensive accessibility certification."
+  ]
+}

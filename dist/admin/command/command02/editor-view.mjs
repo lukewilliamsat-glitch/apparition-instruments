@@ -1,6 +1,6 @@
-import {uiNode as node} from '../../application.mjs';
-import {fields,displayValue,categories,editable} from './schema.mjs';
-import {createEditorSession} from './session.mjs';
+import {uiNode as node} from '../../application.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
+import {fields,displayValue,categories,editable} from './schema.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
+import {createEditorSession} from './session.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
 
 export function createEditorView(document,{persistence,onSaved=()=>{},timeoutMs=8000,canSave=()=>false,onState=()=>{},getSelectedId=()=>null}){
  const $=id=>document.getElementById(id),root=$('editor-workspace'),form=$('product-form');

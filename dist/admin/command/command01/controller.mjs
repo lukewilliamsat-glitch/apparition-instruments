@@ -1,4 +1,4 @@
-import {catalogue,detail,emptyFilters,filterCatalogue} from './model.mjs';
+import {catalogue,detail,emptyFilters,filterCatalogue} from './model.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
 // The caller must supply an approved synthetic transport. Never fall back to fetch.
 export function createWorkbench({transport,onChange=()=>{}}={}) {
   if(!['command01-synthetic','command05-readonly'].includes(transport?.kind) || typeof transport.list!=='function' || typeof transport.detail!=='function') throw new Error('Explicit read-only catalogue transport required.');

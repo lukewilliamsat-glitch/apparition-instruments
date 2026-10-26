@@ -1,9 +1,9 @@
-import {mountWorkbench} from './command01/view.mjs';
-import {createReadBoundary} from './read-boundary.mjs';
-import {createEditorView} from './command02/editor-view.mjs';
-import {createPreviewPort} from './editor-port.mjs';
-import {mountPresentation} from './presentation.mjs';
-import {createProductionReadAdapter} from './production-read.mjs';
+import {mountWorkbench} from './command01/view.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
+import {createReadBoundary} from './read-boundary.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
+import {createEditorView} from './command02/editor-view.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
+import {createPreviewPort} from './editor-port.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
+import {mountPresentation} from './presentation.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
+import {createProductionReadAdapter} from './production-read.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
 export async function mountAdminWorkspace({document,auth,services}={}){
  const $=id=>document.getElementById(id),boundary=createReadBoundary({auth,adapter:services?.commandReadAdapter??createProductionReadAdapter({auth,events:document.defaultView})});
  let app=null,editor=null,presentation=null,closed=false;

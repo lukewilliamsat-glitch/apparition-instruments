@@ -1,6 +1,6 @@
-import {bindAdminDialogs} from './interaction.mjs';
-import {prepareCatalogue} from './catalogue-presentation.mjs';
-import {prepareSalesContent} from './sales-content-presentation.mjs';
+import {bindAdminDialogs} from './interaction.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
+import {prepareCatalogue} from './catalogue-presentation.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
+import {prepareSalesContent} from './sales-content-presentation.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
 export const adminRoutes=[
  ['overview','Overview','/admin/overview/',''],['command','COMMAND Catalogue','/admin/command/',''],['conjure','Conjure','/admin/conjure/',''],
  ['inventory','Inventory / Components','/admin/?view=inventory','Catalogue'],['assemblies','Products / Assemblies','/admin/?view=assemblies','Catalogue'],['kits','Wiring Kits','/admin/wiring-kit-master/','Catalogue'],['catalogue','Catalogue Settings','/admin/catalogue-settings/','Catalogue'],
@@ -16,7 +16,7 @@ export function mountAdminShell(d,signOut){const path=d.location?.pathname||'';i
  if(d.querySelector('[data-admin-topbar]')){d.querySelector('[data-admin-session]').append(signOut);return d.querySelector('[data-admin-topbar]');}
  d.body.dataset.adminApp='v2';main.classList.add('admin-main');if(!main.id)main.id='main';
  d.querySelectorAll('body > .site-header,body > #mobile-nav,body > footer,.admin-workspaces,.admin-navigation,nav.admin-tabs').forEach(n=>n.remove());
- const css=d.createElement('link');css.rel='stylesheet';const url=new URL('./application.css',import.meta.url);url.search=new URL(import.meta.url).search;css.href=url.href;css.dataset.adminStyles='v2';d.head.append(css);
+ const css=d.createElement('link');css.rel='stylesheet';const url=new URL('./application.css?build=df78c5bf5144b012a7d96c628186180fa6432df3',import.meta.url);url.search=new URL(import.meta.url).search;css.href=url.href;css.dataset.adminStyles='v2';d.head.append(css);
  const top=uiNode(d,'header',undefined,'admin-app-topbar');top.dataset.adminTopbar='true';const toggle=uiNode(d,'button','Menu','admin-icon-button');toggle.type='button';toggle.setAttribute('aria-controls','admin-sidebar');toggle.setAttribute('aria-expanded','false');toggle.dataset.adminMenu='true';const brand=uiNode(d,'a','APPARITION ADMIN','admin-app-brand');brand.href='/admin/overview/';const session=uiNode(d,'div',undefined,'admin-app-session');session.dataset.adminSession='true';const account=uiNode(d,'a','Account');account.href='/account/';account.target='_blank';account.rel='noopener';session.append(account,signOut);top.append(toggle,brand,session);
  const sidebar=uiNode(d,'aside',undefined,'admin-app-sidebar');sidebar.id='admin-sidebar';const nav=uiNode(d,'nav');nav.setAttribute('aria-label','Admin workspaces');let group=null;
  for(const r of adminRoutes){if(r.group&&r.group!==group){group=r.group;const h=uiNode(d,'h2',group,'admin-nav-group');nav.append(h);}const link=uiNode(d,'a',r.label,'admin-nav-item');link.href=r.href;link.dataset.workspace=r.id;if(['inventory','assemblies','orders','kits'].includes(r.id))link.dataset.adminDestination=r.id==='kits'?'master':r.id;if(r.id==='conjure')link.classList.add('admin-conjure-entry');nav.append(link);}sidebar.append(nav);main.before(top,sidebar);
