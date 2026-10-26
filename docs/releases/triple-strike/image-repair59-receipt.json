@@ -1,0 +1,350 @@
+{
+  "status": "LIVE_VERIFIED",
+  "authority": "AUTHORISATION_59",
+  "verifiedAt": "2026-10-26T16:47:00.842928+00:00",
+  "productionURL": "https://apparitioninstruments.co.uk/",
+  "source": "865448c4e5a5cc262440772b225e6707fcb0d535",
+  "repairSource": "c312f6df722382180955d5ad45c9a02d502201ec",
+  "runId": 40359269590,
+  "artifact": {
+    "id": 12667702915,
+    "zipSHA256": "02ae9c9d75be98643c0b89c46c6a595072b323c0ee84a4b67edb3806bf1302f4",
+    "tarSHA256": "6c2ad544475bec2a4f022645e8619dbcddae83d7856acdbfcb49ca87687c5514",
+    "payloadDigest": "314b57c475fa53636acbc93ca800c477bddddbcb6543876fe57f2893ece1aa6b",
+    "files": 427,
+    "expiresAt": "2026-11-09T16:27:34Z"
+  },
+  "rollback": {
+    "artifactId": 12667797643,
+    "zipSHA256": "5645c1d0c1e50344420ed8629b822e9426e9c1461c42047d4884dd2347d76353",
+    "tarSHA256": "c6579400b21319db17ecf0bd0d29ae7578b7ba6488da7d77ea6e9c4d0c72e1c8",
+    "payloadDigest": "a70fb1d8f0e18cfd9d26a166824efa1598d1afc856d6e7faefa5a2ffc337dca8",
+    "files": 427,
+    "readBack": "PASS",
+    "preservesSentinel": true,
+    "used": false
+  },
+  "rootCause": "Three nested category pages resolved ../storefront/entry.mjs to absent components/storefront/entry.mjs. Static category cards contain specification placeholders; the controller never mounted. The references also retained the superseded LANTERN build identity. Product pages use the valid absolute entry path.",
+  "changedFiles": [
+    {
+      "path": "components/treble-bleeds/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "after": "../../storefront/entry.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "bcdf4ba4a0edc1165b74fc37de69b54f885134402aee7f28dfc463b632d7e22c",
+      "afterSHA256": "1e0043e7bce6ea1ed221aeb2c59e1b06682bcccc3ac7ccba7cf90029222aad2d",
+      "bytes": 10708
+    },
+    {
+      "path": "components/capacitors/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "after": "../../storefront/entry.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "99e03062b1ad2c1887f02c402c37be8af7e2e752a5ac70a880ded1554f5abff5",
+      "afterSHA256": "c7fe5c380fbf2abf997d45c26efd9fba934d7d852a69ba0414d7dce9d4f56a4e",
+      "bytes": 9369
+    },
+    {
+      "path": "components/potentiometers/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "after": "../../storefront/entry.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "4782dc2d08389fba02ee573ecc8206c149e1db97c22e1477a2e29ce59125baa4",
+      "afterSHA256": "b23a60639d14804fa58e75dd27a7521b919df015767146fe8ad7d1326b6c3c99",
+      "bytes": 10129
+    }
+  ],
+  "unrelatedFilesPreserved": 424,
+  "tests": {
+    "entryCases": "4/4 PASS",
+    "actualStorefrontEntryPages": 17,
+    "oldPathAndCacheRegressionRejected": true,
+    "fullAppCampaignRepeated": false
+  },
+  "live": {
+    "operations": {
+      "bytes": 437,
+      "mutations": 0,
+      "observedAt": "2026-10-26T16:28:05.903475+00:00",
+      "pause_from": null,
+      "requests": 1,
+      "resume_at": null,
+      "sha256": "f6b9f2866caf85361d74f0114226f55ef50452b8023287a085170f15ae6d4cc4",
+      "state": "OPEN",
+      "updated_at": "2026-10-26T11:58:26.803364+00:00"
+    },
+    "static": {
+      "bytes": 78284,
+      "feature": "LANTERN",
+      "files": [
+        {
+          "bytes": 10708,
+          "path": "/components/treble-bleeds/",
+          "sha256": "1e0043e7bce6ea1ed221aeb2c59e1b06682bcccc3ac7ccba7cf90029222aad2d"
+        },
+        {
+          "bytes": 9369,
+          "path": "/components/capacitors/",
+          "sha256": "c7fe5c380fbf2abf997d45c26efd9fba934d7d852a69ba0414d7dce9d4f56a4e"
+        },
+        {
+          "bytes": 10129,
+          "path": "/components/potentiometers/",
+          "sha256": "b23a60639d14804fa58e75dd27a7521b919df015767146fe8ad7d1326b6c3c99"
+        },
+        {
+          "bytes": 15145,
+          "path": "/",
+          "sha256": "370654f692fefdf6f12994ba93a2ab456dfd0eb91a5763012fc2c48bcb5a53e9"
+        },
+        {
+          "bytes": 3091,
+          "path": "/operations/snapshot.json",
+          "sha256": "0daa8a0d6f03c9eaf746ba91d20c0728fe2b0512c10cea3796c6145358cca69f"
+        },
+        {
+          "bytes": 10199,
+          "path": "/products/bleed-prs/",
+          "sha256": "6bcfe4c9f15ff11344169f8b398af04bc41742a778d2ed09bdc457c5bd937b61"
+        },
+        {
+          "bytes": 15314,
+          "path": "/admin/",
+          "sha256": "3226a5bb7acc6d35b5ce2b93f89076b513da5ea911df2fdd02e14bbc852a2c9e"
+        },
+        {
+          "bytes": 4329,
+          "path": "/basket/",
+          "sha256": "a1c55e3f487367cd2d52cdfec6b58445deb3c0bc26e832b7c38bccdda61ce42c"
+        }
+      ],
+      "kind": "candidate",
+      "requests": 8,
+      "result": "PASS"
+    }
+  },
+  "photoVerification": {
+    "status": "PASS_FOR_SUPPLIED_IMAGES",
+    "categories": 3,
+    "decodedPhotos": 6,
+    "viewport": 390,
+    "cardOverflow": false,
+    "missingUsablePhotoItems": [
+      {
+        "page": "/components/capacitors/",
+        "id": "cde-047",
+        "label": "0.047\u00b5F",
+        "sourceNotSupplied": true
+      },
+      {
+        "page": "/components/potentiometers/",
+        "id": "pot-short-alpha-a",
+        "label": "500k\u03a9",
+        "sourceNotSupplied": true
+      },
+      {
+        "page": "/components/potentiometers/",
+        "id": "pot-short-cts-a",
+        "label": "500k\u03a9",
+        "sourceNotSupplied": true
+      },
+      {
+        "page": "/components/treble-bleeds/",
+        "id": "bleed-prs",
+        "label": "180pF",
+        "sourceNotSupplied": true
+      }
+    ],
+    "prsDetailAlsoHasFallback": true
+  },
+  "nativeBrowser": {
+    "categories": [
+      {
+        "cards": [
+          {
+            "id": "cde-715p-600",
+            "inside": true,
+            "photo": {
+              "complete": true,
+              "height": 1254,
+              "renderedWidth": 341,
+              "width": 1254
+            }
+          },
+          {
+            "fallback": "0.047\u00b5F",
+            "fallbackParent": "component-card",
+            "id": "cde-047",
+            "inside": true,
+            "photo": null
+          },
+          {
+            "id": "cde-022",
+            "inside": true,
+            "photo": {
+              "complete": true,
+              "height": 1254,
+              "renderedWidth": 341,
+              "width": 1254
+            }
+          }
+        ],
+        "mainHidden": false,
+        "page": "/components/capacitors/",
+        "scrollWidth": 375,
+        "viewport": 390
+      },
+      {
+        "cards": [
+          {
+            "fallback": "500k\u03a9",
+            "fallbackParent": "component-card",
+            "id": "pot-short-alpha-a",
+            "inside": true,
+            "photo": null
+          },
+          {
+            "fallback": "500k\u03a9",
+            "fallbackParent": "component-card",
+            "id": "pot-short-cts-a",
+            "inside": true,
+            "photo": null
+          },
+          {
+            "id": "AI-Pot-SS-AlphaMini-A500K",
+            "inside": true,
+            "photo": {
+              "complete": true,
+              "height": 1261,
+              "renderedWidth": 341,
+              "width": 1247
+            }
+          }
+        ],
+        "mainHidden": false,
+        "page": "/components/potentiometers/",
+        "scrollWidth": 375,
+        "viewport": 390
+      },
+      {
+        "cards": [
+          {
+            "id": "bleed-duncan",
+            "inside": true,
+            "photo": {
+              "complete": true,
+              "height": 1448,
+              "renderedWidth": 341,
+              "width": 1086
+            }
+          },
+          {
+            "fallback": "180pF",
+            "fallbackParent": "component-card",
+            "id": "bleed-prs",
+            "inside": true,
+            "photo": null
+          },
+          {
+            "id": "bleed-premium",
+            "inside": true,
+            "photo": {
+              "complete": true,
+              "height": 1254,
+              "renderedWidth": 341,
+              "width": 1254
+            }
+          },
+          {
+            "id": "bleed-cap",
+            "inside": true,
+            "photo": {
+              "complete": true,
+              "height": 1086,
+              "renderedWidth": 341,
+              "width": 1448
+            }
+          }
+        ],
+        "mainHidden": false,
+        "page": "/components/treble-bleeds/",
+        "scrollWidth": 375,
+        "viewport": 390
+      }
+    ],
+    "prsDetail": {
+      "fallback": "TREBLE BLEEDS\n180pF\nSpecification-led selection",
+      "mainHidden": false,
+      "photos": [],
+      "url": "/products/bleed-prs/"
+    },
+    "applicationErrors": [],
+    "visualPhotoReview": "One focused mobile screenshot confirmed a real capacitor photograph; no screenshot campaign."
+  },
+  "tripleStrike": {
+    "SPECTRE": {
+      "status": "LIVE_VERIFIED_PRESERVED",
+      "initialSource": "05f184389862af8860263cf3bbfd0af78a1885fe",
+      "run": 40346846816
+    },
+    "LANTERN": {
+      "status": "LIVE_VERIFIED_IMAGE_REPAIR",
+      "initialSource": "69495492b89b4e7325b21292af3dee1477849d79",
+      "initialRun": 40349943424,
+      "repairSource": "865448c4e5a5cc262440772b225e6707fcb0d535",
+      "repairRun": 40359269590
+    },
+    "SENTINEL": {
+      "status": "LIVE_VERIFIED_PRESERVED",
+      "source": "12229ba70a19ccd180c8e5bde9be09ea8e7e7c47",
+      "run": 40356022691,
+      "rollbackArtifact": 12663979622,
+      "rollbackPayloadDigest": "cbd782dbdfddfc0a617d9ed96db4bfd0f84cf876d875ae3f589db56471342a36",
+      "ownerInteractionDecision": {
+        "status": "OWNER_ACCEPTED",
+        "applicationSource": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "preparedCandidateCommit": "3dd3739fde0325327cee5f257066fa3acf083b88",
+        "authority": "AUTHORISATION_59",
+        "choice": "Accepted safeguards (Recommended)",
+        "recordedAt": "2026-10-26T16:05:58.027248+00:00",
+        "effects": [
+          "Retain unavailable saved items without assumed stock or totals.",
+          "Keep checkout stable and hold uncertain handoffs in the current document.",
+          "Show Delivery not confirmed for an uncertain enquiry."
+        ],
+        "limit": "Reloading is not proof of failure."
+      }
+    }
+  },
+  "preservation": {
+    "operations": "OPEN",
+    "news": "UNCHANGED",
+    "images": "UNCHANGED",
+    "imageDeliveryArchitecture": "UNCHANGED",
+    "commandReads": false,
+    "commandWrites": false,
+    "schemaOrPolicyChanges": false,
+    "businessMutationTests": 0,
+    "paymentsOrMessagesGenerated": 0
+  },
+  "limits": [
+    "Four products have no usable photo supplied to the renderer; no image was invented or backend record changed. PRS detail also shows its specification fallback.",
+    "The unchanged category controller retains its legacy Loading components status text after cards render; this separate copy defect was not altered in the three-reference image repair.",
+    "Live payment/enquiry uncertainty was not forced; the accepted isolated SENTINEL cases were reused."
+  ]
+}

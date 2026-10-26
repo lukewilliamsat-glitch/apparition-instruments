@@ -130,6 +130,39 @@
     "existingProductPagesUnchanged": true,
     "newJavaScriptLogic": false,
     "newDependencies": false,
-    "nativePhotoVerification": "PENDING_AFTER_PUBLICATION"
+    "nativePhotoVerification": {
+      "status": "PASS_FOR_SUPPLIED_IMAGES",
+      "categories": 3,
+      "decodedPhotos": 6,
+      "viewport": 390,
+      "cardOverflow": false,
+      "missingUsablePhotoItems": [
+        {
+          "page": "/components/capacitors/",
+          "id": "cde-047",
+          "label": "0.047\u00b5F",
+          "sourceNotSupplied": true
+        },
+        {
+          "page": "/components/potentiometers/",
+          "id": "pot-short-alpha-a",
+          "label": "500k\u03a9",
+          "sourceNotSupplied": true
+        },
+        {
+          "page": "/components/potentiometers/",
+          "id": "pot-short-cts-a",
+          "label": "500k\u03a9",
+          "sourceNotSupplied": true
+        },
+        {
+          "page": "/components/treble-bleeds/",
+          "id": "bleed-prs",
+          "label": "180pF",
+          "sourceNotSupplied": true
+        }
+      ],
+      "prsDetailAlsoHasFallback": true
+    }
   }
 }
