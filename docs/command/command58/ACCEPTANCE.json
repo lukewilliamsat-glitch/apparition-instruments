@@ -1,6 +1,6 @@
 {
   "authority": "AUTHORISATION_58",
-  "status": "ENGINEERING_VERIFIED_PRODUCTION_PUBLICATION_PENDING",
+  "status": "RELEASE_A_LIVE_VERIFIED_RELEASE_B_DISABLED_RELEASE_C_NOT_ACTIVATED",
   "applicationSource": "df78c5bf5144b012a7d96c628186180fa6432df3",
   "baseline": {
     "source": "865448c4e5a5cc262440772b225e6707fcb0d535",
@@ -90,5 +90,590 @@
     "Local DOM uses fictional authentication and does not establish live JWT/RLS.",
     "Current automated browser has no signed-in Admin session; Release B remains independently gated.",
     "No additional comprehensive accessibility certification."
-  ]
+  ],
+  "recordedAt": "2026-10-26T18:54:58.004114+00:00",
+  "releaseA": {
+    "status": "LIVE_VERIFIED",
+    "url": "https://apparitioninstruments.co.uk/admin/command/",
+    "source": "bc5eeef3f998c439b7cb88daeb8d6d1ecd5dd7b0",
+    "tree": "bd29c00e7d9fd5c87c779f213f49ff5aa43f7ff1",
+    "applicationSource": "df78c5bf5144b012a7d96c628186180fa6432df3",
+    "runId": 40381176219,
+    "jobId": 121777496173,
+    "artifact": {
+      "artifact": 12678662381,
+      "name": "github-pages",
+      "zipBytes": 20349423,
+      "zipSHA256": "b84355779a8da84ac251cf3f68ebc8e8fa994f73cbc01714e6cafc0691930177",
+      "tarSHA256": "2142ccce2b3363c4ed64e2fcd2d2a092d037baf6a62ebb913fc114674a96094e",
+      "tarBytes": 25098240,
+      "payloadDigest": "02e760d679a44a3dd95169224846f7b745f7f295e9cc16e175fda3ba911c1155",
+      "files": 445,
+      "independentReadback": "PASS"
+    },
+    "rollback": {
+      "artifact": 12678252454,
+      "name": "frontend-rollback",
+      "zipBytes": 20307804,
+      "zipSHA256": "b831c355496d6b8ab2032af281a6fdd08c40a2468cb6ed5aaa0e4270ea3255d1",
+      "tarSHA256": "f289313a169b0da608a68ac438d86bada6aa29654e88b21740e8b7dc4bc95754",
+      "tarBytes": 24934400,
+      "payloadDigest": "314b57c475fa53636acbc93ca800c477bddddbcb6543876fe57f2893ece1aa6b",
+      "files": 427,
+      "independentReadback": "PASS",
+      "used": false,
+      "restoresSource": "865448c4e5a5cc262440772b225e6707fcb0d535",
+      "restoresRun": 40359269590
+    },
+    "receiptArtifact": {
+      "artifact": 12678658392,
+      "name": "frontend-release-receipt",
+      "zipBytes": 50391,
+      "zipSHA256": "8b23b8c6d41644dbc1deb99e3aca38008a5681d28d167481bcfc610631bf1798",
+      "files": [
+        "frontend-preflight-before.json",
+        "frontend-preflight-final.json",
+        "frontend-live.json",
+        "frontend-prepared.json",
+        "frontend-receipt.json",
+        "frontend-rollback-verified.json",
+        "frontend-upload-verified.json"
+      ]
+    },
+    "artifactExpiry": "2026-11-09T18:49:58Z rollback; 18:50:04Z candidate; 18:50:25Z receipt",
+    "live": {
+      "operations": {
+        "bytes": 437,
+        "mutations": 0,
+        "observedAt": "2026-10-26T18:50:25.492023+00:00",
+        "pause_from": null,
+        "requests": 1,
+        "resume_at": null,
+        "sha256": "af9da89c6048992537206cfdf795ea40752ebbe32c9ced49d4baeb8e14915b9c",
+        "state": "OPEN",
+        "updated_at": "2026-10-26T11:58:26.803364+00:00"
+      },
+      "static": {
+        "bytes": 69527,
+        "feature": "COMMAND_FRONTEND",
+        "files": [
+          {
+            "bytes": 8683,
+            "path": "/admin/command/",
+            "sha256": "c04bb8b971c7443df973479bd1a2dce709cf658508d240b7deeb18381c174629"
+          },
+          {
+            "bytes": 331,
+            "path": "/admin/command/read-activation.mjs",
+            "sha256": "0982665d9fd9234fa28380ffaddee4f02d90b95b250603d0123573eb9fd4f594"
+          },
+          {
+            "bytes": 8077,
+            "path": "/admin/admin-gate.mjs",
+            "sha256": "d37da9143463e53c6f1d90c42e5a4a3c19c21414c1eb0f1e8e0f5ae738597cf3"
+          },
+          {
+            "bytes": 8178,
+            "path": "/admin/application.mjs",
+            "sha256": "c0af98f4330fab2b6a27e16515d5719c401686510779c987f9cbc8881a284dd3"
+          },
+          {
+            "bytes": 15314,
+            "path": "/admin/",
+            "sha256": "5f35908843a10f92d5c06f94f468312cf84273e638568e3de1745b08618f5ac5"
+          },
+          {
+            "bytes": 3091,
+            "path": "/operations/snapshot.json",
+            "sha256": "0daa8a0d6f03c9eaf746ba91d20c0728fe2b0512c10cea3796c6145358cca69f"
+          },
+          {
+            "bytes": 15145,
+            "path": "/",
+            "sha256": "370654f692fefdf6f12994ba93a2ab456dfd0eb91a5763012fc2c48bcb5a53e9"
+          },
+          {
+            "bytes": 10708,
+            "path": "/components/treble-bleeds/",
+            "sha256": "1e0043e7bce6ea1ed221aeb2c59e1b06682bcccc3ac7ccba7cf90029222aad2d"
+          }
+        ],
+        "kind": "candidate",
+        "requests": 8,
+        "result": "PASS"
+      }
+    },
+    "independentLive": {
+      "requests": 8,
+      "passed": 8,
+      "files": [
+        {
+          "path": "/admin/command/",
+          "status": 200,
+          "bytes": 8683,
+          "sha256": "c04bb8b971c7443df973479bd1a2dce709cf658508d240b7deeb18381c174629",
+          "match": true,
+          "seconds": 4.8
+        },
+        {
+          "path": "/admin/command/read-activation.mjs",
+          "status": 200,
+          "bytes": 331,
+          "sha256": "0982665d9fd9234fa28380ffaddee4f02d90b95b250603d0123573eb9fd4f594",
+          "match": true,
+          "seconds": 4.47
+        },
+        {
+          "path": "/admin/admin-gate.mjs",
+          "status": 200,
+          "bytes": 8077,
+          "sha256": "d37da9143463e53c6f1d90c42e5a4a3c19c21414c1eb0f1e8e0f5ae738597cf3",
+          "match": true,
+          "seconds": 4.61
+        },
+        {
+          "path": "/admin/application.mjs",
+          "status": 200,
+          "bytes": 8178,
+          "sha256": "c0af98f4330fab2b6a27e16515d5719c401686510779c987f9cbc8881a284dd3",
+          "match": true,
+          "seconds": 4.65
+        },
+        {
+          "path": "/admin/",
+          "status": 200,
+          "bytes": 15314,
+          "sha256": "5f35908843a10f92d5c06f94f468312cf84273e638568e3de1745b08618f5ac5",
+          "match": true,
+          "seconds": 4.69
+        },
+        {
+          "path": "/operations/snapshot.json",
+          "status": 200,
+          "bytes": 3091,
+          "sha256": "0daa8a0d6f03c9eaf746ba91d20c0728fe2b0512c10cea3796c6145358cca69f",
+          "match": true,
+          "seconds": 4.65
+        },
+        {
+          "path": "/",
+          "status": 200,
+          "bytes": 15145,
+          "sha256": "370654f692fefdf6f12994ba93a2ab456dfd0eb91a5763012fc2c48bcb5a53e9",
+          "match": true,
+          "seconds": 4.54
+        },
+        {
+          "path": "/components/treble-bleeds/",
+          "status": 200,
+          "bytes": 10708,
+          "sha256": "1e0043e7bce6ea1ed221aeb2c59e1b06682bcccc3ac7ccba7cf90029222aad2d",
+          "match": true,
+          "seconds": 4.8
+        }
+      ]
+    },
+    "nativeBrowser": {
+      "browser": "Cloud Chrome",
+      "loggedOutGateVisible": true,
+      "protectedMainConcealed": true,
+      "productRecords": 0,
+      "emailToPasswordKeyboardFocus": true,
+      "expectedAcceptedBuildIdentity": true,
+      "commandAndNocturneStylesReferenced": true,
+      "siteErrorsObserved": 0,
+      "unrelatedExtensionErrorsObserved": true,
+      "authenticated": "NOT_VERIFIED; no existing signed-in session available to this browser"
+    },
+    "changedFileManifest": [
+      {
+        "path": "admin/admin-auth.mjs",
+        "beforeSHA256": "c11bb71eec880153c5060d13ceb5b4eca3711ba054a922483c87f34694a46085",
+        "afterSHA256": "20632a519cf0591563e4b1cacd7fd39d3df3ba3b8b21b3c3032c511e8d530180",
+        "bytes": 6638,
+        "operation": "source",
+        "source": "dist/admin/admin-auth.mjs"
+      },
+      {
+        "path": "admin/admin-gate.mjs",
+        "beforeSHA256": "5a39586fa81be16ad13f3dd24102b450a1d280c127a76329c2e63079ac739f0d",
+        "afterSHA256": "d37da9143463e53c6f1d90c42e5a4a3c19c21414c1eb0f1e8e0f5ae738597cf3",
+        "bytes": 8077,
+        "operation": "source",
+        "source": "dist/admin/admin-gate.mjs"
+      },
+      {
+        "path": "admin/application.mjs",
+        "beforeSHA256": "d290d4930c16a015adf0d7e5023b429295a44957515c86065deae741ea01e638",
+        "afterSHA256": "c0af98f4330fab2b6a27e16515d5719c401686510779c987f9cbc8881a284dd3",
+        "bytes": 8178,
+        "operation": "source",
+        "source": "dist/admin/application.mjs"
+      },
+      {
+        "path": "admin/command/bounded-json.mjs",
+        "beforeSHA256": null,
+        "afterSHA256": "b222f629be1fb294d2a3869ccda86b1c8b47238fc90461ed86ac777a9428dbca",
+        "bytes": 1880,
+        "operation": "source",
+        "source": "dist/admin/command/bounded-json.mjs"
+      },
+      {
+        "path": "admin/command/command.css",
+        "beforeSHA256": null,
+        "afterSHA256": "a776596e9e2eb92c832fb73c7015372dfd5230c89d79ec4d33f7d4db16b0da25",
+        "bytes": 6563,
+        "operation": "source",
+        "source": "dist/admin/command/command.css"
+      },
+      {
+        "path": "admin/command/command01/controller.mjs",
+        "beforeSHA256": null,
+        "afterSHA256": "1fa032b5270506bbe9d91c1ef919edba5f0135a480a0ff6f2ebc7c0bbf6172ea",
+        "bytes": 4323,
+        "operation": "source",
+        "source": "dist/admin/command/command01/controller.mjs"
+      },
+      {
+        "path": "admin/command/command01/model.mjs",
+        "beforeSHA256": null,
+        "afterSHA256": "1d6efcc47242ec9829a2a9a270a71dff18293e044f35d65e400de2f27bac30ed",
+        "bytes": 5079,
+        "operation": "source",
+        "source": "dist/admin/command/command01/model.mjs"
+      },
+      {
+        "path": "admin/command/command01/view.mjs",
+        "beforeSHA256": null,
+        "afterSHA256": "332adaa8c5329b217dcb867bdb75b0ae6edcae376c1b16add2e785a5e608d878",
+        "bytes": 14365,
+        "operation": "source",
+        "source": "dist/admin/command/command01/view.mjs"
+      },
+      {
+        "path": "admin/command/command01/workbench.css",
+        "beforeSHA256": null,
+        "afterSHA256": "299c86226e392fffcc58f005ca6b42c125a3b7b435f828dd9d1d5cc08178a179",
+        "bytes": 15895,
+        "operation": "source",
+        "source": "dist/admin/command/command01/workbench.css"
+      },
+      {
+        "path": "admin/command/command02/editor-view.mjs",
+        "beforeSHA256": null,
+        "afterSHA256": "f5ce937e950636a6b0ad8e86e13bc65a1a06c6bb5ccee59c0127981e34828c15",
+        "bytes": 14819,
+        "operation": "source",
+        "source": "dist/admin/command/command02/editor-view.mjs"
+      },
+      {
+        "path": "admin/command/command02/editor.css",
+        "beforeSHA256": null,
+        "afterSHA256": "4967d622c2c2c22a173f71cd844f581c8d59c0e5847997b943c48ae151b1db5b",
+        "bytes": 6170,
+        "operation": "source",
+        "source": "dist/admin/command/command02/editor.css"
+      },
+      {
+        "path": "admin/command/command02/schema.mjs",
+        "beforeSHA256": null,
+        "afterSHA256": "9e02336e98c75e220d7862c4ebbd450794ce7a32b906cb7405b06140d419548e",
+        "bytes": 6013,
+        "operation": "source",
+        "source": "dist/admin/command/command02/schema.mjs"
+      },
+      {
+        "path": "admin/command/command02/session.mjs",
+        "beforeSHA256": null,
+        "afterSHA256": "9ac36cc62d6adc63fcc8d3fc9f5a5525b5b2cac77490bd65da5aa60ab7b0f315",
+        "bytes": 8475,
+        "operation": "source",
+        "source": "dist/admin/command/command02/session.mjs"
+      },
+      {
+        "path": "admin/command/editor-port.mjs",
+        "beforeSHA256": null,
+        "afterSHA256": "31089526ea9086329f34bd52b8f50576b16ef72ed893a39e60e4c0fcad9eda1b",
+        "bytes": 897,
+        "operation": "source",
+        "source": "dist/admin/command/editor-port.mjs"
+      },
+      {
+        "path": "admin/command/entry.mjs",
+        "beforeSHA256": null,
+        "afterSHA256": "f379f1209080d765968b70ad0aec8823f207d4608271e15c4e185803c66dbe7b",
+        "bytes": 6574,
+        "operation": "source",
+        "source": "dist/admin/command/entry.mjs"
+      },
+      {
+        "path": "admin/command/index.html",
+        "beforeSHA256": null,
+        "afterSHA256": "c04bb8b971c7443df973479bd1a2dce709cf658508d240b7deeb18381c174629",
+        "bytes": 8683,
+        "operation": "source",
+        "source": "dist/admin/command/index.html"
+      },
+      {
+        "path": "admin/command/nocturne.css",
+        "beforeSHA256": null,
+        "afterSHA256": "6f7d206a7828881f0eab44757d3d3e6e7a9bb7ee510e9f2fd14f8f25b54f7b99",
+        "bytes": 20455,
+        "operation": "source",
+        "source": "dist/admin/command/nocturne.css"
+      },
+      {
+        "path": "admin/command/presentation.mjs",
+        "beforeSHA256": null,
+        "afterSHA256": "99a4c71207ba059aaad6783a4132dd8cdb23a5c46d96e486579ddc669c015765",
+        "bytes": 5079,
+        "operation": "source",
+        "source": "dist/admin/command/presentation.mjs"
+      },
+      {
+        "path": "admin/command/production-read.mjs",
+        "beforeSHA256": null,
+        "afterSHA256": "72049caf8081bf73cf75623227d7f69206631ebaa1961b718c38e625c29f37bb",
+        "bytes": 8165,
+        "operation": "source",
+        "source": "dist/admin/command/production-read.mjs"
+      },
+      {
+        "path": "admin/command/read-activation.mjs",
+        "beforeSHA256": null,
+        "afterSHA256": "0982665d9fd9234fa28380ffaddee4f02d90b95b250603d0123573eb9fd4f594",
+        "bytes": 331,
+        "operation": "source",
+        "source": "dist/admin/command/read-activation.mjs"
+      },
+      {
+        "path": "admin/command/read-boundary.mjs",
+        "beforeSHA256": null,
+        "afterSHA256": "2e6a69c01e2987aa4bee3290f55d8b7ea39d6464c931566294e637b57cd19c8d",
+        "bytes": 12153,
+        "operation": "source",
+        "source": "dist/admin/command/read-boundary.mjs"
+      },
+      {
+        "path": "admin/catalogue-settings/index.html",
+        "operation": "replace",
+        "replacements": [
+          {
+            "before": "/admin/admin-gate.mjs?v=p10g&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+            "after": "/admin/admin-gate.mjs?v=p10g&build=df78c5bf5144b012a7d96c628186180fa6432df3",
+            "count": 1
+          }
+        ],
+        "beforeSHA256": "70067176bd1b87330bf2ad9d9e4b61ac4c13c2e980986d673bac53b2cb4e05bf",
+        "afterSHA256": "689d0cb4f55b9bddd9905c5f4169812418b136a374b39cb0ca2b000d4aa51fd3",
+        "bytes": 1094
+      },
+      {
+        "path": "admin/conjure/index.html",
+        "operation": "replace",
+        "replacements": [
+          {
+            "before": "/admin/admin-gate.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+            "after": "/admin/admin-gate.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3",
+            "count": 1
+          }
+        ],
+        "beforeSHA256": "6ded7b0753bed8e36ee448d298e3369393d5261e5747237fab0c0a0a53ce2c23",
+        "afterSHA256": "8f0ea07508d32956c36bf49fba983733d105a5c9d085e2325504028f50849559",
+        "bytes": 3843
+      },
+      {
+        "path": "admin/email-preview/index.html",
+        "operation": "replace",
+        "replacements": [
+          {
+            "before": "../admin-gate.mjs?v=p08b4&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+            "after": "../admin-gate.mjs?v=p08b4&build=df78c5bf5144b012a7d96c628186180fa6432df3",
+            "count": 1
+          }
+        ],
+        "beforeSHA256": "d2aceed124cf16b5185e82b4c6f80deb026ebe4fcb00ce70991f91ff3ff232ed",
+        "afterSHA256": "416f23b589a37ac7be880c06d4f8e26442f62a884da0b8a8fa1ed73239045896",
+        "bytes": 2648
+      },
+      {
+        "path": "admin/email-templates/index.html",
+        "operation": "replace",
+        "replacements": [
+          {
+            "before": "/admin/admin-gate.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+            "after": "/admin/admin-gate.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3",
+            "count": 1
+          }
+        ],
+        "beforeSHA256": "d6cd3903cd5e773dc1c1c07aa1a8815c6e17ce264325f3aeb336816559e81484",
+        "afterSHA256": "2d8368c652ba56f70d356d4a9c2c78dff562db0521aa8285285c21de26b3cccc",
+        "bytes": 5054
+      },
+      {
+        "path": "admin/hub-cms/index.html",
+        "operation": "replace",
+        "replacements": [
+          {
+            "before": "/admin/admin-gate.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+            "after": "/admin/admin-gate.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3",
+            "count": 1
+          }
+        ],
+        "beforeSHA256": "d60888addf769a1acff6d763582fd05dabbd76113dc55da06780b57b5180d4e5",
+        "afterSHA256": "78d1ea8cf4a832a816f7e5ae7884d7ff25792565135be7edbc6ae7dae004f65c",
+        "bytes": 9148
+      },
+      {
+        "path": "admin/hub-media/index.html",
+        "operation": "replace",
+        "replacements": [
+          {
+            "before": "/admin/admin-gate.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+            "after": "/admin/admin-gate.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3",
+            "count": 1
+          }
+        ],
+        "beforeSHA256": "a12b22d8c5b28626f8690fb484c23b3d92296fa20afe0c8c340476f7176e0afb",
+        "afterSHA256": "23eff3f6b371b5ee589ceb73497c9fd2b9b1a275e04368292ba61a7b175c7280",
+        "bytes": 2376
+      },
+      {
+        "path": "admin/index.html",
+        "operation": "replace",
+        "replacements": [
+          {
+            "before": "../admin/admin-gate.mjs?v=p10hi&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+            "after": "../admin/admin-gate.mjs?v=p10hi&build=df78c5bf5144b012a7d96c628186180fa6432df3",
+            "count": 1
+          }
+        ],
+        "beforeSHA256": "3226a5bb7acc6d35b5ce2b93f89076b513da5ea911df2fdd02e14bbc852a2c9e",
+        "afterSHA256": "5f35908843a10f92d5c06f94f468312cf84273e638568e3de1745b08618f5ac5",
+        "bytes": 15314
+      },
+      {
+        "path": "admin/orders/build-sheet/index.html",
+        "operation": "replace",
+        "replacements": [
+          {
+            "before": "../../../admin/admin-gate.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+            "after": "../../../admin/admin-gate.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3",
+            "count": 1
+          }
+        ],
+        "beforeSHA256": "a68eda42964b182efb014217d528cee6279987f82afaf7f229b0670f18a94e32",
+        "afterSHA256": "80139f98b1b495fca371d055996286e1abb01be0c1c37d5a81e0145ea89cc9d5",
+        "bytes": 5544
+      },
+      {
+        "path": "admin/orders/index.html",
+        "operation": "replace",
+        "replacements": [
+          {
+            "before": "../../admin/admin-gate.mjs?v=customer-aftercare-giga-v1&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+            "after": "../../admin/admin-gate.mjs?v=customer-aftercare-giga-v1&build=df78c5bf5144b012a7d96c628186180fa6432df3",
+            "count": 1
+          }
+        ],
+        "beforeSHA256": "58d9c2138cd2d15345efd2ac91cde64a6b480315619abd219db7c3204e54eb2c",
+        "afterSHA256": "c9cb2a94d18cb7889f7d03912079fbebe71f9ea18b528bd748fcd8de5ebd5334",
+        "bytes": 8101
+      },
+      {
+        "path": "admin/orders/invoice/index.html",
+        "operation": "replace",
+        "replacements": [
+          {
+            "before": "../../admin-gate.mjs?v=external-v1&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+            "after": "../../admin-gate.mjs?v=external-v1&build=df78c5bf5144b012a7d96c628186180fa6432df3",
+            "count": 1
+          }
+        ],
+        "beforeSHA256": "461544f16ea89af7edcffcc2fe4800290be82e6112374b3add68e55149c58d3d",
+        "afterSHA256": "e8daaad6681f1e1a954269f57ec10f8bf5ab810bc6acc597a33de633ee164999",
+        "bytes": 1000
+      },
+      {
+        "path": "admin/overview/index.html",
+        "operation": "replace",
+        "replacements": [
+          {
+            "before": "/admin/admin-gate.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+            "after": "/admin/admin-gate.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3",
+            "count": 1
+          }
+        ],
+        "beforeSHA256": "4ccbfd7a056126dfb284b4658dbad525f22347ec1787ceed3991fbe719c021bc",
+        "afterSHA256": "629fe07e45e56beb7857965294c99e997a1bfcbf184feb7400f5c1a860854e25",
+        "bytes": 937
+      },
+      {
+        "path": "admin/site-operations/index.html",
+        "operation": "replace",
+        "replacements": [
+          {
+            "before": "/admin/admin-gate.mjs?v=operations-v1&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+            "after": "/admin/admin-gate.mjs?v=operations-v1&build=df78c5bf5144b012a7d96c628186180fa6432df3",
+            "count": 1
+          }
+        ],
+        "beforeSHA256": "2e538da4ad0e130a959a3ada810745158e48eda9578a28c18402faca23016b89",
+        "afterSHA256": "cbbe40417d524b2a763608cf1efd0083704bd910320374c245083c535f01345e",
+        "bytes": 8505
+      },
+      {
+        "path": "admin/wiring-kit-master/index.html",
+        "operation": "replace",
+        "replacements": [
+          {
+            "before": "../../admin/admin-gate.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+            "after": "../../admin/admin-gate.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3",
+            "count": 1
+          }
+        ],
+        "beforeSHA256": "d68edcbe61c85147bffa3e6a6b4d0413b9f687e584e33d1287943e51956241e1",
+        "afterSHA256": "8baf4aaff62f0dd39b344a0efd7fb4e70072005a325b7d680c867d0bac924165",
+        "bytes": 7821
+      }
+    ],
+    "scope": "Accepted frontend and navigation only; no verified live catalogue and no new writes."
+  },
+  "releaseB": {
+    "status": "DISABLED",
+    "metadataCompatibility": "Existing accepted evidence reused; no query repeated.",
+    "metadataEvidenceSHA256": "15ec4d74c31111037cb3e1e2d0e0e1a849447cbd6ffea0cc61c7884cc4b81355",
+    "liveJWT_RLS": "UNVERIFIED",
+    "condition": "A supported ordinary authenticated Admin session is not present in the available automated browser. No token extraction, manual console procedure or hidden synthetic fallback was used.",
+    "productionReadActivation": false,
+    "liveCatalogueTestRequests": 0
+  },
+  "releaseC": {
+    "status": "PENDING_SEPARATE_OPERATIONAL_CUTOVER",
+    "readiness": "Accepted editor and isolated atomic transaction architecture preserved; production schema/permissions, all writers, rollback/reconciliation and normal-session transactional compatibility still require exact separate acceptance.",
+    "newCommandProductWrites": false,
+    "newCommandStockWrites": false,
+    "newCommandFinancialWrites": false,
+    "databaseChanges": 0
+  },
+  "preservationEvidence": {
+    "completeBaselineFiles": 427,
+    "candidateFiles": 445,
+    "changedExistingFiles": 16,
+    "newCommandFiles": 18,
+    "unchangedBaselineFiles": 411,
+    "allPublicFilesPreserved": 322,
+    "publicSiteLogicChanged": false,
+    "operations": "OPEN freshly verified before and after deploy",
+    "news": "Unchanged, independently published announcement not modified",
+    "storefront": "SPECTRE, LANTERN, SENTINEL and category-image repair byte-for-byte retained",
+    "existingAdmin": "Legacy workspace modules/forms/actions retained; only accepted shared auth/gate/navigation and cache references changed",
+    "backendGeneration": false,
+    "schemaOrPolicyChanges": false,
+    "businessMutations": false,
+    "manualConsoleRequired": false,
+    "deployAttempts": 1,
+    "rollbackUsed": false
+  },
+  "verificationLimit": "An initial independent static GET pass hit the existing five-second transport deadline. One bounded diagnostic pass at eight seconds confirmed all eight served hashes. CI live verification and native route loading passed; no deployment was retried."
 }
