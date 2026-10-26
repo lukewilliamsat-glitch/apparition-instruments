@@ -1635,7 +1635,20 @@
       }
     ],
     "wording": "Existing normal basket-summary wording retained; new unavailable-item and uncertain-outcome text is the accepted SENTINEL source.",
-    "interactionDecision": "PENDING_OWNER_CHOICE",
+    "interactionDecision": {
+      "status": "OWNER_ACCEPTED",
+      "applicationSource": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+      "preparedCandidateCommit": "3dd3739fde0325327cee5f257066fa3acf083b88",
+      "authority": "AUTHORISATION_59",
+      "choice": "Accepted safeguards (Recommended)",
+      "recordedAt": "2026-10-26T16:05:58.027248+00:00",
+      "effects": [
+        "Retain unavailable saved items without assumed stock or totals.",
+        "Keep checkout stable and hold uncertain handoffs in the current document.",
+        "Show Delivery not confirmed for an uncertain enquiry."
+      ],
+      "limit": "Reloading is not proof of failure."
+    },
     "uncertaintyLimit": "Current-document hold only; reloading is not proof of failure."
   },
   "targetedAcceptance": {
@@ -1649,5 +1662,6 @@
     "sourceSyntax": "PASS",
     "interactionChoiceGuard": "PASS before any request",
     "completeComposition": "PASS"
-  }
+  },
+  "continuationAuthority": "AUTHORISATION_59"
 }
