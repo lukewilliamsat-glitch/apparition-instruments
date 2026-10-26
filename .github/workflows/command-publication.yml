@@ -8,7 +8,11 @@ on:
       operation:
         required: true
         type: choice
-        options: [release, restore]
+        options: [release, restore, inspect]
+      deployment_id:
+        description: Exact Pages deployment ID for read-only inspection
+        required: false
+        type: string
       rollback_run_id:
         description: Exact release run containing the verified rollback artifact
         required: false
@@ -24,11 +28,11 @@ permissions:
   pages: write
   id-token: write
 concurrency:
-  group: pages
+  group: ${{ github.event_name == 'workflow_dispatch' && inputs.operation == 'inspect' && 'pages-inspection' || github.event_name == 'push' && !contains(github.event.head_commit.message, '[command-exact-release]') && 'pages-command-guard' || 'pages' }}
   cancel-in-progress: false
 jobs:
   inspect-pages:
-    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, '[command-pages-status]')
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && inputs.operation == 'inspect'
     runs-on: ubuntu-24.04
     timeout-minutes: 2
     permissions:
@@ -38,24 +42,29 @@ jobs:
       - name: Read exact failed Pages deployment status without publishing
         env:
           GH_TOKEN: ${{ github.token }}
+          DEPLOYMENT_ID: ${{ inputs.deployment_id }}
         shell: bash
         run: |
           python - <<'STATUS'
           import json,os,urllib.request,re
-          url='https://api.github.com/repos/lukewilliamsat-glitch/apparition-instruments/pages/deployments/0c102c72e63ebd5d6232803c5b9019942fd55853'
+          deployment=os.environ['DEPLOYMENT_ID']
+          assert re.fullmatch(r'(?:[a-f0-9]{40}|[0-9]{1,30})',deployment),'Exact Pages deployment ID required'
+          url='https://api.github.com/repos/lukewilliamsat-glitch/apparition-instruments/pages/deployments/'+deployment
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+            def redirect_request(self,*args,**kwargs):return None
           request=urllib.request.Request(url,headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'})
-          with urllib.request.urlopen(request,timeout=5) as response:
+          with urllib.request.build_opener(NoRedirect).open(request,timeout=5) as response:
             raw=response.read(65537);assert len(raw)<=65536
           value=json.loads(raw)
           error=value.get('error')
           message=error.get('message') if isinstance(error,dict) else error
-          result={'deployment':'0c102c72e63ebd5d6232803c5b9019942fd55853','status':value.get('status'),'errorMessage':re.sub(r'https?://[^\s]+','[URL]',str(message))[:4000],'responseFields':list(value)}
+          result={'deployment':deployment,'status':value.get('status'),'errorMessage':re.sub(r'https?://[^\s]+','[URL]',str(message))[:4000],'responseFields':list(value)}
           print(json.dumps(result))
           STATUS
   exact-publication:
-    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[command-exact-release]')) && !contains(github.event.head_commit.message, '[command-pages-status]')
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/main' && ((github.event_name == 'workflow_dispatch' && inputs.operation != 'inspect') || contains(github.event.head_commit.message, '[command-exact-release]')) && !contains(github.event.head_commit.message, '[command-pages-status]')
     runs-on: ubuntu-24.04
-    timeout-minutes: 12
+    timeout-minutes: 30
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
@@ -65,7 +74,15 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: ${{ github.sha }}
-          fetch-depth: 5
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Read the exact accepted base source without relying on main history depth
+        if: env.COMMAND_OPERATION == 'release'
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f
+          path: .command55-base-source
+          fetch-depth: 1
           persist-credentials: false
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
@@ -96,8 +113,15 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          node scripts/command-release/cache-overlay.mjs "$GITHUB_WORKSPACE" \
-            docs/command/command05/COMMAND_RELEASE_SOURCE.json "$RUNNER_TEMP/command-compiled"
+          node --input-type=module <<'JS'
+          import {readFileSync} from 'node:fs';
+          import {join} from 'node:path';
+          import {cacheOverlay} from './scripts/command-release/cache-overlay.mjs';
+          const root=process.env.GITHUB_WORKSPACE;
+          const manifest=JSON.parse(readFileSync(join(root,'docs/command/command05/COMMAND_RELEASE_SOURCE.json'),'utf8'));
+          await cacheOverlay({root,manifest,out:join(process.env.RUNNER_TEMP,'command-compiled'),
+            baseRead:path=>readFileSync(join(root,'.command55-base-source/dist',path))});
+          JS
       - name: Verify exact complete frontend candidate or original restoration payload
         shell: bash
         run: |

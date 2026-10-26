@@ -1,0 +1,1092 @@
+{
+  "auditDate": "2026-10-26",
+  "status": "AUDIT_COMPLETE_VERIFIED_FINDINGS_AND_ENGINEERING_CORRECTIONS",
+  "productionStatus": "NOT_REPAIRED_NOT_DEPLOYED_PAGES_CAUSE_UNRESOLVED",
+  "auditedMain": "c598a7fcea1ad4fc741969e3a3ab9ff7c33b5039",
+  "auditedTree": "a96d470c50ec264532c58969b382ff83ea978986",
+  "engineeringBranch": "engineering/clean-slate-audit",
+  "repairFiles": [
+    {
+      "path": ".github/workflows/command-publication.yml",
+      "sha256": "e4e369ad3723a38e9e31faa7bf29495823939c093c19ae49bd655b1d00642b23",
+      "bytes": 13411
+    },
+    {
+      "path": ".github/workflows/static.yml",
+      "sha256": "7abb209d4c6175f851287943863f2afcb078505079d93a1c2a730725ad3c5ef5",
+      "bytes": 3460
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "5f9e545f929238620d046753c260e9e70b71850f824a55713ec87607286f35aa",
+      "bytes": 111
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "2553abde0a925aa21f9ac1305b17ea903eca3b6e6e0090c983c57837dd92d466",
+      "bytes": 29722
+    },
+    {
+      "path": "package.json",
+      "sha256": "4f9691ea534a0b1280742c8914e7b055d25908191c3a6f6b48526aee62084887",
+      "bytes": 1041
+    },
+    {
+      "path": "scripts/command-release/frontend.py",
+      "sha256": "f5f3e6e61018118c72e400e908229a82753ebd186c1dd5c5d425164d62b5e7eb",
+      "bytes": 18940
+    },
+    {
+      "path": "scripts/generate-product-pages.mjs",
+      "sha256": "64a518c64ef0b1492930e5b5cfe482bcb59c39557a13fe1ebcc8f470d60f2b2f",
+      "bytes": 11190
+    },
+    {
+      "path": "scripts/generate-site-operations.mjs",
+      "sha256": "008a361e06cf70b10fa3ec5a3051aed9cd46289103dc25f2497eda5af4d830ef",
+      "bytes": 6864
+    },
+    {
+      "path": "scripts/refine-commercial-snapshots.mjs",
+      "sha256": "9d77863c3d19b563eef601cd881229d057cb9dcc55a9b32b8cd64a0388fd1fa0",
+      "bytes": 5580
+    },
+    {
+      "path": "scripts/static-dom.mjs",
+      "sha256": "ce1d48504bbbcf49c02debeb68bd0d3ccfdc354bb96ad94de7b39cc655f61424",
+      "bytes": 382
+    },
+    {
+      "path": "tests/repository-health/release-safety.mjs",
+      "sha256": "7b0ad717e9203c4c6f73dd4073b0e155e29def6978b086b7f607494cd71914f7",
+      "bytes": 7149
+    },
+    {
+      "path": "tests/repository-health/test_receipt.py",
+      "sha256": "0835cf6ff5955bc29c2aa7679f522b8eb81570c65df5b027d5e6b9e38455496d",
+      "bytes": 2195
+    }
+  ],
+  "repairContentSHA256": "27c4f75f370de796c6dacf3f762458c717e98383261852296eb06d24c6a320f1",
+  "newVerification": {
+    "node": "v22.20.0",
+    "happyDomBefore": "20.14.5",
+    "happyDomAfter": "21.0.4",
+    "releaseSafetyChecks": {
+      "passed": 5,
+      "total": 5,
+      "file": "tests/repository-health/release-safety.mjs"
+    },
+    "receiptCases": {
+      "passed": 2,
+      "total": 2,
+      "file": "tests/repository-health/test_receipt.py"
+    },
+    "affectedProductSEOTest": "tests/p11-product-seo.mjs PASS",
+    "generatorFingerprintsBefore": {
+      "product": {
+        "bytes": 5066,
+        "sha256": "7491f0d47f72c4cc97c8dfd621b83436049acaaa82c4db82f94ccc78a1575ac2"
+      },
+      "category": {
+        "bytes": 747,
+        "sha256": "5317b8331e675916109967c68013698881a8debcba9a63c0e432741bfac4f7a9"
+      },
+      "news": {
+        "bytes": 1824,
+        "sha256": "29563c64e97b12523764911db90a3dceaa7aaffcb25fd42d8ae49105a38263fa"
+      },
+      "newsIndex": {
+        "bytes": 1906,
+        "sha256": "63dac75507fb84e2a127287249be9070457af411e0a05302a61c048a8c68c9fe"
+      }
+    },
+    "generatorFingerprintsAfter": {
+      "product": {
+        "bytes": 5066,
+        "sha256": "7491f0d47f72c4cc97c8dfd621b83436049acaaa82c4db82f94ccc78a1575ac2"
+      },
+      "category": {
+        "bytes": 747,
+        "sha256": "5317b8331e675916109967c68013698881a8debcba9a63c0e432741bfac4f7a9"
+      },
+      "news": {
+        "bytes": 1824,
+        "sha256": "29563c64e97b12523764911db90a3dceaa7aaffcb25fd42d8ae49105a38263fa"
+      },
+      "newsIndex": {
+        "bytes": 1906,
+        "sha256": "63dac75507fb84e2a127287249be9070457af411e0a05302a61c048a8c68c9fe"
+      }
+    },
+    "yamlParse": "Both workflows PASS; local PyYAML syntax check, not GitHub execution",
+    "changedModuleSyntax": "PASS",
+    "gitDiffWhitespace": "PASS",
+    "npmAuditBefore": {
+      "high": 1,
+      "package": "happy-dom",
+      "advisory": "GHSA-834v-8h66-3h79"
+    },
+    "npmAuditAfter": {
+      "vulnerabilities": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "dependencies": {
+        "prod": 1,
+        "dev": 61,
+        "optional": 26,
+        "peer": 0,
+        "peerOptional": 0,
+        "total": 61
+      }
+    },
+    "newCIWorkflowsOrDispatches": 0,
+    "newChromeRuns": 0,
+    "newScreenshots": 0,
+    "newSupabaseRequests": 0
+  },
+  "repositoryChecks": {
+    "trackedFiles": 927,
+    "textFiles": 917,
+    "moduleParsing": {
+      "node": "v22.20.0",
+      "method": "Node SourceTextModule parser; no module evaluation or network",
+      "syntaxFiles": 534,
+      "syntaxErrors": [],
+      "moduleEdges": 1510,
+      "missingModuleReferences": [],
+      "browserModuleEdges": 654,
+      "browserMissingReferences": []
+    },
+    "html": {
+      "pages": 95,
+      "duplicateIds": [],
+      "missingFragmentCandidates": []
+    },
+    "missingLocalHTMLAndCSSReferences": 0,
+    "secretPatternMatches": 0,
+    "secretScanScope": "Current tracked tree only; no full-history leak certification. Public publishable key is intentional.",
+    "byteDuplicateGroups": 0,
+    "databaseEdgeSourceDeltaFrom2e3c45a6": [],
+    "runtimeDistDeltaFromAuditedMain": [],
+    "acceptedCommandSourceHashesVerified": 21,
+    "dynamicRuntimeAndInstalledProviderState": "NOT CERTIFIED"
+  },
+  "reuse": [
+    {
+      "scope": "ARCHIVIST",
+      "commit": "faa860df58901a1c4ebbf7cba5b3677b3fd6bafc",
+      "path": "docs/engineering/archivist/ENGINEERING_PORTFOLIO.md",
+      "blob": "a2137f585429c9ffa6a1addae81631dd137db462",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/faa860df58901a1c4ebbf7cba5b3677b3fd6bafc/docs/engineering/archivist/ENGINEERING_PORTFOLIO.md"
+    },
+    {
+      "scope": "ARCHIVIST CI",
+      "commit": "faa860df58901a1c4ebbf7cba5b3677b3fd6bafc",
+      "path": "docs/engineering/archivist/CI_EVIDENCE_REGISTER.md",
+      "blob": "b633e309d41484dc63b1192f81b88905e482124c",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/faa860df58901a1c4ebbf7cba5b3677b3fd6bafc/docs/engineering/archivist/CI_EVIDENCE_REGISTER.md"
+    },
+    {
+      "scope": "NIGHTWATCH",
+      "commit": "0dc0902985d00524fc0465face22b7b19edc7ef8",
+      "path": "docs/operations/nightwatch/README.md",
+      "blob": "a57ad657a2871468840e10715ed993087597cb1d",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/0dc0902985d00524fc0465face22b7b19edc7ef8/docs/operations/nightwatch/README.md"
+    },
+    {
+      "scope": "COMMAND54",
+      "commit": "2ab91af74a08631260df18ad55075267dffe6714",
+      "path": "docs/command/command05/FINAL_ACCEPTANCE_54.json",
+      "blob": "1c8ac9ef52832e10d6417dc6b3ff0990886cfcbc",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/2ab91af74a08631260df18ad55075267dffe6714/docs/command/command05/FINAL_ACCEPTANCE_54.json"
+    },
+    {
+      "scope": "NOCTURNE",
+      "commit": "993108aa7d65ac204ef54a7018a85f5c783813fd",
+      "path": "docs/command/command04a/README.md",
+      "blob": "881b8380cee3801d717dbec9ce69e5cd32b81f91",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/993108aa7d65ac204ef54a7018a85f5c783813fd/docs/command/command04a/README.md"
+    },
+    {
+      "scope": "LIGHTHOUSE",
+      "commit": "35032409c2f9ce01cbd2741aa32697e0fbbdbaaa",
+      "path": "docs/storefront/lighthouse/README.md",
+      "blob": "7361dfa3379e8fec3e257b6fbf55791de2a6dee8",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/35032409c2f9ce01cbd2741aa32697e0fbbdbaaa/docs/storefront/lighthouse/README.md"
+    },
+    {
+      "scope": "SENTINEL",
+      "commit": "31186e01cedd0ea74f7d68a05624ff96efb66b33",
+      "path": "docs/storefront/sentinel/README.md",
+      "blob": "90666ea22e13a1452477dc7da9d7a345b448a9b8",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/31186e01cedd0ea74f7d68a05624ff96efb66b33/docs/storefront/sentinel/README.md"
+    },
+    {
+      "scope": "LEDGER",
+      "commit": "c614da6b7a9148b8c3958255a7c791436b3bc34e",
+      "path": "docs/command/ledger/README.md",
+      "blob": "a9fa952df579da5690ddd75e395c16d36585b62c",
+      "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/c614da6b7a9148b8c3958255a7c791436b3bc34e/docs/command/ledger/README.md"
+    }
+  ],
+  "workflowInventory": [
+    {
+      "id": 389439792,
+      "name": "Atlas release validation (no deployment)",
+      "path": ".github/workflows/atlas-release-validation.yml",
+      "state": "active",
+      "lastRun": {
+        "id": 39402161682,
+        "head_sha": "fe16cc5752460dcc2a26968d4ee144b7bc940893",
+        "head_branch": "atlas/phase2g-certification-closure",
+        "event": "push",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-20T09:38:29Z",
+        "updated_at": "2026-10-20T09:38:52Z",
+        "run_attempt": 1
+      },
+      "triggers": {
+        "push": {
+          "branches": [
+            "atlas/phase2g-certification-closure"
+          ],
+          "paths-ignore": [
+            ".github/workflows/**"
+          ]
+        },
+        "workflow_dispatch": ""
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "jobs": {
+        "offline-validation": {
+          "if": "github.ref == 'refs/heads/atlas/phase2g-certification-closure'",
+          "timeoutMinutes": "10",
+          "environment": null,
+          "permissions": null
+        }
+      },
+      "sourceStatus": "Historical source at last executed SHA; default-main presence assessed separately"
+    },
+    {
+      "id": 390731932,
+      "name": "BLACKBOX 33 isolated browser feasibility",
+      "path": ".github/workflows/blackbox33-browser-acceptance.yml",
+      "state": "active",
+      "lastRun": {
+        "id": 39454638477,
+        "head_sha": "b0c62497fed249e0a1c28885ee0a54813d9eecb0",
+        "head_branch": "engineering/blackbox33-browser-verification",
+        "event": "push",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-20T16:07:25Z",
+        "updated_at": "2026-10-20T16:08:01Z",
+        "run_attempt": 1
+      },
+      "triggers": {
+        "push": {
+          "branches": [
+            "engineering/blackbox33-browser-verification"
+          ],
+          "paths": [
+            ".github/workflows/blackbox33-browser-acceptance.yml",
+            "tests/blackbox33/**"
+          ]
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "jobs": {
+        "feasibility": {
+          "if": "github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/blackbox33-browser-verification'",
+          "timeoutMinutes": "10",
+          "environment": null,
+          "permissions": null
+        }
+      },
+      "sourceStatus": "Historical source at last executed SHA; default-main presence assessed separately"
+    },
+    {
+      "id": 391496620,
+      "name": "NIGHTFALL isolated engineering acceptance",
+      "path": ".github/workflows/blackbox34-nightfall.yml",
+      "state": "active",
+      "lastRun": {
+        "id": 39577122377,
+        "head_sha": "135d2c8c6b177631c5c06358030aa610e44e322d",
+        "head_branch": "engineering/blackbox34-nightfall",
+        "event": "push",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-21T09:27:39Z",
+        "updated_at": "2026-10-21T09:28:35Z",
+        "run_attempt": 1
+      },
+      "triggers": {
+        "push": {
+          "branches": [
+            "engineering/blackbox34-nightfall"
+          ],
+          "paths": [
+            ".github/workflows/blackbox34-nightfall.yml",
+            "tests/blackbox34/**",
+            "tests/run-blackbox34.py",
+            "dist/backend/**",
+            "dist/components/cards.mjs",
+            "dist/products/app.mjs",
+            "scripts/portable-image-publication.mjs",
+            "scripts/catalogue-compatibility-preflight.mjs",
+            "scripts/retained-catalogue-snapshot.mjs",
+            "scripts/generate-product-pages.mjs"
+          ]
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "jobs": {
+        "offline": {
+          "if": "github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/blackbox34-nightfall'",
+          "timeoutMinutes": "15",
+          "environment": null,
+          "permissions": null
+        },
+        "browser": {
+          "if": "github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/blackbox34-nightfall'",
+          "timeoutMinutes": "20",
+          "environment": null,
+          "permissions": null
+        }
+      },
+      "sourceStatus": "Historical source at last executed SHA; default-main presence assessed separately"
+    },
+    {
+      "id": 396935921,
+      "name": "COMMAND exact approved Pages publication",
+      "path": ".github/workflows/command-publication.yml",
+      "state": "active",
+      "lastRun": {
+        "id": 40321193513,
+        "head_sha": "c598a7fcea1ad4fc741969e3a3ab9ff7c33b5039",
+        "head_branch": "main",
+        "event": "push",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-10-26T12:15:52Z",
+        "updated_at": "2026-10-26T12:16:49Z",
+        "run_attempt": 1
+      },
+      "triggers": {
+        "push": {
+          "branches": [
+            "main"
+          ]
+        },
+        "workflow_dispatch": {
+          "inputs": {
+            "operation": {
+              "required": "true",
+              "type": "choice",
+              "options": [
+                "release",
+                "restore"
+              ]
+            },
+            "rollback_run_id": {
+              "description": "Exact release run containing the verified rollback artifact",
+              "required": "false",
+              "type": "string"
+            },
+            "rollback_artifact_id": {
+              "description": "Exact verified command55-rollback-pages artifact",
+              "required": "false",
+              "type": "string"
+            }
+          }
+        }
+      },
+      "permissions": {
+        "contents": "read",
+        "actions": "read",
+        "deployments": "read",
+        "pages": "write",
+        "id-token": "write"
+      },
+      "jobs": {
+        "inspect-pages": {
+          "if": "github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, '[command-pages-status]')",
+          "timeoutMinutes": "2",
+          "environment": null,
+          "permissions": {
+            "contents": "read",
+            "pages": "read"
+          }
+        },
+        "exact-publication": {
+          "if": "github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[command-exact-release]')) && !contains(github.event.head_commit.message, '[command-pages-status]')",
+          "timeoutMinutes": "12",
+          "environment": {
+            "name": "github-pages",
+            "url": "${{ steps.deploy.outputs.page_url }}"
+          },
+          "permissions": null
+        }
+      },
+      "sourceStatus": "Historical source at last executed SHA; default-main presence assessed separately"
+    },
+    {
+      "id": 391799690,
+      "name": "COMMAND 01 isolated acceptance",
+      "path": ".github/workflows/command01-acceptance.yml",
+      "state": "active",
+      "lastRun": {
+        "id": 39618086032,
+        "head_sha": "5f82f7403e188605895cf53427c03d8b157681cd",
+        "head_branch": "engineering/command01-catalogue-workbench",
+        "event": "push",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-21T14:35:03Z",
+        "updated_at": "2026-10-21T14:35:30Z",
+        "run_attempt": 1
+      },
+      "triggers": {
+        "push": {
+          "branches": [
+            "engineering/command01-catalogue-workbench"
+          ],
+          "paths": [
+            ".github/workflows/command01-acceptance.yml",
+            "tests/command01/**",
+            "prototypes/command01/**"
+          ]
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "jobs": {
+        "browser": {
+          "if": "github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/command01-catalogue-workbench'",
+          "timeoutMinutes": "15",
+          "environment": null,
+          "permissions": null
+        }
+      },
+      "sourceStatus": "Historical source at last executed SHA; default-main presence assessed separately"
+    },
+    {
+      "id": 391896553,
+      "name": "COMMAND 02 isolated editor acceptance",
+      "path": ".github/workflows/command02-acceptance.yml",
+      "state": "active",
+      "lastRun": {
+        "id": 39630582702,
+        "head_sha": "04bd1adfd8b6b1e21180b4f78622a404b9eb5701",
+        "head_branch": "engineering/command02-forge-editor",
+        "event": "push",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-21T15:58:47Z",
+        "updated_at": "2026-10-21T16:00:14Z",
+        "run_attempt": 1
+      },
+      "triggers": {
+        "push": {
+          "branches": [
+            "engineering/command02-forge-editor"
+          ],
+          "paths": [
+            ".github/workflows/command02-acceptance.yml",
+            "tests/command02/**",
+            "prototypes/command02/**",
+            "prototypes/command01/view.mjs"
+          ]
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "jobs": {
+        "browser": {
+          "if": "github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/command02-forge-editor'",
+          "timeoutMinutes": "15",
+          "environment": null,
+          "permissions": null
+        }
+      },
+      "sourceStatus": "Historical source at last executed SHA; default-main presence assessed separately"
+    },
+    {
+      "id": 392768515,
+      "name": "COMMAND 03 isolated bridge acceptance",
+      "path": ".github/workflows/command03-acceptance.yml",
+      "state": "active",
+      "lastRun": {
+        "id": 39770441983,
+        "head_sha": "598b8d230514034f3a5a02784da229f22cea1111",
+        "head_branch": "engineering/command03-the-bridge",
+        "event": "push",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-22T11:25:15Z",
+        "updated_at": "2026-10-22T11:27:04Z",
+        "run_attempt": 1
+      },
+      "triggers": {
+        "push": {
+          "branches": [
+            "engineering/command03-the-bridge"
+          ],
+          "paths": [
+            ".github/workflows/command03-acceptance.yml",
+            "tests/command03/**",
+            "prototypes/command03/**"
+          ]
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "jobs": {
+        "browser": {
+          "if": "github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/command03-the-bridge'",
+          "timeoutMinutes": "15",
+          "environment": null,
+          "permissions": null
+        }
+      },
+      "sourceStatus": "Historical source at last executed SHA; default-main presence assessed separately"
+    },
+    {
+      "id": 392931427,
+      "name": "COMMAND 04 isolated IRONCLAD acceptance",
+      "path": ".github/workflows/command04-acceptance.yml",
+      "state": "active",
+      "lastRun": {
+        "id": 39788439046,
+        "head_sha": "24d7232b13de2cea3c43a892ec433a8ae5322a7e",
+        "head_branch": "engineering/command04-ironclad",
+        "event": "push",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-22T13:37:13Z",
+        "updated_at": "2026-10-22T13:40:55Z",
+        "run_attempt": 1
+      },
+      "triggers": {
+        "push": {
+          "branches": [
+            "engineering/command04-ironclad"
+          ],
+          "paths": [
+            ".github/workflows/command04-acceptance.yml",
+            "tests/command04/**",
+            "prototypes/command04/**"
+          ]
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "jobs": {
+        "acceptance": {
+          "if": "github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/command04-ironclad'",
+          "timeoutMinutes": "18",
+          "environment": null,
+          "permissions": null
+        }
+      },
+      "sourceStatus": "Historical source at last executed SHA; default-main presence assessed separately"
+    },
+    {
+      "id": 393819578,
+      "name": "COMMAND 04A NOCTURNE isolated visual acceptance",
+      "path": ".github/workflows/command04a-nocturne.yml",
+      "state": "active",
+      "lastRun": {
+        "id": 39930046308,
+        "head_sha": "1bbe60fd216a412eed7349c8d79acdd50a94931e",
+        "head_branch": "engineering/command04a-nocturne",
+        "event": "push",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-23T09:11:23Z",
+        "updated_at": "2026-10-23T09:14:05Z",
+        "run_attempt": 1
+      },
+      "triggers": {
+        "push": {
+          "branches": [
+            "engineering/command04a-nocturne"
+          ],
+          "paths": [
+            ".github/workflows/command04a-nocturne.yml",
+            "tests/command04a/**",
+            "prototypes/command04a/**"
+          ]
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "jobs": {
+        "acceptance": {
+          "if": "github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/command04a-nocturne'",
+          "timeoutMinutes": "18",
+          "environment": null,
+          "permissions": null
+        }
+      },
+      "sourceStatus": "Historical source at last executed SHA; default-main presence assessed separately"
+    },
+    {
+      "id": 396284969,
+      "name": "COMMAND05 ASCENSION isolated Admin acceptance",
+      "path": ".github/workflows/command05-ascension.yml",
+      "state": "active",
+      "lastRun": {
+        "id": 40243379865,
+        "head_sha": "72c143a45993adf9f524aad94cce5da6ad3349b3",
+        "head_branch": "engineering/command05-the-ascension",
+        "event": "push",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-25T23:08:13Z",
+        "updated_at": "2026-10-25T23:08:42Z",
+        "run_attempt": 1
+      },
+      "triggers": {
+        "push": {
+          "branches": [
+            "engineering/command05-the-ascension"
+          ],
+          "paths": [
+            ".github/workflows/command05-ascension.yml",
+            "dist/admin/command/**",
+            "dist/admin/admin-gate.mjs",
+            "dist/admin/application.mjs",
+            "tests/command05/**"
+          ]
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "jobs": {
+        "acceptance": {
+          "if": "github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/command05-the-ascension'",
+          "timeoutMinutes": "15",
+          "environment": null,
+          "permissions": null
+        }
+      },
+      "sourceStatus": "Historical source at last executed SHA; default-main presence assessed separately"
+    },
+    {
+      "id": 391772231,
+      "name": "HOMECOMING release safety fixtures (no deployment)",
+      "path": ".github/workflows/homecoming36-validation.yml",
+      "state": "active",
+      "lastRun": {
+        "id": 39612316997,
+        "head_sha": "8aa4d3e386ba81ce6bf4c0833d43ced6b2bff998",
+        "head_branch": "release/spectre35-homecoming",
+        "event": "push",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-21T13:55:53Z",
+        "updated_at": "2026-10-21T13:56:04Z",
+        "run_attempt": 1
+      },
+      "triggers": {
+        "push": {
+          "branches": [
+            "release/spectre35-homecoming"
+          ],
+          "paths": [
+            ".github/workflows/homecoming36-validation.yml",
+            "tests/homecoming36/**",
+            "dist/customer-ui.css"
+          ]
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "jobs": {
+        "validate": {
+          "if": "github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/release/spectre35-homecoming'",
+          "timeoutMinutes": "5",
+          "environment": null,
+          "permissions": null
+        }
+      },
+      "sourceStatus": "Historical source at last executed SHA; default-main presence assessed separately"
+    },
+    {
+      "id": 396099619,
+      "name": "NIGHTWATCH synthetic release acceptance",
+      "path": ".github/workflows/nightwatch-synthetic.yml",
+      "state": "active",
+      "lastRun": {
+        "id": 40206536274,
+        "head_sha": "f614e8807dfafe07bf258954c01decd1352ce74c",
+        "head_branch": "engineering/nightwatch-first-contact",
+        "event": "push",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-25T15:21:21Z",
+        "updated_at": "2026-10-25T15:21:31Z",
+        "run_attempt": 1
+      },
+      "triggers": {
+        "push": {
+          "branches": [
+            "engineering/nightwatch-first-contact"
+          ],
+          "paths": [
+            ".github/workflows/nightwatch-synthetic.yml",
+            "scripts/nightwatch/**",
+            "tests/nightwatch/**"
+          ]
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "jobs": {
+        "synthetic": {
+          "if": "github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/nightwatch-first-contact'",
+          "timeoutMinutes": "10",
+          "environment": null,
+          "permissions": null
+        }
+      },
+      "sourceStatus": "Historical source at last executed SHA; default-main presence assessed separately"
+    },
+    {
+      "id": 394176211,
+      "name": "RAVEN LIGHTHOUSE isolated acceptance",
+      "path": ".github/workflows/raven-lighthouse.yml",
+      "state": "active",
+      "lastRun": {
+        "id": 39981284222,
+        "head_sha": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+        "head_branch": "engineering/raven-lighthouse",
+        "event": "push",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-23T15:47:25Z",
+        "updated_at": "2026-10-23T15:49:04Z",
+        "run_attempt": 1
+      },
+      "triggers": {
+        "push": {
+          "branches": [
+            "engineering/raven-lighthouse"
+          ],
+          "paths": [
+            ".github/workflows/raven-lighthouse.yml",
+            "tests/lighthouse/**",
+            "dist/storefront/**",
+            "tests/p10c-storefront-truth.mjs"
+          ]
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "jobs": {
+        "acceptance": {
+          "if": "github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/raven-lighthouse'",
+          "timeoutMinutes": "20",
+          "environment": null,
+          "permissions": null
+        }
+      },
+      "sourceStatus": "Historical source at last executed SHA; default-main presence assessed separately"
+    },
+    {
+      "id": 394240049,
+      "name": "RAVEN SENTINEL isolated acceptance",
+      "path": ".github/workflows/raven-sentinel.yml",
+      "state": "active",
+      "lastRun": {
+        "id": 39988495190,
+        "head_sha": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+        "head_branch": "engineering/raven-sentinel",
+        "event": "push",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-23T16:38:44Z",
+        "updated_at": "2026-10-23T16:41:09Z",
+        "run_attempt": 1
+      },
+      "triggers": {
+        "push": {
+          "branches": [
+            "engineering/raven-sentinel"
+          ],
+          "paths": [
+            ".github/workflows/raven-sentinel.yml",
+            "tests/sentinel/**",
+            "dist/commerce.mjs",
+            "dist/basket-ui.mjs",
+            "dist/basket/basket.mjs",
+            "dist/checkout/checkout.mjs",
+            "dist/contact/contact.mjs"
+          ]
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "jobs": {
+        "acceptance": {
+          "if": "github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/raven-sentinel'",
+          "timeoutMinutes": "20",
+          "environment": null,
+          "permissions": null
+        }
+      },
+      "sourceStatus": "Historical source at last executed SHA; default-main presence assessed separately"
+    },
+    {
+      "id": 391557514,
+      "name": "Spectre hero isolated acceptance",
+      "path": ".github/workflows/spectre35-hero.yml",
+      "state": "active",
+      "lastRun": {
+        "id": 39583250290,
+        "head_sha": "232017a80fd6c5f2a3083d99cd9f647d8f4db27e",
+        "head_branch": "engineering/spectre-hero-responsive-fix",
+        "event": "push",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-21T10:15:30Z",
+        "updated_at": "2026-10-21T10:16:39Z",
+        "run_attempt": 1
+      },
+      "triggers": {
+        "push": {
+          "branches": [
+            "engineering/spectre-hero-responsive-fix"
+          ],
+          "paths": [
+            ".github/workflows/spectre35-hero.yml",
+            "tests/spectre35/**",
+            "dist/customer-ui.css"
+          ]
+        }
+      },
+      "permissions": {
+        "contents": "read"
+      },
+      "jobs": {
+        "browser": {
+          "if": "github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/spectre-hero-responsive-fix'",
+          "timeoutMinutes": "15",
+          "environment": null,
+          "permissions": null
+        }
+      },
+      "sourceStatus": "Historical source at last executed SHA; default-main presence assessed separately"
+    },
+    {
+      "id": 364963377,
+      "name": "Deploy static content to Pages",
+      "path": ".github/workflows/static.yml",
+      "state": "active",
+      "lastRun": {
+        "id": 40321193066,
+        "head_sha": "c598a7fcea1ad4fc741969e3a3ab9ff7c33b5039",
+        "head_branch": "main",
+        "event": "push",
+        "status": "completed",
+        "conclusion": "skipped",
+        "created_at": "2026-10-26T12:15:52Z",
+        "updated_at": "2026-10-26T12:15:53Z",
+        "run_attempt": 1
+      },
+      "triggers": {
+        "push": {
+          "branches": [
+            "main"
+          ]
+        },
+        "workflow_dispatch": "",
+        "schedule": [
+          {
+            "cron": "0 3 * * *"
+          }
+        ]
+      },
+      "permissions": {
+        "contents": "read",
+        "pages": "write",
+        "id-token": "write"
+      },
+      "jobs": {
+        "deploy": {
+          "if": "github.event_name != 'push' || !contains(github.event.head_commit.message, '[command-exact-release]')",
+          "timeoutMinutes": null,
+          "environment": {
+            "name": "github-pages",
+            "url": "${{ steps.deployment.outputs.page_url }}"
+          },
+          "permissions": null
+        }
+      },
+      "sourceStatus": "Historical source at last executed SHA; default-main presence assessed separately"
+    },
+    {
+      "id": 364958740,
+      "name": "pages-build-deployment",
+      "path": "dynamic/pages/pages-build-deployment",
+      "state": "active",
+      "lastRun": {
+        "id": 35838821304,
+        "head_sha": "4b13a96547a89251eaddd405bb942b8015ec4b00",
+        "head_branch": "main",
+        "event": "dynamic",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-09-23T08:44:16Z",
+        "updated_at": "2026-09-23T08:44:58Z",
+        "run_attempt": 1
+      },
+      "sourceStatus": "GitHub-managed Pages workflow"
+    }
+  ],
+  "runSample": {
+    "count": 100,
+    "from": "2026-10-16T18:24:06Z",
+    "to": "2026-10-26T12:15:52Z",
+    "eventCounts": {
+      "push": 72,
+      "schedule": 28
+    },
+    "workflowCounts": {
+      "COMMAND exact approved Pages publication": 4,
+      "Deploy static content to Pages": 32,
+      "COMMAND05 ASCENSION isolated Admin acceptance": 6,
+      "NIGHTWATCH synthetic release acceptance": 3,
+      "RAVEN SENTINEL isolated acceptance": 4,
+      "RAVEN LIGHTHOUSE isolated acceptance": 9,
+      "COMMAND 04A NOCTURNE isolated visual acceptance": 6,
+      "COMMAND 04 isolated IRONCLAD acceptance": 3,
+      "COMMAND 03 isolated bridge acceptance": 5,
+      "COMMAND 02 isolated editor acceptance": 2,
+      "COMMAND 01 isolated acceptance": 5,
+      "HOMECOMING release safety fixtures (no deployment)": 1,
+      "Spectre hero isolated acceptance": 5,
+      "NIGHTFALL isolated engineering acceptance": 5,
+      "BLACKBOX 33 isolated browser acceptance": 3,
+      "BLACKBOX 33 isolated browser feasibility": 1,
+      "Atlas release validation (no deployment)": 6
+    },
+    "conclusions": {
+      "failure": 59,
+      "skipped": 4,
+      "success": 36,
+      "cancelled": 1
+    },
+    "limitation": "Last 100 run records; attempts may be consolidated. Not billed usage, not a census of current defects."
+  },
+  "pagesEvidence": {
+    "lastSuccess": {
+      "run": 40292065655,
+      "source": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f"
+    },
+    "failures": [
+      {
+        "run": 40311358554,
+        "attempt": 1,
+        "source": "0c102c72e63ebd5d6232803c5b9019942fd55853",
+        "result": "deployment_failed",
+        "timestamp": "2026-10-26T10:57:53Z"
+      },
+      {
+        "run": 40311358554,
+        "attempt": 2,
+        "result": "PREFLIGHT_CURRENT_MAIN_CHANGED_NO_DEPLOYMENT"
+      },
+      {
+        "run": 40321193513,
+        "source": "c598a7fcea1ad4fc741969e3a3ab9ff7c33b5039",
+        "artifact": 12649081774,
+        "result": "deployment_queued_then_deployment_failed",
+        "timestamp": "2026-10-26T12:16:45.9916831Z",
+        "rollbackArtifact": 12648308848,
+        "receiptArtifact": 12649645213,
+        "retentionExpires": "2026-11-09"
+      }
+    ],
+    "originalRawArchiveRetrievedOrOpenedInAudit": false,
+    "rootCause": "UNESTABLISHED",
+    "noFurtherPublicationAttempt": true,
+    "currentReadActivation": false,
+    "currentCommandWriteActivation": false,
+    "boundedUnauthenticatedMetadataRead": {
+      "requests": [
+        {
+          "path": "/pages",
+          "httpStatus": 404,
+          "requestId": "3284:822EB:851284:1AD901D:6ADF6520",
+          "fields": {
+            "status": "404",
+            "message": "Not Found"
+          }
+        },
+        {
+          "path": "/pages/deployments/c598a7fcea1ad4fc741969e3a3ab9ff7c33b5039",
+          "unavailable": "URLError"
+        }
+      ],
+      "conclusion": "No reliable deployment state obtained; no authenticated failure cause inferred and no repeated request."
+    }
+  },
+  "openStateEvidence": {
+    "source": "Existing public get_site_operations RPC result reused; no repeat request",
+    "serverTime": "2026-10-26T12:04:43.169274+00:00",
+    "state": "OPEN",
+    "pauseFrom": null,
+    "resumeAt": null,
+    "updatedAt": "2026-10-26T11:58:26.803364+00:00",
+    "staticSnapshotCorrection": "Prepared in audited main; not successfully deployed",
+    "publishedNews": "Independent, not changed"
+  },
+  "preservation": {
+    "mainUpdatedByAudit": false,
+    "existingBranchesUpdatedByAudit": false,
+    "trackedFilesDeleted": [],
+    "productionDatabaseOrPoliciesChanged": false,
+    "deploymentSettingsChanged": false,
+    "hostingOrDNSChanged": false,
+    "privateArchiveOrScreenshotPublished": false
+  },
+  "limitations": [
+    "Static graph/HTML checks do not prove every runtime business path, dynamic URL or current provider security.",
+    "Native COMMAND/LANTERN/SENTINEL/NIGHTFALL tests were reused for exact recorded sources, not rerun or relabelled as live acceptance.",
+    "Patched Happy DOM verification covers affected generators and four fictional output fingerprints; not every historical DOM test was rerun.",
+    "Workflow validation is local; no GitHub execution or live restoration of the audit corrections is claimed.",
+    "Pages root cause remains unknown; official GNU-tar packaging versus custom envelope is still an untested hypothesis.",
+    "Private originals, browser PNGs and unredacted policy expressions were not accessed or copied."
+  ],
+  "mainBranchProtectionRead": {
+    "protected": false,
+    "requiredStatusChecks": [],
+    "settingsChanged": false
+  }
+}

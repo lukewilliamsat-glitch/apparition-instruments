@@ -2,7 +2,7 @@
 import {readFile,writeFile,mkdir,readdir,rm} from 'node:fs/promises';
 import {resolve,join} from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {Window} from 'happy-dom';
+import {createStaticWindow} from './static-dom.mjs';
 import {publicBackendConfig} from '../dist/backend/public-config.mjs';
 import {esc,safeHref,newsCategories,ukDate,effectiveStore} from '../dist/operations/model.mjs';
 import {renderNewsBody,newsCards,articleURL} from '../dist/operations/news-render.mjs';
@@ -14,7 +14,7 @@ export function publicPosts(posts,now=Date.now()){
  return Object.fromEntries(['id','slug','title','excerpt','body','category','publication_at','expires_at','cta_label','cta_url','announcement','priority','dismissible','updated_at'].map(k=>[k,p[k]??null]));}).sort((a,b)=>Date.parse(b.publication_at)-Date.parse(a.publication_at)||a.slug.localeCompare(b.slug));
 }
 export function newsPage(shell,post=null,posts=[]){
- const win=new Window({settings:{disableCSSFileLoading:true,disableJavaScriptFileLoading:true,disableJavaScriptEvaluation:true}});win.document.write(shell);const d=win.document,title=post?post.title+' | Apparition News':'News | Apparition Instruments',description=post?post.excerpt.slice(0,160):'News and updates from Apparition Instruments: products, practical guitar electronics tools and workshop information.',url=origin+(post?articleURL(post):'/news/');
+ const win=createStaticWindow();win.document.write(shell);const d=win.document,title=post?post.title+' | Apparition News':'News | Apparition Instruments',description=post?post.excerpt.slice(0,160):'News and updates from Apparition Instruments: products, practical guitar electronics tools and workshop information.',url=origin+(post?articleURL(post):'/news/');
  d.title=title;d.querySelector('meta[name=description]').content=description;d.querySelector('link[rel=canonical]').href=url;d.querySelectorAll('script[type="application/ld+json"],meta[property^="og:"],meta[name^="twitter:"]').forEach(n=>n.remove());
  for(const [property,content] of Object.entries({'og:type':post?'article':'website','og:site_name':'Apparition Instruments','og:title':title,'og:description':description,'og:url':url,...post?{'article:published_time':post.publication_at,'article:modified_time':post.updated_at}:{}})){const m=d.createElement('meta');m.setAttribute('property',property);m.content=content;d.head.append(m);}const twitter=d.createElement('meta');twitter.name='twitter:card';twitter.content='summary';d.head.append(twitter);
  for(const n of d.querySelectorAll('[href],[src]'))for(const attribute of ['href','src']){const value=n.getAttribute(attribute);if(value?.startsWith('../')||value?.startsWith('./'))n.setAttribute(attribute,new URL(value,origin+'/news/').pathname);}

@@ -1,0 +1,85 @@
+{
+  "deletionsApprovedOrPerformed": [],
+  "destructiveCleanupRequiresExactOwnerApproval": true,
+  "byteDuplicateGroupsFoundInMain": 0,
+  "candidates": [
+    {
+      "paths": [
+        ".github/workflows/static.yml"
+      ],
+      "proposal": "After one successful exact-payload publication and accepted restoration, separate/retain generation and retire the competing legacy deployment job.",
+      "usage": "Current push/manual/daily production route; cannot delete now.",
+      "requiredBeforeChange": [
+        "working replacement publisher",
+        "verified complete rollback",
+        "reviewed exact workflow diff"
+      ]
+    },
+    {
+      "paths": [
+        "scripts/command-release/compose.py",
+        "scripts/command-release/handoff.py",
+        "scripts/command-release/transport.py",
+        "scripts/command-release/frontend.py"
+      ],
+      "proposal": "Consolidate orchestration around one artifact/receipt interface after the route is proved. Retain archive_core and source compilation boundaries.",
+      "usage": "frontend imports compose and transport; handoff/capsule code retains recovery/history purpose. Not proven dead code.",
+      "requiredBeforeChange": [
+        "call-site and recovery-contract manifest",
+        "retained frozen checkpoints",
+        "targeted old/new receipt compatibility"
+      ]
+    },
+    {
+      "paths": [
+        ".github/workflows/command-publication.yml"
+      ],
+      "proposal": "Retire mission-number literals, historical artifact IDs and log-step-name matching in favour of versioned release receipts after a separately verified replacement.",
+      "usage": "These strings currently participate in strict historical-failure proof. Blind renaming breaks recovery.",
+      "requiredBeforeChange": [
+        "bounded active-deployment lookup",
+        "receipt/source/artifact identities",
+        "unknown-outcome hold preserved"
+      ]
+    },
+    {
+      "paths": [
+        "PASS-01.md",
+        "PASS-02.md",
+        "REFINEMENT-PASS01.md",
+        "CUSTOMER-READY-PASS01.md",
+        "CUSTOMER-READY-PASS02.md",
+        "BUILD-SHEET-CHECKPOINTS.md"
+      ],
+      "proposal": "Optionally move dated checkpoints to docs/archive with redirects/index updates; preserve content and Git history.",
+      "usage": "Historical engineering evidence, not disposable duplicates.",
+      "requiredBeforeChange": [
+        "reviewed move/link manifest",
+        "exact owner cleanup approval"
+      ]
+    },
+    {
+      "paths": [
+        "dist/",
+        "supabase/",
+        "tests/",
+        "scripts/luthier-hub/baseline/"
+      ],
+      "proposal": "KEEP. Do not classify these as disposable build output merely by folder name.",
+      "usage": "dist is the actual editable application plus required snapshots; SQL preserves migration history; tests/baselines preserve acceptance/recovery.",
+      "requiredBeforeChange": [
+        "no removal approved"
+      ]
+    },
+    {
+      "paths": [
+        "frozen branch-owned acceptance workflows"
+      ],
+      "proposal": "KEEP registered workflows; do not delete merely because absent from default main.",
+      "usage": "Fourteen isolated workflows target explicit branches/path deltas. They are not scheduled main jobs.",
+      "requiredBeforeChange": [
+        "branch-specific owner decision if retirement is ever proposed"
+      ]
+    }
+  ]
+}

@@ -1,13 +1,13 @@
 // Offline presentation migration of committed public snapshots, never a catalogue refresh.
 import {readFileSync,writeFileSync,readdirSync} from 'node:fs';
-import {Window} from 'happy-dom';
+import {createStaticWindow} from './static-dom.mjs';
 import {refineProductPresentation,refineCatalogueCard} from '../dist/products/presentation.mjs';
 const root=new URL('../dist/',import.meta.url),read=path=>readFileSync(new URL(path,root),'utf8'),write=(path,html)=>writeFileSync(new URL(path,root),html);
 const commercialPaths=['index.html','components/index.html',...['potentiometers','capacitors','treble-bleeds'].map(k=>'components/'+k+'/index.html'),'products/index.html','wiring-kits/index.html','wiring-kits/help-me-choose/index.html','les-paul-kits/index.html','basket/index.html'];
 for(const entry of readdirSync(new URL('wiring-kits/',root),{withFileTypes:true}).filter(e=>e.isDirectory())){const path='wiring-kits/'+entry.name+'/index.html';if(!commercialPaths.includes(path))commercialPaths.push(path);}
 const products=[];
 for(const dir of readdirSync(new URL('products/',root),{withFileTypes:true}).filter(e=>e.isDirectory())){
- const path='products/'+dir.name+'/index.html',source=read(path),w=new Window();w.document.write(source);const d=w.document;
+ const path='products/'+dir.name+'/index.html',source=read(path),w=createStaticWindow();w.document.write(source);const d=w.document;
  const schema=[...d.querySelectorAll('script[type="application/ld+json"]')].map(s=>JSON.parse(s.textContent)).find(x=>x['@type']==='Product');if(!schema)throw Error('Missing public snapshot authority '+path);
  const category=d.querySelector('.product-breadcrumb a[href^="/components/"][href$="/"]:not([href="/components/"])')?.getAttribute('href').split('/')[2];
  const properties=(schema.additionalProperty||[]).map(({name,value})=>({label:name,value}));
@@ -20,7 +20,7 @@ for(const dir of readdirSync(new URL('products/',root),{withFileTypes:true}).fil
  w.close();commercialPaths.push(path);
 }
 for(const path of ['components/index.html',...['potentiometers','capacitors','treble-bleeds'].map(k=>'components/'+k+'/index.html')]){
- let source=read(path),w=new Window();w.document.write(source);const d=w.document;
+ let source=read(path),w=createStaticWindow();w.document.write(source);const d=w.document;
  for(const card of d.querySelectorAll('.component-card')){const id=card.dataset.product||card.querySelector('a[href^="/products/"]')?.getAttribute('href').split('/')[2],product=products.find(p=>p.id.toLowerCase()===id?.toLowerCase());if(!product)continue;const old=card.outerHTML;refineCatalogueCard(card,product);source=source.replace(old,card.outerHTML);}
  if(path==='components/index.html'){
   source=source.replace(/<div class="page-intro">[\s\S]*?<\/div>/,'<div class="page-intro"><p class="eyebrow">APPARITION / GUITAR ELECTRONICS</p><h1>Small components.<br><em>Considered choices.</em></h1><p>Treble bleeds, tone capacitors and potentiometers for your next build. Choose by electrical value, control behaviour and the fit of your guitar.</p></div>');

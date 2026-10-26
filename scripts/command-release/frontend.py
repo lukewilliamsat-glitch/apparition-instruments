@@ -193,7 +193,7 @@ def preflight(plan,operation='release',restore_run=None,get=None,public_get=None
     expected_snapshot=plan['operationalCorrection']['afterSHA256'] if restoring_open else plan['protectedReferences']['operations/snapshot.json']
     require(sha(raw)==expected_snapshot,'Served Operations snapshot changed')
     require(strict_json(raw).get('store',{}).get('state')==('OPEN' if restoring_open else 'ORDERS_PAUSED'),'Current static Operations baseline drift')
-    return {**result,'priorRunId':plan['baseRunId'] if operation=='release' else restore_run,'excludedProvenNonPublishingRuns':excluded,'metadataRequests':calls,'metadataBytes':size,'servedHoliday':'ORDERS_PAUSED','backendRequests':0,'scope':SCOPE}
+    return {**result,'priorRunId':plan['baseRunId'] if operation=='release' else restore_run,'excludedProvenNonPublishingRuns':excluded,'metadataRequests':calls,'metadataBytes':size,'servedHoliday':strict_json(raw)['store']['state'],'servedStaticStoreState':strict_json(raw)['store']['state'],'snapshotAuthority':'STATIC_PRESENTATION_ONLY','backendRequests':0,'scope':SCOPE}
 
 def verify_live(plan,kind='release',get=None):
     mapping=plan['verificationFiles' if kind=='release' else 'rollbackVerificationFiles'];require(isinstance(mapping,dict) and 3<=len(mapping)<=7,'Bounded live plan missing')

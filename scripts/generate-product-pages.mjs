@@ -3,7 +3,7 @@ import {refineProductPresentation,refineCatalogueCard} from '../dist/products/pr
 import {readFile,writeFile,mkdir,readdir,rm} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {resolve,join} from 'node:path';
-import {Window} from 'happy-dom';
+import {createStaticWindow} from './static-dom.mjs';
 import {publicBackendConfig} from '../dist/backend/public-config.mjs';
 import {componentFromRow} from '../dist/backend/component-data.mjs';
 import {readPublicRows,productColumns,optionColumns} from '../dist/backend/public-read.mjs';
@@ -41,7 +41,7 @@ export function productSchema(p,options=[]){
  return schema;
 }
 export function productPage(p,shell,options=[],related=[]){
- const w=new Window({url:origin+productURL(p.id)});w.document.write(shell);const d=w.document;
+ const w=createStaticWindow({url:origin+productURL(p.id)});w.document.write(shell);const d=w.document;
  const title=p.name+' | Apparition Instruments',description=productDescription(p),url=origin+productURL(p.id),category=categoryName(p.category);
  d.title=title;d.querySelector('meta[name="description"]').content=description;
  d.querySelector('meta[name="robots"]').remove();d.querySelector('link[rel="canonical"]').href=url;
@@ -66,7 +66,7 @@ export function productPage(p,shell,options=[],related=[]){
  const result='<!doctype html>\n'+d.documentElement.outerHTML;w.close();return result;
 }
 export function injectCategoryLinks(html,products,category){
- const w=new Window();w.document.write(html);const d=w.document,grid=d.querySelector('.component-section#'+category+' .component-grid');if(!grid)throw new Error('Category grid missing: '+category);
+ const w=createStaticWindow();w.document.write(html);const d=w.document,grid=d.querySelector('.component-section#'+category+' .component-grid');if(!grid)throw new Error('Category grid missing: '+category);
  const intro={potentiometers:'Compare the control value, taper and shaft fit before choosing a potentiometer for your guitar.',capacitors:'Compare capacitance, voltage rating and physical fit when selecting a passive guitar tone capacitor.','treble-bleeds':'Compare capacitor-only and resistor-capacitor treble bleed networks, then explore their response in the Designer.'};
  if(d.querySelector('.page-intro h1')?.textContent.trim()===categoryName(category)){
   const copy=d.querySelector('.page-intro p:last-of-type');if(copy)copy.textContent=intro[category];

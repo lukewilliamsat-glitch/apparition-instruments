@@ -1,0 +1,251 @@
+{
+  "auditedMain": "c598a7fcea1ad4fc741969e3a3ab9ff7c33b5039",
+  "categories": {
+    "P0": "production critical",
+    "P1": "functional/security/release-safety defect",
+    "P2": "engineering inefficiency",
+    "P3": "maintenance",
+    "INFORMATIONAL": "context or owner policy decision"
+  },
+  "findings": [
+    {
+      "id": "CS01",
+      "priority": "P0",
+      "title": "Pages reports terminal deployment failures without a server-side explanation",
+      "files": [
+        ".github/workflows/command-publication.yml"
+      ],
+      "evidence": [
+        "40311358554 attempt 1: deployment 0c102c72e63ebd5d6232803c5b9019942fd55853 failed after creation at 2026-10-26T10:57:53Z.",
+        "Its attempt 2 stopped at Current main changed; no publication.",
+        "40321193513: deployment c598a7fcea1ad4fc741969e3a3ab9ff7c33b5039 went from deployment_queued to Deployment failed, try again later at 2026-10-26T12:16:45.9916831Z.",
+        "Both attempts passed the applicable complete-payload and rollback checks. The recovery also restored configure-pages, github-pages artifact naming and 600000ms timeouts."
+      ],
+      "impact": "COMMAND and the prepared static OPEN correction are not live. This is not evidence of a broken COMMAND application or a proven global/provider outage.",
+      "smallestAction": "Inspect the exact latest Pages deployment through the repaired read-only input. The remaining controlled compatibility option is official upload-pages-artifact packaging plus complete per-file read-back, if fresh active-state/rollback gates permit one attempt. Do not repeat the same artifact deployment blindly.",
+      "verification": "No further deployment or application retest in this audit. Packaging-versus-server/content cause remains unknown.",
+      "status": "OPEN_CAUSE_UNRESOLVED",
+      "productionEffect": "No live change; integration not performed"
+    },
+    {
+      "id": "CS02",
+      "priority": "P1",
+      "title": "Publication job can expire during a valid rollback",
+      "files": [
+        ".github/workflows/command-publication.yml"
+      ],
+      "evidence": [
+        "Job timeout was 12 minutes; each deploy-pages call permits 10 minutes. Publication plus restoration can need over 20 minutes."
+      ],
+      "impact": "A slow successful publication followed by verification failure could exhaust the job before rollback finishes. Not the cause of the observed seconds-long failures.",
+      "smallestAction": "Allow 30 minutes for the bounded publication/restoration job. Preserve both action timeouts and no cancellation.",
+      "verification": "New release-safety check covers both 600000ms windows plus five minutes overhead.",
+      "status": "REPAIRED_ON_ISOLATED_BRANCH",
+      "productionEffect": "No live change; integration not performed"
+    },
+    {
+      "id": "CS03",
+      "priority": "P1",
+      "title": "Release compilation depends on accidental main history depth",
+      "files": [
+        ".github/workflows/command-publication.yml",
+        "scripts/command-release/cache-overlay.mjs"
+      ],
+      "evidence": [
+        "fetch-depth:5 currently just reaches 2e3c45a6; another descendant commit pushes that accepted base outside the shallow checkout. cache-overlay default reads it with git show."
+      ],
+      "impact": "A future legitimate release can fail before publication despite unchanged application bytes.",
+      "smallestAction": "Check out the exact accepted base separately at depth 1 and use the existing validated baseRead seam. Current checkout also uses depth 1.",
+      "verification": "Actual workflow Node block executed in a fixture with no .git directory; the 21-file compiled manifest remains SHA-256 899151248c2fe2492f198ae19bc36a975287d0edad55cf5168c2657184e17ff1.",
+      "status": "REPAIRED_ON_ISOLATED_BRANCH",
+      "productionEffect": "No live change; integration not performed"
+    },
+    {
+      "id": "CS04",
+      "priority": "P1",
+      "title": "Known high-severity vulnerability in the build/test DOM dependency",
+      "files": [
+        "package.json",
+        "package-lock.json"
+      ],
+      "evidence": [
+        "npm audit identified happy-dom 20.14.5 in GHSA-834v-8h66-3h79; affected range 17.0.0\u201321.0.3; patched version 21.0.4.",
+        "The advisory requires JavaScript evaluation and attacker-controlled source. Main does not explicitly enable evaluation; exploitation is not demonstrated. This package is build/test tooling, not shipped browser runtime."
+      ],
+      "impact": "Latent host-code execution risk if unsafe evaluation is enabled in tooling.",
+      "smallestAction": "Pin patched happy-dom 21.0.4 and retain inert static rendering. No npm audit fix --force or unrelated dependency upgrades.",
+      "verification": "Node22.20.0; affected product SEO test PASS; four fictional generator output hashes unchanged; post-change npm audit reports 0 known vulnerabilities. Advisory: https://github.com/advisories/GHSA-834v-8h66-3h79",
+      "status": "REPAIRED_ON_ISOLATED_BRANCH",
+      "productionEffect": "No live change; integration not performed"
+    },
+    {
+      "id": "CS05",
+      "priority": "P2",
+      "title": "Static-only and documentation pushes can perform unnecessary backend generation",
+      "files": [
+        ".github/workflows/static.yml",
+        "scripts/generate-hub-cms.mjs"
+      ],
+      "evidence": [
+        "CMS generation was unconditional although the static-only comment promised backend-free operation. generate-hub-cms calls public_hub_articles.",
+        "Ordinary documentation-only pushes previously selected the full generation workflow. Current main has no required branch status checks; that metadata was read before adding path exclusions."
+      ],
+      "impact": "Unnecessary build-time Supabase requests and avoidable deployment failures; actual byte consumption was not measured.",
+      "smallestAction": "Skip CMS only for static-only pushes, preserve cms-only/full/manual/scheduled behaviour, and ignore docs/Markdown-only push paths. Correct the stale 15-minute schedule comment to daily 03:00 UTC.",
+      "verification": "New workflow-condition matrix verifies full, static-only, cms-only, manual, scheduled and marked release paths.",
+      "status": "REPAIRED_ON_ISOLATED_BRANCH",
+      "productionEffect": "No live change; integration not performed"
+    },
+    {
+      "id": "CS06",
+      "priority": "P2",
+      "title": "Pure static renderers allow unnecessary asset loading by default",
+      "files": [
+        "scripts/static-dom.mjs",
+        "scripts/generate-product-pages.mjs",
+        "scripts/generate-site-operations.mjs",
+        "scripts/refine-commercial-snapshots.mjs"
+      ],
+      "evidence": [
+        "Product/commercial renderers constructed default Happy DOM Windows; CSS/iframe loading defaults were not disabled. These operations only edit markup."
+      ],
+      "impact": "Unnecessary resource-loading capability during generation; no claim that this caused measured production egress.",
+      "smallestAction": "Share a static-only Window factory with JavaScript evaluation and script/CSS/iframe loading disabled.",
+      "verification": "Loopback fixture received zero requests; inline script did not execute; four product/category/News fixture outputs stayed byte-identical.",
+      "status": "REPAIRED_ON_ISOLATED_BRANCH",
+      "productionEffect": "No live change; integration not performed"
+    },
+    {
+      "id": "CS07",
+      "priority": "P2",
+      "title": "Image-bearing full catalogue reads remain the production fallback",
+      "files": [
+        "dist/backend/public-read.mjs",
+        "dist/backend/component-data.mjs",
+        "dist/backend/catalogue-image-delivery.mjs",
+        "dist/backend/image-delivery-config.mjs",
+        "dist/products/app.mjs",
+        "dist/operations/public.mjs"
+      ],
+      "evidence": [
+        "imageDeliveryConfig.enabled is false; default public repository includes image. readPublicRows uses response.json without row/response-size enforcement.",
+        "startProductDetail default refreshes the full catalogue before resolving the selected product.",
+        "Public cache expiry is 30 seconds. Visible public pages refresh two Operations/announcement RPCs at most once per minute, plus initial/visibility refreshes."
+      ],
+      "impact": "Plausible egress contributors, not attribution of the owner-reported 624.495 MB/day. Cache bounds are not wire-response bounds.",
+      "smallestAction": "Reuse accepted NIGHTFALL metadata/image delivery; verify its narrow live contract and activate separately. Preserve stock/checkout authority and existing cache invalidation; do not create a second optimisation programme.",
+      "verification": "Source paths/projections inspected. No live catalogue download or new Supabase request in this audit.",
+      "status": "OPEN_INTEGRATION_GATED",
+      "productionEffect": "No live change; integration not performed"
+    },
+    {
+      "id": "CS08",
+      "priority": "P1",
+      "title": "Accepted customer reliability corrections remain outside main",
+      "files": [
+        "dist/storefront/entry.mjs (candidate only)",
+        "dist/storefront/startup.mjs (candidate only)",
+        "dist/basket-ui.mjs",
+        "dist/commerce.mjs",
+        "dist/checkout/checkout.mjs",
+        "dist/contact/contact.mjs"
+      ],
+      "evidence": [
+        "LANTERN/LIGHTHOUSE accepted startup containment is absent from main. SENTINEL fixes unavailable-basket intent loss, checkout focus/submission behaviour and settled contact Sending labels.",
+        "Main public sources remain identical to the previously assessed 2e3c45a6 source. LIGHTHOUSE 39981284222 and SENTINEL 39988495190 close their isolated browser gates."
+      ],
+      "impact": "Known failure-state defects persist; not evidence that normal checkout is down.",
+      "smallestAction": "Review outstanding interaction/copy decisions, then integrate the existing accepted deltas against a current complete payload. SENTINEL depends on the LANTERN/LIGHTHOUSE base. Do not redevelop them.",
+      "verification": "Existing source-specific native evidence reused; no screenshot download or browser suite repeated.",
+      "status": "OPEN_OWNER_REVIEW_AND_PUBLICATION_GATED",
+      "productionEffect": "No live change; integration not performed"
+    },
+    {
+      "id": "CS09",
+      "priority": "P2",
+      "title": "Two production publishing routes and a mission-specific release plan remain active",
+      "files": [
+        ".github/workflows/static.yml",
+        ".github/workflows/command-publication.yml",
+        "docs/command/command05/FRONTEND_RELEASE_55.json",
+        "scripts/command-release/frontend.py"
+      ],
+      "evidence": [
+        "Legacy push/manual/daily generation still deploys; marked pushes/manual exact publication use a separate route.",
+        "The exact publisher pins old run/artifact identities, a five-deployment search window and one prior terminal failure. Later failures or expiry deliberately block it. This is not a reusable generic release service."
+      ],
+      "impact": "Confusing operator entry points and repeated recovery-specific edits. The original baseline artifact expiry is 27 October; retained corrected candidate/rollback expiry is 9 November.",
+      "smallestAction": "Keep one future production publisher for immutable complete artifacts; separate generator refresh from deployment. Retire legacy publishing only after the replacement and restoration actually succeed. Generalise receipts/deployment lookup with bounded proof; never silently ignore unknown failures.",
+      "verification": "All 17 registered workflow records and their latest executed definitions reviewed; no workflow removed or disabled.",
+      "status": "OPEN_CONSOLIDATION_REQUIRES_VERIFIED_CUTOVER",
+      "productionEffect": "No live change; integration not performed"
+    },
+    {
+      "id": "CS10",
+      "priority": "P3",
+      "title": "OPEN restoration receipt could falsely label the static state paused",
+      "files": [
+        "scripts/command-release/frontend.py"
+      ],
+      "evidence": [
+        "preflight returned servedHoliday:ORDERS_PAUSED even when the restoration branch had verified an OPEN snapshot."
+      ],
+      "impact": "Misleading audit evidence, not an ordering-permission change.",
+      "smallestAction": "Report the parsed static state, retain the compatibility field and label it presentation-only.",
+      "verification": "New synthetic OPEN restoration receipt and strict main-drift rejection tests pass; backendRequests stays zero.",
+      "status": "REPAIRED_ON_ISOLATED_BRANCH",
+      "productionEffect": "No live change; integration not performed"
+    },
+    {
+      "id": "CS11",
+      "priority": "P3",
+      "title": "Pages inspection is hard-coded to an obsolete deployment",
+      "files": [
+        ".github/workflows/command-publication.yml"
+      ],
+      "evidence": [
+        "The diagnostic job selected 0c102c72... even after c598a7f failed. It required a specially marked main commit."
+      ],
+      "impact": "Inspecting the wrong deployment and creating unnecessary main commits.",
+      "smallestAction": "Offer an explicit read-only inspect operation with a validated deployment ID, no redirects, bounded output and read-only job permissions; exclude it from publication selection. Isolate nonpublishing runs from the pages queue.",
+      "verification": "New condition checks prove inspect cannot select the publication job; main/ref guards and serialized publishing remain.",
+      "status": "REPAIRED_ON_ISOLATED_BRANCH",
+      "productionEffect": "No live change; integration not performed"
+    },
+    {
+      "id": "CS12",
+      "priority": "P3",
+      "title": "Floating production Action refs and untracked local caches impair reproducibility",
+      "files": [
+        ".github/workflows/static.yml",
+        ".gitignore"
+      ],
+      "evidence": [
+        "Legacy workflow used five moving Action tags; local Python bytecode and a node_modules symlink appeared as untracked files."
+      ],
+      "impact": "Avoidable source drift and review noise; no malicious Action or committed credential was found.",
+      "smallestAction": "Pin the already observed official action commits; ignore bytecode and root dependency symlinks.",
+      "verification": "Action-pin/credential-policy checks and git diff --check pass. No tracked file deleted.",
+      "status": "REPAIRED_ON_ISOLATED_BRANCH",
+      "productionEffect": "No live change; integration not performed"
+    },
+    {
+      "id": "CS13",
+      "priority": "INFORMATIONAL",
+      "title": "Main has no required branch checks; historical handovers contain superseded gates",
+      "files": [
+        "docs/handover/LATEST_STATE.md",
+        "docs/command/command05/FINAL_ACCEPTANCE_54.json (engineering branch)"
+      ],
+      "evidence": [
+        "Current branches/main metadata reports protected:false and no required checks. GitHub Pages environment restrictions are separate.",
+        "The frozen 54 acceptance report predates supplied metadata, current artifacts and explicit owner visual acceptance of df78c5bf. Its old PENDING flags are historical."
+      ],
+      "impact": "Do not treat either missing branch rules or old prose as current release authority.",
+      "smallestAction": "Keep dated evidence intact, use the reconciled register here, and consider required targeted checks as a separate owner-reviewed policy change. No protection settings changed.",
+      "verification": "Read-only repository metadata and existing acceptance records reconciled.",
+      "status": "OBSERVATION_NO_AUTOMATIC_SECURITY_CHANGE",
+      "productionEffect": "No live change; integration not performed"
+    }
+  ]
+}
