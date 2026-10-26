@@ -1,0 +1,131 @@
+{
+  "status": "LIVE_VERIFIED",
+  "feature": "SPECTRE",
+  "siteURL": "https://apparitioninstruments.co.uk/",
+  "source": "05f184389862af8860263cf3bbfd0af78a1885fe",
+  "applicationSource": "4f09bd5b4d5109df6028a8dc0d00468512d9af1c",
+  "runId": 40346846816,
+  "artifact": {
+    "id": 12661268224,
+    "zipSHA256": "1d36c829d5c0096b428b818d50dd7d2d8ed39235b4420826abfcb0151e79b56d",
+    "tarSHA256": "abc2592dbab58ba99b65f0987462e73968ec3b83506fbc760467523df21ed78c",
+    "payloadDigest": "2cd169fcfb84015e0be64e801bca71f6e61890480fee7acbb8af38a630f70e36",
+    "files": 425,
+    "expiresAt": "2026-11-09T15:11:51Z"
+  },
+  "rollback": {
+    "artifactId": 12662590487,
+    "zipSHA256": "c4dc9e5f78b83d1f9c4f0d7924f91a5ecc87860209e1c062111cfd4aac320edd",
+    "tarSHA256": "66b2f62fc8b04ba83e08afb391b378d110cee2cd87351abc556df24d5e32676a",
+    "payloadDigest": "90e52dd2e3f35aa812f94f17c3593e3db29793a577323e6890ed2e19aec805c0",
+    "files": 425,
+    "readBack": "PASS",
+    "used": false
+  },
+  "changedFiles": [
+    {
+      "path": "customer-ui.css",
+      "operation": "source",
+      "source": "dist/customer-ui.css",
+      "beforeSHA256": "f72258fb8d455513d2cb38e3672f914207f81ee37664c7e6b32edc7d9c320f26",
+      "afterSHA256": "16d6ebbd2372d54e32565a7999edfd1bc9152c785b77f1bcbf79ee47bba1794a",
+      "bytes": 18732
+    },
+    {
+      "path": "index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/customer-ui.css?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/customer-ui.css?build=4f09bd5b4d5109df6028a8dc0d00468512d9af1c",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "acfa48ccf4a00c43040d5c0783bc6e8c6a2cb39623d1dfc3da6473558c1b1449",
+      "afterSHA256": "370654f692fefdf6f12994ba93a2ab456dfd0eb91a5763012fc2c48bcb5a53e9",
+      "bytes": 15145
+    },
+    {
+      "path": "operations/snapshot.json",
+      "operation": "operations-open",
+      "source": "docs/command/command05/OPEN_SNAPSHOT_55.json",
+      "beforeSHA256": "0dd3a244d2ab694730b83a985fdd69a6310d06e29aa70ab2e5e3f956d8d8c557",
+      "afterSHA256": "0daa8a0d6f03c9eaf746ba91d20c0728fe2b0512c10cea3796c6145358cca69f",
+      "bytes": 3091
+    }
+  ],
+  "live": {
+    "operations": {
+      "bytes": 437,
+      "mutations": 0,
+      "observedAt": "2026-10-26T15:12:23.417111+00:00",
+      "pause_from": null,
+      "requests": 1,
+      "resume_at": null,
+      "sha256": "f053133bd25c205e5aea13d9e1cc1f6285a78b56d3a0f36fa36e2561c07e76f5",
+      "state": "OPEN",
+      "updated_at": "2026-10-26T11:58:26.803364+00:00"
+    },
+    "static": {
+      "bytes": 97223,
+      "feature": "SPECTRE",
+      "files": [
+        {
+          "bytes": 15145,
+          "path": "/",
+          "sha256": "370654f692fefdf6f12994ba93a2ab456dfd0eb91a5763012fc2c48bcb5a53e9"
+        },
+        {
+          "bytes": 18732,
+          "path": "/customer-ui.css?build=4f09bd5b4d5109df6028a8dc0d00468512d9af1c",
+          "sha256": "16d6ebbd2372d54e32565a7999edfd1bc9152c785b77f1bcbf79ee47bba1794a"
+        },
+        {
+          "bytes": 3091,
+          "path": "/operations/snapshot.json",
+          "sha256": "0daa8a0d6f03c9eaf746ba91d20c0728fe2b0512c10cea3796c6145358cca69f"
+        },
+        {
+          "bytes": 40475,
+          "path": "/interactive-tools/",
+          "sha256": "d93272db6a2c4ccf5120c476e98accbc19fe827617be6df2f6f9e8bf19aa22c3"
+        },
+        {
+          "bytes": 15314,
+          "path": "/admin/",
+          "sha256": "c92b588d170611751a4f23a4e1aa7681cfa5a4b66e9d36969f248fbfe3c0f196"
+        },
+        {
+          "bytes": 4466,
+          "path": "/checkout/",
+          "sha256": "71eeeb8ef1312f6d6c54a2546f915e1d7c0e86b41d062792b1b2371258f5f066"
+        }
+      ],
+      "kind": "candidate",
+      "requests": 6,
+      "result": "PASS"
+    }
+  },
+  "independentBrowser": {
+    "viewportWidths": [
+      320,
+      390,
+      768,
+      1024,
+      1440,
+      1920
+    ],
+    "newCssReferenceObserved": true,
+    "mobile320FontBefore": "56px",
+    "mobile320FontAfter": "51.2px",
+    "heroContent1920Before": 1550,
+    "heroContent1920After": 1905,
+    "ctaReachableAll": true,
+    "staticSnapshotObserved": "OPEN",
+    "newsUnchangedObserved": true
+  },
+  "additionalContainerStaticProbe": "Transport unavailable; not counted as a passing independent HTTP check. Runner complete hashes and separate connected-browser observations establish live acceptance.",
+  "commandReads": false,
+  "commandWrites": false,
+  "productionTransactionsOrMessages": 0
+}
