@@ -1,0 +1,42 @@
+# AUTHORISATION 55 — delivery checkpoint / owner-input HOLD
+
+COMMAND is **not deployed**. Accepted application `df78c5bf5144b012a7d96c628186180fa6432df3` remains byte-identical, including disabled production activation. Its existing source/DOM/native/visual evidence is reused. No unchanged suite or screenshot campaign was repeated. This checkpoint preserves completed delivery implementation, not a production-release claim.
+
+## Completed independent work
+
+* **Cache-correct package compilation:** `scripts/command-release/cache-overlay.mjs` reuses the existing production `stampSource` rule. The old workflow stamps transitive module imports, so raw Git preimages cannot be substituted for actual generated files. The compiler derives exact stamped baseline preimages and candidate bytes for the same 21 reviewed files, records raw-source provenance and preserves unrelated files. Nine named checks pass on Node 22.20.0, including executing the stamped Auth/factory/workbench/editor module graph with fictional HTTP data. A missing baseline dependency closure in the initial test fixture was resolved from the declared imports, without application changes.
+* **Exact handoff:** `handoff.py` verifies owner/source/evidence identities, complete release and rollback bundles, protected Operations files, cache provenance and the original selected TAR. It independently verifies the uploaded TAR byte-for-byte before deployment. Nine targeted tests pass, including release/restore round trips, source/archive/upload drift, missing approvals, stale/concurrent evidence and private-evidence exclusion.
+* **Bounded transport and preflight:** `transport.py` receives only an exactly hashed, size-limited private handoff through a separately approved temporary environment-secret capsule. The URL is never printed; redirects, unknown hosts, archive paths/types, excess files and oversized data are rejected. GitHub-only preflights check main, target, pending publishers and previous deployment twice, with request/byte/deadline ceilings and no identity fallback. Ten tests pass. Artifact source identity and publishing-workflow identity are explicitly distinct, including restoration.
+* **Reviewable publication workflow:** `templates/command-publication-only.yml.example` uses the pinned NIGHTWATCH actions, Pages/OIDC permissions, the `github-pages` environment and shared `pages` concurrency. It reads back the exact uploaded TAR before one deployment attempt. YAML is parsed/validated and pinned deploy-action inputs checked against its immutable source. It is not installed or live-tested. The private capsule is available only to the receive step, not other actions.
+* **Existing operations preserved:** the companion `static-command-guard.patch` only skips the legacy generator for the exact marked COMMAND release push. Scheduled/manual CMS/SEO generation remains unchanged. It must be disclosed in the final decision because background backend usage and later scheduled publications remain possible. Neither workflow is modified on main here; no generation is invoked.
+* **Bounded real-read checker prepared:** `OWNER_READ_CHECK_55.js` is an inert, dependency-free bundle of the accepted Auth/read code. Loading only defines the owner function and sends zero requests. It binds the application source, verifies existing identity/membership, reads one bounded catalogue and one product, returns only status/counts/sizes, and rejects repeat attempts/reinstallation. At most 8 GETs plus one normal Auth refresh, 25 seconds, 768 KiB accepted decoded JSON. That is not a guaranteed billed-egress ceiling: transport overhead/prefetch and rejected bodies are not represented as production billing measurements. Seven fictional scenarios pass, including refresh, denial, wrong origin, no session and private-field rejection. No real probe was executed or approved.
+
+The source-only cache compiler never opens the original archive. All new test archives and responses are fictional. No Supabase project access, SQL, migration, stock/customer/payment action, private archive materialisation, environment-secret installation, main merge or deployment occurred.
+
+## Immediate owner action — the existing two-query contract
+
+The intended project in the accepted source is `acdxpxvksvdwfajntzfx`; the owner must confirm that it is the intended selected SQL Editor project. Its actual selection has not been independently observed.
+
+Run each unchanged file **once only**, or return its existing result if already run. Five-second statement / one-second lock timeouts, 50-row rejection threshold, 8,192 bytes each / 16,384 aggregate. Keep policy expressions private. No assistant-operated SQL or widened inspection is substituted.
+
+| File | SHA-256 |
+| --- | --- |
+| `PROVIDER_QUERY_53_1.sql` | `3f3829e7e3533d321f3df47eadb5c071901a070355b9cf9accf15777ab6e5946` |
+| `PROVIDER_QUERY_53_2.sql` | `54f4574c55d311c511e9dde55e1dcfcf09e0ab19eca45c070ec0c95a58e76e51` |
+
+The outputs are still absent. They are the first compatibility gate. After assessment, request the exact bounded owner-read execution against this helper's digest and confirmed origin; do not execute it merely because its fixtures passed. The source canonical origin is `https://apparitioninstruments.co.uk`, not independently verified current Pages configuration.
+
+Existing genuine visual evidence remains [the 22 original PNGs](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/40242794782/artifacts/12617148442), explicitly fictional data and expiry 8 November 2026 at 23:01:37 UTC. Owner visual acceptance is still pending against the unchanged tested presentation. No production design approval is inferred from AUTHORISATION 55's launch objective.
+
+## Remaining release gates in this same mission
+
+1. Assess the private SQL results; obtain separate bounded real-read acceptance, then enable the verified production adapter and bind actual evidence hashes. No schema/RLS mutation is proposed.
+2. Establish current Pages/deployment/environment settings and complete served-payload association. The GitHub connector lacks those settings endpoints; public web reads were inaccessible. A public static Operations lookup was also inaccessible. These tool limits do not prove site failure or holiday state. No privileged browser session was probed. Read-only browser fallback requires the owner's permission under the browser-tool rule.
+3. Obtain the exact approved current baseline access and authoritative holiday content. Do not reuse or retrieve the expired original artifact. Historical OPEN is unacceptable. The assembler still rejects an OPEN/unknown snapshot; no correction is fabricated from owner dates. Current holiday-safe candidate/rollback digests do not yet exist.
+4. Compile only the reviewed source overlay into its cache-stamped form, then use that directory and its new `source-manifest.json` with `compose.py`. Preserve the original private archive unchanged. Bind both the application-source and publisher-source identities.
+5. Present one exact final deployment decision with complete packages, accepted visual/live evidence, public read-back plan, current target/protection/concurrency evidence and rollback triggers. Include the narrow workflow/guard installation and private-handoff transport/retention scope. The proposed capsule is a new temporary private file capability, not permission to change account credentials or publish archives in Git. No capsule or protected setting is created until that concrete decision is approved.
+6. After that decision, install only the exact reviewed composition, publish, verify actual static/owner-authenticated behaviour and record the live receipt. API/Actions success alone cannot close the release. Reconcile uncertainty before retry/restoration; confirmed failures use the verified complete-payload restoration route.
+
+The supported first-release execution can use an exact marked main push, so it does not require an unavailable connector workflow-dispatch operation. Branch/environment protections still apply; refusal is a stop, not permission to use another identity or route. Preserve existing CMS/SEO behaviour unless its precise scheduling implications are separately accepted in the final release decision.
+
+Continue within AUTHORISATION 55 when mandatory owner facts arrive. Do not restart COMMAND or commission another broad planning mission. Machine-readable evidence is in `LAUNCH_55_RESULTS.json`. IRONCLAD production writes remain a separate pending cutover.

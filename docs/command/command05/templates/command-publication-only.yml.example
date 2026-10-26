@@ -1,0 +1,136 @@
+# REVIEWED CANDIDATE ONLY. Install as .github/workflows/command-publication.yml
+# solely with the exact owner-approved release and the companion static guard.
+# Existing CMS/SEO scheduled/manual generation is preserved, not invoked here.
+# Requires an approved github-pages environment and temporary private-handoff
+# capsule. Never put its URL, private archives or credentials in repository Git.
+name: COMMAND exact approved Pages publication
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      operation:
+        required: true
+        type: choice
+        options: [release, restore]
+permissions:
+  contents: read
+  actions: read
+  deployments: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  exact-publication:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[command-exact-release]'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Receive only the exact private approved handoff
+        env:
+          COMMAND_HANDOFF_CAPSULE: ${{ secrets.COMMAND_HANDOFF_CAPSULE }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/command-release/transport.py receive --tooling-commit "$GITHUB_SHA" \
+            --out-new "$RUNNER_TEMP/command-handoff" > "$RUNNER_TEMP/command-received.json"
+      - name: Pin the approved operation and response identity
+        env:
+          MANUAL_OPERATION: ${{ inputs.operation }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          value=json.loads((Path(os.environ['RUNNER_TEMP'])/'command-received.json').read_text())
+          expected='release' if os.environ['GITHUB_EVENT_NAME']=='push' else os.environ['MANUAL_OPERATION']
+          assert value['operation']==expected and expected in ('release','restore')
+          assert len(value['approvalSHA256'])==64 and all(c in '0123456789abcdef' for c in value['approvalSHA256'])
+          with open(os.environ['GITHUB_ENV'],'a') as f:
+            f.write('COMMAND_APPROVAL_SHA256='+value['approvalSHA256']+'\n')
+            f.write('COMMAND_OPERATION='+expected+'\n')
+          PY
+      - name: Check current main, Pages target and competing publications
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/command-release/transport.py preflight --handoff "$RUNNER_TEMP/command-handoff" \
+            --approval-sha256 "$COMMAND_APPROVAL_SHA256" --operation "$COMMAND_OPERATION" --tooling-commit "$GITHUB_SHA" > "$RUNNER_TEMP/command-preflight-before.json"
+      - name: Verify complete source, payload, holiday and rollback identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/command-release/handoff.py stage --handoff "$RUNNER_TEMP/command-handoff" \
+            --approval-sha256 "$COMMAND_APPROVAL_SHA256" --operation "$COMMAND_OPERATION" \
+            --tooling-commit "$GITHUB_SHA" --checkout "$GITHUB_WORKSPACE" \
+            --out-new "$RUNNER_TEMP/command-selected" > "$RUNNER_TEMP/command-staged.json"
+      - name: Upload exact approved Pages TAR
+        id: upload
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: command-approved-pages
+          path: ${{ runner.temp }}/command-selected/artifact.tar
+          if-no-files-found: error
+          retention-days: 14
+      - name: Independently read back the uploaded TAR before publication
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          artifact-ids: ${{ steps.upload.outputs.artifact-id }}
+          path: ${{ runner.temp }}/command-uploaded
+          merge-multiple: true
+      - name: Verify original uploaded bytes and complete inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/command-release/handoff.py verify-upload --handoff "$RUNNER_TEMP/command-handoff" \
+            --approval-sha256 "$COMMAND_APPROVAL_SHA256" --operation "$COMMAND_OPERATION" \
+            --tooling-commit "$GITHUB_SHA" --uploaded "$RUNNER_TEMP/command-uploaded" \
+            --staged "$RUNNER_TEMP/command-selected/staged.json" > "$RUNNER_TEMP/command-upload-verified.json"
+      - name: Recheck freshness, main and concurrent publication immediately before deploy
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/command-release/transport.py preflight --handoff "$RUNNER_TEMP/command-handoff" \
+            --approval-sha256 "$COMMAND_APPROVAL_SHA256" --operation "$COMMAND_OPERATION" --tooling-commit "$GITHUB_SHA" > "$RUNNER_TEMP/command-preflight-final.json"
+      - name: Publish this exact verified Pages artifact once
+        id: deploy
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346
+        with:
+          artifact_name: command-approved-pages
+          timeout: '120000'
+          error_count: '1'
+          preview: 'false'
+      - name: Preserve non-sensitive publication evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: command-publication-receipt
+          path: |
+            ${{ runner.temp }}/command-received.json
+            ${{ runner.temp }}/command-staged.json
+            ${{ runner.temp }}/command-upload-verified.json
+            ${{ runner.temp }}/command-preflight-before.json
+            ${{ runner.temp }}/command-preflight-final.json
+          if-no-files-found: warn
+          retention-days: 14
+# API success is not live acceptance. Perform the separately pinned static and
+# owner-authenticated live plan, then record the served result. On an uncertain
+# outcome reconcile first; no blind retry/restore. Confirmed failure uses the same
+# verified route with an explicitly authorised restore capsule and current evidence.

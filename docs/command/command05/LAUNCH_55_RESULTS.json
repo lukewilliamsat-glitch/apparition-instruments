@@ -1,0 +1,92 @@
+{
+  "mission": "AUTHORISATION_55_OPERATION_LAUNCH_COMMAND",
+  "status": "PRODUCTION_HOLD_OWNER_INPUT_REQUIRED",
+  "baseCheckpoint": "21b04755f0c212165e688e19e770211178f8d3ab",
+  "applicationCommit": "df78c5bf5144b012a7d96c628186180fa6432df3",
+  "applicationDistTree": "98b47d2ab3afe4f2cac543b01129606774955f20",
+  "applicationChanged": false,
+  "productionActivation": false,
+  "backendMetadataOutputsReceived": false,
+  "selectedProviderProjectOwnerConfirmed": false,
+  "intendedSourceProject": "acdxpxvksvdwfajntzfx",
+  "currentProductionMain": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+  "ownerVisualAcceptance": "PENDING",
+  "realReadCompatibility": "PENDING",
+  "currentServedPayload": "UNKNOWN",
+  "currentHolidayPreservation": "UNVERIFIED",
+  "completeReleaseSHA256": null,
+  "acceptedRollbackSHA256": null,
+  "actualPublisherInstalled": false,
+  "liveReleaseVerified": false,
+  "privateProductionArchivesRead": 0,
+  "supabaseProjectRequests": 0,
+  "newCIExecutions": 0,
+  "newScreenshots": 0,
+  "evidenceReused": {
+    "applicationReceipt": "FINAL_ACCEPTANCE_54.json",
+    "nativeJourneys": 54,
+    "nativeAggregation": "53 individual PASS results from 40242794782 plus targeted logout 1/1 in 40243379865; no single 54/54 run claimed",
+    "nodeReadCases": 32,
+    "nodeChangedBoundaryCases": 28,
+    "productionDOMJourneys": 4,
+    "releaseCompositionCases": 14,
+    "screenshots": 22,
+    "isolationControls": 10
+  },
+  "newVerification": {
+    "node": "v22.20.0",
+    "cacheOverlayNamedChecks": 9,
+    "cacheOverlayFiles": 21,
+    "stampedAuthAndReadonlyWorkspaceGraph": "PASS_NODE_DOM_NOT_NATIVE_CHROME",
+    "handoffPythonCases": 9,
+    "transportPythonCases": 10,
+    "ownerReadHelperFixtureScenarios": 7,
+    "workflowYAMLParsed": true,
+    "legacyGuardPatchApplies": true,
+    "pinnedDeployPagesActionInputsVerified": true,
+    "allLiveResponsesUsedForTests": "FICTIONAL"
+  },
+  "ownerReadHelper": {
+    "file": "OWNER_READ_CHECK_55.js",
+    "bytes": 39357,
+    "sha256": "74673d224e576ee69def7260a5fa0eb0f5a190adeb597ee4726df91ffa1261cc",
+    "modules": 8,
+    "inertOnLoad": true,
+    "maximumGETs": 8,
+    "maximumAuthRefreshPOSTs": 1,
+    "maximumAttemptSeconds": 25,
+    "acceptedDecodedJSONCeilingBytes": 786432,
+    "recordsAndCredentialsExported": false,
+    "oneAttemptAndNoReinstallationGuard": true,
+    "executionApproved": false,
+    "billingEgressCeilingClaimed": false
+  },
+  "publicationRoute": {
+    "candidateOnly": true,
+    "workflowTargetPath": ".github/workflows/command-publication.yml",
+    "legacyChange": "Only skip the exact marked release push; existing scheduled/manual CMS/SEO remains enabled",
+    "sharedConcurrencyGroup": "pages",
+    "permissions": [
+      "contents:read",
+      "actions:read",
+      "deployments:read",
+      "pages:write",
+      "id-token:write"
+    ],
+    "temporaryEnvironmentSecretProposed": "COMMAND_HANDOFF_CAPSULE",
+    "secretCreated": false,
+    "privateHandoffMaxBytes": 50331648,
+    "uploadedOriginalTarReadbackRequired": true,
+    "liveVerificationRequiredBeyondActionsSuccess": true,
+    "privateArchiveAndArtifactTransportApprovalRequired": true
+  },
+  "capabilityBlockers": [
+    "GitHub connector does not expose current Pages/environment settings. Anonymous public metadata reads were also inaccessible. No privileged browser session was probed.",
+    "Public static Operations snapshot was inaccessible through the web tool; no conclusion about site health/current holiday state was drawn.",
+    "Actual private baseline access, authoritative current holiday evidence and complete payload/rollback remain gated."
+  ],
+  "providerQuerySHA256": {
+    "1": "3f3829e7e3533d321f3df47eadb5c071901a070355b9cf9accf15777ab6e5946",
+    "2": "54f4574c55d311c511e9dde55e1dcfcf09e0ab19eca45c070ec0c95a58e76e51"
+  }
+}
