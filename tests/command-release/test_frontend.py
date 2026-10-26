@@ -2,7 +2,7 @@ import copy,io,json,sys,tempfile,unittest,zipfile
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'scripts/command-release'))
 from archive_core import Rejected,canonical,pages_zip,sha
-from frontend import compose_frontend,stage,verify_tar,prior_identity,verify_live,SITE
+from frontend import compose_frontend,stage,verify_tar,prior_identity,verify_live,exclude_proven_nonpublications,SITE
 from test_compose import fixture
 
 def frontend_fixture(root):
@@ -74,5 +74,22 @@ class FrontendTests(unittest.TestCase):
         r=verify_live(plan,get=get);self.assertEqual(r['requests'],3);self.assertFalse(r['productionReads']);self.assertEqual(r['authenticatedCatalogueAcceptance'],'NOT_CLAIMED_DISABLED')
         self.assertEqual(calls,list(bodies));bad=copy.deepcopy(plan);bad['verificationFiles']['/']='0'*64
         self.assertRaises(Rejected,verify_live,bad,get=get)
+
+    def test_only_proven_skipped_pinned_failed_run_is_excluded(self):
+        prefix='https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/'
+        p={'nonPublishingFailedRuns':[{'runId':77,'jobId':99,'sourceCommit':'2'*40}]}
+        d={'id':12,'sha':'2'*40,'latestStatus':{'state':'failure','log_url':prefix+'77/job/99'}}
+        run={'head_sha':'2'*40,'status':'completed','conclusion':'failure'}
+        names=['Publish this exact verified Pages artifact once','Restore the verified complete rollback on confirmed live verification failure']
+        job={'id':99,'run_id':77,'conclusion':'failure','steps':[{'name':n,'conclusion':'skipped'} for n in names]}
+        def get(path):return run if path=='/actions/runs/77' else job
+        self.assertEqual(exclude_proven_nonpublications(p,[d],get),([],[77]))
+        for state in ['success','failure','in_progress']:
+            job['steps'][0]['conclusion']=state
+            self.assertRaises(Rejected,exclude_proven_nonpublications,p,[d],get)
+        job['steps'][0]['conclusion']='skipped';run['status']='in_progress'
+        self.assertRaises(Rejected,exclude_proven_nonpublications,p,[d],get)
+        other=copy.deepcopy(d);other['latestStatus']['log_url']=prefix+'78/job/100'
+        self.assertEqual(exclude_proven_nonpublications(p,[other],get),([other],[]))
 
 if __name__=='__main__':unittest.main()

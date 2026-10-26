@@ -85,6 +85,24 @@ def prior_identity(plan,deployments,current_run,tooling_sha,operation,restore_ru
     require(log==prefix+str(expected_run) or log.startswith(prefix+str(expected_run)+'/'),'Current publishing run changed')
     return d
 
+def exclude_proven_nonpublications(plan,deployments,read):
+    """Exclude only a pinned failed attempt whose actual deploy steps were skipped."""
+    keep=[];excluded=[];prefix='https://github.com/'+REPOSITORY+'/actions/runs/'
+    for d in deployments:
+        log=d.get('latestStatus',{}).get('log_url') or ''
+        known=next((v for v in plan.get('nonPublishingFailedRuns',[]) if log==prefix+str(v['runId']) or log.startswith(prefix+str(v['runId'])+'/')),None)
+        if known is None:keep.append(d);continue
+        require(d.get('sha')==known['sourceCommit'] and d.get('latestStatus',{}).get('state')=='failure','Known nonpublication identity/status drift')
+        run=read('/actions/runs/'+str(known['runId']));job=read('/actions/jobs/'+str(known['jobId']))
+        require(run.get('head_sha')==known['sourceCommit'] and run.get('status')=='completed' and run.get('conclusion')=='failure','Failed run is not completed/unchanged')
+        require(job.get('run_id')==known['runId'] and job.get('id')==known['jobId'] and job.get('conclusion')=='failure','Failed job identity mismatch')
+        steps=job.get('steps',[])
+        for name in ['Publish this exact verified Pages artifact once','Restore the verified complete rollback on confirmed live verification failure']:
+            matches=[s for s in steps if s.get('name')==name]
+            require(len(matches)==1 and matches[0].get('conclusion')=='skipped','Cannot exclude an attempted/uncertain publication')
+        excluded.append(known['runId'])
+    return keep,excluded
+
 def preflight(plan,operation='release',restore_run=None,get=None,public_get=None):
     require(os.environ.get('GITHUB_REPOSITORY')==REPOSITORY and os.environ.get('GITHUB_REF')=='refs/heads/main','Wrong repository/branch')
     tooling=os.environ.get('GITHUB_SHA','');current=os.environ.get('GITHUB_RUN_ID','');token=os.environ.get('GH_TOKEN','')
@@ -101,13 +119,14 @@ def preflight(plan,operation='release',restore_run=None,get=None,public_get=None
     ds=read('/deployments?environment=github-pages&per_page=5');require(isinstance(ds,list) and 0<len(ds)<=5,'Deployment metadata missing')
     for d in ds:
         require(type(d.get('id')) is int,'Deployment identity invalid');ss=read('/deployments/'+str(d['id'])+'/statuses?per_page=1');require(len(ss)==1,'Deployment status missing');d['latestStatus']=ss[0]
+    ds,excluded=exclude_proven_nonpublications(plan,ds,read)
     d=prior_identity(plan,ds,current,tooling,operation,restore_run)
     a={'siteURL':SITE,'expectedActive':{'deploymentId':str(d['id'])},'expectedActiveWorkflowCommit':d['sha']}
     result=assess_github(a,ref=ref,pages=pages,runs=runs,deployments=ds,current_run=current,tooling_commit=tooling)
     raw=(public_get or get_bytes)(SITE+'/operations/snapshot.json?command55check='+plan['baseTarSHA256'][:12],8192)
     require(sha(raw)==plan['protectedReferences']['operations/snapshot.json'],'Served holiday snapshot changed')
     require(strict_json(raw).get('store',{}).get('state')=='ORDERS_PAUSED','Actual holiday state not paused')
-    return {**result,'priorRunId':plan['baseRunId'] if operation=='release' else restore_run,'metadataRequests':calls,'metadataBytes':size,'servedHoliday':'ORDERS_PAUSED','backendRequests':0,'scope':SCOPE}
+    return {**result,'priorRunId':plan['baseRunId'] if operation=='release' else restore_run,'excludedProvenNonPublishingRuns':excluded,'metadataRequests':calls,'metadataBytes':size,'servedHoliday':'ORDERS_PAUSED','backendRequests':0,'scope':SCOPE}
 
 def verify_live(plan,kind='release',get=None):
     mapping=plan['verificationFiles' if kind=='release' else 'rollbackVerificationFiles'];require(isinstance(mapping,dict) and 3<=len(mapping)<=7,'Bounded live plan missing')
