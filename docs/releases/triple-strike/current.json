@@ -1,59 +1,275 @@
 {
   "version": 1,
   "authority": "AUTHORISATION_57",
-  "feature": "SPECTRE",
-  "applicationSource": "4f09bd5b4d5109df6028a8dc0d00468512d9af1c",
-  "releaseCheckpoint": "f89657ec28c73a153f65c1f346fc974747bd5994",
-  "sourceParent": "c598a7fcea1ad4fc741969e3a3ab9ff7c33b5039",
+  "feature": "LANTERN",
+  "applicationSource": "b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+  "releaseCheckpoint": "35032409c2f9ce01cbd2741aa32697e0fbbdbaaa",
+  "sourceParent": "05f184389862af8860263cf3bbfd0af78a1885fe",
   "siteURL": "https://apparitioninstruments.co.uk",
-  "baseSource": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-  "baseRunId": 40292065655,
-  "baseArtifactId": 12636623182,
-  "baseTarSHA256": "329af2c355da7d031ae772aec7b2d8808e46062df0ed3862cbf9135d01ff74f4",
-  "basePayloadDigest": "4b78c9e5d71fcc2d5b25459776521903545e3f3e692665e5fe19e45fc8ebf34c",
-  "candidateDigest": "2cd169fcfb84015e0be64e801bca71f6e61890480fee7acbb8af38a630f70e36",
-  "rollbackDigest": "90e52dd2e3f35aa812f94f17c3593e3db29793a577323e6890ed2e19aec805c0",
+  "baseSource": "05f184389862af8860263cf3bbfd0af78a1885fe",
+  "baseRunId": 40346846816,
+  "baseArtifactId": 12661268224,
+  "baseTarSHA256": "abc2592dbab58ba99b65f0987462e73968ec3b83506fbc760467523df21ed78c",
+  "basePayloadDigest": "2cd169fcfb84015e0be64e801bca71f6e61890480fee7acbb8af38a630f70e36",
+  "candidateDigest": "cbd782dbdfddfc0a617d9ed96db4bfd0f84cf876d875ae3f589db56471342a36",
+  "rollbackDigest": "2cd169fcfb84015e0be64e801bca71f6e61890480fee7acbb8af38a630f70e36",
   "changes": [
     {
-      "path": "customer-ui.css",
+      "path": "storefront/entry.mjs",
       "operation": "source",
-      "source": "dist/customer-ui.css",
-      "beforeSHA256": "f72258fb8d455513d2cb38e3672f914207f81ee37664c7e6b32edc7d9c320f26",
-      "afterSHA256": "16d6ebbd2372d54e32565a7999edfd1bc9152c785b77f1bcbf79ee47bba1794a",
-      "bytes": 18732
+      "source": "dist/storefront/entry.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "c7e4e2f56e406db14d753443e86bdbdf5d8f2dca1a0a8fc54099721ad76c3e01",
+      "bytes": 823
     },
     {
-      "path": "index.html",
+      "path": "storefront/startup.mjs",
+      "operation": "source",
+      "source": "dist/storefront/startup.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "816b77ada3339b0afad426dff44f999e45a9084422be7c2d88eee439e5d7a8b9",
+      "bytes": 3727
+    },
+    {
+      "path": "checkout/index.html",
       "operation": "replace",
       "replacements": [
         {
-          "before": "/customer-ui.css?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "/customer-ui.css?build=4f09bd5b4d5109df6028a8dc0d00468512d9af1c",
+          "before": "../checkout/checkout.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
           "count": 1
         }
       ],
-      "beforeSHA256": "acfa48ccf4a00c43040d5c0783bc6e8c6a2cb39623d1dfc3da6473558c1b1449",
-      "afterSHA256": "370654f692fefdf6f12994ba93a2ab456dfd0eb91a5763012fc2c48bcb5a53e9",
-      "bytes": 15145
+      "beforeSHA256": "71eeeb8ef1312f6d6c54a2546f915e1d7c0e86b41d062792b1b2371258f5f066",
+      "afterSHA256": "fa820092e66e44acf91556f0649b788367ffbd55e5b00484f24108ec907e05b1",
+      "bytes": 4465
     },
     {
-      "path": "operations/snapshot.json",
-      "operation": "operations-open",
-      "source": "docs/command/command05/OPEN_SNAPSHOT_55.json",
-      "beforeSHA256": "0dd3a244d2ab694730b83a985fdd69a6310d06e29aa70ab2e5e3f956d8d8c557",
-      "afterSHA256": "0daa8a0d6f03c9eaf746ba91d20c0728fe2b0512c10cea3796c6145358cca69f",
-      "bytes": 3091
+      "path": "components/treble-bleeds/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../components/components.mjs?v=p11&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "468e6e320e1ced9752f40ed3a7feaf80ca698f88596d2052aace30b00ba45bf3",
+      "afterSHA256": "64f1e45d3814ac96e16ce12f36553bc9f4353e6f2636ae4b9cb6492e6960c2b6",
+      "bytes": 10705
+    },
+    {
+      "path": "components/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../components/components.mjs?v=p11&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "9e58e1285bcf319c0d5a3912d72309597cfe8cfc6f4230e0add912c4abc62551",
+      "afterSHA256": "a0747d408adc3ee3c1ef00c93d2d47de4e9923488c2272491aada421b9030333",
+      "bytes": 17248
+    },
+    {
+      "path": "components/potentiometers/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../components/components.mjs?v=p11&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "6258c9a75590002f514dd4d39e7b6cf32376f635a8ce58f151254196b1d5d03e",
+      "afterSHA256": "cf43f233039d7e1a043a46cc5c543570b6502f286618d2cc16c6b23db27449a8",
+      "bytes": 10126
+    },
+    {
+      "path": "components/capacitors/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../components/components.mjs?v=p11&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "9eecfba4189d5bee6ca0022e1f7e54c5b67f4198d7d320041b670eda3b4ec533",
+      "afterSHA256": "5a5b5cc223b06d464481a06cd8270a79aff664dd9b2c7197f3f098d2982b9e73",
+      "bytes": 9366
+    },
+    {
+      "path": "products/pot-short-cts-a/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/products/app.mjs?v=p11ef&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "91666f354dcb17dfce374cfafaa81b71b386548c39db93cf6fa15bdf2024b936",
+      "afterSHA256": "8b033d171934ff3abbbf920e08e1f7b7399f55c24e3b19fe82c67c07a2e61927",
+      "bytes": 10161
+    },
+    {
+      "path": "products/bleed-premium/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/products/app.mjs?v=p11ef&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "483cd5e9218dae3023376061cc6a2511448ef66aa03b156386e35cba075c84e1",
+      "afterSHA256": "5a465d49ca29339f3722e88c764f7833a48102a47b15b89f6f925eff09b57aa5",
+      "bytes": 10952
+    },
+    {
+      "path": "products/pot-short-alpha-a/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/products/app.mjs?v=p11ef&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "81786dd45e9edb174f0a44f6942a3878d598e472406931d5ca60bd26662ceea6",
+      "afterSHA256": "f2e3e82b0325d976f363aac03e447d11f8c03c80463fa7a4e627a091d1acc885",
+      "bytes": 9985
+    },
+    {
+      "path": "products/bleed-duncan/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/products/app.mjs?v=p11ef&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "640779f22b6ca1e0de3c193acb61bae26417af155002012bea5e9a2a60c240ac",
+      "afterSHA256": "1afa8e615fc68826788d8bb90fb03cdb8fc77647a344fcbad594217f6cd298a8",
+      "bytes": 10273
+    },
+    {
+      "path": "products/bleed-cap/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/products/app.mjs?v=p11ef&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "694b807044b8873591fbb7e03fca91ad1afe10b46a77a584620a8488f9ab8325",
+      "afterSHA256": "174f874ebcdb8a96f06fb3ff43e1857646dbd4abd2184595344afba8e6bd0aa3",
+      "bytes": 10396
+    },
+    {
+      "path": "products/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/products/app.mjs?v=p11ef&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "164f26c367203fb7cbb39e7a2dac27f4cbb726ca5a63de5918a6d8959dbbebdc",
+      "afterSHA256": "c014ee0e74801f5088526983fbc36546680e249516d9eb6bfdbb60a90fb11621",
+      "bytes": 4140
+    },
+    {
+      "path": "products/cde-715p-600/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/products/app.mjs?v=p11ef&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "8136659d5004220dc55e6d0a52b273948a25cbb3067a532f8df900091414a2bb",
+      "afterSHA256": "5a3594b5612cdb6ed6376334bc9d0009e4c143946224bef1dd42c3200912dae4",
+      "bytes": 9998
+    },
+    {
+      "path": "products/ai-pot-ss-alphamini-a500k/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/products/app.mjs?v=p11ef&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "afad3e0c9ee441ca23f91a36e9ac809003d0c6fa01c69dfb51bbb76619be876e",
+      "afterSHA256": "faf7b0c1b62282f52ee91ec08ae0378b1312107f1ae149adf07e10aaed345657",
+      "bytes": 10258
+    },
+    {
+      "path": "products/bleed-prs/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/products/app.mjs?v=p11ef&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "9371a83e663aa9972c91e6cf1969b6b1139cea7a1a75340d2b3f462ceafc136e",
+      "afterSHA256": "4ef0d46028329ccfe1c83f6a83f0d74c8600c6abbf33fc3804cb0e615e159637",
+      "bytes": 10199
+    },
+    {
+      "path": "products/cde-047/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/products/app.mjs?v=p11ef&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "c3d44af3b7abce32bc80ac91d988f562fa73b184770e59217767bb10334a431e",
+      "afterSHA256": "c272e241cd0e6b393408e344df6d1378ca60b7c9e6fe19c2f2a956bf3bc7541a",
+      "bytes": 9828
+    },
+    {
+      "path": "products/cde-022/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/products/app.mjs?v=p11ef&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "495023685f8d8e72aa757ccc57ad74fd0b25498629aba8f269c395932034105e",
+      "afterSHA256": "45c6464ee06a8814ba1e7579389f5c39a4e1e653032d246d7ced96098e493909",
+      "bytes": 9963
+    },
+    {
+      "path": "basket/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../basket/basket.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "affed8093222718a1316f59b277774b3d25e1adebb1120b2a0a1d7e1cbda455c",
+      "afterSHA256": "4c324372f628793270ab15241e56bdcff43fd0574818cbdc5b1d51e30893f023",
+      "bytes": 4329
     }
   ],
   "baselineVerification": {
-    "/": "acfa48ccf4a00c43040d5c0783bc6e8c6a2cb39623d1dfc3da6473558c1b1449",
-    "/customer-ui.css?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f": "f72258fb8d455513d2cb38e3672f914207f81ee37664c7e6b32edc7d9c320f26",
-    "/operations/snapshot.json": "0dd3a244d2ab694730b83a985fdd69a6310d06e29aa70ab2e5e3f956d8d8c557",
-    "/interactive-tools/": "d93272db6a2c4ccf5120c476e98accbc19fe827617be6df2f6f9e8bf19aa22c3",
-    "/admin/": "c92b588d170611751a4f23a4e1aa7681cfa5a4b66e9d36969f248fbfe3c0f196",
-    "/checkout/": "71eeeb8ef1312f6d6c54a2546f915e1d7c0e86b41d062792b1b2371258f5f066"
-  },
-  "releaseVerification": {
     "/": "370654f692fefdf6f12994ba93a2ab456dfd0eb91a5763012fc2c48bcb5a53e9",
     "/customer-ui.css?build=4f09bd5b4d5109df6028a8dc0d00468512d9af1c": "16d6ebbd2372d54e32565a7999edfd1bc9152c785b77f1bcbf79ee47bba1794a",
     "/operations/snapshot.json": "0daa8a0d6f03c9eaf746ba91d20c0728fe2b0512c10cea3796c6145358cca69f",
@@ -61,9 +277,19 @@
     "/admin/": "c92b588d170611751a4f23a4e1aa7681cfa5a4b66e9d36969f248fbfe3c0f196",
     "/checkout/": "71eeeb8ef1312f6d6c54a2546f915e1d7c0e86b41d062792b1b2371258f5f066"
   },
+  "releaseVerification": {
+    "/": "370654f692fefdf6f12994ba93a2ab456dfd0eb91a5763012fc2c48bcb5a53e9",
+    "/operations/snapshot.json": "0daa8a0d6f03c9eaf746ba91d20c0728fe2b0512c10cea3796c6145358cca69f",
+    "/components/": "a0747d408adc3ee3c1ef00c93d2d47de4e9923488c2272491aada421b9030333",
+    "/basket/": "4c324372f628793270ab15241e56bdcff43fd0574818cbdc5b1d51e30893f023",
+    "/checkout/": "fa820092e66e44acf91556f0649b788367ffbd55e5b00484f24108ec907e05b1",
+    "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c": "c7e4e2f56e406db14d753443e86bdbdf5d8f2dca1a0a8fc54099721ad76c3e01",
+    "/storefront/startup.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c": "816b77ada3339b0afad426dff44f999e45a9084422be7c2d88eee439e5d7a8b9",
+    "/admin/": "c92b588d170611751a4f23a4e1aa7681cfa5a4b66e9d36969f248fbfe3c0f196"
+  },
   "rollbackVerification": {
-    "/": "acfa48ccf4a00c43040d5c0783bc6e8c6a2cb39623d1dfc3da6473558c1b1449",
-    "/customer-ui.css?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f": "f72258fb8d455513d2cb38e3672f914207f81ee37664c7e6b32edc7d9c320f26",
+    "/": "370654f692fefdf6f12994ba93a2ab456dfd0eb91a5763012fc2c48bcb5a53e9",
+    "/customer-ui.css?build=4f09bd5b4d5109df6028a8dc0d00468512d9af1c": "16d6ebbd2372d54e32565a7999edfd1bc9152c785b77f1bcbf79ee47bba1794a",
     "/operations/snapshot.json": "0daa8a0d6f03c9eaf746ba91d20c0728fe2b0512c10cea3796c6145358cca69f",
     "/interactive-tools/": "d93272db6a2c4ccf5120c476e98accbc19fe827617be6df2f6f9e8bf19aa22c3",
     "/admin/": "c92b588d170611751a4f23a4e1aa7681cfa5a4b66e9d36969f248fbfe3c0f196",
@@ -74,70 +300,47 @@
     "pause_from": null,
     "resume_at": null,
     "updated_at": "2026-10-26T11:58:26.803364+00:00",
-    "observedAt": "2026-10-26T14:50:34.651363+00:00",
-    "sha256": "ad80c9554c8384bd66d002a68c4d4ccdaaf896ac7f37d22c6b389306f30fe19d"
+    "observedAt": "2026-10-26T15:12:23.417111+00:00",
+    "sha256": "f053133bd25c205e5aea13d9e1cc1f6285a78b56d3a0f36fa36e2561c07e76f5"
   },
-  "knownFailedPublications": [
-    {
-      "runId": 40321193513,
-      "source": "c598a7fcea1ad4fc741969e3a3ab9ff7c33b5039",
-      "jobId": 121566246932,
-      "kind": "terminal",
-      "deployStep": "Publish this exact verified Pages artifact once",
-      "restoreStep": "Restore the verified complete rollback on confirmed live verification failure"
-    },
-    {
-      "runId": 40311358554,
-      "source": "0c102c72e63ebd5d6232803c5b9019942fd55853",
-      "jobId": 121533058543,
-      "kind": "terminal",
-      "deployStep": "Publish this exact verified Pages artifact once",
-      "restoreStep": "Restore the verified complete rollback on confirmed live verification failure"
-    },
-    {
-      "runId": 40310242181,
-      "source": "ee620b5277e009d450800735f0fe4543182896aa",
-      "jobId": 121529304330,
-      "kind": "preflight",
-      "deployStep": "Publish this exact verified Pages artifact once",
-      "restoreStep": "Restore the verified complete rollback on confirmed live verification failure"
-    }
-  ],
+  "knownFailedPublications": [],
   "commandReads": false,
   "commandWrites": false,
   "evidenceReuse": {
-    "nativeRun": 39583250290,
-    "heroMarkupExactMatch": true,
-    "cssSHA256": "16d6ebbd2372d54e32565a7999edfd1bc9152c785b77f1bcbf79ee47bba1794a",
-    "scopeAccepted": "AUTHORISATION_57_UNCHANGED_ACCEPTED_CSS_SCOPE",
-    "newScreenshotApprovalClaimed": false,
-    "limits": [
-      "External-font parity and browser-chrome zoom not certified.",
-      "Existing 7px header overflow at 320px with 150% default text remains outside hero scope."
-    ]
-  },
-  "publisherCompatibilityChange": "Official upload-pages-artifact packaging replaces the custom TAR packager; this is a controlled compatibility recovery, not a proven explanation of prior failures.",
-  "targetedAcceptance": {
-    "publisherCases": {
-      "passed": 12,
-      "total": 12
-    },
-    "officialPackagingRoundTrip": {
-      "candidateFiles": 425,
-      "rollbackFiles": 425,
-      "status": "PASS"
-    },
-    "baselineCascadeExactMatch": [
-      "style.css",
-      "navigation.css",
-      "brand.css",
-      "knowledge.css",
-      "homepage.css"
+    "acceptedLightHouseApplication": "932f714b263775215ac091fbef362ad8b5bbc8b5",
+    "run": 39981284222,
+    "nativeCases": 33,
+    "isolationControls": 10,
+    "startupModules": [
+      {
+        "path": "storefront/entry.mjs",
+        "acceptedSourceSHA256": "8e1395073c57c859cd6ecc7b7638ab74d6bf411e8358a48942db8d9efab2d641",
+        "compiledSHA256": "c7e4e2f56e406db14d753443e86bdbdf5d8f2dca1a0a8fc54099721ad76c3e01",
+        "cacheOnly": true
+      },
+      {
+        "path": "storefront/startup.mjs",
+        "acceptedSourceSHA256": "816b77ada3339b0afad426dff44f999e45a9084422be7c2d88eee439e5d7a8b9",
+        "compiledSHA256": "816b77ada3339b0afad426dff44f999e45a9084422be7c2d88eee439e5d7a8b9",
+        "cacheOnly": true
+      }
     ],
-    "inheritedChromeMatrixRun": 39583250290,
-    "newBrowserAcceptanceCampaign": false,
-    "newScreenshots": 0,
-    "newApplicationTests": 0,
-    "yamlAndPins": "PASS"
+    "wording": "Existing static route, FAQ and basket-summary wording retained under AUTHORISATION 57; optional copy-only changes excluded. Accepted recovery boundary text/deadline unchanged.",
+    "wholeMainPendingDeadlineMs": 15000,
+    "newMaterialInteractionBeyondAcceptedScope": false
+  },
+  "targetedAcceptance": {
+    "cacheOnlyStartupSourceRecovery": "PASS",
+    "generatedContentOutsideEntryURLPreserved": 17,
+    "currentGeneratedPagesReconciled": [
+      "products/cde-715p-600/index.html",
+      "products/cde-047/index.html"
+    ],
+    "unrelatedExistingFilesUnchanged": 408,
+    "sourceSyntax": "PASS",
+    "inheritedPublisherTests": "12/12 unchanged publisher source reused",
+    "newApplicationCampaign": false,
+    "newModuleImportsResolve": "PASS",
+    "completeComposition": "PASS"
   }
 }

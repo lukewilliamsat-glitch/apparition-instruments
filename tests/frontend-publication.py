@@ -15,7 +15,7 @@ class Publisher(unittest.TestCase):
     def setUp(self):
         self.env=dict(os.environ)
         os.environ.update(GITHUB_REPOSITORY='lukewilliamsat-glitch/apparition-instruments',GITHUB_REF='refs/heads/main',GITHUB_SHA=SHA,GITHUB_RUN_ID='999')
-        self.p=f.plan_at(ROOT/'docs/releases/triple-strike/current.json')
+        self.p=f.plan_at(ROOT/'docs/releases/triple-strike/release1-plan.json')
         self.payload={path:b'fictional '+path.encode() for path in self.p['baselineVerification']}
         self.p['baselineVerification']={path:sha(data) for path,data in self.payload.items()}
         self.events=[(7,SHA,999,None),(6,'c598a7fcea1ad4fc741969e3a3ab9ff7c33b5039',40321193513,121566246932),(5,'0c102c72e63ebd5d6232803c5b9019942fd55853',40311358554,123),(4,'0c102c72e63ebd5d6232803c5b9019942fd55853',40311358554,121533058543),(3,'ee620b5277e009d450800735f0fe4543182896aa',40310242181,121529304330),(2,BASE,40292065655,None)]
