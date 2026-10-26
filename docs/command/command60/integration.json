@@ -125,6 +125,16 @@
       "id": "R60-3",
       "evidence": "Existing mobile navigation does not make background workspace inert.",
       "repair": "Mobile drawer isolates focus, blocks background interaction, restores focus on Escape and follows measured header height."
+    },
+    {
+      "id": "R60-4",
+      "evidence": "Actual current production gate imports six repository singleton families with build=df78c5b while legacy consumers import build=2e3c45a. Overview also uses a different order-data query identity. Browser ESM instances therefore diverge.",
+      "repair": "Restore canonical unchanged repository cache identities and align the Overview order-data import. Regression proves six actual setter/getter families and all active consumers share the same module."
+    },
+    {
+      "id": "R60-5",
+      "evidence": "Invoice controller intentionally starts with hidden main; placing shared page chrome inside it conceals navigation context while awaiting data.",
+      "repair": "Keep authenticated invoice page context outside its data-controlled paper surface, and preserve light-paper/print styling."
     }
   ],
   "sourcePreservation": "Business controllers, backend contracts, public website source and Auth implementation are unchanged. Only shell, shared styles, existing gate presentation hooks and compatibility redirect change.",
@@ -141,12 +151,25 @@
       "admin-v2-c-workspaces",
       "admin-v2-catalogue"
     ],
-    "newRouteChecks": 23
+    "newRouteChecks": 23,
+    "singletonRegression": {
+      "families": 6,
+      "activeConsumerBindings": 23,
+      "sourceStatus": "PASS"
+    }
   },
   "disabled": {
     "advancedCommandCatalogue": true,
     "ironclad": true,
     "newCommandWrites": true
   },
-  "nativeAcceptance": "PENDING_ENGINEERING_CI"
+  "nativeAcceptance": {
+    "initialRun": 40390818477,
+    "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+    "passed": 31,
+    "total": 36,
+    "isolation": 10,
+    "remaining": "Targeted recovery of five failed boundaries and opaque preview iframe checks.",
+    "environmentFinding": "Pinned Playwright browserContext.js directly reads navigator.serviceWorker in every frame; opaque sandbox frames throw SecurityError. Preserve their sandbox and use an equivalent registration-denial init script with SecurityError handling, worker-src none, unchanged kernel isolation and an explicit registration-denial assertion."
+  }
 }

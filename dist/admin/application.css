@@ -236,3 +236,15 @@
 @media print{[data-admin-app=command] :is(.admin-app-topbar,.admin-app-sidebar,.admin-nav-backdrop,.admin-breadcrumb,.admin-page-description){display:none!important}[data-admin-app=command] .admin-main{margin:0;padding:0;max-width:none}[data-admin-app=command]{background:#fff;color:#111}}
 [data-admin-app=command] .admin-brand-word strong{overflow-wrap:anywhere}
 @media(max-width:1300px){[data-admin-app=command] .studio-workspace{grid-template-columns:minmax(0,1fr)}}
+/* Keep shell chrome available while the invoice controller awaits its own record. */
+[data-admin-app=command] .admin-route-intro{padding-bottom:0}
+[data-admin-app=command] #invoice{margin-top:0}
+[data-admin-app=command] #invoice .sheet{max-width:210mm;margin-inline:auto;color:#20262b;background:#fff}
+[data-admin-app=command] #invoice .sheet table{min-width:0;table-layout:fixed;font:11px/1.5 Arial,sans-serif;color:#20262b;background:#fff}
+[data-admin-app=command] #invoice .sheet :is(th,td){position:static;background:transparent;color:#20262b;font:11px/1.5 Arial,sans-serif;padding:9px 5px;border-color:#dad7d0;min-width:0}
+[data-admin-app=command] #invoice .sheet th{color:#755a35;font-weight:600;text-transform:none;letter-spacing:normal}
+[data-admin-app=command] #invoice .sheet tbody tr:hover{background:transparent}
+[data-command-skin]>.skip{position:fixed;z-index:2000;top:0;left:16px;transform:translateY(-160%);background:#e3c996;color:#101113;padding:10px 16px;text-decoration:none}
+[data-command-skin]>.skip:focus{transform:none}
+[data-admin-app=command] #status:empty{min-height:0;margin:0}
+@media print{[data-admin-app=command] .admin-route-intro{display:none!important}}

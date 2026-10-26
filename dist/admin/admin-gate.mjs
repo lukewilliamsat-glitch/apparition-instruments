@@ -1,15 +1,15 @@
-import {createEmailTemplateRepository,setEmailTemplateRepository} from '../backend/email-templates.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
-import {mountAdminShell,mountAdminSkin,concealAdminShell} from './application.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
-import {addConjureNavigation} from './conjure/navigation.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
-import {createAdminAuth} from './admin-auth.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
-import {setComponentRepository} from './component-repository.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
-import {createAdminComponentRepository} from '../backend/component-data.mjs?v=p11ef&build=df78c5bf5144b012a7d96c628186180fa6432df3';
-import {createAdminOptionRepository,setAdminOptionRepository} from '../backend/catalogue-options.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
-import {setAssemblyRepository} from './assembly-repository.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
-import {createAdminAssemblyRepository} from '../backend/assembly-data.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
-import {createAuthenticatedRepositoryTransport} from '../backend/providers.mjs?v=p10g&build=df78c5bf5144b012a7d96c628186180fa6432df3';
-import {createAdminOrderRepository,setAdminOrderRepository} from '../backend/order-data.mjs?v=external-v1&build=df78c5bf5144b012a7d96c628186180fa6432df3';
-import {createOperationsRepository,setOperationsRepository} from '../backend/operations-admin.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
+import {createEmailTemplateRepository,setEmailTemplateRepository} from '../backend/email-templates.mjs';
+import {mountAdminShell,mountAdminSkin,concealAdminShell} from './application.mjs';
+import {addConjureNavigation} from './conjure/navigation.mjs';
+import {createAdminAuth} from './admin-auth.mjs';
+import {setComponentRepository} from './component-repository.mjs';
+import {createAdminComponentRepository} from '../backend/component-data.mjs?v=p11ef';
+import {createAdminOptionRepository,setAdminOptionRepository} from '../backend/catalogue-options.mjs';
+import {setAssemblyRepository} from './assembly-repository.mjs';
+import {createAdminAssemblyRepository} from '../backend/assembly-data.mjs';
+import {createAuthenticatedRepositoryTransport} from '../backend/providers.mjs?v=p10g';
+import {createAdminOrderRepository,setAdminOrderRepository} from '../backend/order-data.mjs?v=external-v1';
+import {createOperationsRepository,setOperationsRepository} from '../backend/operations-admin.mjs';
 
 const element=(document,tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
 const entryModules=document=>(document.querySelector('script[data-admin-entry]')?.dataset.adminEntry||'').split(',').map(value=>value.trim()).filter(Boolean);

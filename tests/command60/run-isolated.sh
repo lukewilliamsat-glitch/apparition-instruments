@@ -12,4 +12,5 @@ cd "$root"
 run_isolated(){ runuser -u "$owner" -- env -i HOME="$fixture_home" TMPDIR="$fixture_home" PATH="$(dirname "$node"):/usr/bin:/bin" LANG=C.UTF-8 "$node" "$@"; }
 run_isolated tests/command60/isolation.mjs "$output" "$browser" "$controller" "$parent_namespace" "$commit"
 run_isolated --import ./tests/fixtures/admin-offline.mjs tests/command60/shell.mjs > "$output/dom-results.txt"
+run_isolated tests/command60/cache-identity.mjs dist > "$output/cache-identity-results.txt"
 run_isolated tests/command60/browser.mjs "$output" "$browser" "$controller" "$commit"
