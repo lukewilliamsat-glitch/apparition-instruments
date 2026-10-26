@@ -1,0 +1,45 @@
+{
+  "store": {
+    "state": "OPEN",
+    "resume_at": null,
+    "pause_from": null,
+    "updated_at": "2026-10-26T11:58:26.803364+00:00",
+    "desired_state": "OPEN",
+    "customer_title": "Workshop holiday",
+    "customer_message": "Apparition Instruments is taking a workshop break. The Luthier Hub and interactive tools remain available. Your basket stays saved; online ordering returns when the workshop reopens."
+  },
+  "news": [
+    {
+      "id": "81bdb1bf-a898-4f82-ac28-bee351f96d49",
+      "slug": "temporary-store-closure-october-november-2026",
+      "title": "Temporary Store Closure | 27 October – 15 November 2026",
+      "excerpt": "Our online store is temporarily closed from 27 October to 15 November 2026. Orders will resume from 16 November, while our free online guitar wiring tools remain available throughout.",
+      "body": "# Temporary Store Closure | 27 October – 15 November 2026\n\nOur online store is temporarily closed from **27 October to 15 November 2026**, with normal operations resuming on **Monday, 16 November 2026**.\n\nDuring this period, we will not be processing or dispatching new orders.\n\n## Our Online Tools Remain Available\n\nAlthough the store is temporarily closed, our online guitar wiring tools and resources will remain available throughout.\n\nYou can continue to explore our wiring diagrams, experiment with different electronics configurations, and plan your next guitar project.\n\n## Returning on 16 November\n\nWe look forward to reopening on **Monday, 16 November 2026**, when normal order processing and dispatch will resume.\n\nThank you for your patience, understanding and continued support of Apparition Instruments.\n\n**The Apparition Instruments Workshop**",
+      "category": "NEWS",
+      "publication_at": "2026-10-25T13:44:45.145821+00:00",
+      "expires_at": "2026-11-15T13:44:00+00:00",
+      "cta_label": "Explore Our Online Tools",
+      "cta_url": "/interactive-tools/",
+      "announcement": true,
+      "priority": 90,
+      "dismissible": false,
+      "updated_at": "2026-10-25T13:45:38.75642+00:00"
+    },
+    {
+      "id": "5ec9edd9-0098-4aaa-a30f-3fc00a34fbba",
+      "slug": "workshop-closure",
+      "title": "Workshop closed 12–13 October",
+      "excerpt": "The Apparition workshop will be closed on 12 and 13 October while we get married. Normal service resumes shortly afterwards.",
+      "body": "The Apparition Instruments workshop will be closed on 12 and 13 October while we take a couple of days away to get married!  \nThe website, Luthier Hub and interactive tools will remain available as normal. Orders and enquiries received around the closure may take a little longer to process.  \nNormal service will resume shortly afterwards. Thanks for your patience!",
+      "category": "NEWS",
+      "publication_at": "2026-10-06T15:06:19.733962+00:00",
+      "expires_at": "2026-10-14T08:00:00+00:00",
+      "cta_label": null,
+      "cta_url": null,
+      "announcement": true,
+      "priority": 50,
+      "dismissible": true,
+      "updated_at": "2026-10-06T15:06:19.707223+00:00"
+    }
+  ]
+}
