@@ -1,5 +1,5 @@
 import {createEmailTemplateRepository,setEmailTemplateRepository} from '../backend/email-templates.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
-import {mountAdminShell} from './application.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
+import {mountAdminShell,mountAdminSkin,concealAdminShell} from './application.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
 import {addConjureNavigation} from './conjure/navigation.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
 import {createAdminAuth} from './admin-auth.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
 import {setComponentRepository} from './component-repository.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3';
@@ -16,18 +16,19 @@ const entryModules=document=>(document.querySelector('script[data-admin-entry]')
 
 export async function bootAdminGate({document=globalThis.document,auth=createAdminAuth(),load=specifier=>import(specifier),workspaceServices}={}){
  let workspace=null;
+ mountAdminSkin(document);
  const body=document.body;body.classList.remove('admin-authorized');
  const main=element(document,'main');main.className='admin-access-gate';main.setAttribute('aria-labelledby','admin-access-title');body.prepend(main);
  const panel=element(document,'section');panel.className='admin-access-panel';main.append(panel);
- const eyebrow=element(document,'p','APPARITION / ADMIN');eyebrow.className='eyebrow';
- const title=element(document,'h1','Admin Access');title.id='admin-access-title';
+ const eyebrow=element(document,'p','APPARITION INSTRUMENTS / COMMAND');eyebrow.className='eyebrow';
+ const title=element(document,'h1','Workshop access');title.id='admin-access-title';
  const note=element(document,'p');note.className='admin-access-note';
  const feedback=element(document,'p');feedback.className='error';feedback.setAttribute('role','alert');
  const home=element(document,'a','Return to website'),path=document.location?.pathname||'',adminAt=path.indexOf('/admin/');home.href=adminAt<0?'../':path.slice(0,adminAt+1);
  panel.append(eyebrow,title,note,feedback,home);
 
  const signOut=async()=>{
-  workspace?.lock?.('sign-out');
+  workspace?.lock?.('sign-out');concealAdminShell(document);
   setComponentRepository(null);
   setAdminOptionRepository(null);
   setAssemblyRepository(null);
@@ -39,6 +40,7 @@ export async function bootAdminGate({document=globalThis.document,auth=createAdm
  };
  const signOutButton=()=>{const button=element(document,'button','Sign Out');button.type='button';button.className='button';button.addEventListener('click',signOut);return button;};
  const render=state=>{
+  concealAdminShell(document);
   body.classList.remove('admin-authorized');main.hidden=false;feedback.textContent='';panel.replaceChildren(eyebrow,title,note);
   if(state==='denied'||state==='sign-out-error'){
    note.textContent=state==='denied'?'This account is not authorised for Admin access.':'Could not end the Admin session. Please retry.';

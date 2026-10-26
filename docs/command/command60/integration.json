@@ -1,0 +1,152 @@
+{
+  "authority": "AUTHORISATION_60",
+  "baseline": "bc5eeef3f998c439b7cb88daeb8d6d1ecd5dd7b0",
+  "primaryEntry": "/admin/",
+  "authentication": "Existing admin/admin-auth.mjs server identity and Admin membership checks; no role / RLS changes.",
+  "sharedShell": "admin/application.mjs + application.css, mounted once by existing admin-gate. Shell readiness follows authenticated Admin access; advanced COMMAND adapter is not involved.",
+  "modules": [
+    {
+      "name": "Inventory / stock / products",
+      "route": "/admin/?view=inventory; /admin/?view=assemblies; /admin/?view=maintenance",
+      "controller": "admin/admin.mjs",
+      "contract": "admin/component-repository.mjs; admin/assembly-repository.mjs; backend/component-data.mjs; backend/assembly-data.mjs",
+      "writes": "Existing save, changeStock, remove and assembly operations",
+      "integration": "Retain controller, IDs, forms, event bindings and repository. Shared shell / styles only."
+    },
+    {
+      "name": "Overview",
+      "route": "/admin/overview/",
+      "controller": "admin/overview.mjs",
+      "contract": "Existing component, assembly, order, operations and CMS read repositories",
+      "writes": "None",
+      "integration": "Retain controller, IDs, forms, event bindings and repository. Shared shell / styles only."
+    },
+    {
+      "name": "Orders / fulfilment / marketplace / Aftercare",
+      "route": "/admin/orders/; ?new=external; ?view=aftercare; ?view=attempts",
+      "controller": "admin/orders/app.mjs; external-order.mjs; external-edit.mjs; customer-aftercare.mjs",
+      "contract": "backend/order-data.mjs and existing reviewed function requests",
+      "writes": "Existing order creation, fulfilment, dispatch, adjustment and Aftercare actions",
+      "integration": "Retain controller, IDs, forms, event bindings and repository. Shared shell / styles only."
+    },
+    {
+      "name": "Build sheet and invoice",
+      "route": "/admin/orders/build-sheet/; /admin/orders/invoice/",
+      "controller": "admin/orders/build-sheet/app.mjs; admin/orders/invoice/app.mjs",
+      "contract": "Existing Orders reads and build-sheet picking / QC repositories",
+      "writes": "Existing picking / QC actions; invoice print only",
+      "integration": "Retain controller, IDs, forms, event bindings and repository. Shared shell / styles only."
+    },
+    {
+      "name": "Wiring kits",
+      "route": "/admin/wiring-kit-master/",
+      "controller": "admin/wiring-kit-master/app.mjs",
+      "contract": "admin/component-repository.mjs; master model",
+      "writes": "Existing local planning contract",
+      "integration": "Retain controller, IDs, forms, event bindings and repository. Shared shell / styles only."
+    },
+    {
+      "name": "Catalogue settings",
+      "route": "/admin/catalogue-settings/",
+      "controller": "admin/catalogue-settings/settings.mjs",
+      "contract": "backend/catalogue-options.mjs; component-repository.mjs",
+      "writes": "Existing option operations",
+      "integration": "Retain controller, IDs, forms, event bindings and repository. Shared shell / styles only."
+    },
+    {
+      "name": "Conjure",
+      "route": "/admin/conjure/",
+      "controller": "admin/conjure/app.mjs",
+      "contract": "conjure/document-repository.mjs; hub-cms/repository.mjs",
+      "writes": "Existing document / draft saves with unsaved-draft guard",
+      "integration": "Retain controller, IDs, forms, event bindings and repository. Shared shell / styles only."
+    },
+    {
+      "name": "Articles / revisions",
+      "route": "/admin/hub-cms/",
+      "controller": "admin/hub-cms/admin.mjs",
+      "contract": "admin/hub-cms/repository.mjs; admin/hub-media/repository.mjs",
+      "writes": "Existing drafts, publication and immutable history",
+      "integration": "Retain controller, IDs, forms, event bindings and repository. Shared shell / styles only."
+    },
+    {
+      "name": "Media",
+      "route": "/admin/hub-media/",
+      "controller": "admin/hub-media/admin.mjs",
+      "contract": "admin/hub-media/repository.mjs",
+      "writes": "Existing article / asset references",
+      "integration": "Retain controller, IDs, forms, event bindings and repository. Shared shell / styles only."
+    },
+    {
+      "name": "Operations / News / commercial",
+      "route": "/admin/site-operations/; #news; #announcements; #commercial-destinations",
+      "controller": "admin/site-operations/operations.mjs; commercial/admin.mjs",
+      "contract": "backend/operations-admin.mjs",
+      "writes": "Existing store, News and destination operations",
+      "integration": "Retain controller, IDs, forms, event bindings and repository. Shared shell / styles only."
+    },
+    {
+      "name": "Email template studio",
+      "route": "/admin/email-templates/",
+      "controller": "admin/email-templates/studio.mjs",
+      "contract": "backend/email-templates.mjs",
+      "writes": "Existing versioned drafts / publication",
+      "integration": "Retain controller, IDs, forms, event bindings and repository. Shared shell / styles only."
+    },
+    {
+      "name": "Email preview",
+      "route": "/admin/email-preview/",
+      "controller": "admin/email-preview/app.mjs",
+      "contract": "Existing authenticated preview request",
+      "writes": "No customer send; preview only",
+      "integration": "Retain controller, IDs, forms, event bindings and repository. Shared shell / styles only."
+    },
+    {
+      "name": "Circuit FORGE / instruments",
+      "route": "/circuit-forge/",
+      "controller": "circuit-forge/app.mjs; forge-pro/instrument-workspace.mjs",
+      "contract": "Existing project and instrument repositories / original session contract",
+      "writes": "Existing specialist operations; public workbench is not converted into Admin",
+      "integration": "Shared Admin navigation links to original specialist public workbench. Preserve its specialised canvas and account lifecycle."
+    }
+  ],
+  "confirmedIntegrationDefects": [
+    {
+      "id": "R60-1",
+      "evidence": "COMMAND is a separate inactive route while normal inventory retains prior presentation.",
+      "repair": "Shared shell at /admin/; legacy /admin/command/ redirects to primary route; no separate catalogue activation needed."
+    },
+    {
+      "id": "R60-2",
+      "evidence": "Shared shell explicitly skips /admin/conjure/.",
+      "repair": "Use shared shell while preserving Conjure controls, iframe, sandbox and existing unsaved-draft guard."
+    },
+    {
+      "id": "R60-3",
+      "evidence": "Existing mobile navigation does not make background workspace inert.",
+      "repair": "Mobile drawer isolates focus, blocks background interaction, restores focus on Escape and follows measured header height."
+    }
+  ],
+  "sourcePreservation": "Business controllers, backend contracts, public website source and Auth implementation are unchanged. Only shell, shared styles, existing gate presentation hooks and compatibility redirect change.",
+  "acceptanceReuse": {
+    "commandApplication": "df78c5bf5144b012a7d96c628186180fa6432df3",
+    "browserRuns": [
+      40227070614,
+      40242794782,
+      40243379865
+    ],
+    "tripleStrike": "Closed; preserved byte-for-byte, no acceptance rerun.",
+    "existingAffectedNodeChecks": [
+      "admin-gate",
+      "admin-v2-c-workspaces",
+      "admin-v2-catalogue"
+    ],
+    "newRouteChecks": 23
+  },
+  "disabled": {
+    "advancedCommandCatalogue": true,
+    "ironclad": true,
+    "newCommandWrites": true
+  },
+  "nativeAcceptance": "PENDING_ENGINEERING_CI"
+}
