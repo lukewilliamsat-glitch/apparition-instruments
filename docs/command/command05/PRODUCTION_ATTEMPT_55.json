@@ -1,0 +1,84 @@
+{
+  "version": 1,
+  "status": "HOLD_PAGES_PUBLICATION_FAILED",
+  "scope": "COMMAND_FRONTEND_ONLY_READS_DISABLED",
+  "applicationSource": "df78c5bf5144b012a7d96c628186180fa6432df3",
+  "ownerVisualAcceptance": "ACCEPTED",
+  "providerMetadata": "COMPATIBLE_QUERIES_EXECUTED_ONCE_EACH",
+  "authenticatedCatalogueAcceptance": "UNVERIFIED_DISABLED",
+  "productionReads": false,
+  "productionWrites": false,
+  "publication": {
+    "source": "0c102c72e63ebd5d6232803c5b9019942fd55853",
+    "runId": 40311358554,
+    "jobId": 121533058543,
+    "url": "https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/40311358554",
+    "completeCandidateVerification": "PASS",
+    "uploadedCandidateOriginalTarReadback": "PASS",
+    "completeRollbackOriginalTarReadback": "PASS",
+    "preflightBeforeAndAfterAssembly": "PASS",
+    "publisher": "actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346",
+    "result": "deployment_failed",
+    "message": "Deployment failed, try again later.",
+    "liveVerification": "NOT_RUN_PUBLISHER_FAILED",
+    "automaticRestoration": "NOT_RUN_PUBLISHER_FAILED"
+  },
+  "candidate": {
+    "files": 443,
+    "tarSHA256": "01e2416a28455b77a4bb91a7b845500fdd8541c1cf293830b2793bb01b65f97d",
+    "inventorySHA256": "2278e034dbdcc9385f25d0edf3504b14a4c7c4aaa46a775bcc299d8c0dd79a45",
+    "unrelatedFilesPreserved": 422
+  },
+  "rollback": {
+    "source": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+    "runId": 40292065655,
+    "originalArtifactId": 12636623182,
+    "tarSHA256": "329af2c355da7d031ae772aec7b2d8808e46062df0ed3862cbf9135d01ff74f4",
+    "state": "ORDERS_PAUSED"
+  },
+  "artifacts": [
+    {
+      "id": 12644193674,
+      "name": "command-publication-receipt",
+      "bytes": 3971,
+      "digest": "sha256:61f14875f1576bed942caeabe8938f6f1c4dadfe154d16fc191787436a18b353",
+      "expiresAt": "2026-11-09T10:57:53Z"
+    },
+    {
+      "id": 12644184409,
+      "name": "command-approved-pages",
+      "bytes": 20343183,
+      "digest": "sha256:4c82efceb713865784493331851816fd7d702c386d3be22cef87687ad000c849",
+      "expiresAt": "2026-11-09T10:57:35Z"
+    },
+    {
+      "id": 12644169386,
+      "name": "command55-rollback-pages",
+      "bytes": 20303403,
+      "digest": "sha256:ca589f378bd37161fc7f89330d6f72217d71d9040e9d35dd0773559e613f2053",
+      "expiresAt": "2026-11-09T10:57:31Z"
+    }
+  ],
+  "readOnlyDiagnostic": {
+    "source": "6632b6d02a8be808e9e71de7223b6c13ec1194f1",
+    "runId": 40313043373,
+    "jobId": 121538686612,
+    "status": "SUCCESS_NO_PUBLICATION",
+    "pagesResponse": {
+      "status": ""
+    },
+    "underlyingError": "NOT_SUPPLIED_BY_GITHUB"
+  },
+  "browserObservation": {
+    "commandURL": "https://apparitioninstruments.co.uk/admin/command/?command55check=01e2416a2845",
+    "result": "404_CUSTOM_PAGE",
+    "productionLaunchVerified": false
+  },
+  "unmodifiedBoundaries": [
+    "No new Supabase requests after the two metadata inspections",
+    "No product, stock or financial mutations",
+    "No holiday content changes",
+    "No frozen engineering branch changes"
+  ],
+  "outcome": "No successful production deployment. Do not represent engineering/main source publication as a live release."
+}
