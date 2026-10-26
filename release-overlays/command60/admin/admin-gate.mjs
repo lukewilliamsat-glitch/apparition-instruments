@@ -1,0 +1,96 @@
+import {createEmailTemplateRepository,setEmailTemplateRepository} from '../backend/email-templates.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f';
+import {mountAdminShell,mountAdminSkin,concealAdminShell} from './application.mjs?build=745251f1ce6d0a488d0d7363eca033888e00a00f';
+import {addConjureNavigation} from './conjure/navigation.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f';
+import {createAdminAuth} from './admin-auth.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f';
+import {setComponentRepository} from './component-repository.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f';
+import {createAdminComponentRepository} from '../backend/component-data.mjs?v=p11ef&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f';
+import {createAdminOptionRepository,setAdminOptionRepository} from '../backend/catalogue-options.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f';
+import {setAssemblyRepository} from './assembly-repository.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f';
+import {createAdminAssemblyRepository} from '../backend/assembly-data.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f';
+import {createAuthenticatedRepositoryTransport} from '../backend/providers.mjs?v=p10g&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f';
+import {createAdminOrderRepository,setAdminOrderRepository} from '../backend/order-data.mjs?v=external-v1&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f';
+import {createOperationsRepository,setOperationsRepository} from '../backend/operations-admin.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f';
+
+const element=(document,tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
+const entryModules=document=>(document.querySelector('script[data-admin-entry]')?.dataset.adminEntry||'').split(',').map(value=>value.trim()).filter(Boolean);
+
+export async function bootAdminGate({document=globalThis.document,auth=createAdminAuth(),load=specifier=>import(specifier),workspaceServices}={}){
+ let workspace=null;
+ mountAdminSkin(document);
+ const body=document.body;body.classList.remove('admin-authorized');
+ const main=element(document,'main');main.className='admin-access-gate';main.setAttribute('aria-labelledby','admin-access-title');body.prepend(main);
+ const panel=element(document,'section');panel.className='admin-access-panel';main.append(panel);
+ const eyebrow=element(document,'p','APPARITION INSTRUMENTS / COMMAND');eyebrow.className='eyebrow';
+ const title=element(document,'h1','Workshop access');title.id='admin-access-title';
+ const note=element(document,'p');note.className='admin-access-note';
+ const feedback=element(document,'p');feedback.className='error';feedback.setAttribute('role','alert');
+ const home=element(document,'a','Return to website'),path=document.location?.pathname||'',adminAt=path.indexOf('/admin/');home.href=adminAt<0?'../':path.slice(0,adminAt+1);
+ panel.append(eyebrow,title,note,feedback,home);
+
+ const signOut=async()=>{
+  workspace?.lock?.('sign-out');concealAdminShell(document);
+  setComponentRepository(null);
+  setAdminOptionRepository(null);
+  setAssemblyRepository(null);
+  setAdminOrderRepository(null);
+  setOperationsRepository(null);setEmailTemplateRepository(null);
+  body.classList.remove('admin-authorized');main.hidden=false;panel.replaceChildren(eyebrow,title,note,feedback);
+  note.textContent='Signing out…';feedback.textContent='';
+  try{await auth.signOut();document.querySelector('.admin-lock')?.remove();render('signed-out');}catch{render('sign-out-error');}
+ };
+ const signOutButton=()=>{const button=element(document,'button','Sign Out');button.type='button';button.className='button';button.addEventListener('click',signOut);return button;};
+ const render=state=>{
+  concealAdminShell(document);
+  body.classList.remove('admin-authorized');main.hidden=false;feedback.textContent='';panel.replaceChildren(eyebrow,title,note);
+  if(state==='denied'||state==='sign-out-error'){
+   note.textContent=state==='denied'?'This account is not authorised for Admin access.':'Could not end the Admin session. Please retry.';
+   panel.append(signOutButton(),home);return;
+  }
+  if(state==='checking'){note.textContent='Checking Admin access…';panel.append(feedback);return;}
+  note.textContent='Sign in with your authorised Apparition Admin account.';
+  const form=element(document,'form');
+  const emailLabel=element(document,'label','Email'),email=element(document,'input');email.type='email';email.name='email';email.required=true;email.autocomplete='username';emailLabel.append(email);
+  const passwordLabel=element(document,'label','Password'),password=element(document,'input');password.type='password';password.name='password';password.required=true;password.autocomplete='current-password';passwordLabel.append(password);
+  const button=element(document,'button','Sign In');button.type='submit';button.className='button';form.append(emailLabel,passwordLabel,button);
+  form.addEventListener('submit',async event=>{event.preventDefault();button.disabled=true;feedback.textContent='';note.textContent='Authenticating…';
+   try{const result=await auth.signIn(email.value.trim(),password.value);if(result.status==='authorized')await reveal();else if(result.status==='denied')render('denied');else{note.textContent='Sign in with your authorised Apparition Admin account.';feedback.textContent='Sign-in failed. Check your email and password.';password.value='';password.focus();}}
+   catch{note.textContent='Sign in with your authorised Apparition Admin account.';feedback.textContent='Admin sign-in is unavailable. Please try again.';}
+   finally{button.disabled=false;}
+  });
+  panel.append(form,feedback,home);email.focus();
+ };
+ const reveal=async()=>{
+  const signOutControl=signOutButton();signOutControl.className='admin-lock';body.prepend(signOutControl);
+  try{
+   if(typeof auth.accessToken==='function'){
+    const transport=createAuthenticatedRepositoryTransport(auth);
+    setComponentRepository(createAdminComponentRepository(transport));
+    setAdminOptionRepository(createAdminOptionRepository(transport));
+    setAssemblyRepository(createAdminAssemblyRepository(transport));
+    setAdminOrderRepository(createAdminOrderRepository(transport));
+    setOperationsRepository(createOperationsRepository(transport));
+    setEmailTemplateRepository(createEmailTemplateRepository(transport));
+   }
+   addConjureNavigation(document);
+   const navigation=document.querySelector('.admin-navigation')||document.querySelector('.admin-tabs');
+   if(navigation&&!navigation.querySelector('a[href="/admin/site-operations/"]')){const group=element(document,'div'),label=element(document,'span','Operations'),link=element(document,'a','Site Operations');link.href='/admin/site-operations/';group.append(label,link);if(navigation.classList.contains('admin-navigation'))navigation.append(group);else navigation.append(link);}
+   mountAdminShell(document,signOutControl);
+   for(const entry of entryModules(document)){
+    const module=await load(new URL(entry,document.baseURI).href);
+    if(typeof module?.mountAdminWorkspace==='function'){
+     workspace?.destroy?.();
+     workspace=await module.mountAdminWorkspace({document,auth,services:workspaceServices});
+    }
+   }
+   main.hidden=true;body.classList.add('admin-authorized');
+  }catch{setComponentRepository(null);setAdminOptionRepository(null);setAssemblyRepository(null);setAdminOrderRepository(null);setOperationsRepository(null);setEmailTemplateRepository(null);signOutControl.remove();render('checking');feedback.textContent='Admin could not load. Please reload and try again.';}
+ };
+ render('checking');
+ try{const result=await auth.restore();if(result.status==='authorized')await reveal();else render(result.status==='denied'?'denied':'signed-out');}
+ catch{render('signed-out');feedback.textContent='Could not check Admin access. Please try again.';}
+}
+
+if(typeof document!=='undefined'&&document.querySelector('script[src*="admin-gate.mjs"][data-admin-entry]'))bootAdminGate().catch(()=>{
+ document.body.classList.remove('admin-authorized');
+ const gate=document.querySelector('.admin-access-gate');if(gate)gate.textContent='Admin access is unavailable. Please reload.';
+});

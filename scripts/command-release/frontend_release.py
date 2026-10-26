@@ -13,16 +13,19 @@ from frontend import get_bytes,NoRedirect
 from transport import REPOSITORY
 
 SITE='https://apparitioninstruments.co.uk'
-FEATURES={'SPECTRE','LANTERN','SENTINEL','COMMAND_FRONTEND'}
+FEATURES={'SPECTRE','LANTERN','SENTINEL','COMMAND_FRONTEND','COMMAND_UNIFIED_ADMIN'}
 COMMAND_SOURCE='df78c5bf5144b012a7d96c628186180fa6432df3'
+UNIFIED_ALLOWED={'admin/application.mjs','admin/application.css','admin/admin-gate.mjs','admin/overview.mjs','admin/command/index.html','admin/command-redirect.mjs'}
 COMMAND_MANIFEST_SHA='899151248c2fe2492f198ae19bc36a975287d0edad55cf5168c2657184e17ff1'
 
 def plan_at(path):
     p=strict_json(bounded_file(path,262144))
-    require(p.get('version')==1 and p.get('feature') in FEATURES and p.get('authority')==('AUTHORISATION_58' if p['feature']=='COMMAND_FRONTEND' else 'AUTHORISATION_57'),'Wrong frontend authority/scope')
+    require(p.get('version')==1 and p.get('feature') in FEATURES and p.get('authority')==('AUTHORISATION_58' if p['feature']=='COMMAND_FRONTEND' else 'AUTHORISATION_60' if p['feature']=='COMMAND_UNIFIED_ADMIN' else 'AUTHORISATION_57'),'Wrong frontend authority/scope')
     if p['feature']=='COMMAND_FRONTEND':
         require(p.get('applicationSource')==p.get('visualAcceptedSource')==COMMAND_SOURCE,'COMMAND accepted source mismatch')
         require(p.get('commandManifestSHA256')==COMMAND_MANIFEST_SHA,'COMMAND compiled source manifest mismatch')
+    if p['feature']=='COMMAND_UNIFIED_ADMIN':
+        require(re.fullmatch('[a-f0-9]{40}',p.get('applicationSource','')) and re.fullmatch('[a-f0-9]{64}',p.get('unifiedManifestSHA256','')),'Unified source identity missing')
     require(p.get('siteURL')==SITE and p.get('commandReads') is False and p.get('commandWrites') is False,'Site or COMMAND activation mismatch')
     for key in ['baseTarSHA256','basePayloadDigest','candidateDigest','rollbackDigest']:
         require(re.fullmatch('[a-f0-9]{64}',p.get(key,'')),'Missing immutable payload identity')
@@ -68,10 +71,20 @@ def prepare(p,baseline,root,out):
         require(sha(canonical(manifest))==COMMAND_MANIFEST_SHA and manifest.get('sourceCommit')==COMMAND_SOURCE,'COMMAND source manifest changed')
         command_entries={e['path']:e for e in manifest['entries']}
         require(set(command_entries)==ALLOWED and {c['path'] for c in p['changes'] if c.get('operation')=='source'}==ALLOWED,'Exact COMMAND overlay required')
+    if p['feature']=='COMMAND_UNIFIED_ADMIN':
+        manifest=strict_json(bounded_file(Path(root)/'docs/command/command60/source-manifest.json',65536))
+        require(sha(canonical(manifest))==p['unifiedManifestSHA256'] and manifest.get('kind')=='COMMAND_UNIFIED_ADMIN_V1' and manifest.get('sourceCommit')==p['applicationSource'],'Unified source manifest changed')
+        command_entries={e['path']:e for e in manifest['entries']}
+        require(set(command_entries)==UNIFIED_ALLOWED and {c['path'] for c in p['changes'] if c.get('operation')=='compiled-admin'}==UNIFIED_ALLOWED,'Exact unified Admin overlay required')
     for c in p['changes']:
         path=c['path'];before=files.get(path)
         require(not path.startswith('supabase/'),'Backend delta refused')
-        if p['feature']=='COMMAND_FRONTEND':
+        if p['feature']=='COMMAND_UNIFIED_ADMIN':
+            if path in command_entries:
+                e=command_entries[path]
+                require(c.get('operation')=='compiled-admin' and c.get('source')=='release-overlays/command60/'+path and all(c.get(k)==e[k] for k in ['beforeSHA256','afterSHA256','bytes']),'Unified approved source mismatch')
+            else:require((path.startswith('admin/') or path=='commercial/admin.mjs') and path.endswith(('.html','.mjs')) and cache_reference_only(c),'Unified unrelated delta refused')
+        elif p['feature']=='COMMAND_FRONTEND':
             if path in command_entries:
                 e=command_entries[path]
                 require(c.get('operation')=='source' and c.get('source')=='dist/'+path and all(c.get(k)==e[k] for k in ['beforeSHA256','afterSHA256','bytes']),'COMMAND approved source delta mismatch')
@@ -79,7 +92,10 @@ def prepare(p,baseline,root,out):
         else:require(not path.startswith(('admin/','forge-pro/')) or cache_reference_only(c),'Unrelated privileged workspace delta refused')
         if p['feature']=='SPECTRE':require(path in {'customer-ui.css','index.html','operations/snapshot.json'},'SPECTRE delta exceeded')
         require((sha(before) if before is not None else None)==c['beforeSHA256'],'Delta preimage mismatch: '+path)
-        if c['operation']=='source':
+        if c['operation']=='compiled-admin':
+            require(p['feature']=='COMMAND_UNIFIED_ADMIN' and c['source']=='release-overlays/command60/'+path and path in UNIFIED_ALLOWED,'Unapproved compiled Admin source')
+            data=bounded_file(Path(root)/c['source'],8*1024*1024)
+        elif c['operation']=='source':
             require(c['source'].startswith('dist/') and '..' not in c['source'].split('/'),'Unapproved overlay source')
             data=bounded_file(Path(root)/c['source'],8*1024*1024)
         elif c['operation']=='replace':
@@ -99,7 +115,7 @@ def prepare(p,baseline,root,out):
         else:raise ValueError('Unsupported delta operation')
         require(sha(data)==c['afterSHA256'] and len(data)==c['bytes'],'Delta postimage mismatch: '+path)
         files[path]=data;changes.append({'path':path,'beforeSHA256':c['beforeSHA256'],'afterSHA256':sha(data),'bytes':len(data)})
-    if p['feature']=='COMMAND_FRONTEND':
+    if p['feature'] in ('COMMAND_FRONTEND','COMMAND_UNIFIED_ADMIN'):
         activation=files['admin/command/read-activation.mjs'].decode('utf-8')
         require(all(re.search(r'^\s*'+name+r'\s*:\s*false\s*,?\s*$',activation,re.M) for name in ['enabled','inventoryRead']),'COMMAND unverified activation refused')
         require(all(re.search(r'^\s*'+name+r'\s*:\s*null\s*,?\s*$',activation,re.M) for name in ['metadataEvidenceSHA256','liveReadEvidenceSHA256']),'COMMAND fabricated activation evidence refused')
@@ -144,6 +160,18 @@ def operations(p,get=None):
     require(abs((datetime.now(timezone.utc)-datetime.fromisoformat(observed)).total_seconds())<=300,'Operations timestamp is stale')
     return {'state':'OPEN','pause_from':None,'resume_at':None,'updated_at':s['updated_at'],'observedAt':observed,'bytes':len(raw),'sha256':sha(raw),'requests':1,'mutations':0}
 
+def unified_native_evidence(p,read):
+    evidence=p['nativeAcceptance'];execution=evidence.get('executionSource',p['applicationSource'])
+    require(re.fullmatch('[a-f0-9]{40}',execution),'Native execution source missing')
+    accepted=read('/actions/runs/'+str(evidence['runId']))
+    require(accepted.get('head_sha')==execution and accepted.get('status')=='completed' and accepted.get('conclusion')=='success','Unified native acceptance is not successful for exact source')
+    if execution!=p['applicationSource']:
+        compared=read('/compare/'+p['applicationSource']+'...'+execution)
+        require(compared.get('merge_base_commit',{}).get('sha')==p['applicationSource'] and compared.get('status')=='ahead','Native reuse ancestry differs')
+        files=compared.get('files',[])
+        require(0<len(files)<=10 and all(f.get('filename','').startswith('tests/command60/') and f.get('status') in ('added','modified') for f in files),'Application changed after native reuse source')
+    return {'runId':evidence['runId'],'applicationSource':p['applicationSource'],'executionSource':execution,'applicationUnchanged':True}
+
 def preflight(p,get=None,public_get=get_bytes,final=False,operation='release',restore_run=None):
     if p['feature']=='SENTINEL':
         decision=p.get('evidenceReuse',{}).get('interactionDecision')
@@ -162,6 +190,7 @@ def preflight(p,get=None,public_get=get_bytes,final=False,operation='release',re
             raw=get_bytes('https://api.github.com/repos/'+REPOSITORY+path,786432,{'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'})
             total+=len(raw);require(total<=4194304,'Metadata byte ceiling');value=strict_json(raw)
         cache[path]=value;return value
+    if p['feature']=='COMMAND_UNIFIED_ADMIN':unified_native_evidence(p,read)
     require(read('/git/ref/heads/main').get('object',{}).get('sha')==source,'Current main changed')
     pages=read('/pages');require(pages.get('build_type')=='workflow' and pages.get('html_url','').rstrip('/')==SITE and pages.get('https_enforced') is True,'Pages target/settings changed')
     for state in ['in_progress','queued','waiting','pending','requested']:

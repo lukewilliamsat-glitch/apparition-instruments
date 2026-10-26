@@ -1,44 +1,23 @@
 {
   "version": 1,
-  "authority": "AUTHORISATION_58",
-  "feature": "COMMAND_FRONTEND",
-  "applicationSource": "df78c5bf5144b012a7d96c628186180fa6432df3",
-  "releaseCheckpoint": "df78c5bf5144b012a7d96c628186180fa6432df3",
-  "sourceParent": "865448c4e5a5cc262440772b225e6707fcb0d535",
+  "authority": "AUTHORISATION_60",
+  "feature": "COMMAND_UNIFIED_ADMIN",
+  "applicationSource": "745251f1ce6d0a488d0d7363eca033888e00a00f",
+  "releaseCheckpoint": "745251f1ce6d0a488d0d7363eca033888e00a00f",
+  "sourceParent": "745251f1ce6d0a488d0d7363eca033888e00a00f",
+  "visualFoundationSource": "df78c5bf5144b012a7d96c628186180fa6432df3",
+  "presentationAuthority": "AUTHORISATION_60",
   "siteURL": "https://apparitioninstruments.co.uk",
-  "baseSource": "865448c4e5a5cc262440772b225e6707fcb0d535",
-  "baseRunId": 40359269590,
-  "baseArtifactId": 12667702915,
-  "baseTarSHA256": "6c2ad544475bec2a4f022645e8619dbcddae83d7856acdbfcb49ca87687c5514",
-  "basePayloadDigest": "314b57c475fa53636acbc93ca800c477bddddbcb6543876fe57f2893ece1aa6b",
-  "candidateDigest": "02e760d679a44a3dd95169224846f7b745f7f295e9cc16e175fda3ba911c1155",
-  "rollbackDigest": "314b57c475fa53636acbc93ca800c477bddddbcb6543876fe57f2893ece1aa6b",
-  "baselineVerification": {
-    "/": "370654f692fefdf6f12994ba93a2ab456dfd0eb91a5763012fc2c48bcb5a53e9",
-    "/operations/snapshot.json": "0daa8a0d6f03c9eaf746ba91d20c0728fe2b0512c10cea3796c6145358cca69f",
-    "/admin/": "3226a5bb7acc6d35b5ce2b93f89076b513da5ea911df2fdd02e14bbc852a2c9e",
-    "/basket/": "a1c55e3f487367cd2d52cdfec6b58445deb3c0bc26e832b7c38bccdda61ce42c",
-    "/components/treble-bleeds/": "1e0043e7bce6ea1ed221aeb2c59e1b06682bcccc3ac7ccba7cf90029222aad2d",
-    "/contact/": "e05a8865644127a3c4c186366656cce058e891b6c0c73ca614161f6e61bf5c4f"
-  },
-  "releaseVerification": {
-    "/admin/command/": "c04bb8b971c7443df973479bd1a2dce709cf658508d240b7deeb18381c174629",
-    "/admin/command/read-activation.mjs": "0982665d9fd9234fa28380ffaddee4f02d90b95b250603d0123573eb9fd4f594",
-    "/admin/admin-gate.mjs": "d37da9143463e53c6f1d90c42e5a4a3c19c21414c1eb0f1e8e0f5ae738597cf3",
-    "/admin/application.mjs": "c0af98f4330fab2b6a27e16515d5719c401686510779c987f9cbc8881a284dd3",
-    "/admin/": "5f35908843a10f92d5c06f94f468312cf84273e638568e3de1745b08618f5ac5",
-    "/operations/snapshot.json": "0daa8a0d6f03c9eaf746ba91d20c0728fe2b0512c10cea3796c6145358cca69f",
-    "/": "370654f692fefdf6f12994ba93a2ab456dfd0eb91a5763012fc2c48bcb5a53e9",
-    "/components/treble-bleeds/": "1e0043e7bce6ea1ed221aeb2c59e1b06682bcccc3ac7ccba7cf90029222aad2d"
-  },
-  "rollbackVerification": {
-    "/": "370654f692fefdf6f12994ba93a2ab456dfd0eb91a5763012fc2c48bcb5a53e9",
-    "/operations/snapshot.json": "0daa8a0d6f03c9eaf746ba91d20c0728fe2b0512c10cea3796c6145358cca69f",
-    "/admin/": "3226a5bb7acc6d35b5ce2b93f89076b513da5ea911df2fdd02e14bbc852a2c9e",
-    "/basket/": "a1c55e3f487367cd2d52cdfec6b58445deb3c0bc26e832b7c38bccdda61ce42c",
-    "/components/treble-bleeds/": "1e0043e7bce6ea1ed221aeb2c59e1b06682bcccc3ac7ccba7cf90029222aad2d",
-    "/contact/": "e05a8865644127a3c4c186366656cce058e891b6c0c73ca614161f6e61bf5c4f"
-  },
+  "baseSource": "bc5eeef3f998c439b7cb88daeb8d6d1ecd5dd7b0",
+  "baseRunId": 40381176219,
+  "baseArtifactId": 12678662381,
+  "baseTarSHA256": "2142ccce2b3363c4ed64e2fcd2d2a092d037baf6a62ebb913fc114674a96094e",
+  "basePayloadDigest": "02e760d679a44a3dd95169224846f7b745f7f295e9cc16e175fda3ba911c1155",
+  "candidateDigest": "40036660628fccf87842d26ce378c1b573d46e303441d2af3afc827c622ab012",
+  "rollbackDigest": "02e760d679a44a3dd95169224846f7b745f7f295e9cc16e175fda3ba911c1155",
+  "unifiedManifestSHA256": "faf1e1b7d1b41e58dd2b2ff87d4803509727fd2887c5714f1a753fa4053eb239",
+  "commandReads": false,
+  "commandWrites": false,
   "operationsEvidence": {
     "state": "OPEN",
     "pause_from": null,
@@ -48,399 +27,481 @@
     "sha256": "1040aa31f8c5c5a874c46259d08fd2c0400f6d3eac8421bd7e1529d4b0d27a25"
   },
   "knownFailedPublications": [],
-  "commandReads": false,
-  "commandWrites": false,
-  "continuationAuthority": "AUTHORISATION_58",
-  "subrelease": "COMMAND_NOCTURNE_FRONTEND_READS_DISABLED",
-  "productionAuthority": "AUTHORISATION_58",
+  "baselineVerification": {
+    "/admin/": "5f35908843a10f92d5c06f94f468312cf84273e638568e3de1745b08618f5ac5",
+    "/admin/admin-gate.mjs": "d37da9143463e53c6f1d90c42e5a4a3c19c21414c1eb0f1e8e0f5ae738597cf3",
+    "/operations/snapshot.json": "0daa8a0d6f03c9eaf746ba91d20c0728fe2b0512c10cea3796c6145358cca69f",
+    "/": "370654f692fefdf6f12994ba93a2ab456dfd0eb91a5763012fc2c48bcb5a53e9",
+    "/basket/": "a1c55e3f487367cd2d52cdfec6b58445deb3c0bc26e832b7c38bccdda61ce42c",
+    "/components/treble-bleeds/": "1e0043e7bce6ea1ed221aeb2c59e1b06682bcccc3ac7ccba7cf90029222aad2d"
+  },
+  "rollbackVerification": {
+    "/admin/": "5f35908843a10f92d5c06f94f468312cf84273e638568e3de1745b08618f5ac5",
+    "/admin/admin-gate.mjs": "d37da9143463e53c6f1d90c42e5a4a3c19c21414c1eb0f1e8e0f5ae738597cf3",
+    "/operations/snapshot.json": "0daa8a0d6f03c9eaf746ba91d20c0728fe2b0512c10cea3796c6145358cca69f",
+    "/": "370654f692fefdf6f12994ba93a2ab456dfd0eb91a5763012fc2c48bcb5a53e9",
+    "/basket/": "a1c55e3f487367cd2d52cdfec6b58445deb3c0bc26e832b7c38bccdda61ce42c",
+    "/components/treble-bleeds/": "1e0043e7bce6ea1ed221aeb2c59e1b06682bcccc3ac7ccba7cf90029222aad2d"
+  },
+  "releaseVerification": {
+    "/admin/": "1f31ba866e0630858450c6dd2fad518e9f559763a12da607372d0168e66ff938",
+    "/admin/application.css": "e236bf64da6ab626e47e1f5894d4b01abd0d741a540a9bc83d6cc69ce9daaad2",
+    "/admin/application.mjs": "f40a3768a39762a5c4983b76cf28dd12764e087294a76127d7db478c44ef1cf9",
+    "/admin/admin-gate.mjs": "5e99c9747a869c873347a8f4e51d56abfdb17e91a82990f606872fa25db8ef69",
+    "/admin/command/": "aff5fb730ab1ff27ef8947822a612dc67b86eaa7bb4f0a8e9d68aca57335cbf2",
+    "/operations/snapshot.json": "0daa8a0d6f03c9eaf746ba91d20c0728fe2b0512c10cea3796c6145358cca69f",
+    "/": "370654f692fefdf6f12994ba93a2ab456dfd0eb91a5763012fc2c48bcb5a53e9",
+    "/components/treble-bleeds/": "1e0043e7bce6ea1ed221aeb2c59e1b06682bcccc3ac7ccba7cf90029222aad2d"
+  },
+  "nativeAcceptance": {
+    "runId": 40394191549,
+    "source": "745251f1ce6d0a488d0d7363eca033888e00a00f",
+    "scope": "Final Orders startup 1/1, with 36 unchanged or recovered native groups reused (37 unique groups total).",
+    "reuse": [
+      {
+        "runId": 40390818477,
+        "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
+        "passedGroups": 31
+      },
+      {
+        "runId": 40392606748,
+        "source": "74f9bc971dc9e8c540cef268828476521497b112",
+        "passedGroups": 10
+      },
+      {
+        "runId": 40393495996,
+        "source": "745251f1ce6d0a488d0d7363eca033888e00a00f",
+        "passedGroups": 1,
+        "scope": "Actual inventory editor, image element retained, zero writes."
+      }
+    ],
+    "historicalCommand53JourneysRerun": false,
+    "executionSource": "f350de62445e8e63332c3230f48ae5c98cacc38c"
+  },
   "changes": [
     {
-      "path": "admin/admin-auth.mjs",
-      "beforeSHA256": "c11bb71eec880153c5060d13ceb5b4eca3711ba054a922483c87f34694a46085",
-      "afterSHA256": "20632a519cf0591563e4b1cacd7fd39d3df3ba3b8b21b3c3032c511e8d530180",
-      "bytes": 6638,
-      "operation": "source",
-      "source": "dist/admin/admin-auth.mjs"
+      "path": "admin/application.mjs",
+      "operation": "compiled-admin",
+      "source": "release-overlays/command60/admin/application.mjs",
+      "beforeSHA256": "c0af98f4330fab2b6a27e16515d5719c401686510779c987f9cbc8881a284dd3",
+      "afterSHA256": "f40a3768a39762a5c4983b76cf28dd12764e087294a76127d7db478c44ef1cf9",
+      "bytes": 12252
+    },
+    {
+      "path": "admin/application.css",
+      "operation": "compiled-admin",
+      "source": "release-overlays/command60/admin/application.css",
+      "beforeSHA256": "07f64e12981161b2b290f47cdbc62178c3ccd6114d10823625f3328cee2ed025",
+      "afterSHA256": "e236bf64da6ab626e47e1f5894d4b01abd0d741a540a9bc83d6cc69ce9daaad2",
+      "bytes": 34132
     },
     {
       "path": "admin/admin-gate.mjs",
-      "beforeSHA256": "5a39586fa81be16ad13f3dd24102b450a1d280c127a76329c2e63079ac739f0d",
-      "afterSHA256": "d37da9143463e53c6f1d90c42e5a4a3c19c21414c1eb0f1e8e0f5ae738597cf3",
-      "bytes": 8077,
-      "operation": "source",
-      "source": "dist/admin/admin-gate.mjs"
+      "operation": "compiled-admin",
+      "source": "release-overlays/command60/admin/admin-gate.mjs",
+      "beforeSHA256": "d37da9143463e53c6f1d90c42e5a4a3c19c21414c1eb0f1e8e0f5ae738597cf3",
+      "afterSHA256": "5e99c9747a869c873347a8f4e51d56abfdb17e91a82990f606872fa25db8ef69",
+      "bytes": 8213
     },
     {
-      "path": "admin/application.mjs",
-      "beforeSHA256": "d290d4930c16a015adf0d7e5023b429295a44957515c86065deae741ea01e638",
-      "afterSHA256": "c0af98f4330fab2b6a27e16515d5719c401686510779c987f9cbc8881a284dd3",
-      "bytes": 8178,
-      "operation": "source",
-      "source": "dist/admin/application.mjs"
-    },
-    {
-      "path": "admin/command/bounded-json.mjs",
-      "beforeSHA256": null,
-      "afterSHA256": "b222f629be1fb294d2a3869ccda86b1c8b47238fc90461ed86ac777a9428dbca",
-      "bytes": 1880,
-      "operation": "source",
-      "source": "dist/admin/command/bounded-json.mjs"
-    },
-    {
-      "path": "admin/command/command.css",
-      "beforeSHA256": null,
-      "afterSHA256": "a776596e9e2eb92c832fb73c7015372dfd5230c89d79ec4d33f7d4db16b0da25",
-      "bytes": 6563,
-      "operation": "source",
-      "source": "dist/admin/command/command.css"
-    },
-    {
-      "path": "admin/command/command01/controller.mjs",
-      "beforeSHA256": null,
-      "afterSHA256": "1fa032b5270506bbe9d91c1ef919edba5f0135a480a0ff6f2ebc7c0bbf6172ea",
-      "bytes": 4323,
-      "operation": "source",
-      "source": "dist/admin/command/command01/controller.mjs"
-    },
-    {
-      "path": "admin/command/command01/model.mjs",
-      "beforeSHA256": null,
-      "afterSHA256": "1d6efcc47242ec9829a2a9a270a71dff18293e044f35d65e400de2f27bac30ed",
-      "bytes": 5079,
-      "operation": "source",
-      "source": "dist/admin/command/command01/model.mjs"
-    },
-    {
-      "path": "admin/command/command01/view.mjs",
-      "beforeSHA256": null,
-      "afterSHA256": "332adaa8c5329b217dcb867bdb75b0ae6edcae376c1b16add2e785a5e608d878",
-      "bytes": 14365,
-      "operation": "source",
-      "source": "dist/admin/command/command01/view.mjs"
-    },
-    {
-      "path": "admin/command/command01/workbench.css",
-      "beforeSHA256": null,
-      "afterSHA256": "299c86226e392fffcc58f005ca6b42c125a3b7b435f828dd9d1d5cc08178a179",
-      "bytes": 15895,
-      "operation": "source",
-      "source": "dist/admin/command/command01/workbench.css"
-    },
-    {
-      "path": "admin/command/command02/editor-view.mjs",
-      "beforeSHA256": null,
-      "afterSHA256": "f5ce937e950636a6b0ad8e86e13bc65a1a06c6bb5ccee59c0127981e34828c15",
-      "bytes": 14819,
-      "operation": "source",
-      "source": "dist/admin/command/command02/editor-view.mjs"
-    },
-    {
-      "path": "admin/command/command02/editor.css",
-      "beforeSHA256": null,
-      "afterSHA256": "4967d622c2c2c22a173f71cd844f581c8d59c0e5847997b943c48ae151b1db5b",
-      "bytes": 6170,
-      "operation": "source",
-      "source": "dist/admin/command/command02/editor.css"
-    },
-    {
-      "path": "admin/command/command02/schema.mjs",
-      "beforeSHA256": null,
-      "afterSHA256": "9e02336e98c75e220d7862c4ebbd450794ce7a32b906cb7405b06140d419548e",
-      "bytes": 6013,
-      "operation": "source",
-      "source": "dist/admin/command/command02/schema.mjs"
-    },
-    {
-      "path": "admin/command/command02/session.mjs",
-      "beforeSHA256": null,
-      "afterSHA256": "9ac36cc62d6adc63fcc8d3fc9f5a5525b5b2cac77490bd65da5aa60ab7b0f315",
-      "bytes": 8475,
-      "operation": "source",
-      "source": "dist/admin/command/command02/session.mjs"
-    },
-    {
-      "path": "admin/command/editor-port.mjs",
-      "beforeSHA256": null,
-      "afterSHA256": "31089526ea9086329f34bd52b8f50576b16ef72ed893a39e60e4c0fcad9eda1b",
-      "bytes": 897,
-      "operation": "source",
-      "source": "dist/admin/command/editor-port.mjs"
-    },
-    {
-      "path": "admin/command/entry.mjs",
-      "beforeSHA256": null,
-      "afterSHA256": "f379f1209080d765968b70ad0aec8823f207d4608271e15c4e185803c66dbe7b",
-      "bytes": 6574,
-      "operation": "source",
-      "source": "dist/admin/command/entry.mjs"
+      "path": "admin/overview.mjs",
+      "operation": "compiled-admin",
+      "source": "release-overlays/command60/admin/overview.mjs",
+      "beforeSHA256": "50c1605daa8b7a997fa36d1c829484758989be6f7d23ac0abe1ddedd24e370de",
+      "afterSHA256": "1c8bc84970bf26d433c7db28c6ecd50ef1a593bc0aac130bcb571f1c184ea78a",
+      "bytes": 7530
     },
     {
       "path": "admin/command/index.html",
-      "beforeSHA256": null,
-      "afterSHA256": "c04bb8b971c7443df973479bd1a2dce709cf658508d240b7deeb18381c174629",
-      "bytes": 8683,
-      "operation": "source",
-      "source": "dist/admin/command/index.html"
+      "operation": "compiled-admin",
+      "source": "release-overlays/command60/admin/command/index.html",
+      "beforeSHA256": "c04bb8b971c7443df973479bd1a2dce709cf658508d240b7deeb18381c174629",
+      "afterSHA256": "aff5fb730ab1ff27ef8947822a612dc67b86eaa7bb4f0a8e9d68aca57335cbf2",
+      "bytes": 441
     },
     {
-      "path": "admin/command/nocturne.css",
+      "path": "admin/command-redirect.mjs",
+      "operation": "compiled-admin",
+      "source": "release-overlays/command60/admin/command-redirect.mjs",
       "beforeSHA256": null,
-      "afterSHA256": "6f7d206a7828881f0eab44757d3d3e6e7a9bb7ee510e9f2fd14f8f25b54f7b99",
-      "bytes": 20455,
-      "operation": "source",
-      "source": "dist/admin/command/nocturne.css"
+      "afterSHA256": "91b903ff21d812d0ed9beab1036dfe60dc40da518fb8edde101bb7e7f083475a",
+      "bytes": 319
     },
     {
-      "path": "admin/command/presentation.mjs",
-      "beforeSHA256": null,
-      "afterSHA256": "99a4c71207ba059aaad6783a4132dd8cdb23a5c46d96e486579ddc669c015765",
-      "bytes": 5079,
-      "operation": "source",
-      "source": "dist/admin/command/presentation.mjs"
-    },
-    {
-      "path": "admin/command/production-read.mjs",
-      "beforeSHA256": null,
-      "afterSHA256": "72049caf8081bf73cf75623227d7f69206631ebaa1961b718c38e625c29f37bb",
-      "bytes": 8165,
-      "operation": "source",
-      "source": "dist/admin/command/production-read.mjs"
-    },
-    {
-      "path": "admin/command/read-activation.mjs",
-      "beforeSHA256": null,
-      "afterSHA256": "0982665d9fd9234fa28380ffaddee4f02d90b95b250603d0123573eb9fd4f594",
-      "bytes": 331,
-      "operation": "source",
-      "source": "dist/admin/command/read-activation.mjs"
-    },
-    {
-      "path": "admin/command/read-boundary.mjs",
-      "beforeSHA256": null,
-      "afterSHA256": "2e6a69c01e2987aa4bee3290f55d8b7ea39d6464c931566294e637b57cd19c8d",
-      "bytes": 12153,
-      "operation": "source",
-      "source": "dist/admin/command/read-boundary.mjs"
+      "path": "admin/admin.mjs",
+      "operation": "replace",
+      "beforeSHA256": "b26f3d94f03092af759c8fb5f403b1edc7157b59a645529c46703a57f584a850",
+      "afterSHA256": "9397e9a3b1d4a3b858e51f30c79c57e5c5ba3430e66e0782e5af54668e8d0b81",
+      "bytes": 27851,
+      "replacements": [
+        {
+          "before": "./application.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "./application.mjs?build=745251f1ce6d0a488d0d7363eca033888e00a00f",
+          "count": 1
+        }
+      ]
     },
     {
       "path": "admin/catalogue-settings/index.html",
       "operation": "replace",
+      "beforeSHA256": "689d0cb4f55b9bddd9905c5f4169812418b136a374b39cb0ca2b000d4aa51fd3",
+      "afterSHA256": "37f5d20128378914753433ae79891b1688f42360880b53f6b89aa2ed6e33c385",
+      "bytes": 1094,
       "replacements": [
         {
-          "before": "/admin/admin-gate.mjs?v=p10g&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "/admin/admin-gate.mjs?v=p10g&build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "before": "/admin/admin-gate.mjs?v=p10g&build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "after": "/admin/admin-gate.mjs?v=p10g&build=745251f1ce6d0a488d0d7363eca033888e00a00f",
           "count": 1
         }
-      ],
-      "beforeSHA256": "70067176bd1b87330bf2ad9d9e4b61ac4c13c2e980986d673bac53b2cb4e05bf",
-      "afterSHA256": "689d0cb4f55b9bddd9905c5f4169812418b136a374b39cb0ca2b000d4aa51fd3",
-      "bytes": 1094
+      ]
+    },
+    {
+      "path": "admin/command/command01/view.mjs",
+      "operation": "replace",
+      "beforeSHA256": "332adaa8c5329b217dcb867bdb75b0ae6edcae376c1b16add2e785a5e608d878",
+      "afterSHA256": "9567263ad8c2bc3956a356541d31b597f4ed3b07b145007dee7eb2b11ef534ff",
+      "bytes": 14365,
+      "replacements": [
+        {
+          "before": "../../application.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "after": "../../application.mjs?build=745251f1ce6d0a488d0d7363eca033888e00a00f",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "admin/command/command02/editor-view.mjs",
+      "operation": "replace",
+      "beforeSHA256": "f5ce937e950636a6b0ad8e86e13bc65a1a06c6bb5ccee59c0127981e34828c15",
+      "afterSHA256": "c4b895bcb57b4d3b74254f4d1a33cb9fa3213d46903937ce773fcec279ad1fc7",
+      "bytes": 14819,
+      "replacements": [
+        {
+          "before": "../../application.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "after": "../../application.mjs?build=745251f1ce6d0a488d0d7363eca033888e00a00f",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "admin/command/entry.mjs",
+      "operation": "replace",
+      "beforeSHA256": "f379f1209080d765968b70ad0aec8823f207d4608271e15c4e185803c66dbe7b",
+      "afterSHA256": "c26cedd78e24e99755c0487a8a2c3f90c39359fc3ad39080452eaf3ae58df410",
+      "bytes": 6574,
+      "replacements": [
+        {
+          "before": "./command01/view.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "after": "./command01/view.mjs?build=745251f1ce6d0a488d0d7363eca033888e00a00f",
+          "count": 1
+        },
+        {
+          "before": "./command02/editor-view.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "after": "./command02/editor-view.mjs?build=745251f1ce6d0a488d0d7363eca033888e00a00f",
+          "count": 1
+        }
+      ]
     },
     {
       "path": "admin/conjure/index.html",
       "operation": "replace",
+      "beforeSHA256": "8f0ea07508d32956c36bf49fba983733d105a5c9d085e2325504028f50849559",
+      "afterSHA256": "a2f519b7a77b0ce1e528cec181cc7db39899cae86be0e9f42b9be76cbdd25a5f",
+      "bytes": 3843,
       "replacements": [
         {
-          "before": "/admin/admin-gate.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "/admin/admin-gate.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "before": "/admin/admin-gate.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "after": "/admin/admin-gate.mjs?build=745251f1ce6d0a488d0d7363eca033888e00a00f",
           "count": 1
         }
-      ],
-      "beforeSHA256": "6ded7b0753bed8e36ee448d298e3369393d5261e5747237fab0c0a0a53ce2c23",
-      "afterSHA256": "8f0ea07508d32956c36bf49fba983733d105a5c9d085e2325504028f50849559",
-      "bytes": 3843
+      ]
     },
     {
       "path": "admin/email-preview/index.html",
       "operation": "replace",
+      "beforeSHA256": "416f23b589a37ac7be880c06d4f8e26442f62a884da0b8a8fa1ed73239045896",
+      "afterSHA256": "b59a4e18e2afc6f18e81afa67c8018a5b33dc5ceba6f6fc4b2749ade6859b823",
+      "bytes": 2648,
       "replacements": [
         {
-          "before": "../admin-gate.mjs?v=p08b4&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "../admin-gate.mjs?v=p08b4&build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "before": "../admin-gate.mjs?v=p08b4&build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "after": "../admin-gate.mjs?v=p08b4&build=745251f1ce6d0a488d0d7363eca033888e00a00f",
           "count": 1
         }
-      ],
-      "beforeSHA256": "d2aceed124cf16b5185e82b4c6f80deb026ebe4fcb00ce70991f91ff3ff232ed",
-      "afterSHA256": "416f23b589a37ac7be880c06d4f8e26442f62a884da0b8a8fa1ed73239045896",
-      "bytes": 2648
+      ]
     },
     {
       "path": "admin/email-templates/index.html",
       "operation": "replace",
+      "beforeSHA256": "2d8368c652ba56f70d356d4a9c2c78dff562db0521aa8285285c21de26b3cccc",
+      "afterSHA256": "128c4874d1d3f757657c683475be2419ca2f5ffb1461d722cc1d82b81dfa53cd",
+      "bytes": 5054,
       "replacements": [
         {
-          "before": "/admin/admin-gate.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "/admin/admin-gate.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "before": "/admin/admin-gate.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "after": "/admin/admin-gate.mjs?build=745251f1ce6d0a488d0d7363eca033888e00a00f",
           "count": 1
         }
-      ],
-      "beforeSHA256": "d6cd3903cd5e773dc1c1c07aa1a8815c6e17ce264325f3aeb336816559e81484",
-      "afterSHA256": "2d8368c652ba56f70d356d4a9c2c78dff562db0521aa8285285c21de26b3cccc",
-      "bytes": 5054
+      ]
+    },
+    {
+      "path": "admin/hub-cms/admin.mjs",
+      "operation": "replace",
+      "beforeSHA256": "1a64d3788ecbd78c56ff1564d916344abe464f06e50865f2a1d9ea7da05de457",
+      "afterSHA256": "4f4842cdd1d7778baecbeeab3ae7a6d07e8400c314cff2caf49e11b5dd136dc5",
+      "bytes": 21538,
+      "replacements": [
+        {
+          "before": "../application.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../application.mjs?build=745251f1ce6d0a488d0d7363eca033888e00a00f",
+          "count": 1
+        }
+      ]
     },
     {
       "path": "admin/hub-cms/index.html",
       "operation": "replace",
+      "beforeSHA256": "78d1ea8cf4a832a816f7e5ae7884d7ff25792565135be7edbc6ae7dae004f65c",
+      "afterSHA256": "ebb91606aa9eec29147c1bebe8dce15d894781fffafde7987f5f6895848d9da2",
+      "bytes": 9148,
       "replacements": [
         {
-          "before": "/admin/admin-gate.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "/admin/admin-gate.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "before": "/admin/admin-gate.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "after": "/admin/admin-gate.mjs?build=745251f1ce6d0a488d0d7363eca033888e00a00f",
+          "count": 1
+        },
+        {
+          "before": "./admin.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "./admin.mjs?build=745251f1ce6d0a488d0d7363eca033888e00a00f",
           "count": 1
         }
-      ],
-      "beforeSHA256": "d60888addf769a1acff6d763582fd05dabbd76113dc55da06780b57b5180d4e5",
-      "afterSHA256": "78d1ea8cf4a832a816f7e5ae7884d7ff25792565135be7edbc6ae7dae004f65c",
-      "bytes": 9148
+      ]
     },
     {
       "path": "admin/hub-media/index.html",
       "operation": "replace",
+      "beforeSHA256": "23eff3f6b371b5ee589ceb73497c9fd2b9b1a275e04368292ba61a7b175c7280",
+      "afterSHA256": "9e7b3e92fcff402ba65c05cfe762b709cb3633406598f9e571ef0395c9661c86",
+      "bytes": 2376,
       "replacements": [
         {
-          "before": "/admin/admin-gate.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "/admin/admin-gate.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "before": "/admin/admin-gate.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "after": "/admin/admin-gate.mjs?build=745251f1ce6d0a488d0d7363eca033888e00a00f",
           "count": 1
         }
-      ],
-      "beforeSHA256": "a12b22d8c5b28626f8690fb484c23b3d92296fa20afe0c8c340476f7176e0afb",
-      "afterSHA256": "23eff3f6b371b5ee589ceb73497c9fd2b9b1a275e04368292ba61a7b175c7280",
-      "bytes": 2376
+      ]
     },
     {
       "path": "admin/index.html",
       "operation": "replace",
+      "beforeSHA256": "5f35908843a10f92d5c06f94f468312cf84273e638568e3de1745b08618f5ac5",
+      "afterSHA256": "1f31ba866e0630858450c6dd2fad518e9f559763a12da607372d0168e66ff938",
+      "bytes": 15314,
       "replacements": [
         {
-          "before": "../admin/admin-gate.mjs?v=p10hi&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "../admin/admin-gate.mjs?v=p10hi&build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "before": "../admin/admin-gate.mjs?v=p10hi&build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "after": "../admin/admin-gate.mjs?v=p10hi&build=745251f1ce6d0a488d0d7363eca033888e00a00f",
+          "count": 1
+        },
+        {
+          "before": "./admin.mjs?v=p11ef&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "./admin.mjs?v=p11ef&build=745251f1ce6d0a488d0d7363eca033888e00a00f",
           "count": 1
         }
-      ],
-      "beforeSHA256": "3226a5bb7acc6d35b5ce2b93f89076b513da5ea911df2fdd02e14bbc852a2c9e",
-      "afterSHA256": "5f35908843a10f92d5c06f94f468312cf84273e638568e3de1745b08618f5ac5",
-      "bytes": 15314
+      ]
+    },
+    {
+      "path": "admin/orders/app.mjs",
+      "operation": "replace",
+      "beforeSHA256": "ac8541174d8ac4b4625113930208a11104cf4ad0e7e972619ef19a08c443c56e",
+      "afterSHA256": "d4bea55176814a50cc20567464966fbbdcc523c29d65c22cba56cff87186be14",
+      "bytes": 15804,
+      "replacements": [
+        {
+          "before": "./detail-presentation.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "./detail-presentation.mjs?build=745251f1ce6d0a488d0d7363eca033888e00a00f",
+          "count": 1
+        },
+        {
+          "before": "../application.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../application.mjs?build=745251f1ce6d0a488d0d7363eca033888e00a00f",
+          "count": 1
+        }
+      ]
     },
     {
       "path": "admin/orders/build-sheet/index.html",
       "operation": "replace",
+      "beforeSHA256": "80139f98b1b495fca371d055996286e1abb01be0c1c37d5a81e0145ea89cc9d5",
+      "afterSHA256": "66571ac3cd4dba9d55772f1be75243bb2950375af6d7be220b90de152c5617ba",
+      "bytes": 5544,
       "replacements": [
         {
-          "before": "../../../admin/admin-gate.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "../../../admin/admin-gate.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "before": "../../../admin/admin-gate.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "after": "../../../admin/admin-gate.mjs?build=745251f1ce6d0a488d0d7363eca033888e00a00f",
           "count": 1
         }
-      ],
-      "beforeSHA256": "a68eda42964b182efb014217d528cee6279987f82afaf7f229b0670f18a94e32",
-      "afterSHA256": "80139f98b1b495fca371d055996286e1abb01be0c1c37d5a81e0145ea89cc9d5",
-      "bytes": 5544
+      ]
+    },
+    {
+      "path": "admin/orders/detail-presentation.mjs",
+      "operation": "replace",
+      "beforeSHA256": "a76e77bd67b6aed83b9ebc2924a082e786958b44ccbc43555b3826e9282da47e",
+      "afterSHA256": "08989b9cc9f8c5ac7218a99087207af6758d03fafebe7f2c27b6730d4479d339",
+      "bytes": 2225,
+      "replacements": [
+        {
+          "before": "../application.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../application.mjs?build=745251f1ce6d0a488d0d7363eca033888e00a00f",
+          "count": 1
+        }
+      ]
     },
     {
       "path": "admin/orders/index.html",
       "operation": "replace",
+      "beforeSHA256": "c9cb2a94d18cb7889f7d03912079fbebe71f9ea18b528bd748fcd8de5ebd5334",
+      "afterSHA256": "482aa7bbce324a04871b2ab9d22a737539d183cd91e4d1aa289421da66427525",
+      "bytes": 8101,
       "replacements": [
         {
-          "before": "../../admin/admin-gate.mjs?v=customer-aftercare-giga-v1&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "../../admin/admin-gate.mjs?v=customer-aftercare-giga-v1&build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "before": "../../admin/admin-gate.mjs?v=customer-aftercare-giga-v1&build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "after": "../../admin/admin-gate.mjs?v=customer-aftercare-giga-v1&build=745251f1ce6d0a488d0d7363eca033888e00a00f",
+          "count": 1
+        },
+        {
+          "before": "./app.mjs?v=customer-aftercare-giga-v1&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "./app.mjs?v=customer-aftercare-giga-v1&build=745251f1ce6d0a488d0d7363eca033888e00a00f",
           "count": 1
         }
-      ],
-      "beforeSHA256": "58d9c2138cd2d15345efd2ac91cde64a6b480315619abd219db7c3204e54eb2c",
-      "afterSHA256": "c9cb2a94d18cb7889f7d03912079fbebe71f9ea18b528bd748fcd8de5ebd5334",
-      "bytes": 8101
+      ]
     },
     {
       "path": "admin/orders/invoice/index.html",
       "operation": "replace",
+      "beforeSHA256": "e8daaad6681f1e1a954269f57ec10f8bf5ab810bc6acc597a33de633ee164999",
+      "afterSHA256": "855cfa5aad0da63cbfb16df01c2d7c848dab7eb2ab6606475a36b96e950d1c13",
+      "bytes": 1000,
       "replacements": [
         {
-          "before": "../../admin-gate.mjs?v=external-v1&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "../../admin-gate.mjs?v=external-v1&build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "before": "../../admin-gate.mjs?v=external-v1&build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "after": "../../admin-gate.mjs?v=external-v1&build=745251f1ce6d0a488d0d7363eca033888e00a00f",
           "count": 1
         }
-      ],
-      "beforeSHA256": "461544f16ea89af7edcffcc2fe4800290be82e6112374b3add68e55149c58d3d",
-      "afterSHA256": "e8daaad6681f1e1a954269f57ec10f8bf5ab810bc6acc597a33de633ee164999",
-      "bytes": 1000
+      ]
     },
     {
       "path": "admin/overview/index.html",
       "operation": "replace",
+      "beforeSHA256": "629fe07e45e56beb7857965294c99e997a1bfcbf184feb7400f5c1a860854e25",
+      "afterSHA256": "0e7fa9b4911bd84e497d101b2a55f8921481fa200fb5e50417bde41a9ab334c0",
+      "bytes": 937,
       "replacements": [
         {
-          "before": "/admin/admin-gate.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "/admin/admin-gate.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "before": "/admin/admin-gate.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "after": "/admin/admin-gate.mjs?build=745251f1ce6d0a488d0d7363eca033888e00a00f",
+          "count": 1
+        },
+        {
+          "before": "../overview.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../overview.mjs?build=745251f1ce6d0a488d0d7363eca033888e00a00f",
           "count": 1
         }
-      ],
-      "beforeSHA256": "4ccbfd7a056126dfb284b4658dbad525f22347ec1787ceed3991fbe719c021bc",
-      "afterSHA256": "629fe07e45e56beb7857965294c99e997a1bfcbf184feb7400f5c1a860854e25",
-      "bytes": 937
+      ]
     },
     {
       "path": "admin/site-operations/index.html",
       "operation": "replace",
+      "beforeSHA256": "cbbe40417d524b2a763608cf1efd0083704bd910320374c245083c535f01345e",
+      "afterSHA256": "b127e0dd10d3cb009b7ddb02566c08fa7c01c540b121701166426278ada3fbf3",
+      "bytes": 8505,
       "replacements": [
         {
-          "before": "/admin/admin-gate.mjs?v=operations-v1&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "/admin/admin-gate.mjs?v=operations-v1&build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "before": "/admin/admin-gate.mjs?v=operations-v1&build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "after": "/admin/admin-gate.mjs?v=operations-v1&build=745251f1ce6d0a488d0d7363eca033888e00a00f",
+          "count": 1
+        },
+        {
+          "before": "./operations.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "./operations.mjs?build=745251f1ce6d0a488d0d7363eca033888e00a00f",
+          "count": 1
+        },
+        {
+          "before": "../../commercial/admin.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../commercial/admin.mjs?build=745251f1ce6d0a488d0d7363eca033888e00a00f",
           "count": 1
         }
-      ],
-      "beforeSHA256": "2e538da4ad0e130a959a3ada810745158e48eda9578a28c18402faca23016b89",
-      "afterSHA256": "cbbe40417d524b2a763608cf1efd0083704bd910320374c245083c535f01345e",
-      "bytes": 8505
+      ]
+    },
+    {
+      "path": "admin/site-operations/operations.mjs",
+      "operation": "replace",
+      "beforeSHA256": "6e3a9c93615eade6739dd09cb2e974ed0ed6e2204d333841f3ce922984c51c73",
+      "afterSHA256": "c2febd46f5e7ccbbb1da6de81d3d0ddfc52ddb6d019e9e35a2321b56bd3b6f74",
+      "bytes": 10691,
+      "replacements": [
+        {
+          "before": "../application.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../application.mjs?build=745251f1ce6d0a488d0d7363eca033888e00a00f",
+          "count": 1
+        }
+      ]
     },
     {
       "path": "admin/wiring-kit-master/index.html",
       "operation": "replace",
+      "beforeSHA256": "8baf4aaff62f0dd39b344a0efd7fb4e70072005a325b7d680c867d0bac924165",
+      "afterSHA256": "94a559bea03f48cf30e579c9eb4325c5c3f3540802b0bf980275154fb8ad5eda",
+      "bytes": 7821,
       "replacements": [
         {
-          "before": "../../admin/admin-gate.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "../../admin/admin-gate.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "before": "../../admin/admin-gate.mjs?build=df78c5bf5144b012a7d96c628186180fa6432df3",
+          "after": "../../admin/admin-gate.mjs?build=745251f1ce6d0a488d0d7363eca033888e00a00f",
           "count": 1
         }
-      ],
-      "beforeSHA256": "d68edcbe61c85147bffa3e6a6b4d0413b9f687e584e33d1287943e51956241e1",
-      "afterSHA256": "8baf4aaff62f0dd39b344a0efd7fb4e70072005a325b7d680c867d0bac924165",
-      "bytes": 7821
+      ]
+    },
+    {
+      "path": "commercial/admin.mjs",
+      "operation": "replace",
+      "beforeSHA256": "e7116abb70298447c810f56bfd939dbd58e8b1e89b8cf9df5ab1a67bb0e4fca2",
+      "afterSHA256": "46979d0502562b87d3f5c3cacdc679310571d92a9d0fc00cfc06f133c86e65f1",
+      "bytes": 4954,
+      "replacements": [
+        {
+          "before": "../admin/application.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../admin/application.mjs?build=745251f1ce6d0a488d0d7363eca033888e00a00f",
+          "count": 1
+        }
+      ]
     }
   ],
   "evidenceReuse": {
-    "applicationSource": "df78c5bf5144b012a7d96c628186180fa6432df3",
-    "unchangedAcceptedApplicationFiles": 21,
-    "nativeAcceptanceRuns": [
-      40227070614,
-      40242794782,
-      40243379865
-    ],
-    "ownerVisualAcceptance": "Supplied for df78c5bf5144b012a7d96c628186180fa6432df3; unchanged design reused.",
-    "metadataEvidenceSHA256": "15ec4d74c31111037cb3e1e2d0e0e1a849447cbd6ffea0cc61c7884cc4b81355",
-    "liveReadAcceptance": "UNVERIFIED_DISABLED",
-    "tripleStrikePreservation": "Complete current 427-file baseline; all public files including OPEN and News unchanged."
+    "existingAuth": "admin-auth implementation and ordinary Admin membership contract unchanged; live authenticated session not available to automation.",
+    "existingDataWriters": "No repository/API/RLS/transaction changes. Six actual repository singleton families and 23 served bindings now share exact canonical module identity.",
+    "newAdvancedCommand": "Unused and disabled; compatibility URL returns to existing inventory.",
+    "tripleStrike": "All public page/controller/Operations/News bytes preserved. commercial/admin.mjs changes cache references only, and is an existing private Admin controller."
   },
   "targetedAcceptance": {
-    "composedDOM": {
-      "passed": 8,
-      "total": 8,
-      "networkRequests": 0,
-      "authentication": "Fictional only"
+    "DOMRouteAndAuthCases": 23,
+    "repositorySingletonFamilies": 6,
+    "repositoryConsumerBindings": 23,
+    "baselineIdentityRegression": "Existing actual production payload reproduces split repository identity; corrected candidate passes.",
+    "inheritedAffectedChecks": [
+      "admin-gate",
+      "admin-v2-c-workspaces",
+      "admin-v2-catalogue"
+    ],
+    "newDependencies": 0,
+    "nativeUniqueGroups": 37,
+    "nativeFinalGroups": {
+      "passed": 1,
+      "total": 1
     },
-    "publicationBoundary": {
-      "passed": 6,
-      "total": 6
+    "isolation": {
+      "passed": 10,
+      "total": 10
     },
-    "inheritedPrivilegedDeltaNegativeControls": {
-      "passed": 2,
-      "total": 2
-    },
-    "resolvedModuleAndStyleReferences": 130,
-    "candidateFiles": 445,
-    "changedPayloadFiles": 34,
-    "unchangedBaselineFiles": 411,
-    "publicFilesPreserved": 322,
-    "acceptedDesignUnchanged": true,
-    "nativeAcceptance": "Existing 47/47, expanded 53 and corrected logout 1/1 reused for unchanged application; no rerun."
-  },
-  "visualAcceptedSource": "df78c5bf5144b012a7d96c628186180fa6432df3",
-  "commandManifestSHA256": "899151248c2fe2492f198ae19bc36a975287d0edad55cf5168c2657184e17ff1"
+    "compiledCandidateRepositoryIdentity": "6 families / 23 bindings PASS"
+  }
 }

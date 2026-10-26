@@ -164,12 +164,52 @@
     "newCommandWrites": true
   },
   "nativeAcceptance": {
-    "initialRun": 40390818477,
-    "source": "6b251f4103e6b5f171effd9b2e08864a4c12cc35",
-    "passed": 31,
-    "total": 36,
-    "isolation": 10,
-    "remaining": "Targeted recovery of five failed boundaries and opaque preview iframe checks.",
-    "environmentFinding": "Pinned Playwright browserContext.js directly reads navigator.serviceWorker in every frame; opaque sandbox frames throw SecurityError. Preserve their sandbox and use an equivalent registration-denial init script with SecurityError handling, worker-src none, unchanged kernel isolation and an explicit registration-denial assertion."
-  }
+    "browser": "Chrome 155.0.8059.39",
+    "implementationSource": "745251f1ce6d0a488d0d7363eca033888e00a00f",
+    "executionSource": "f350de62445e8e63332c3230f48ae5c98cacc38c",
+    "finalRun": 40394191549,
+    "finalGroups": {
+      "passed": 1,
+      "total": 1
+    },
+    "uniqueGroupsAccepted": 37,
+    "reusedRuns": [
+      40390818477,
+      40392606748,
+      40393495996
+    ],
+    "isolation": {
+      "passed": 10,
+      "total": 10
+    },
+    "sourceReuseProof": "Git compare from implementation to execution source changes two fixture test files only. No application difference.",
+    "fixtureCorrections": [
+      "Preserve img element IDs while removing their network sources.",
+      "Supply the existing model seed as a fictional kit so unchanged Orders top-level dependency can initialise.",
+      "Use precise protected-main locator; preserve intentionally hidden invoice paper while its independent shell stays visible.",
+      "Pinned Playwright service-worker init script throws on opaque sandbox frames. Equivalent registration denial with SecurityError handling, worker-src none and exact negative assertion preserves sandbox and network restrictions."
+    ],
+    "limits": [
+      "Authentication is fictional in isolation; no normal live Admin JWT was available.",
+      "Specialist routes are checked with actual retained markup and new CSS; unchanged business controllers/contracts reuse accepted evidence.",
+      "No writes, emails, payments or content publication executed in tests."
+    ]
+  },
+  "release": {
+    "status": "VERIFIED_CANDIDATE_PUBLICATION_PENDING",
+    "primaryURL": "https://apparitioninstruments.co.uk/admin/",
+    "candidateDigest": "40036660628fccf87842d26ce378c1b573d46e303441d2af3afc827c622ab012",
+    "rollbackDigest": "02e760d679a44a3dd95169224846f7b745f7f295e9cc16e175fda3ba911c1155",
+    "files": 446,
+    "changedFiles": 28,
+    "unchangedBaselineFiles": 418,
+    "coreFrontendFiles": 6,
+    "cacheReferenceOnlyFiles": 22,
+    "newDependencies": 0
+  },
+  "remainingExceptions": [
+    "Circuit FORGE remains its existing specialised public/instrument workbench, reached through unified Admin navigation. No public editor or account lifecycle is replaced.",
+    "Normal authenticated live-session behaviour is not claimed from fictional browser checks. Existing Auth implementation and server permission rules are unchanged.",
+    "Advanced COMMAND catalogue and IRONCLAD write activation remain disabled; existing Inventory/Orders writes retain their original contracts."
+  ]
 }

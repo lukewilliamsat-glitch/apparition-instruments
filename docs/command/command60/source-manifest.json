@@ -1,0 +1,50 @@
+{
+  "kind": "COMMAND_UNIFIED_ADMIN_V1",
+  "sourceCommit": "745251f1ce6d0a488d0d7363eca033888e00a00f",
+  "baseSourceCommit": "bc5eeef3f998c439b7cb88daeb8d6d1ecd5dd7b0",
+  "unchangedRepositoryRevision": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+  "entries": [
+    {
+      "path": "admin/application.mjs",
+      "beforeSHA256": "c0af98f4330fab2b6a27e16515d5719c401686510779c987f9cbc8881a284dd3",
+      "afterSHA256": "f40a3768a39762a5c4983b76cf28dd12764e087294a76127d7db478c44ef1cf9",
+      "bytes": 12252,
+      "rawSourceSHA256": "722dbf04bca1eafdd160504fdc90d989823a3f75d84d196e4a05ef0b7ad98a97"
+    },
+    {
+      "path": "admin/application.css",
+      "beforeSHA256": "07f64e12981161b2b290f47cdbc62178c3ccd6114d10823625f3328cee2ed025",
+      "afterSHA256": "e236bf64da6ab626e47e1f5894d4b01abd0d741a540a9bc83d6cc69ce9daaad2",
+      "bytes": 34132,
+      "rawSourceSHA256": "e236bf64da6ab626e47e1f5894d4b01abd0d741a540a9bc83d6cc69ce9daaad2"
+    },
+    {
+      "path": "admin/admin-gate.mjs",
+      "beforeSHA256": "d37da9143463e53c6f1d90c42e5a4a3c19c21414c1eb0f1e8e0f5ae738597cf3",
+      "afterSHA256": "5e99c9747a869c873347a8f4e51d56abfdb17e91a82990f606872fa25db8ef69",
+      "bytes": 8213,
+      "rawSourceSHA256": "18fc38ddc2c182c5cac1ee25814fe27486b493ef892c4f5a5b9f74f8a0ab3697"
+    },
+    {
+      "path": "admin/overview.mjs",
+      "beforeSHA256": "50c1605daa8b7a997fa36d1c829484758989be6f7d23ac0abe1ddedd24e370de",
+      "afterSHA256": "1c8bc84970bf26d433c7db28c6ecd50ef1a593bc0aac130bcb571f1c184ea78a",
+      "bytes": 7530,
+      "rawSourceSHA256": "239d9a45b9fe779119a3e0b4dcfeb7c10535b54a967316f787d1f94d8b41a354"
+    },
+    {
+      "path": "admin/command/index.html",
+      "beforeSHA256": "c04bb8b971c7443df973479bd1a2dce709cf658508d240b7deeb18381c174629",
+      "afterSHA256": "aff5fb730ab1ff27ef8947822a612dc67b86eaa7bb4f0a8e9d68aca57335cbf2",
+      "bytes": 441,
+      "rawSourceSHA256": "1598524052bbc5b58766cff7318c0e7de0ff5d30d3a8b2b10ef8b1280905ec97"
+    },
+    {
+      "path": "admin/command-redirect.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "91b903ff21d812d0ed9beab1036dfe60dc40da518fb8edde101bb7e7f083475a",
+      "bytes": 319,
+      "rawSourceSHA256": "91b903ff21d812d0ed9beab1036dfe60dc40da518fb8edde101bb7e7f083475a"
+    }
+  ]
+}
