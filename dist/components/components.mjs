@@ -1,7 +1,7 @@
 import {renderComponentCards} from './cards.mjs?v=p11';
 import {categories} from '../admin/data.mjs';
 import {catalogue,productById,refreshCatalogue} from './catalogue.mjs';
-import {addComponent} from '../commerce.mjs';
+import {addComponent} from '../commerce.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4';
 import {deploymentPath} from '../deployment.mjs';
 import {bindPurchaseControl,assertPurchaseAllowed} from '../operations/purchase-controls.mjs';
 const status=document.querySelector('#component-status');

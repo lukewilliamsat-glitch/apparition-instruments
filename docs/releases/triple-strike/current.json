@@ -1,61 +1,72 @@
 {
   "version": 1,
   "authority": "AUTHORISATION_57",
-  "feature": "LANTERN",
-  "applicationSource": "b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
-  "releaseCheckpoint": "35032409c2f9ce01cbd2741aa32697e0fbbdbaaa",
-  "sourceParent": "05f184389862af8860263cf3bbfd0af78a1885fe",
+  "feature": "SENTINEL",
+  "applicationSource": "0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+  "releaseCheckpoint": "31186e01cedd0ea74f7d68a05624ff96efb66b33",
+  "sourceParent": "69495492b89b4e7325b21292af3dee1477849d79",
   "siteURL": "https://apparitioninstruments.co.uk",
-  "baseSource": "05f184389862af8860263cf3bbfd0af78a1885fe",
-  "baseRunId": 40346846816,
-  "baseArtifactId": 12661268224,
-  "baseTarSHA256": "abc2592dbab58ba99b65f0987462e73968ec3b83506fbc760467523df21ed78c",
-  "basePayloadDigest": "2cd169fcfb84015e0be64e801bca71f6e61890480fee7acbb8af38a630f70e36",
-  "candidateDigest": "cbd782dbdfddfc0a617d9ed96db4bfd0f84cf876d875ae3f589db56471342a36",
-  "rollbackDigest": "2cd169fcfb84015e0be64e801bca71f6e61890480fee7acbb8af38a630f70e36",
+  "baseSource": "69495492b89b4e7325b21292af3dee1477849d79",
+  "baseRunId": 40349943424,
+  "baseArtifactId": 12663033173,
+  "baseTarSHA256": "9c2e4858e23e1a5a0bf66e41437488fb1bd9761e7b6ddcc86ba3714ab44d73d5",
+  "basePayloadDigest": "cbd782dbdfddfc0a617d9ed96db4bfd0f84cf876d875ae3f589db56471342a36",
+  "candidateDigest": "a70fb1d8f0e18cfd9d26a166824efa1598d1afc856d6e7faefa5a2ffc337dca8",
+  "rollbackDigest": "cbd782dbdfddfc0a617d9ed96db4bfd0f84cf876d875ae3f589db56471342a36",
   "changes": [
     {
-      "path": "storefront/entry.mjs",
-      "operation": "source",
-      "source": "dist/storefront/entry.mjs",
-      "beforeSHA256": null,
-      "afterSHA256": "c7e4e2f56e406db14d753443e86bdbdf5d8f2dca1a0a8fc54099721ad76c3e01",
-      "bytes": 823
-    },
-    {
-      "path": "storefront/startup.mjs",
-      "operation": "source",
-      "source": "dist/storefront/startup.mjs",
-      "beforeSHA256": null,
-      "afterSHA256": "816b77ada3339b0afad426dff44f999e45a9084422be7c2d88eee439e5d7a8b9",
-      "bytes": 3727
+      "path": "checkout/success/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "d21364e980327fa5bf9cf2fbfcccb53b13bc73d795804fe64a159863d01f8ca9",
+      "afterSHA256": "6a5ebdd24625bbd45ce0f823292bdbb709f348482b449f890e3e0013fc736472",
+      "bytes": 4211
     },
     {
       "path": "checkout/index.html",
       "operation": "replace",
       "replacements": [
         {
-          "before": "../checkout/checkout.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "../storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "before": "../storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "after": "../storefront/entry.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        },
+        {
+          "before": "../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
           "count": 1
         }
       ],
-      "beforeSHA256": "71eeeb8ef1312f6d6c54a2546f915e1d7c0e86b41d062792b1b2371258f5f066",
-      "afterSHA256": "fa820092e66e44acf91556f0649b788367ffbd55e5b00484f24108ec907e05b1",
+      "beforeSHA256": "fa820092e66e44acf91556f0649b788367ffbd55e5b00484f24108ec907e05b1",
+      "afterSHA256": "15d021de6c7ae1f0678f1ea5b5a701ab3d69c6bace31e7f00d9809de29e7f2e8",
       "bytes": 4465
+    },
+    {
+      "path": "checkout/checkout.mjs",
+      "operation": "source",
+      "source": "dist/checkout/checkout.mjs",
+      "beforeSHA256": "ea518f44d5904f1d217d2402ce0fcbbf7926f7a1d5d76bd5c24302deade6e4ab",
+      "afterSHA256": "30c1626b7aeace76f263f5ad604166a008a2f8aeb2ae41dc9316a7d5d49e4346",
+      "bytes": 8716
     },
     {
       "path": "components/treble-bleeds/index.html",
       "operation": "replace",
       "replacements": [
         {
-          "before": "../../components/components.mjs?v=p11&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "../storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "before": "../../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
           "count": 1
         }
       ],
-      "beforeSHA256": "468e6e320e1ced9752f40ed3a7feaf80ca698f88596d2052aace30b00ba45bf3",
-      "afterSHA256": "64f1e45d3814ac96e16ce12f36553bc9f4353e6f2636ae4b9cb6492e6960c2b6",
+      "beforeSHA256": "64f1e45d3814ac96e16ce12f36553bc9f4353e6f2636ae4b9cb6492e6960c2b6",
+      "afterSHA256": "bcdf4ba4a0edc1165b74fc37de69b54f885134402aee7f28dfc463b632d7e22c",
       "bytes": 10705
     },
     {
@@ -63,13 +74,18 @@
       "operation": "replace",
       "replacements": [
         {
-          "before": "../components/components.mjs?v=p11&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "../storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "before": "../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        },
+        {
+          "before": "../storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "after": "../storefront/entry.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
           "count": 1
         }
       ],
-      "beforeSHA256": "9e58e1285bcf319c0d5a3912d72309597cfe8cfc6f4230e0add912c4abc62551",
-      "afterSHA256": "a0747d408adc3ee3c1ef00c93d2d47de4e9923488c2272491aada421b9030333",
+      "beforeSHA256": "a0747d408adc3ee3c1ef00c93d2d47de4e9923488c2272491aada421b9030333",
+      "afterSHA256": "50bbe114dfbba7cb4008445eba769ae46bb2f113c0d6210f3c214977ff0f02a8",
       "bytes": 17248
     },
     {
@@ -77,13 +93,13 @@
       "operation": "replace",
       "replacements": [
         {
-          "before": "../../components/components.mjs?v=p11&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "../storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "before": "../../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
           "count": 1
         }
       ],
-      "beforeSHA256": "6258c9a75590002f514dd4d39e7b6cf32376f635a8ce58f151254196b1d5d03e",
-      "afterSHA256": "cf43f233039d7e1a043a46cc5c543570b6502f286618d2cc16c6b23db27449a8",
+      "beforeSHA256": "cf43f233039d7e1a043a46cc5c543570b6502f286618d2cc16c6b23db27449a8",
+      "afterSHA256": "4782dc2d08389fba02ee573ecc8206c149e1db97c22e1477a2e29ce59125baa4",
       "bytes": 10126
     },
     {
@@ -91,27 +107,210 @@
       "operation": "replace",
       "replacements": [
         {
-          "before": "../../components/components.mjs?v=p11&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "../storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "before": "../../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
           "count": 1
         }
       ],
-      "beforeSHA256": "9eecfba4189d5bee6ca0022e1f7e54c5b67f4198d7d320041b670eda3b4ec533",
-      "afterSHA256": "5a5b5cc223b06d464481a06cd8270a79aff664dd9b2c7197f3f098d2982b9e73",
+      "beforeSHA256": "5a5b5cc223b06d464481a06cd8270a79aff664dd9b2c7197f3f098d2982b9e73",
+      "afterSHA256": "99e03062b1ad2c1887f02c402c37be8af7e2e752a5ac70a880ded1554f5abff5",
       "bytes": 9366
+    },
+    {
+      "path": "components/components.mjs",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../commerce.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../commerce.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "f518d662898ee8c9ab9a5e96dec81937cf0481479404bf09c2ac23b333958760",
+      "afterSHA256": "c6ab3bc600caaabfca737ac38e2e322f9063d9b1f0424892e04618e5276d1407",
+      "bytes": 4513
+    },
+    {
+      "path": "contact/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        },
+        {
+          "before": "../contact/contact.mjs?v=p09a&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../contact/contact.mjs?v=p09a&build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "7b82689b5305bedfd3795e0f2f03150219d54ce945527a815e5ae2742a936f73",
+      "afterSHA256": "e05a8865644127a3c4c186366656cce058e891b6c0c73ca614161f6e61bf5c4f",
+      "bytes": 8571
+    },
+    {
+      "path": "contact/contact.mjs",
+      "operation": "source",
+      "source": "dist/contact/contact.mjs",
+      "beforeSHA256": "824d94470f121ee7ba65cb7973eae93f58153f3338accae9a80ef5c8ef05eaca",
+      "afterSHA256": "d6205f114d727d7b56b84eeaa40401bdb3764cf2d55d9cf663beb73cb5c552c4",
+      "bytes": 4545
+    },
+    {
+      "path": "faq/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "a2feac9cda0f7f47d4566b3038c94563fd4bdf5abf2ba8f3109af38947971b6e",
+      "afterSHA256": "2d188a0d9376f7756254dc3590a870b6b6ea8f24d0d859b476f0fa9a75905993",
+      "bytes": 9523
+    },
+    {
+      "path": "treble-bleed-designer/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        },
+        {
+          "before": "../treble-bleed-designer/app.mjs?v=p11ef&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../treble-bleed-designer/app.mjs?v=p11ef&build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "c27ef6a317d064f227f3d9ffea3cd3a826614b4e4361898267145105d8b6a822",
+      "afterSHA256": "5bddb8872a3c8b9331992e95e31334273ca1d38a284e75400cd303e5d2236173",
+      "bytes": 13824
+    },
+    {
+      "path": "treble-bleed-designer/app.mjs",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../commerce.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../commerce.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "32a0af6cb876f07a0b6a3990f476c9664585fd071e36450f152282b5479e3d27",
+      "afterSHA256": "2c25f3699bdc20868a00f39a80326378798e1bc05bf138aadd91ad2eea8b2ddd",
+      "bytes": 10029
+    },
+    {
+      "path": "storefront/entry.mjs",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../components/components.mjs?v=p11&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../components/components.mjs?v=p11&build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        },
+        {
+          "before": "../products/app.mjs?v=p11ef&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../products/app.mjs?v=p11ef&build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        },
+        {
+          "before": "../basket/basket.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../basket/basket.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        },
+        {
+          "before": "../checkout/checkout.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../checkout/checkout.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "c7e4e2f56e406db14d753443e86bdbdf5d8f2dca1a0a8fc54099721ad76c3e01",
+      "afterSHA256": "28122d3b6bdcd7435037421189fdce245f3afe14564da48e81fcc826b534fc1e",
+      "bytes": 823
+    },
+    {
+      "path": "account/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "6603f84a69e0efeba8323f3e2869cd2c4cfbf2d79b9c9c8008f0080d14539d19",
+      "afterSHA256": "534cfab01ea0e21c69af6cdf28a64c9fbf04b07b759a225a7e5b6eb70f23e670",
+      "bytes": 8003
+    },
+    {
+      "path": "account/order/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "dbb389d2ec835d31f19eff8d4e94e024d9f32890b7ba8ae801c5964846f3e9d7",
+      "afterSHA256": "d0eb928e1ec096dfacacc4a6dfd2449b2b2d271ad8ca1bbe82d6e16737f48450",
+      "bytes": 4229
+    },
+    {
+      "path": "les-paul-kits/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../wiring-kits/builder-entry.mjs?v=p10hi&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../wiring-kits/builder-entry.mjs?v=p10hi&build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        },
+        {
+          "before": "../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "c90e6e90c0b5bdc143e2840a27c60970bc33d8064657f2d7dbdc26251dccfe3b",
+      "afterSHA256": "dd6cc0a494dde8eb44fb0cd0211da888eeba998bbbfb607fbd224ad1a27fa767",
+      "bytes": 12374
+    },
+    {
+      "path": "les-paul-kits/kits.mjs",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../commerce.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../commerce.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "2028f049d3d98ac342fc37fefe029822be9020da1da9f25805581a2f7a749552",
+      "afterSHA256": "64a3169e0105d728cd4fdc15e33509b6889799899efeb0b15f5ee4b0496be723",
+      "bytes": 13944
     },
     {
       "path": "products/pot-short-cts-a/index.html",
       "operation": "replace",
       "replacements": [
         {
-          "before": "/products/app.mjs?v=p11ef&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        },
+        {
+          "before": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "after": "/storefront/entry.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
           "count": 1
         }
       ],
-      "beforeSHA256": "91666f354dcb17dfce374cfafaa81b71b386548c39db93cf6fa15bdf2024b936",
-      "afterSHA256": "8b033d171934ff3abbbf920e08e1f7b7399f55c24e3b19fe82c67c07a2e61927",
+      "beforeSHA256": "8b033d171934ff3abbbf920e08e1f7b7399f55c24e3b19fe82c67c07a2e61927",
+      "afterSHA256": "98c7abcf46869f2f79d4d7b90613b90942ec1967fa77132768641049df77727d",
       "bytes": 10161
     },
     {
@@ -119,13 +318,18 @@
       "operation": "replace",
       "replacements": [
         {
-          "before": "/products/app.mjs?v=p11ef&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        },
+        {
+          "before": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "after": "/storefront/entry.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
           "count": 1
         }
       ],
-      "beforeSHA256": "483cd5e9218dae3023376061cc6a2511448ef66aa03b156386e35cba075c84e1",
-      "afterSHA256": "5a465d49ca29339f3722e88c764f7833a48102a47b15b89f6f925eff09b57aa5",
+      "beforeSHA256": "5a465d49ca29339f3722e88c764f7833a48102a47b15b89f6f925eff09b57aa5",
+      "afterSHA256": "a589b2624e61db12a4f8cd55972cb6ec2bff0eae7b8af9aa0538f30870b8da01",
       "bytes": 10952
     },
     {
@@ -133,13 +337,18 @@
       "operation": "replace",
       "replacements": [
         {
-          "before": "/products/app.mjs?v=p11ef&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        },
+        {
+          "before": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "after": "/storefront/entry.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
           "count": 1
         }
       ],
-      "beforeSHA256": "81786dd45e9edb174f0a44f6942a3878d598e472406931d5ca60bd26662ceea6",
-      "afterSHA256": "f2e3e82b0325d976f363aac03e447d11f8c03c80463fa7a4e627a091d1acc885",
+      "beforeSHA256": "f2e3e82b0325d976f363aac03e447d11f8c03c80463fa7a4e627a091d1acc885",
+      "afterSHA256": "9722443f59d300143041ab9df8f5e08452363abb53e9ddf6b245df72f10635ee",
       "bytes": 9985
     },
     {
@@ -147,13 +356,18 @@
       "operation": "replace",
       "replacements": [
         {
-          "before": "/products/app.mjs?v=p11ef&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        },
+        {
+          "before": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "after": "/storefront/entry.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
           "count": 1
         }
       ],
-      "beforeSHA256": "640779f22b6ca1e0de3c193acb61bae26417af155002012bea5e9a2a60c240ac",
-      "afterSHA256": "1afa8e615fc68826788d8bb90fb03cdb8fc77647a344fcbad594217f6cd298a8",
+      "beforeSHA256": "1afa8e615fc68826788d8bb90fb03cdb8fc77647a344fcbad594217f6cd298a8",
+      "afterSHA256": "36b13ab22f3bfb7863ce6563ec669db039abbfbaeee47c96de99a74e63c59738",
       "bytes": 10273
     },
     {
@@ -161,13 +375,18 @@
       "operation": "replace",
       "replacements": [
         {
-          "before": "/products/app.mjs?v=p11ef&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        },
+        {
+          "before": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "after": "/storefront/entry.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
           "count": 1
         }
       ],
-      "beforeSHA256": "694b807044b8873591fbb7e03fca91ad1afe10b46a77a584620a8488f9ab8325",
-      "afterSHA256": "174f874ebcdb8a96f06fb3ff43e1857646dbd4abd2184595344afba8e6bd0aa3",
+      "beforeSHA256": "174f874ebcdb8a96f06fb3ff43e1857646dbd4abd2184595344afba8e6bd0aa3",
+      "afterSHA256": "a9ce88b9d47915007b13bf844f6532bfff4a0eb56d2281154d18bf308bdaed1e",
       "bytes": 10396
     },
     {
@@ -175,13 +394,18 @@
       "operation": "replace",
       "replacements": [
         {
-          "before": "/products/app.mjs?v=p11ef&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        },
+        {
+          "before": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "after": "/storefront/entry.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
           "count": 1
         }
       ],
-      "beforeSHA256": "164f26c367203fb7cbb39e7a2dac27f4cbb726ca5a63de5918a6d8959dbbebdc",
-      "afterSHA256": "c014ee0e74801f5088526983fbc36546680e249516d9eb6bfdbb60a90fb11621",
+      "beforeSHA256": "c014ee0e74801f5088526983fbc36546680e249516d9eb6bfdbb60a90fb11621",
+      "afterSHA256": "e99c1b682311f47155b4c2afde817c884a34a5d2c046e47a7c6db66211b7c9ab",
       "bytes": 4140
     },
     {
@@ -189,13 +413,18 @@
       "operation": "replace",
       "replacements": [
         {
-          "before": "/products/app.mjs?v=p11ef&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        },
+        {
+          "before": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "after": "/storefront/entry.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
           "count": 1
         }
       ],
-      "beforeSHA256": "8136659d5004220dc55e6d0a52b273948a25cbb3067a532f8df900091414a2bb",
-      "afterSHA256": "5a3594b5612cdb6ed6376334bc9d0009e4c143946224bef1dd42c3200912dae4",
+      "beforeSHA256": "5a3594b5612cdb6ed6376334bc9d0009e4c143946224bef1dd42c3200912dae4",
+      "afterSHA256": "a12d4a75bcbe38272061ad7a19ca2541515e9136d95c983b48560888eeaea335",
       "bytes": 9998
     },
     {
@@ -203,13 +432,18 @@
       "operation": "replace",
       "replacements": [
         {
-          "before": "/products/app.mjs?v=p11ef&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        },
+        {
+          "before": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "after": "/storefront/entry.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
           "count": 1
         }
       ],
-      "beforeSHA256": "afad3e0c9ee441ca23f91a36e9ac809003d0c6fa01c69dfb51bbb76619be876e",
-      "afterSHA256": "faf7b0c1b62282f52ee91ec08ae0378b1312107f1ae149adf07e10aaed345657",
+      "beforeSHA256": "faf7b0c1b62282f52ee91ec08ae0378b1312107f1ae149adf07e10aaed345657",
+      "afterSHA256": "8fe352a0c87c63cc2372ffeb4d7deea077b0a5c027a9f261e0f46a37622dfce5",
       "bytes": 10258
     },
     {
@@ -217,13 +451,18 @@
       "operation": "replace",
       "replacements": [
         {
-          "before": "/products/app.mjs?v=p11ef&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        },
+        {
+          "before": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "after": "/storefront/entry.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
           "count": 1
         }
       ],
-      "beforeSHA256": "9371a83e663aa9972c91e6cf1969b6b1139cea7a1a75340d2b3f462ceafc136e",
-      "afterSHA256": "4ef0d46028329ccfe1c83f6a83f0d74c8600c6abbf33fc3804cb0e615e159637",
+      "beforeSHA256": "4ef0d46028329ccfe1c83f6a83f0d74c8600c6abbf33fc3804cb0e615e159637",
+      "afterSHA256": "6bcfe4c9f15ff11344169f8b398af04bc41742a778d2ed09bdc457c5bd937b61",
       "bytes": 10199
     },
     {
@@ -231,53 +470,1095 @@
       "operation": "replace",
       "replacements": [
         {
-          "before": "/products/app.mjs?v=p11ef&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        },
+        {
+          "before": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "after": "/storefront/entry.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
           "count": 1
         }
       ],
-      "beforeSHA256": "c3d44af3b7abce32bc80ac91d988f562fa73b184770e59217767bb10334a431e",
-      "afterSHA256": "c272e241cd0e6b393408e344df6d1378ca60b7c9e6fe19c2f2a956bf3bc7541a",
+      "beforeSHA256": "c272e241cd0e6b393408e344df6d1378ca60b7c9e6fe19c2f2a956bf3bc7541a",
+      "afterSHA256": "6f9f5c7e09f7ef7947479b582687e67c5d40b298f4e52a59713f01a8ac2c0756",
       "bytes": 9828
+    },
+    {
+      "path": "products/app.mjs",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../commerce.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../commerce.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "8326f4abfd46a0fe6425a1509f846a72fe777d96a75aa7a84231e8c480a3abd7",
+      "afterSHA256": "74e2a76a0e16a625f3bcfcfad27c8af5b92cccf6b2456e9a82417c28c83269fd",
+      "bytes": 6853
     },
     {
       "path": "products/cde-022/index.html",
       "operation": "replace",
       "replacements": [
         {
-          "before": "/products/app.mjs?v=p11ef&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        },
+        {
+          "before": "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "after": "/storefront/entry.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
           "count": 1
         }
       ],
-      "beforeSHA256": "495023685f8d8e72aa757ccc57ad74fd0b25498629aba8f269c395932034105e",
-      "afterSHA256": "45c6464ee06a8814ba1e7579389f5c39a4e1e653032d246d7ced96098e493909",
+      "beforeSHA256": "45c6464ee06a8814ba1e7579389f5c39a4e1e653032d246d7ced96098e493909",
+      "afterSHA256": "b2edd08783fa44a6e535cb577a7933dfc0acc2bfcc6ea04d4d6608aad0d51532",
       "bytes": 9963
+    },
+    {
+      "path": "privacy/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "7b60aa9de45381f780de9d88d3a21c3b7dae151b18dd3aa41b763e6dbfa6516d",
+      "afterSHA256": "e25521025348210b9a6eb60ef27d9bb566747f4c4e915eceff64fbaf2fd3b89e",
+      "bytes": 13364
+    },
+    {
+      "path": "site.mjs",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "./basket-count.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "./basket-count.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "545f0b5cb8985c43b5bc58b59922dfb026f0e13cbbfc295fbbe099f59e0c100b",
+      "afterSHA256": "3c909814e6c9074dd4965a4ea962a361414077ff8c3b89c715e9e0a61c37a94d",
+      "bytes": 5896
+    },
+    {
+      "path": "circuit-forge/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "a060e9bff35bdb1565dcfe4a9f1663df98f55a56e6850d6befbb0fb977a36d37",
+      "afterSHA256": "7cff0a2dd6814f1b0f9dd54b4a81d292067e81768d38715e6d2c51bb61608647",
+      "bytes": 23921
+    },
+    {
+      "path": "circuit-forge/projects/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "333577d06fd17fbb92a7203cee233840e1d73a50e41313fcf7d4728dd75ded7e",
+      "afterSHA256": "ff25f366b0386f7daecfe37741713d0e25bc35d7a6a82d0a852b963e1a1f3d05",
+      "bytes": 4505
     },
     {
       "path": "basket/index.html",
       "operation": "replace",
       "replacements": [
         {
-          "before": "../basket/basket.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
-          "after": "../storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "before": "../storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c",
+          "after": "../storefront/entry.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        },
+        {
+          "before": "../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
           "count": 1
         }
       ],
-      "beforeSHA256": "affed8093222718a1316f59b277774b3d25e1adebb1120b2a0a1d7e1cbda455c",
-      "afterSHA256": "4c324372f628793270ab15241e56bdcff43fd0574818cbdc5b1d51e30893f023",
+      "beforeSHA256": "4c324372f628793270ab15241e56bdcff43fd0574818cbdc5b1d51e30893f023",
+      "afterSHA256": "a1c55e3f487367cd2d52cdfec6b58445deb3c0bc26e832b7c38bccdda61ce42c",
       "bytes": 4329
+    },
+    {
+      "path": "basket/basket.mjs",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../commerce.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../commerce.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        },
+        {
+          "before": "../basket-ui.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../basket-ui.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "25244794767454e46e9c4c094252edf2ee6f67c50e5dae0483d857121e242ed5",
+      "afterSHA256": "077697f3b49561a2450fd9d902fdfe9fd23c964f224f90f7a778a564c8e7b329",
+      "bytes": 1706
+    },
+    {
+      "path": "admin/email-preview/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "70321ea8520fda9d893aea654b389785b75b0a940abcbb7727ec4ee3d7c7c10c",
+      "afterSHA256": "d2aceed124cf16b5185e82b4c6f80deb026ebe4fcb00ce70991f91ff3ff232ed",
+      "bytes": 2648
+    },
+    {
+      "path": "admin/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "c92b588d170611751a4f23a4e1aa7681cfa5a4b66e9d36969f248fbfe3c0f196",
+      "afterSHA256": "3226a5bb7acc6d35b5ce2b93f89076b513da5ea911df2fdd02e14bbc852a2c9e",
+      "bytes": 15314
+    },
+    {
+      "path": "admin/orders/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "d4faa79f7e00e70b5c9e92118064c394602d627becbd28619191ee90614b3a51",
+      "afterSHA256": "58d9c2138cd2d15345efd2ac91cde64a6b480315619abd219db7c3204e54eb2c",
+      "bytes": 8101
+    },
+    {
+      "path": "admin/orders/build-sheet/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "317d703e187d0c0725e068634ae5ebfcbe83d38764ceb110b9282526a7a736e2",
+      "afterSHA256": "a68eda42964b182efb014217d528cee6279987f82afaf7f229b0670f18a94e32",
+      "bytes": 5544
+    },
+    {
+      "path": "admin/orders/create.mjs",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../commerce.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../commerce.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "5973c2455d5fdce6486c3cbc2daaa1df904bb97dcd2c48706cbd92e1dcd3847a",
+      "afterSHA256": "ceebddbc7b4a8ccaa70b15633151fa5d4d216a890f295062857bb688857c600f",
+      "bytes": 7982
+    },
+    {
+      "path": "admin/wiring-kit-master/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "0e44d5847221f9d23668cb1b209179bab68d6ab8533d13ad719a21ada93ad8e5",
+      "afterSHA256": "d68edcbe61c85147bffa3e6a6b4d0413b9f687e584e33d1287943e51956241e1",
+      "bytes": 7821
+    },
+    {
+      "path": "luthier-hub/022-vs-047-tone-capacitors/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "64589aa5a79448f9fd8ecb504a57ebac0270995d948a60f01ee34779d940caab",
+      "afterSHA256": "5d05e17244fd818138aef111ca2efbec3843b3354d31a55ccc30bb9afb5872c8",
+      "bytes": 15281
+    },
+    {
+      "path": "luthier-hub/coil-splitting-explained/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "c32491dbe911295fa1ede29993101c47775b6b47afcf1a0e1d7980819bf01179",
+      "afterSHA256": "e6d43f5236fb5ccb59c84e298b8c7d230644a61fc434336c3b1c8d6302b26630",
+      "bytes": 13126
+    },
+    {
+      "path": "luthier-hub/categories/treble-bleeds/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "0f956848486df0de590c40d930beb5a29f007f896a328208987f3bba68290d1b",
+      "afterSHA256": "6de2602a38a824ba905cc9384c6293838332c3a4725900822309a9ef749d3b17",
+      "bytes": 7722
+    },
+    {
+      "path": "luthier-hub/categories/troubleshooting/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "886c16d4fede498732b2320fdb4d02c6f8e82487ab80396fc20315c625a29ca9",
+      "afterSHA256": "6ac865b3454a4d26382b06c910cce39cc0c37a3e3aed6a5a5321ab4c7e81c0c5",
+      "bytes": 9323
+    },
+    {
+      "path": "luthier-hub/categories/tone-controls/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "69445b16ae884a16b26a7622b389deb39ab29f1a2807bead1c5c0e37976b6ae9",
+      "afterSHA256": "875a655f87b816d7b085a5544be28b1007d5058795b4c83addf0b74b5ac0e1c3",
+      "bytes": 9351
+    },
+    {
+      "path": "luthier-hub/categories/potentiometers/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "9a3da20bad013f67fb34b485913374d0537024d28f6e1b0e7bb3b51fbf58f254",
+      "afterSHA256": "9519ce4e25537690b441e391f3e87269190ccb737e7578c33ec2676f1eb169e2",
+      "bytes": 9493
+    },
+    {
+      "path": "luthier-hub/categories/pickups/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "677e881c2fad52356289cea8899a6a8d8ff721a99d8528131df1b2c921cff723",
+      "afterSHA256": "f4ce6071a1a5fc4839930e22742a9d145fc07b51d7868f4d912c880d3fb1bb68",
+      "bytes": 12527
+    },
+    {
+      "path": "luthier-hub/categories/wiring/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "fd7f3ce13069992f5b537e372020ab7001e77c5d8c679c417258ebc0cf2cd8ae",
+      "afterSHA256": "799ed36a363b8e3839d4116c401ae6f3fab6b8aea5ba5c8486a26502d5da72fc",
+      "bytes": 12536
+    },
+    {
+      "path": "luthier-hub/treble-bleeds/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "2ed757a005d7161f37463b90341423a6650bee1ce903ca102928dd7465218b63",
+      "afterSHA256": "1f336488a561eeb85463b730b039aee7825d706a909d60d5c1e1562d3246b5e6",
+      "bytes": 20986
+    },
+    {
+      "path": "luthier-hub/pickup-phase-switching/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "527357e8fedb5a83dc943644be5cdd2776c727d77790c97b85aae95d9162d9f9",
+      "afterSHA256": "bbb5946f583cc3eb313bdefa4032c5513fbb68ad459bc124d38c9b4ff2230844",
+      "bytes": 13500
+    },
+    {
+      "path": "luthier-hub/reading-a-circuit-model/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "81f0f7807534f0b7250cf86cb873d29b9154447cf1aa833b4779b1d2635ec1c5",
+      "afterSHA256": "57e6bdef578cd4834b6c4384f4b6bda9d641c6be72c3e23fdf6977888116626c",
+      "bytes": 13859
+    },
+    {
+      "path": "luthier-hub/tools/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "50f558bfd92e88c6d0086f1761838042d8bd78eb26456b4b43a517f54eccf244",
+      "afterSHA256": "ec33eb17a885d86fe5427e02a5d4fb30014b57b5b2aa4d77efad7fa120639e70",
+      "bytes": 14187
+    },
+    {
+      "path": "luthier-hub/guitar-pot-lug-numbering-wiring/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "b4ed2da585841e14745c07b790e589a73cbb32712713b9285543dcd9f8c15879",
+      "afterSHA256": "f8102c2a45cb2cf703dede8a3b8d8fa7532aa836d3a8c6bc75ef710d5884c0c2",
+      "bytes": 16694
+    },
+    {
+      "path": "luthier-hub/les-paul-installation/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "ec0d196d91ce081c689fd5a62120d76ab5e4bccb12dab6789f7dff2058afadf3",
+      "afterSHA256": "aab7869ac54a4a03158bccb524002e6c909e39b505743e248a1a5c9af77d23d3",
+      "bytes": 18600
+    },
+    {
+      "path": "luthier-hub/troubleshooting/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "f9fb00d78a39ff731b796000b1c513a2d736a8c254336809b422f71873e19243",
+      "afterSHA256": "8d33808abc0673160f44743b53e4557ed6c81425897728c78b5ea7f9031b4f17",
+      "bytes": 24291
+    },
+    {
+      "path": "luthier-hub/pickup-dc-resistance-output/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "d7305e014b5b32ca57191660989604cabf12ccca0a9e2340f07bd732108c8935",
+      "afterSHA256": "464a61876cf8a89f679b37b84323530601ffb39b3770d07020ab346a520d2f20",
+      "bytes": 13443
+    },
+    {
+      "path": "luthier-hub/glossary/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "1f86db823c174b1052bcbdeefacfd2810ff0845d6831e314cf0b4e6ce3c63a4b",
+      "afterSHA256": "34e2172d30c24f039f190be17d8863fc3c0364bfa09de182e9c7a40394f6b35b",
+      "bytes": 13656
+    },
+    {
+      "path": "luthier-hub/push-pull-dpdt/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "f7ab4d3db2c53be56f0d07478a47fbb4c0607cf4e75019776939211e13bca5f2",
+      "afterSHA256": "e8257194065abb3ca69d79452b0fb9af4d5f9e38e7134eaba1dbe275c8f34dca",
+      "bytes": 13448
+    },
+    {
+      "path": "luthier-hub/modern-vs-50s-les-paul-wiring/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "769fd6b6a5fc5ccd5f27204a58310eb3b3de285768005669f1752b873a3b46b1",
+      "afterSHA256": "1dfa50d2c4468da2cb1619a0560b1ad875f693763cb2ece9e4b95cdff5af55d3",
+      "bytes": 14509
+    },
+    {
+      "path": "luthier-hub/capacitors-treble-bleeds/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "217dc8484f565e190ad7cb8e5ee2a8c057b3721b55f98cbed7a3b3aadc53770a",
+      "afterSHA256": "8acc31e25bd062869167c2186e3a0589cda0b96b383a83f039382a5f999c3183",
+      "bytes": 17821
+    },
+    {
+      "path": "luthier-hub/guitar-three-way-toggle-switch-wiring/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "e5d189b7b8de6a6df8f3d5d0d2f7a83d36b1fce2dc5b40f40f817f212519802e",
+      "afterSHA256": "14ef5a08dff20dac5028dabaf854305da37e486a1bc7dc4132407a61a636356e",
+      "bytes": 14159
+    },
+    {
+      "path": "luthier-hub/selectors/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "6b51fef396fdfc35fec397811977aca713dcb32e252c245b42b206662347fe4c",
+      "afterSHA256": "635a14e333aa953872250b4e027ef2a8014f510fd9ab17d93d3b63c660e975a4",
+      "bytes": 11155
+    },
+    {
+      "path": "luthier-hub/250k-vs-500k-pots/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "c7af13f56c2cc9e4270d44a9e77f98394c4da7cc69a2c414ed3eb1da3c1943be",
+      "afterSHA256": "9a0a3a4d8295e061eb8afd43aaf7524f6cc2eed07605fd4c80c095f051e2c780",
+      "bytes": 15072
+    },
+    {
+      "path": "luthier-hub/how-les-paul-controls-work/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "8a0949abaa386dfda2d4ba1dbc13514e2e66a9ef003714607f1add20ad26fa08",
+      "afterSHA256": "6ea9d5936d58bbfaa0c6f35e7e1f77eece31b4918aff7fb555e605893c5bbf14",
+      "bytes": 14077
+    },
+    {
+      "path": "luthier-hub/potentiometers-explained/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "5ba69f94ecb42a329f16d040605338b54db530aa6deabaa4684c8ef28491e8f3",
+      "afterSHA256": "cb81cf95c3581a85b2e861d5ce9553b4ad30f16fd215e793372d6f5efb094645",
+      "bytes": 25916
+    },
+    {
+      "path": "luthier-hub/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "4f38b6478e0b2e82db6393f59caa1e919422488767bf8e3d6471c5d1ab6c53f5",
+      "afterSHA256": "1adc8636810bd63c8c2ebe10520b7e1dc154492f2d6c831a182c339138528fa8",
+      "bytes": 57111
+    },
+    {
+      "path": "luthier-hub/output-jack-faults/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "fe74c3a6186f02956a2486c32b8b9be22e4ee3c9006da376895ca333fd4ded57",
+      "afterSHA256": "6215acb952ca572eda3f7d2df3505a5197ab723b19b0038db0c4451dc438501a",
+      "bytes": 13102
+    },
+    {
+      "path": "luthier-hub/pickup-inductance/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "51e68c6cde5573c227497f7cb41e0adc5e8edaf3b3f97813ec3da5f35559ac93",
+      "afterSHA256": "ae6f4987772f9e912314ec082ad4652d78e33429a35d377b06fa746f8b01cb83",
+      "bytes": 13185
+    },
+    {
+      "path": "luthier-hub/audio-vs-linear-taper-pots/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "7f2c326445b37797ae55ed3adae11d7d6f1a27c3d5b6d0e0e3a2832aa63ad8d9",
+      "afterSHA256": "903a9bb920065cfd8ab8cfbd023e6747d1b3db55ddc21565bc9be461cec6b14c",
+      "bytes": 13836
+    },
+    {
+      "path": "luthier-hub/guitar-grounding-common-problems/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "94477dc61ab89c8fbc27eec60b31b2c4c0661e0f47ed8e12e2c1cf24562b5c17",
+      "afterSHA256": "ca71d5e80586213f82f2d0aa3906625c1d56e300b91142f766d9f9157cd0fff8",
+      "bytes": 12722
+    },
+    {
+      "path": "luthier-hub/independent-dependent-volumes/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "9df39e5f9a9c6c76fe34b589207d212814935648336e73c75671f3e09790e4c8",
+      "afterSHA256": "b22381564cd0c4d6235169d4ed7a9bbe3ec05fb80f36fc054c6e3196b3f60ae8",
+      "bytes": 13811
+    },
+    {
+      "path": "luthier-hub/series-vs-parallel-pickup-wiring/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "0c36b5b0ada6b66c3ff353300b3b48995e2f9eb5301fb717dbeb7cbed4fe2647",
+      "afterSHA256": "c66ee9c494b7a6fc1a9b75561b46dcc5ebf6f60cecdcca4d0a1eee18c5595942",
+      "bytes": 13069
+    },
+    {
+      "path": "luthier-hub/how-a-guitar-tone-control-works/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "2c380d1c83b7c5cf3cb47fc772032df652d5cf71530d96aaab5431a6e6a460d2",
+      "afterSHA256": "f1d10347aa524b2805f303d1e9725b0aeb607ef61cdb4f33118c554d26480012",
+      "bytes": 16335
+    },
+    {
+      "path": "luthier-hub/partial-coil-splits/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "10b539d6ebe990463ca3d1d92f35a8315faedc1ef52842a1cf1240f09f0375da",
+      "afterSHA256": "2f2fb9ff9f3685934e7d4a28a82cb536830b11d4d8712aa6ab6df08f0a97d257",
+      "bytes": 13583
+    },
+    {
+      "path": "luthier-hub/cable-capacitance/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "11f3503a4c96f7a0ef90c1fdaaf255f7a822b9b613c7e639daddd69e387a4594",
+      "afterSHA256": "336855af782676c168dae8b5a3199cb8ea4930919c1386dd7ce795eed8924036",
+      "bytes": 13343
+    },
+    {
+      "path": "luthier-hub/wiring-circuits-explained/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "80c72a38a1ee3ce331aaa92b12f1bbd0b0810c6492579700551befc6d3f837ee",
+      "afterSHA256": "f9ae3927401a420da0143a083f880eb07c437ebcc1f85ca0d98412be64d42786",
+      "bytes": 18645
+    },
+    {
+      "path": "luthier-hub/grounding-output/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "eee19d5cddda746555b283cffadaacde471f9938ad3be52628a06973341caf12",
+      "afterSHA256": "f9e1d564f75837a768b8746cc05f8ebb69d7df9defbaaabb1b0f9b3fba6e21e7",
+      "bytes": 11665
+    },
+    {
+      "path": "luthier-hub/pickup-conductors/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "d74bc66a037aeb7fc036d9f6d008b2dd1bd1b04a58ea4be6f811d529d6d3b9b9",
+      "afterSHA256": "07836d99f4f626f6dd6fd2eb6252acbc1da8ab8dc77a6239712cc315db130789",
+      "bytes": 11806
+    },
+    {
+      "path": "wiring-generator/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "674bfac6b146a8704612ce7c6e718b17c33d6c74cab1bcb87dad495890834f75",
+      "afterSHA256": "68c0015f2b07f0fe5b56395c86df862b1a7e89f59406468c8dace3f5e1722633",
+      "bytes": 17110
+    },
+    {
+      "path": "guitar-project/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "20705f14f4f414fa9cc6e748f3a2d01ddb78564d39832a2c31cc9a97c9ac05ad",
+      "afterSHA256": "54cabf511bebf9b64bdd0eb31d7aabd09b78d8af0495ea552f5d4c4d166cfef9",
+      "bytes": 7659
+    },
+    {
+      "path": "terms/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "4c36297746dc373ae442c2455be67402e55a0e41f2465e2e733037dba7957ee7",
+      "afterSHA256": "39117801b360845abb789a7706aa2b732eeacd0772b42b5fcc21c183c7f49437",
+      "bytes": 16258
+    },
+    {
+      "path": "basket-ui.mjs",
+      "operation": "source",
+      "source": "dist/basket-ui.mjs",
+      "beforeSHA256": "b4b564953b47ff0071b2d2c59f0138237b513d2c7deed6bb1906a92dd35b87db",
+      "afterSHA256": "774cc7590541428b64ecaf825c7b2af5b3a3c267566dfdc7c25372801e6d9f3e",
+      "bytes": 7559
+    },
+    {
+      "path": "interactive-tools/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "d93272db6a2c4ccf5120c476e98accbc19fe827617be6df2f6f9e8bf19aa22c3",
+      "afterSHA256": "0282414d8d2fc8ec9e85d7e11bd8267e51f7b648087a5196cd762c8ba2729d1c",
+      "bytes": 40475
+    },
+    {
+      "path": "wiring-kits/prs-se-custom-24/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "416595c92a34d24dd99a3b63b73e45b329b7ae51b32dd19e6215c99b54bb0ac2",
+      "afterSHA256": "cf3135508d45c1cdf7ee2fe41490fcdd078283f922b4a38769883c76ee02ef8d",
+      "bytes": 5844
+    },
+    {
+      "path": "wiring-kits/help-me-choose/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "3e9b0c49217a44134d1771c42664de0b318ad4cd5c35c7f3edf0e71b008aa8a7",
+      "afterSHA256": "6f6e78aa645ac92d9fdd4b62531880fa6cfda49351085e816203f44612821d67",
+      "bytes": 6004
+    },
+    {
+      "path": "wiring-kits/sg/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "d440742d18917054e48aca6b2e0515d61b23512d61f43ff06415172668c35e95",
+      "afterSHA256": "0fa88133a07d7bd91c4b98aab5562432b443d50b4377e8a742b361bd19542238",
+      "bytes": 5748
+    },
+    {
+      "path": "wiring-kits/build/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../builder-entry.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../builder-entry.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        },
+        {
+          "before": "../../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "67f91835df965dd1125c74a40af38946c2882530deea1ac7bf0f60ab995c8f43",
+      "afterSHA256": "8628e9c5546e641f2b6171187807fec9c109a803bff7062fbb62ced738c8a736",
+      "bytes": 3381
+    },
+    {
+      "path": "wiring-kits/landing.mjs",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "./family-repository.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "./family-repository.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "9e32eeca181a6be64142f22931a30665987dea2f02642d3faac5000d5d5a9625",
+      "afterSHA256": "40811df9d8c310de71c7964a51bcceef55d67e3a7f51c6b605e38c682bcc56b2",
+      "bytes": 2657
+    },
+    {
+      "path": "wiring-kits/specification/sheet.mjs",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../commerce.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../commerce.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "39bbd8c4ec06d97d370d65ce8107a412eace8aa7796f878afea553bec33ee992",
+      "afterSHA256": "f9dfd40395b5cecdba48099d95b0e54862bf85241d62af837cb604a1583e57ee",
+      "bytes": 2828
+    },
+    {
+      "path": "wiring-kits/specification/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        },
+        {
+          "before": "../../wiring-kits/specification/sheet.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../wiring-kits/specification/sheet.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "558ee66e7b0c1aaf8b3256fc843a10371bbffb1bfef3c3211802ec2f5c8ea1d2",
+      "afterSHA256": "39cbbec279b447f149865c5c256a78349ce61348e5888f65fcc6ec75d27a9101",
+      "bytes": 6042
+    },
+    {
+      "path": "wiring-kits/builder-entry.mjs",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "./builder-shell.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "./builder-shell.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        },
+        {
+          "before": "./family-repository.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "./family-repository.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "329f0215e616a51903f916ec5a8dfae580389f0b3433a458c82bb3fc89e8bdbd",
+      "afterSHA256": "617fa950eeef618f9ed09b35990057e59e87fa218e4a0e9c5fdfa9f0dc24779c",
+      "bytes": 911
+    },
+    {
+      "path": "wiring-kits/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../wiring-kits/landing.mjs?v=p10f&build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../wiring-kits/landing.mjs?v=p10f&build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        },
+        {
+          "before": "../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "34f95d16ceaa4d55ec662ba226e6360f050151313c5ca89c02fce0f08921772e",
+      "afterSHA256": "c9115c257d8c7bb11c7015b5c5df5e16005976efc77325dd21ad8b31bda7afe6",
+      "bytes": 8447
+    },
+    {
+      "path": "wiring-kits/prs-custom-24/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "ec942bdd9366ed50cc023c33c6c6a5580d0ec9ef1caa8e3505918e917ae41f44",
+      "afterSHA256": "499013d146d97e52fcf879325cdc23e192ddbe15dfbd32a1c3629278bd9cc7d8",
+      "bytes": 5810
+    },
+    {
+      "path": "wiring-kits/family-repository.mjs",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../les-paul-kits/kits.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../les-paul-kits/kits.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "4ac559fedcdb6ced6cfe159eead352f9fe9850bfc5eeef58cd56ff20625c9a8e",
+      "afterSHA256": "6ab6aade1f544da67feb856d49c9d4cbda4ae3705ca892edde89bd54c0544299",
+      "bytes": 2938
+    },
+    {
+      "path": "wiring-kits/builder-shell.mjs",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "./family-repository.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "./family-repository.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "4bde3563bb680448eda6ffc4de034b6d9d248499c1793d4956bf2f09dc50efc5",
+      "afterSHA256": "34f4d95e9789c6f9b899c582b8c2c995988912f87fe822ab3e68671efd076497",
+      "bytes": 1469
+    },
+    {
+      "path": "wiring-kits/prs-se-594/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "../../site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "../../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "f263787cffd122402a01d7b70cc70aa101128d43aa066ba5a46c0c1801af3200",
+      "afterSHA256": "e522e9cbf7a31bb87fdf7003501bd8a8baa47226b1a61965ca28ec51204a2d14",
+      "bytes": 5779
+    },
+    {
+      "path": "commerce.mjs",
+      "operation": "source",
+      "source": "dist/commerce.mjs",
+      "beforeSHA256": "77152f380ce6260028fbe326b4f3f22257626662df37027a90a300c0dc8c67fa",
+      "afterSHA256": "17c727660c77f7a1c93407556a996fab1d7d3f90cdc8aea4cd297a489414e609",
+      "bytes": 4961
+    },
+    {
+      "path": "basket-count.mjs",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "./commerce.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "./commerce.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "72addfefe31f8d8f31e4b972c9ef3a6ba7268703302505856ed322e5bbce8a6b",
+      "afterSHA256": "1fea23c49fbf05436c0661165ebc79de0aba80e83ed75862e68ea9b42284d750",
+      "bytes": 632
+    },
+    {
+      "path": "news/workshop-closure/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "13015072d29135bdb3a6e59dbebbb1d22d34f6052dd2853b35a3b8c45610b89d",
+      "afterSHA256": "9a844feaacd1b9608f4c3e3e483c0367098f9af250dcd143a614f4effea5c5f6",
+      "bytes": 6063
+    },
+    {
+      "path": "news/temporary-store-closure-october-november-2026/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "943836def78001eed1864c16eb862d8d4c41c5ed73d9bf05745f8d49b8c34bbc",
+      "afterSHA256": "21986b4b4d54158e090cfdad0e957f592904243e2d1fc4f413c0c79e04750a90",
+      "bytes": 7143
+    },
+    {
+      "path": "news/index.html",
+      "operation": "replace",
+      "replacements": [
+        {
+          "before": "/site.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+          "after": "/site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4",
+          "count": 1
+        }
+      ],
+      "beforeSHA256": "62216bb3bf290d46fdc2cde1e21d62c77d5c705faaac1a0da43b23446d3834c6",
+      "afterSHA256": "dff41d29d14ba42d029e9c542b1d4a954f67d5010fc7127f5437572817cde4d1",
+      "bytes": 6217
     }
   ],
   "baselineVerification": {
-    "/": "370654f692fefdf6f12994ba93a2ab456dfd0eb91a5763012fc2c48bcb5a53e9",
-    "/customer-ui.css?build=4f09bd5b4d5109df6028a8dc0d00468512d9af1c": "16d6ebbd2372d54e32565a7999edfd1bc9152c785b77f1bcbf79ee47bba1794a",
-    "/operations/snapshot.json": "0daa8a0d6f03c9eaf746ba91d20c0728fe2b0512c10cea3796c6145358cca69f",
-    "/interactive-tools/": "d93272db6a2c4ccf5120c476e98accbc19fe827617be6df2f6f9e8bf19aa22c3",
-    "/admin/": "c92b588d170611751a4f23a4e1aa7681cfa5a4b66e9d36969f248fbfe3c0f196",
-    "/checkout/": "71eeeb8ef1312f6d6c54a2546f915e1d7c0e86b41d062792b1b2371258f5f066"
-  },
-  "releaseVerification": {
     "/": "370654f692fefdf6f12994ba93a2ab456dfd0eb91a5763012fc2c48bcb5a53e9",
     "/operations/snapshot.json": "0daa8a0d6f03c9eaf746ba91d20c0728fe2b0512c10cea3796c6145358cca69f",
     "/components/": "a0747d408adc3ee3c1ef00c93d2d47de4e9923488c2272491aada421b9030333",
@@ -287,60 +1568,86 @@
     "/storefront/startup.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c": "816b77ada3339b0afad426dff44f999e45a9084422be7c2d88eee439e5d7a8b9",
     "/admin/": "c92b588d170611751a4f23a4e1aa7681cfa5a4b66e9d36969f248fbfe3c0f196"
   },
+  "releaseVerification": {
+    "/": "370654f692fefdf6f12994ba93a2ab456dfd0eb91a5763012fc2c48bcb5a53e9",
+    "/operations/snapshot.json": "0daa8a0d6f03c9eaf746ba91d20c0728fe2b0512c10cea3796c6145358cca69f",
+    "/basket/": "a1c55e3f487367cd2d52cdfec6b58445deb3c0bc26e832b7c38bccdda61ce42c",
+    "/checkout/": "15d021de6c7ae1f0678f1ea5b5a701ab3d69c6bace31e7f00d9809de29e7f2e8",
+    "/contact/": "e05a8865644127a3c4c186366656cce058e891b6c0c73ca614161f6e61bf5c4f",
+    "/commerce.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4": "17c727660c77f7a1c93407556a996fab1d7d3f90cdc8aea4cd297a489414e609",
+    "/basket-ui.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4": "774cc7590541428b64ecaf825c7b2af5b3a3c267566dfdc7c25372801e6d9f3e",
+    "/admin/": "3226a5bb7acc6d35b5ce2b93f89076b513da5ea911df2fdd02e14bbc852a2c9e"
+  },
   "rollbackVerification": {
     "/": "370654f692fefdf6f12994ba93a2ab456dfd0eb91a5763012fc2c48bcb5a53e9",
-    "/customer-ui.css?build=4f09bd5b4d5109df6028a8dc0d00468512d9af1c": "16d6ebbd2372d54e32565a7999edfd1bc9152c785b77f1bcbf79ee47bba1794a",
     "/operations/snapshot.json": "0daa8a0d6f03c9eaf746ba91d20c0728fe2b0512c10cea3796c6145358cca69f",
-    "/interactive-tools/": "d93272db6a2c4ccf5120c476e98accbc19fe827617be6df2f6f9e8bf19aa22c3",
-    "/admin/": "c92b588d170611751a4f23a4e1aa7681cfa5a4b66e9d36969f248fbfe3c0f196",
-    "/checkout/": "71eeeb8ef1312f6d6c54a2546f915e1d7c0e86b41d062792b1b2371258f5f066"
+    "/components/": "a0747d408adc3ee3c1ef00c93d2d47de4e9923488c2272491aada421b9030333",
+    "/basket/": "4c324372f628793270ab15241e56bdcff43fd0574818cbdc5b1d51e30893f023",
+    "/checkout/": "fa820092e66e44acf91556f0649b788367ffbd55e5b00484f24108ec907e05b1",
+    "/storefront/entry.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c": "c7e4e2f56e406db14d753443e86bdbdf5d8f2dca1a0a8fc54099721ad76c3e01",
+    "/storefront/startup.mjs?build=b396ec59d317b58ed1c9cd94f8f65620cd50a04c": "816b77ada3339b0afad426dff44f999e45a9084422be7c2d88eee439e5d7a8b9",
+    "/admin/": "c92b588d170611751a4f23a4e1aa7681cfa5a4b66e9d36969f248fbfe3c0f196"
   },
   "operationsEvidence": {
     "state": "OPEN",
     "pause_from": null,
     "resume_at": null,
     "updated_at": "2026-10-26T11:58:26.803364+00:00",
-    "observedAt": "2026-10-26T15:12:23.417111+00:00",
-    "sha256": "f053133bd25c205e5aea13d9e1cc1f6285a78b56d3a0f36fa36e2561c07e76f5"
+    "observedAt": "2026-10-26T15:30:46.58507+00:00",
+    "sha256": "78cb73a41e1b19867794257e8f12e31f5773df05fab442748a2d0008c4bbb329"
   },
   "knownFailedPublications": [],
   "commandReads": false,
   "commandWrites": false,
   "evidenceReuse": {
-    "acceptedLightHouseApplication": "932f714b263775215ac091fbef362ad8b5bbc8b5",
-    "run": 39981284222,
-    "nativeCases": 33,
+    "sentinelRun": 39988495190,
+    "nativeSentinelCases": 31,
+    "inheritedLighthouseCases": 33,
     "isolationControls": 10,
-    "startupModules": [
+    "logicalModules": [
       {
-        "path": "storefront/entry.mjs",
-        "acceptedSourceSHA256": "8e1395073c57c859cd6ecc7b7638ab74d6bf411e8358a48942db8d9efab2d641",
-        "compiledSHA256": "c7e4e2f56e406db14d753443e86bdbdf5d8f2dca1a0a8fc54099721ad76c3e01",
-        "cacheOnly": true
+        "path": "checkout/checkout.mjs",
+        "acceptedSourceSHA256": "932970a1029c801d021d99ef91a423f0aa1b6ce682ed2fd777062722c109e45c",
+        "compiledSHA256": "30c1626b7aeace76f263f5ad604166a008a2f8aeb2ae41dc9316a7d5d49e4346",
+        "currentSummaryCopyPreserved": false,
+        "cacheOnlyBeyondAcceptedLogic": true
       },
       {
-        "path": "storefront/startup.mjs",
-        "acceptedSourceSHA256": "816b77ada3339b0afad426dff44f999e45a9084422be7c2d88eee439e5d7a8b9",
-        "compiledSHA256": "816b77ada3339b0afad426dff44f999e45a9084422be7c2d88eee439e5d7a8b9",
-        "cacheOnly": true
+        "path": "contact/contact.mjs",
+        "acceptedSourceSHA256": "f754074514e0810152d20630076bff5ce3c545bfc59bb70f0436758e42c03c1e",
+        "compiledSHA256": "d6205f114d727d7b56b84eeaa40401bdb3764cf2d55d9cf663beb73cb5c552c4",
+        "currentSummaryCopyPreserved": false,
+        "cacheOnlyBeyondAcceptedLogic": true
+      },
+      {
+        "path": "basket-ui.mjs",
+        "acceptedSourceSHA256": "e2867e3c821b0d8cc0b1592d3e012ee1501a3add82d93159927a79550dbbae71",
+        "compiledSHA256": "774cc7590541428b64ecaf825c7b2af5b3a3c267566dfdc7c25372801e6d9f3e",
+        "currentSummaryCopyPreserved": true,
+        "cacheOnlyBeyondAcceptedLogic": true
+      },
+      {
+        "path": "commerce.mjs",
+        "acceptedSourceSHA256": "412264e6e792b278611f6e8af142ac34875015a55ffaffe5ffe10cb12e0e8e34",
+        "compiledSHA256": "17c727660c77f7a1c93407556a996fab1d7d3f90cdc8aea4cd297a489414e609",
+        "currentSummaryCopyPreserved": false,
+        "cacheOnlyBeyondAcceptedLogic": true
       }
     ],
-    "wording": "Existing static route, FAQ and basket-summary wording retained under AUTHORISATION 57; optional copy-only changes excluded. Accepted recovery boundary text/deadline unchanged.",
-    "wholeMainPendingDeadlineMs": 15000,
-    "newMaterialInteractionBeyondAcceptedScope": false
+    "wording": "Existing normal basket-summary wording retained; new unavailable-item and uncertain-outcome text is the accepted SENTINEL source.",
+    "interactionDecision": "PENDING_OWNER_CHOICE",
+    "uncertaintyLimit": "Current-document hold only; reloading is not proof of failure."
   },
   "targetedAcceptance": {
-    "cacheOnlyStartupSourceRecovery": "PASS",
-    "generatedContentOutsideEntryURLPreserved": 17,
-    "currentGeneratedPagesReconciled": [
-      "products/cde-715p-600/index.html",
-      "products/cde-047/index.html"
-    ],
-    "unrelatedExistingFilesUnchanged": 408,
-    "sourceSyntax": "PASS",
-    "inheritedPublisherTests": "12/12 unchanged publisher source reused",
+    "completeCacheDependencyClosure": "PASS",
+    "affectedModuleIdentities": 18,
+    "cacheOnlyNonLogicalFiles": 99,
+    "logicalSourceRecovery": "PASS except intentionally retained normal summary wording",
+    "unrelatedExistingFilesUnchanged": 324,
+    "publisherCacheGuardCases": "3/3 PASS; other 12 prior checks reused",
     "newApplicationCampaign": false,
-    "newModuleImportsResolve": "PASS",
+    "sourceSyntax": "PASS",
+    "interactionChoiceGuard": "PASS before any request",
     "completeComposition": "PASS"
   }
 }

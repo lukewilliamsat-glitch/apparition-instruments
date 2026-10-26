@@ -2,7 +2,7 @@ import {browserOrderStore,channels,statuses,componentOrderItem,kitOrderItem} fro
 import {basketOrderItems} from './handoff.mjs';
 import {parseGBP,priceInput} from '../data.mjs';
 import {componentRepository} from '../component-repository.mjs';
-import {readBasket} from '../../commerce.mjs';
+import {readBasket} from '../../commerce.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4';
 import {el,money,showItem} from './view.mjs';
 import {deploymentPath} from '../../deployment.mjs';
 const query=new URLSearchParams(location.search);

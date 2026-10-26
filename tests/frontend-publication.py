@@ -90,5 +90,23 @@ class Publisher(unittest.TestCase):
             with zipfile.ZipFile(io.BytesIO(pages_zip(payload))) as z:raw=z.read('artifact.tar')
             (base/'artifact.tar').write_bytes(raw);p=dict(self.p,baseTarSHA256=sha(raw),basePayloadDigest=payload.digest(),changes=[{'path':'admin/command/read-activation.mjs','beforeSHA256':None}])
             with self.assertRaisesRegex(Rejected,'privileged workspace'):f.prepare(p,base,ROOT,root/'out')
+    def test_13_shared_cache_identity_changes_no_workspace_logic(self):
+        value={'operation':'replace','replacements':[{'before':'../site.mjs?build='+BASE,'after':'../site.mjs?build='+SHA,'count':1}]}
+        self.assertTrue(f.cache_reference_only(value))
+        value['replacements'][0]['after']='../different.mjs?build='+SHA
+        self.assertFalse(f.cache_reference_only(value))
+        value['replacements'][0]['after']='https://other.invalid/site.mjs?build='+SHA
+        self.assertFalse(f.cache_reference_only(value))
+    def test_14_workspace_patch_with_noncache_changes_refused(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);folder=root/'base';folder.mkdir();payload=Payload({'index.html':b'fictional','admin/index.html':b'old'})
+            with zipfile.ZipFile(io.BytesIO(pages_zip(payload))) as z:raw=z.read('artifact.tar')
+            (folder/'artifact.tar').write_bytes(raw)
+            p=dict(self.p,feature='SENTINEL',baseTarSHA256=sha(raw),basePayloadDigest=payload.digest(),changes=[{'path':'admin/index.html','beforeSHA256':sha(b'old'),'operation':'replace','replacements':[{'before':'old','after':'new','count':1}]}])
+            with self.assertRaisesRegex(Rejected,'privileged workspace'):f.prepare(p,folder,ROOT,root/'out')
+    def test_15_missing_interaction_choice_stops_before_requests(self):
+        p=dict(self.p,feature='SENTINEL',evidenceReuse={'interactionDecision':'PENDING_OWNER_CHOICE'})
+        def denied(path):raise AssertionError('No request permitted before the choice')
+        with self.assertRaisesRegex(Rejected,'interaction choice'):f.preflight(p,get=denied)
 
 if __name__=='__main__':unittest.main()

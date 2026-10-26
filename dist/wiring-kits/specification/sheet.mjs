@@ -1,4 +1,4 @@
-import {readBasket} from '../../commerce.mjs';
+import {readBasket} from '../../commerce.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4';
 import {drawCircuit} from '../../wiring-generator/render.mjs';
 import {readGeneratorURL} from '../../wiring-generator/session.mjs';
 import {configurationFromURL,describeKit,specLabels,priceKit,formatKitPrice,upgradeLabel,lesPaul,builderURL} from '../../les-paul-kits/config.mjs';

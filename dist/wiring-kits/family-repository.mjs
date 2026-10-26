@@ -7,7 +7,7 @@ export const familyAdapters=Object.freeze({
   route:'/les-paul-kits/',
   collection:'Gibson / Epiphone',
   capabilities:Object.freeze({optionGroups:['wiring','pots','shaft','matching','caps','bleed','jack','selector'],diagram:true,basket:true}),
-  async load(){const domain=await import('../les-paul-kits/config.mjs');return {resolve:domain.resolveLesPaulKit,mount:async context=>{if(domain.lesPaul.id!==context.id)throw new Error('Kit Definition changed during Builder loading.');await import('../les-paul-kits/kits.mjs');}};}
+  async load(){const domain=await import('../les-paul-kits/config.mjs');return {resolve:domain.resolveLesPaulKit,mount:async context=>{if(domain.lesPaul.id!==context.id)throw new Error('Kit Definition changed during Builder loading.');await import('../les-paul-kits/kits.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4');}};}
  })
 });
 

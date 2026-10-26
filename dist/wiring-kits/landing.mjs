@@ -1,5 +1,5 @@
 import {populateFitment} from './fitment.mjs';
-import {createKitFamilyRepository} from './family-repository.mjs';
+import {createKitFamilyRepository} from './family-repository.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4';
 import {deploymentPath} from '../deployment.mjs';
 document.body.classList.add('wiring-kits-landing');
 const stylesheet=document.createElement('link');

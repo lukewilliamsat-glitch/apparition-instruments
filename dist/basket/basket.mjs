@@ -1,5 +1,5 @@
-import {readBasket,changeQuantity,removeKit,resetBasket} from '../commerce.mjs';
-import {el,itemCard,totalCard,emptyBasket,errorBasket} from '../basket-ui.mjs';
+import {readBasket,changeQuantity,removeKit,resetBasket} from '../commerce.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4';
+import {el,itemCard,totalCard,emptyBasket,errorBasket} from '../basket-ui.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4';
 const content=document.querySelector('#basket-content'),status=document.querySelector('#basket-status');
 window.apparitionStoreState||={state:'UNAVAILABLE',customer_message:'Checking current store availability…'};
 function showError(error){status.textContent=error.message;}

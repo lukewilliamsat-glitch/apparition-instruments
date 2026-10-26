@@ -1,4 +1,4 @@
-import {createBasketCounter} from './basket-count.mjs';
+import {createBasketCounter} from './basket-count.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4';
 import {deploymentPath,deploymentRoot} from './deployment.mjs';
 import {bootOperations} from './operations/public.mjs';
 // Keep existing root-relative routes inside a project subpath when the site is

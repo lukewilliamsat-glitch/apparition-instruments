@@ -6,7 +6,7 @@
  const fail=()=>{if(settled)return;settled=true;clearTimeout(watchdog);root.classList.add('forge-entry-failed');root.classList.remove('forge-entering');document.querySelector('#forge-entry-error')?.removeAttribute('hidden');};
  const watchdog=setTimeout(fail,8000);
  window.__forgeEntry={ready:async()=>{if(settled)return;try{await Promise.all([document.fonts.ready,new Promise(resolve=>setTimeout(resolve,Math.max(0,minimum-(performance.now()-started))))]);await new Promise(resolve=>requestAnimationFrame(resolve));}catch{fail();return;}if(settled)return;settled=true;clearTimeout(watchdog);root.classList.add('forge-entry-handoff');root.classList.remove('forge-entering');setTimeout(()=>root.classList.remove('forge-entry-handoff','forge-entry-brief'),240);},fail};
-})();</script><title>Apparition Signal Forge | Apparition Instruments</title><link rel="icon" href="../favicon.svg"><link rel="stylesheet" href="../style.css"><link rel="stylesheet" href="../brand.css"><link rel="stylesheet" href="../knowledge.css"><script type="module" src="../site.mjs"></script><!-- SEO METADATA START -->
+})();</script><title>Apparition Signal Forge | Apparition Instruments</title><link rel="icon" href="../favicon.svg"><link rel="stylesheet" href="../style.css"><link rel="stylesheet" href="../brand.css"><link rel="stylesheet" href="../knowledge.css"><script type="module" src="../site.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4"></script><!-- SEO METADATA START -->
 <meta name="description" content="Start with a supported Les Paul circuit, explore its wiring and inspect electrical paths in Apparition Signal Forge.">
 <link rel="canonical" href="https://apparitioninstruments.co.uk/circuit-forge/">
 <meta property="og:type" content="website">

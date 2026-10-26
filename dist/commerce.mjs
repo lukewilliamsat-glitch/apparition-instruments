@@ -1,17 +1,19 @@
-import {createKitSnapshot,validateKitSnapshot} from './les-paul-kits/snapshot.mjs';
-import {productById} from './components/catalogue.mjs';
-import {basketStorageKey as STORAGE_KEY,readSavedBasket} from './basket-storage.mjs';
+import {createKitSnapshot,validateKitSnapshot} from './les-paul-kits/snapshot.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f';
+import {productById} from './components/catalogue.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f';
+import {basketStorageKey as STORAGE_KEY,readSavedBasket} from './basket-storage.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f';
 export const MAX_QUANTITY=99;
+function validSavedComponent(sku){return typeof sku==='string'&&sku.length>0&&sku.length<=120&&sku.trim()===sku&&!/[\u0000-\u001f\u007f<>]/.test(sku)&&!['__proto__','constructor','prototype'].includes(sku)&&!/^(?:javascript|data|vbscript):/i.test(sku);}
+export const hasUnavailableItems=items=>items.some(item=>item.product==='component'&&!productById(item.sku));
 export function readBasket(){
  const data=readSavedBasket();
  const seen=new Set();
  return data.items.slice(0,50).filter(item=>{
-  if(!item||typeof item.id!=='string'||!/^[a-zA-Z0-9-]{1,80}$/.test(item.id)||seen.has(item.id)||!Number.isInteger(item.quantity)||item.quantity<1||item.quantity>MAX_QUANTITY||!['les-paul','component'].includes(item.product)||(item.product==='component'&&!productById(item.sku)))return false;
+  if(!item||typeof item.id!=='string'||!/^[a-zA-Z0-9-]{1,80}$/.test(item.id)||seen.has(item.id)||!Number.isInteger(item.quantity)||item.quantity<1||item.quantity>MAX_QUANTITY||!['les-paul','component'].includes(item.product)||(item.product==='component'&&!validSavedComponent(item.sku)))return false;
   seen.add(item.id);return true;
- }).map(item=>item.product==='les-paul'?{id:item.id,product:'les-paul',quantity:item.quantity,configuration:structuredClone((item.record||{}).configuration||item.configuration),record:item.record?validateKitSnapshot(item.record):{...createKitSnapshot(item.configuration),legacyReconstructed:true}}:{id:item.id,product:'component',sku:item.sku,quantity:item.quantity});
+ }).map(item=>item.product==='les-paul'?{id:item.id,product:'les-paul',quantity:item.quantity,configuration:structuredClone((item.record||{}).configuration||item.configuration),record:item.record?validateKitSnapshot(item.record):{...createKitSnapshot(item.configuration),legacyReconstructed:true}}:{id:item.id,product:'component',sku:item.sku,quantity:item.quantity,...(!productById(item.sku)?{unavailable:true}:{})});
 }
 function save(items){
- items=items.map(item=>item.product==='les-paul'?{...item,record:validateKitSnapshot(item.record)}:item);
+ items=items.map(item=>item.product==='les-paul'?{...item,record:validateKitSnapshot(item.record)}:{id:item.id,product:'component',sku:item.sku,quantity:item.quantity});
  try{localStorage.setItem(STORAGE_KEY,JSON.stringify({version:1,items}));}catch{throw new Error('Your basket could not be saved. Allow site storage or free some browser storage, then try again.');}
  window.dispatchEvent(new CustomEvent('apparition:basket-changed'));
  return items;

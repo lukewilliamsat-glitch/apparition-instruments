@@ -40,6 +40,18 @@ def write_tree(payload,root):
         f=root/path;f.parent.mkdir(parents=True,exist_ok=True);f.write_bytes(data);f.chmod(0o644)
     require(tree_payload(root).digest()==payload.digest(),'Written tree differs')
 
+def cache_reference_only(c):
+    if c.get('operation')!='replace' or not c.get('replacements'):return False
+    for r in c['replacements']:
+        before=urllib.parse.urlsplit(r['before']);after=urllib.parse.urlsplit(r['after'])
+        if before.scheme or before.netloc or after.scheme or after.netloc:return False
+        if before.path!=after.path or before.fragment!=after.fragment or not re.search(r'\.(?:mjs|js|css)$',before.path):return False
+        old=urllib.parse.parse_qsl(before.query,keep_blank_values=True);new=urllib.parse.parse_qsl(after.query,keep_blank_values=True)
+        if [x for x in old if x[0]!='build']!=[x for x in new if x[0]!='build']:return False
+        builds=[value for key,value in new if key=='build']
+        if len(builds)!=1 or not re.fullmatch('[a-f0-9]{40}',builds[0]) or not isinstance(r.get('count'),int) or r['count']<1:return False
+    return True
+
 def prepare(p,baseline,root,out):
     raw=bounded_file(Path(baseline)/'artifact.tar',MAX_TAR)
     require(sha(raw)==p['baseTarSHA256'],'Original baseline TAR changed')
@@ -47,7 +59,8 @@ def prepare(p,baseline,root,out):
     files=dict(base.files);rollback=dict(base.files);changes=[]
     for c in p['changes']:
         path=c['path'];before=files.get(path)
-        require(not path.startswith(('admin/','forge-pro/','supabase/')),'Unrelated privileged workspace delta refused')
+        require(not path.startswith('supabase/'),'Backend delta refused')
+        require(not path.startswith(('admin/','forge-pro/')) or cache_reference_only(c),'Unrelated privileged workspace delta refused')
         if p['feature']=='SPECTRE':require(path in {'customer-ui.css','index.html','operations/snapshot.json'},'SPECTRE delta exceeded')
         require((sha(before) if before is not None else None)==c['beforeSHA256'],'Delta preimage mismatch: '+path)
         if c['operation']=='source':
@@ -112,6 +125,9 @@ def operations(p,get=None):
     return {'state':'OPEN','pause_from':None,'resume_at':None,'updated_at':s['updated_at'],'observedAt':observed,'bytes':len(raw),'sha256':sha(raw),'requests':1,'mutations':0}
 
 def preflight(p,get=None,public_get=get_bytes,final=False,operation='release',restore_run=None):
+    if p['feature']=='SENTINEL':
+        decision=p.get('evidenceReuse',{}).get('interactionDecision')
+        require(isinstance(decision,dict) and decision.get('status')=='OWNER_ACCEPTED' and decision.get('applicationSource')==p['applicationSource'],'SENTINEL interaction choice has not been supplied')
     require(os.environ.get('GITHUB_REPOSITORY')==REPOSITORY and os.environ.get('GITHUB_REF')=='refs/heads/main','Wrong repository/branch')
     source=os.environ.get('GITHUB_SHA','');run_id=os.environ.get('GITHUB_RUN_ID','');token=os.environ.get('GH_TOKEN','')
     require(re.fullmatch('[a-f0-9]{40}',source) and run_id.isdigit() and (token or get),'Trusted workflow identity required')

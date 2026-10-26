@@ -5,7 +5,7 @@ import {renderKitFields,updateFieldSummaries} from './fields.mjs';
 import {choiceDetails} from './choice-details.mjs';
 import {defaults,normaliseKit,describeKit,specification,lesPaul,resolveLesPaulKit,invalidKitChoices,formatKitPrice,upgradeLabel,configurationFromURL,builderURL,specificationURL,toneCaps} from './config.mjs';
 import {diagramMarkup,componentDescription} from './diagram.mjs';
-import {readBasket,addKit} from '../commerce.mjs';
+import {readBasket,addKit} from '../commerce.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4';
 import {deploymentPath} from '../deployment.mjs';
 import {bindPurchaseControl,assertPurchaseAllowed} from '../operations/purchase-controls.mjs';
 import {refreshCatalogue} from '../components/catalogue.mjs';
