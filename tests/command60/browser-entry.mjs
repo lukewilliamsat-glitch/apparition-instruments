@@ -13,7 +13,7 @@ const auth={restore:async()=>({status:state==='authorized'?'authorized':state===
 const path=location.pathname;let loaded=[];
 await bootAdminGate({document,auth,load:async specifier=>{
  loaded.push(new URL(specifier).pathname);diagnostic.loaded.push(specifier);
- if(path==='/admin/'||path==='/admin/index.html'||path==='/admin/orders/')return import(specifier);
+ if(path==='/admin/'||path==='/admin/index.html'||path==='/admin/orders/'){try{return await import(specifier);}catch(e){diagnostic.importError=String(e);diagnostic.importStack=e.stack;throw e;}}
  // Unchanged specialist business code is covered by accepted source evidence.
  // Native checks here cover the actual retained forms, iframe and new shell geometry.
  if(path==='/admin/conjure/'){const page=document.querySelector('[data-page]');const o=document.createElement('option');o.textContent='Fictional website preview';page.append(o);document.querySelector('[data-status]').textContent='Fictional preview · no website content edited.';document.querySelector('iframe').srcdoc='<!doctype html><style>body{margin:0;background:#f5f2e9;color:#292721;font:18px system-ui;padding:40px}</style><h1>Fictional website preview</h1><p>Isolated editor surface</p>';document.querySelector('[data-advanced]').addEventListener('click',e=>{const panel=document.querySelector('[data-inspector]');panel.hidden=!panel.hidden;e.currentTarget.setAttribute('aria-expanded',String(!panel.hidden));});}
