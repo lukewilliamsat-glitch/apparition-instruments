@@ -55,8 +55,13 @@ class TransportTests(unittest.TestCase):
         r=github_preflight(a,'',54,'3'*40,get);self.assertEqual(r['requests'],9);self.assertEqual(len(calls),9);self.assertTrue(all(path.startswith(('/pages','/deployments','/actions','/git')) for path in calls))
         self.assertRaises(Rejected,github_preflight,a,'',54,'3'*40)
     def test_workflow_is_manual_or_exact_marker_only_without_generators(self):
-        text=(Path(__file__).resolve().parents[2]/'docs/command/command05/templates/command-publication-only.yml.example').read_text()
+        root=Path(__file__).resolve().parents[2]
+        text=(root/'.github/workflows/command-publication.yml').read_text()
         self.assertIn('[command-exact-release]',text);self.assertIn('group: pages',text);self.assertIn('cancel-in-progress: false',text);self.assertIn('name: github-pages',text);self.assertIn('deployments: read',text);self.assertNotIn('schedule:',text);self.assertNotIn('scripts/generate-',text);self.assertNotIn('npm ci',text)
         self.assertLess(text.index('Independently read back'),text.index('Publish this exact'));self.assertLess(text.index('Verify original uploaded bytes'),text.index('Publish this exact'))
+        legacy=(root/'.github/workflows/static.yml').read_text()
+        self.assertIn("if: github.event_name != 'push' || !contains(github.event.head_commit.message, '[command-exact-release]')",legacy)
+        self.assertIn("- cron: '0 3 * * *'",legacy);self.assertIn('workflow_dispatch:',legacy)
+        self.assertIn('node scripts/generate-hub-cms.mjs',legacy)
 
 if __name__=='__main__':unittest.main()

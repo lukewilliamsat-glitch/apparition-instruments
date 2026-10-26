@@ -1,6 +1,6 @@
 {
   "mission": "AUTHORISATION_55_OPERATION_LAUNCH_COMMAND",
-  "status": "PRODUCTION_HOLD_OWNER_INPUT_REQUIRED",
+  "status": "PRODUCTION_HOLD_PROVIDER_METADATA_VISUAL_AND_LIVE_READ_PENDING",
   "baseCheckpoint": "21b04755f0c212165e688e19e770211178f8d3ab",
   "applicationCommit": "df78c5bf5144b012a7d96c628186180fa6432df3",
   "applicationDistTree": "98b47d2ab3afe4f2cac543b01129606774955f20",
@@ -18,7 +18,7 @@
   "acceptedRollbackSHA256": null,
   "actualPublisherInstalled": false,
   "liveReleaseVerified": false,
-  "privateProductionArchivesRead": 0,
+  "privateProductionArchivesRead": 1,
   "supabaseProjectRequests": 0,
   "newCIExecutions": 0,
   "newScreenshots": 0,
@@ -44,7 +44,13 @@
     "workflowYAMLParsed": true,
     "legacyGuardPatchApplies": true,
     "pinnedDeployPagesActionInputsVerified": true,
-    "allLiveResponsesUsedForTests": "FICTIONAL"
+    "allLiveResponsesUsedForTests": "FICTIONAL",
+    "activeArtifactOverlayPreimagesMatched": 21,
+    "changedSharedFiles": 3,
+    "newCommandFiles": 18,
+    "unrelatedBaselineFilesToPreserve": 422,
+    "amendmentTargetedCasesPassed": 2,
+    "acceptedApplicationUnchanged": true
   },
   "ownerReadHelper": {
     "file": "OWNER_READ_CHECK_55.js",
@@ -64,7 +70,7 @@
   "publicationRoute": {
     "candidateOnly": true,
     "workflowTargetPath": ".github/workflows/command-publication.yml",
-    "legacyChange": "Only skip the exact marked release push; existing scheduled/manual CMS/SEO remains enabled",
+    "legacyChange": "One engineering-branch guard skips only the exact marked release push; scheduled/manual CMS/SEO remains enabled",
     "sharedConcurrencyGroup": "pages",
     "permissions": [
       "contents:read",
@@ -78,15 +84,84 @@
     "privateHandoffMaxBytes": 50331648,
     "uploadedOriginalTarReadbackRequired": true,
     "liveVerificationRequiredBeyondActionsSuccess": true,
-    "privateArchiveAndArtifactTransportApprovalRequired": true
+    "privateArchiveAndArtifactTransportApprovalRequired": true,
+    "engineeringWorkflowPath": ".github/workflows/command-publication.yml",
+    "actualProductionInstallation": false,
+    "legacyWorkflowOtherBytesPreserved": true,
+    "additionalFinalApprovalRequired": false
   },
   "capabilityBlockers": [
-    "GitHub connector does not expose current Pages/environment settings. Anonymous public metadata reads were also inaccessible. No privileged browser session was probed.",
-    "Public static Operations snapshot was inaccessible through the web tool; no conclusion about site health/current holiday state was drawn.",
-    "Actual private baseline access, authoritative current holiday evidence and complete payload/rollback remain gated."
+    "Required owner-operated metadata outputs and selected Supabase-project confirmation have not been supplied.",
+    "Owner visual acceptance and separately bounded live-read approval/results are pending.",
+    "Current complete publication artifact and rollback are verified, but actual served bytes/runtime holiday state could not be independently read through available static HTTP tooling.",
+    "Production workflow installation, fresh concurrency/served-identity checks and complete release composition remain dependent on the unresolved release gates."
   ],
   "providerQuerySHA256": {
     "1": "3f3829e7e3533d321f3df47eadb5c071901a070355b9cf9accf15777ab6e5946",
     "2": "54f4574c55d311c511e9dde55e1dcfcf09e0ab19eca45c070ec0c95a58e76e51"
+  },
+  "lastReviewedAt": "2026-10-26T09:20:56.214245+00:00",
+  "originalAnchorArchiveReads": 0,
+  "engineeringPublisherInstalled": true,
+  "requiresAdditionalFinalDeploymentApproval": false,
+  "productionAuthority": {
+    "reference": "AUTHORISATION_55_AMENDMENT_FINAL_PRODUCTION_DEPLOYMENT_AUTHORITY",
+    "conditionalOnEveryMandatoryGate": true,
+    "deployImmediatelyWhenSatisfied": true,
+    "additionalFinalDeploymentApprovalRequired": false,
+    "providerAndVisualGatesWaived": false
+  },
+  "currentPublication": {
+    "sourceCommit": "2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f",
+    "activeRunId": 40292065655,
+    "jobId": 121469213393,
+    "event": "schedule",
+    "workflow": ".github/workflows/static.yml",
+    "runCompletedAt": "2026-10-26T08:25:13Z",
+    "status": "success",
+    "pagesTarget": "https://apparitioninstruments.co.uk/",
+    "pagesSource": "GitHub Actions",
+    "enforceHTTPS": true,
+    "observedFrom": "Signed-in Pages settings and deployment UI; matching GitHub run metadata",
+    "artifactId": 12636623182,
+    "artifactBytes": 20303403,
+    "artifactSHA256": "d9cba50e95c70d11c4bbff6bcf5e35bddc1c60edaa6b2e7ac436d744b30a9b5f",
+    "artifactExpiresAt": "2026-10-27T08:25:01Z",
+    "payloadDigest": "4b78c9e5d71fcc2d5b25459776521903545e3f3e692665e5fe19e45fc8ebf34c",
+    "fileCount": 425,
+    "expandedFileBytes": 24529490,
+    "actualServedBytesIndependentlyVerified": false,
+    "freshNoCompetingPublisherGate": "REQUIRED IMMEDIATELY BEFORE RELEASE"
+  },
+  "currentRollback": {
+    "completeArchiveIntegrity": "PASS",
+    "originalArtifactPreserved": true,
+    "privateRetention": "PASS",
+    "independentRetentionReadback": "PASS",
+    "ownerAccessible": true,
+    "retainedPackageBytes": 20381610,
+    "retainedPackageSHA256": "f6488d39c85e7a9480f7b169cb6e69c7119d96aa11d8560e3db719f07c66672b",
+    "restorationRoute": "OFFLINE TESTS PASS; ACTUAL PUBLICATION INSTALLATION AND LIVE VERIFICATION PENDING",
+    "archiveMaterialisations": 1,
+    "fullInnerArchiveDecodePasses": 1,
+    "originalAnchorAccesses": 0,
+    "maxZIPBytes": 23068672,
+    "maxExpandedBytes": 67108864,
+    "maxPrivateWorkingBytes": 536870912
+  },
+  "holidayBaseline": {
+    "snapshotState": "ORDERS_PAUSED",
+    "desiredState": "ORDERS_PAUSED",
+    "customerTitle": "Workshop holiday",
+    "onlineToolsAvailableInMessage": true,
+    "snapshotPauseFrom": "2026-10-25T13:46:47.044336+00:00",
+    "snapshotResumeAt": "2026-11-15T13:46:00+00:00",
+    "communicatedClosureWindow": [
+      "2026-10-17",
+      "2026-11-15"
+    ],
+    "valuesRewritten": false,
+    "liveRuntimeState": "UNTESTED",
+    "staticServedSnapshotRead": "UNVERIFIED; tool/network access unavailable; no site-health inference"
   }
 }

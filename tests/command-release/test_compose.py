@@ -52,6 +52,8 @@ class ComposeTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             p=Path(tmp);(p/'baseline.zip').write_bytes(raw);r=prepare(baseline_path=p/'baseline.zip',overlay=o,manifest=m,manifest_sha=d,evidence=e,out=p/'out',now=NOW)
             self.assertFalse(r['productionReady']);self.assertEqual((p/'out/rollback-original.zip').read_bytes(),raw)
+            self.assertEqual(r['productionAuthorityRef'],'AUTHORISATION_55_AMENDMENT')
+            self.assertFalse(r['requiresAdditionalOwnerDeploymentApproval']);self.assertTrue(r['requiresAllProductionGatesVerified'])
             for kind in ['release','rollback']:
                 receipt=json.loads((p/'out'/f'{kind}-receipt.json').read_bytes());zipname='release.zip' if kind=='release' else 'rollback-original.zip';payload=verify_bundle((p/'out'/zipname).read_bytes(),receipt,sha(canonical(receipt)))
                 self.assertEqual(payload.files['operations/snapshot.json'],base.files['operations/snapshot.json'])

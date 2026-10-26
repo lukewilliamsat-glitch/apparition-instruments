@@ -1,8 +1,5 @@
-# REVIEWED CANDIDATE ONLY. Install as .github/workflows/command-publication.yml
-# solely with the exact owner-approved release and the companion static guard.
-# Existing CMS/SEO scheduled/manual generation is preserved, not invoked here.
-# Requires an approved github-pages environment and temporary private-handoff
-# capsule. Never put its URL, private archives or credentials in repository Git.
+# AUTHORISATION 55 amendment: engineering installation only until all release gates pass.
+# Main-only, exact-marker/manual publisher; no backend generators.
 name: COMMAND exact approved Pages publication
 on:
   push:
