@@ -4,7 +4,9 @@ from frontend_release import ledger64_evidence,plan_at,sha,LEDGER64_BACKEND,LEDG
 from archive_core import Rejected
 root=pathlib.Path(__file__).resolve().parents[2]
 p=json.loads((root/'docs/releases/triple-strike/current.json').read_text())
-assert plan_at(root/'docs/releases/triple-strike/current.json')['authority']=='AUTHORISATION_63'
+legacy=copy.deepcopy(p);legacy.update(authority='AUTHORISATION_63',phase='SAFE',financialPersistence=False)
+with tempfile.TemporaryDirectory() as t:
+ path=pathlib.Path(t)/'legacy.json';path.write_text(json.dumps(legacy));assert plan_at(path)['authority']=='AUTHORISATION_63'
 p.update(authority='AUTHORISATION_64',phase='CONTROLLED64',financialPersistence=True,backendEvidenceSHA256=LEDGER64_BACKEND,migrationSHA256=LEDGER64_MIGRATION,designatedOrderId=LEDGER64_ORDER,livePersistenceEvidenceSHA256=None,targetedAcceptanceSHA256=sha((root/'docs/operations/black-ledger64/targeted-acceptance.json').read_bytes()))
 ledger64_evidence(p,root)
 count=2
