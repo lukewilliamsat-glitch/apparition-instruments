@@ -1,0 +1,28 @@
+{
+  "status": "EXACT_PRIVILEGE_APPROVAL_REQUIRED_NOT_EXECUTED",
+  "repository": "lukewilliamsat-glitch/apparition-instruments",
+  "currentProduction": "53331335fe3f1418bc8ea77b82e29ef5ae58c9f1",
+  "reason": "The accepted NIGHTFALL durable archive branch and initialisation marker do not exist. Activation must not precede an independently enforced required-archive lifecycle.",
+  "verifiedAbsentRefs": [
+    "refs/heads/catalogue-image-assets",
+    "refs/tags/catalogue-images-initialised"
+  ],
+  "observedRepositoryRulesets": [],
+  "existingPublisherPermission": "contents:read",
+  "requestedOperations": [
+    "Bootstrap only the data-only catalogue-image-assets branch and immutable catalogue-images-initialised marker from the six verified existing photographs.",
+    "Give a dedicated guarded archive publisher repository contents:write. GitHub permission is repository-wide; the reviewed publisher must restrict writes to the exact archive branch and marker, use atomic compare-and-swap and never force-push or delete history.",
+    "Install independently maintained branch/tag lifecycle controls that prohibit deletion and non-fast-forward history replacement without adding bypass privileges.",
+    "Establish CATALOGUE_ARCHIVE_REQUIRED=true independently of application rollback and restore the entire committed image history in every relevant release/restoration assembly."
+  ],
+  "scopeExcluded": [
+    "No database migration, RLS, Auth, stock, financial, customer, payment or email mutation.",
+    "No hosting/DNS change or general security-protection bypass."
+  ],
+  "acceptedPublisherSource": "135d2c8c6b177631c5c06358030aa610e44e322d",
+  "gateSource": "docs/performance/blackbox34/PORTABLE_PUBLICATION.md at c3003c6a56075964f5036ea57507aed8f431b64e",
+  "preparedManifestRevision": "bf38f41bc3bbf514c83f07fa50cc06eea82fe1fdc607c7585de4d3ba8cdf70e9",
+  "verifiedPhotographs": 6,
+  "sourceImageBytes": 8953356,
+  "afterPrivilegeGate": "Publish and verify retained static assets, complete bounded served-byte/header/native-decoding checks, then enable the accepted demand runtime using a complete guarded release and rollback."
+}

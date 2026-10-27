@@ -1,0 +1,55 @@
+{
+  "result": "OFFLINE_PREPARED_NOT_PUBLISHED",
+  "catalogueIdentities": 15,
+  "photographProducts": 6,
+  "uniqueAssets": 6,
+  "assetBytes": 8953356,
+  "manifestRevision": "bf38f41bc3bbf514c83f07fa50cc06eea82fe1fdc607c7585de4d3ba8cdf70e9",
+  "imagesFromVerifiedProductionBaseline": true,
+  "additionalProviderImageDownloads": 0,
+  "productionImageActivation": false,
+  "entries": {
+    "AI-Pot-SS-AlphaMini-A500K": {
+      "sourceHash": "71a778dd96977f41f6e19c591dd2e09a68446a22e6d6cc0f50ecbcdf536f524c",
+      "assetHash": "c722a39fd2f7d48b3ac32f34422a91980028f7a9a281f9e31cd63c8c13a756c8",
+      "mime": "image/png",
+      "bytes": 1602126,
+      "path": "/assets/catalogue-images/c722a39fd2f7d48b3ac32f34422a91980028f7a9a281f9e31cd63c8c13a756c8.png"
+    },
+    "bleed-cap": {
+      "sourceHash": "4ee87f8664f2e4a67b7e34e35ce0770791478077579dc34d3f9b02f118c65cbd",
+      "assetHash": "70e19fa835d6da870e73a85a209dc20ead47f9687c26fafe277ecab366a1278e",
+      "mime": "image/png",
+      "bytes": 2021646,
+      "path": "/assets/catalogue-images/70e19fa835d6da870e73a85a209dc20ead47f9687c26fafe277ecab366a1278e.png"
+    },
+    "bleed-duncan": {
+      "sourceHash": "ab7676219bfbdcee99c9b1259ffaecaa64daa0930b7ec769c64015fb9fff3b87",
+      "assetHash": "48cf60527b2103bbd9a53707f2d62795d2d977fc3769ed3f6e3d69e45e77c909",
+      "mime": "image/png",
+      "bytes": 2267440,
+      "path": "/assets/catalogue-images/48cf60527b2103bbd9a53707f2d62795d2d977fc3769ed3f6e3d69e45e77c909.png"
+    },
+    "bleed-premium": {
+      "sourceHash": "da399e180be545c91de2c55d5a5e7cb27c7d274d893dc24831869cc0e40fc9db",
+      "assetHash": "a7fc2809e8cffd951469e6aef944985e88ae1fefd60f0dacda41ba161ca189cb",
+      "mime": "image/png",
+      "bytes": 974008,
+      "path": "/assets/catalogue-images/a7fc2809e8cffd951469e6aef944985e88ae1fefd60f0dacda41ba161ca189cb.png"
+    },
+    "cde-022": {
+      "sourceHash": "75b36a9b9a4dd542904860d12b24c795bd208c436f22faaa0e0468c7a50f72c4",
+      "assetHash": "c1ff962c4dafa2287b537abff9254819be02f3db00ab2095e7f78de9f33e93c0",
+      "mime": "image/png",
+      "bytes": 1135292,
+      "path": "/assets/catalogue-images/c1ff962c4dafa2287b537abff9254819be02f3db00ab2095e7f78de9f33e93c0.png"
+    },
+    "cde-715p-600": {
+      "sourceHash": "f42a56e196ab28f3b022cd72f2a629502b2bbf5658620d4dfb9d5d1418f04673",
+      "assetHash": "30d8a19d1abe4528866abc3d91b484da557a7ec4d4451dad891b4f5886a79027",
+      "mime": "image/png",
+      "bytes": 952844,
+      "path": "/assets/catalogue-images/30d8a19d1abe4528866abc3d91b484da557a7ec4d4451dad891b4f5886a79027.png"
+    }
+  }
+}

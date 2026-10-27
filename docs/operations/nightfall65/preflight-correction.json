@@ -1,0 +1,12 @@
+{
+  "result": "PASS",
+  "initialFailure": "Invalid public option",
+  "demonstratedCause": "Existing public option keys use underscores: pure_tone, sprague_sbe, vishay_dale, reverse_audio and push_pull. The old preparatory validator allowed underscores in option sets but rejected them in option keys.",
+  "correction": "Permit underscores in option-key syntax without altering raw keys, uniqueness, projection, limits, auth, encoding or failure handling.",
+  "targetedGroups": 14,
+  "livePreflightRequests": 3,
+  "livePreflightBodyBytes": 13599,
+  "sourceSHA256": "02abd420ce481318e8555b37ce8f1bb147b44ee3f56c7b7c38921da6008f5670",
+  "runtimeChanged": false,
+  "imageActivation": false
+}

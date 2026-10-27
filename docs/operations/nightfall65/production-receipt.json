@@ -1,0 +1,75 @@
+{
+  "authority": "AUTHORISATION65_SECTION1A",
+  "status": "WORDING_LIVE_VERIFIED_NIGHTFALL_PRIVILEGE_GATE_PENDING",
+  "liveURL": "https://apparitioninstruments.co.uk/admin/orders/",
+  "productionCommit": "53331335fe3f1418bc8ea77b82e29ef5ae58c9f1",
+  "applicationSource": "9b2d52cc13dbe69e53f139a1a9742bce189098af",
+  "runId": 40569761562,
+  "payloadDigest": "d53ee2b1a6f404aadb81596cf3a5f729daacec837b6338414e5338fa48ee3f2c",
+  "completeFiles": 460,
+  "changedFiles": 6,
+  "unchangedFiles": 454,
+  "browserVerification": {
+    "savedRecordWording": "PASS",
+    "localDirtyDraftWording": "PASS",
+    "revertRestoresLoadedState": "PASS",
+    "financialSaveInvoked": false,
+    "financialActivationPreserved": true
+  },
+  "localGroups": {
+    "wording": 4,
+    "affectedClientDOM": 15,
+    "receiptRegression": 4,
+    "publisherGuard": 8,
+    "nightfallOptionContract": 14
+  },
+  "operations": {
+    "bytes": 436,
+    "mutations": 0,
+    "observedAt": "2026-10-27T19:32:14.94311+00:00",
+    "pause_from": null,
+    "requests": 1,
+    "resume_at": null,
+    "sha256": "9835d7ba30d0127a7e242dbf699cc591412a0c558324ebdf80b3375ea6b2878e",
+    "state": "OPEN",
+    "updated_at": "2026-10-26T11:58:26.803364+00:00"
+  },
+  "staticVerification": {
+    "requests": 8,
+    "bytes": 78026,
+    "result": "PASS"
+  },
+  "rollback": {
+    "artifactId": 12763967895,
+    "payloadDigest": "b7a0ec643c3e48346d5af16b3125b22553a9914ca5031c844415fc4f128866b4",
+    "tarSHA256": "35464a8f68ac9b61161c4ee4c646e9522ad71be19a9dff81beaa8b7cc2c93eb4",
+    "completeFiles": 460,
+    "receiptOriginalZipReadBack": true,
+    "receiptZipSHA256": "e9e0fbb3ce03d4be064b48fb7ce66b882fbc7ccc5b5961f9251306e790fc244f"
+  },
+  "nightfall": {
+    "runtimeUnchanged": true,
+    "preflight": "PASS after targeted underscore-key correction",
+    "metadataRows": 15,
+    "identityRows": 15,
+    "optionRows": 22,
+    "preflightBodyBytes": 13599,
+    "photographsPrepared": 6,
+    "additionalProviderImageDownloads": 0,
+    "assetsPublished": false,
+    "enabled": false,
+    "blocker": "ARCHIVE_PERMISSION_GATE.json"
+  },
+  "preserved": {
+    "databaseSchema": true,
+    "permissions": true,
+    "financialValues": true,
+    "publicStorefront": true,
+    "catalogueImages": true,
+    "OPEN": true,
+    "News": true,
+    "promotionsDisabled": true,
+    "IRONCLADDisabled": true
+  },
+  "publicationReview": "An ambiguous inherited release plan was rejected. The accepted wording plan removes test-order/migration metadata, contains no financial activation instruction and enforces the exact unchanged activation-file hash."
+}

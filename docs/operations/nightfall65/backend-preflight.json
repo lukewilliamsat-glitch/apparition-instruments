@@ -1,0 +1,30 @@
+{
+  "status": "PASS",
+  "planSHA256": "bd9aca0efc68e8921150fbd0aefbce97059919f34d066d6b59c2cec9191e4f44",
+  "requests": [
+    {
+      "name": "metadata",
+      "rows": 15,
+      "bodyBytes": 9533,
+      "elapsedMs": 4976.430714
+    },
+    {
+      "name": "identities",
+      "rows": 15,
+      "bodyBytes": 1441,
+      "elapsedMs": 4282.027541
+    },
+    {
+      "name": "options",
+      "rows": 22,
+      "bodyBytes": 2625,
+      "elapsedMs": 4369.882417000001
+    }
+  ],
+  "totalBodyBytes": 13599,
+  "production": true,
+  "limitations": [
+    "Response checks cannot establish live grants, RLS, security_invoker or database execution cost.",
+    "Identity request elapsed time is round-trip observation, not a database query plan or billing attribution."
+  ]
+}
