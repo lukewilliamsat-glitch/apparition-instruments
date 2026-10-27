@@ -1,0 +1,23 @@
+{
+  "kind": "BLACK_LEDGER_V1",
+  "phase": "RECON",
+  "sourceCommit": "d68f04e79109c1ab40a536cf451aacefefe12b69",
+  "baseSourceCommit": "84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
+  "unchangedRepositoryRevision": "84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
+  "entries": [
+    {
+      "path": "admin/orders/finance-ui.mjs",
+      "beforeSHA256": "88232161b1dac0ce42b4e435d532eafb2f61dbe865b173459d128461feae7d92",
+      "afterSHA256": "5bb929b6fc98400f4d0804514a67babefccda7e4a1ace10a8aa14ce74af99d2f",
+      "bytes": 32827,
+      "rawSourceSHA256": "f694d56a3f65c3cfdbb3c59f401d5349936243fd51b472dc2d0c241cd7c21907"
+    },
+    {
+      "path": "admin/orders/economics-v2.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "b2d7f60f315200f72bf77c9f4926023fb3d518cf710d6ef021f0106d3b58e1a3",
+      "bytes": 8568,
+      "rawSourceSHA256": "78183785669c1f1cd6a646379398cb4ec7656eb6e4705be5e3316bb6be4fb963"
+    }
+  ]
+}

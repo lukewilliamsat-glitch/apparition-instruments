@@ -1,0 +1,48 @@
+{
+  "status": "NATIVE_ACCEPTED_RELEASE_PREPARED",
+  "applicationSource": "d68f04e79109c1ab40a536cf451aacefefe12b69",
+  "executionSource": "0c9ee73d3efa56b34a1fdb96804b8ccd01a475cd",
+  "native": {
+    "run": 40517744856,
+    "browser": "155.0.8059.39",
+    "passed": 2,
+    "total": 2,
+    "viewports": [
+      390,
+      1440
+    ],
+    "increasedText": "200%",
+    "isolation": 10,
+    "externalRequests": 0,
+    "artifact": 12739303639,
+    "artifactSHA256": "a6cb06ed9fa4963979c625d9b092708d76a0e5acc03179c9c45385293b7c2315",
+    "expiresAt": "2026-11-10T14:05:26Z",
+    "originalReadBack": true
+  },
+  "calculation": {
+    "newGroups": 19,
+    "DOM": "PASS",
+    "acceptedV1GroupsReused": 35,
+    "sourceHashes": "tests/command63/recon-reuse.json",
+    "unchangedSuitesRerun": false
+  },
+  "contract": {
+    "customerGross": "Compare customer payment with gross product/postage amounts without adding pass-through twice.",
+    "sellerNet": "Add explicit marketplace pass-through when reconciling tax-exclusive seller line/postage values to gross customer payment.",
+    "taxEvidence": "An entered amount defaults to an estimate; confirmation requires provenance. Unknown remains unknown.",
+    "settlement": "Separate from customer payment/revenue. Settlement-only adjustments do not add a second shipping expense. Seller tax liabilities are separate from marketplace payout."
+  },
+  "fixtureCorrection": {
+    "failedRun": 40516052555,
+    "cause": "The new fixture omitted the existing required Les Paul Kit Definition. Reproduced locally; accepted assembly fixture dependency restored.",
+    "applicationSourceChanged": false,
+    "localBootstrapRegression": "PASS"
+  },
+  "publicationBoundaryChecks": 14,
+  "financialSaving": false,
+  "productionDatabaseMutation": false,
+  "candidateDigest": "07896d435f26ac95f3afefc822ee1a6a17de49b05202a37378bb685f39f3224a",
+  "rollbackDigest": "377d9f3e6345d2f8f6f40fcfc7dc576b359f4f11078537138b1f68f0eda0b1fe",
+  "changedFiles": 5,
+  "unrelatedStorefrontAndOperationsBytesUnchanged": true
+}
