@@ -1,0 +1,63 @@
+{
+  "status": "FRONTEND_LIVE_VERIFIED",
+  "authority": "AUTHORISATION63 targeted publication recovery",
+  "source": "24e0bfbc959619ddad304d7b00e0e4816094bad1",
+  "applicationSource": "b4d7e3708e1cd0153e922122fa2400f0c46d9ce7",
+  "run": 40550780745,
+  "url": "https://apparitioninstruments.co.uk/admin/orders/",
+  "pagesArtifact": 12754827108,
+  "payloadDigest": "238c176d63da87b99d3c1e69ed972dab5fc726a69a1362ba282049721bd8a07c",
+  "artifactZIPDigest": "2c61c6bac9c095009e14675a8b73344437d909cef1b6338eb0b64b99cc0c4a92",
+  "candidateTarSHA256": "d929374625762ef5d12893f809ad70b7e35d3e8b5a1a91848fbe10741b83099a",
+  "rollback": {
+    "artifact": 12755515257,
+    "payloadDigest": "07896d435f26ac95f3afefc822ee1a6a17de49b05202a37378bb685f39f3224a",
+    "tarSHA256": "474410de6515b208e414a65dbd83d30cae71fd7d49321ad9bfe6bc848bc214fc",
+    "restoration": "Existing frontend-publication workflow: restore_run40550780745, restore_artifact12755515257; retain all identity and OPEN guards."
+  },
+  "reconciliation": {
+    "environmentRecords": [
+      7365302103,
+      7362675635
+    ],
+    "successfulBaselineRecord": 7362511613,
+    "proof": "Immutable restore receipt ZIP and complete rollback artifact metadata, successful restore/readback steps,16 new publisher regression groups and8 freshly matching baseline URLs. Exact run/source/job associations pinned. Unknown deployments remain rejected.",
+    "historyRecordsModified": false
+  },
+  "verification": {
+    "ciDeployment": "success",
+    "ciLive": "success",
+    "restore": "skipped",
+    "independentLiveURLs": 8,
+    "independentLiveBytes": 77251,
+    "originalReceiptZIPVerified": true,
+    "receiptArtifact": 12754247910,
+    "receiptZIPDigest": "2cebb38ec3973c5d7097db2d33e16f4d2a07605fb010f81166d9648a6bf6466f",
+    "operations": {
+      "bytes": 437,
+      "mutations": 0,
+      "observedAt": "2026-10-27T17:28:32.093102+00:00",
+      "pause_from": null,
+      "requests": 1,
+      "resume_at": null,
+      "sha256": "ef3a2fa82237b404c35be1a41f4a29e0aeead14fe91526fa3c35f2e390e31285",
+      "state": "OPEN",
+      "updated_at": "2026-10-26T11:58:26.803364+00:00"
+    },
+    "acceptedEngineeringReused": true,
+    "newApplicationTestCampaign": false
+  },
+  "liveScope": "Reviewed Marketplace Economics preview including reconciliation/provenance interface; inactive NIGHTFALL integration installed; existing Commerce draft preview preserved. No financial persistence, trusted checkout promotion or image-delivery activation claimed.",
+  "boundaries": {
+    "financialSaving": false,
+    "financialMigrationExecuted": false,
+    "livePromotions": false,
+    "nightfallImageActivation": false,
+    "commandReads": false,
+    "commandWrites": false,
+    "businessRecordsMutated": false,
+    "backendDependentGeneration": false
+  },
+  "retentionExpiry": "2026-11-10",
+  "stop": "Await separate financial migration approval and controlled noncustomer test-order designation. No automatic continuation."
+}
