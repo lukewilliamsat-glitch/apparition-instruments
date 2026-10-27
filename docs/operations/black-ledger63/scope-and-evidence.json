@@ -1,0 +1,28 @@
+{
+  "authority": "AUTHORISATION_63",
+  "briefSHA256": "06e61fcf406890e3e22cff2ea3acecb4767e48966dfdf2e0dadcff087dcf197b",
+  "productionBase": "66b944aad66ff694926eb2c1bf659748c5ee263e",
+  "baseRun": 40504380105,
+  "initialRelease": "RECON: explicit gross versus seller-net payment breakdown, pass-through provenance, seller revenue and settlement separation. Existing accepted V1 engine remains byte-identical. Financial saving remains disabled.",
+  "privilegedProductionOperations": "Pending exact operation-specific approval after isolated migration/rollback/permission/side-effect tests. No production DDL, RLS, grant, financial-record, stock, payment or customer communication mutation has been executed.",
+  "metadata": {
+    "project": "acdxpxvksvdwfajntzfx",
+    "association": "Existing deployed Admin public configuration and authenticated production reads accepted in AUTHORISATION62. No target switch.",
+    "executions": 1,
+    "transaction": "READ ONLY",
+    "statementTimeout": "5s",
+    "lockTimeout": "1s",
+    "outputRows": 1,
+    "businessRecordRows": 0,
+    "serverVersion": "17.6",
+    "newFinancialAndOfferTables": "Requested extension names absent.",
+    "catalogueDeliveryV2": "Exists, security_invoker=true, anon/authenticated SELECT. Exact lightweight columns verified; private view definition retained outside Git."
+  },
+  "acceptedEvidenceReuse": {
+    "financialV1LogicGroups": 35,
+    "financialV1SHA256": "a086dcef8f33b14d880c8accc91f2f5bfeabf463a3241237a7ac49392ebbba3a",
+    "acceptedV1TestsSHA256": "6aec303848dcfdbe53fa4bc8af03f85125b765ffbd838d808622145d0b208668",
+    "commerceV2PricingAndReadSourcesUnchanged": true,
+    "historicalFrontendCampaignsRerun": false
+  }
+}
