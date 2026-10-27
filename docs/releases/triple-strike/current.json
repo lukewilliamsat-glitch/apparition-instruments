@@ -1,17 +1,17 @@
 {
   "version": 1,
-  "authority": "AUTHORISATION_64",
+  "authority": "AUTHORISATION_65",
   "feature": "BLACK_LEDGER",
-  "phase": "ACTIVE64",
-  "applicationSource": "dd9986842ed12e28c61283a1f32fe092dea6d05d",
+  "phase": "WORDING65",
+  "applicationSource": "9b2d52cc13dbe69e53f139a1a9742bce189098af",
   "siteURL": "https://apparitioninstruments.co.uk",
-  "baseSource": "0bdb339a65a270d54608f57a72ed9917d002997f",
-  "baseRunId": 40563926359,
-  "baseArtifactId": 12761393635,
-  "baseTarSHA256": "7e7e422ae2fcbc82d183ba42cc79e0d841a00dcc122639519cb162faafdd5ad3",
-  "basePayloadDigest": "71a7d8ea5a4e3dcbfc5d5f14bd5ae1ad7bc781136886cbf84e4be190798da523",
-  "candidateDigest": "b7a0ec643c3e48346d5af16b3125b22553a9914ca5031c844415fc4f128866b4",
-  "rollbackDigest": "71a7d8ea5a4e3dcbfc5d5f14bd5ae1ad7bc781136886cbf84e4be190798da523",
+  "baseSource": "00f1c92b57544718432707a14108c38cae1c3e8a",
+  "baseRunId": 40564863124,
+  "baseArtifactId": 12761234089,
+  "baseTarSHA256": "f000a681dabdd6a957040a26a286e872e712af6d15b319a6c47648e10fdb8d64",
+  "basePayloadDigest": "b7a0ec643c3e48346d5af16b3125b22553a9914ca5031c844415fc4f128866b4",
+  "candidateDigest": "d53ee2b1a6f404aadb81596cf3a5f729daacec837b6338414e5338fa48ee3f2c",
+  "rollbackDigest": "b7a0ec643c3e48346d5af16b3125b22553a9914ca5031c844415fc4f128866b4",
   "commandReads": false,
   "commandWrites": false,
   "operationsEvidence": {
@@ -22,7 +22,6 @@
     "observedAt": "2026-10-26T16:07:59.974137+00:00",
     "sha256": "1040aa31f8c5c5a874c46259d08fd2c0400f6d3eac8421bd7e1529d4b0d27a25"
   },
-  "financialPersistence": true,
   "activePromotions": false,
   "nativeAcceptance": {
     "runId": 40525724200,
@@ -32,137 +31,128 @@
     "scope": "Four financial native journeys/ten isolation controls; exact Admin financial files unchanged through b4d7. Separately accepted inactive NIGHTFALL runtime and five targeted integration DOM groups. No new browser campaign."
   },
   "nightfallActivation": false,
-  "migrationSHA256": "a6025c33e9a2936ce61f35af4cf514e49585a2ccdcf1b3e57966e8ed5f63c996",
-  "backendEvidenceSHA256": "4934e7f58863af0f70199fdd10ebebeedfae5d1c72e09078dbbaaf46d61af6d0",
-  "designatedOrderId": "3db324c2-4f60-45b6-b78c-29a3eceeb826",
-  "livePersistenceEvidenceSHA256": "aae05828dc31f10eead5fe84861223a0171b1e4485cca765b0037d4ce567a942",
-  "targetedAcceptanceSHA256": "8041af758a15cc909242e4364f08982aba8559fc2dae9b9c50e21ad2cd2ea248",
-  "receiptCorrectionSHA256": "ab4651251db2d640cc0c4a9191b9283df0130f142fd5bc3f4027a3bb2a560306",
   "knownFailedPublications": [],
   "changes": [
     {
       "path": "admin/orders/app.mjs",
-      "beforeSHA256": "3280f7b7864177d9094d03c019b02aa502d85c54fe82de1b781de7ceccca27d2",
-      "afterSHA256": "3eba537b26b3b1bd52e994eb49662cecf97541fcb89612cd45fa93bb6328f94a",
+      "beforeSHA256": "3eba537b26b3b1bd52e994eb49662cecf97541fcb89612cd45fa93bb6328f94a",
+      "afterSHA256": "da51a5cf86c00f30b9e0a2471cc594e4d1a27f6c466a1da77cca89cfd85bf50d",
       "bytes": 16274,
       "operation": "replace",
       "replacements": [
         {
-          "before": "./external-order.mjs?build=41456a659304b826ff65eaa14ea06b2d2442999c",
-          "after": "./external-order.mjs?build=dd9986842ed12e28c61283a1f32fe092dea6d05d",
+          "before": "./external-order.mjs?build=dd9986842ed12e28c61283a1f32fe092dea6d05d",
+          "after": "./external-order.mjs?build=9b2d52cc13dbe69e53f139a1a9742bce189098af",
           "count": 1
         },
         {
-          "before": "./finance-ui.mjs?build=41456a659304b826ff65eaa14ea06b2d2442999c",
-          "after": "./finance-ui.mjs?build=dd9986842ed12e28c61283a1f32fe092dea6d05d",
+          "before": "./finance-ui.mjs?build=dd9986842ed12e28c61283a1f32fe092dea6d05d",
+          "after": "./finance-ui.mjs?build=9b2d52cc13dbe69e53f139a1a9742bce189098af",
           "count": 1
         },
         {
-          "before": "./financial-order.mjs?build=41456a659304b826ff65eaa14ea06b2d2442999c",
-          "after": "./financial-order.mjs?build=dd9986842ed12e28c61283a1f32fe092dea6d05d",
+          "before": "./financial-order.mjs?build=dd9986842ed12e28c61283a1f32fe092dea6d05d",
+          "after": "./financial-order.mjs?build=9b2d52cc13dbe69e53f139a1a9742bce189098af",
           "count": 1
         }
       ]
     },
     {
       "path": "admin/orders/external-order.mjs",
-      "beforeSHA256": "b12e12c1bf0208c6ce6be9dee3c79fc7bb4a88646544fc89e3d20eb037c582af",
-      "afterSHA256": "30caf7bdaafa8f7b82df7d33dd2a749aec04bf08851e3b9982df242f14878f2b",
+      "beforeSHA256": "30caf7bdaafa8f7b82df7d33dd2a749aec04bf08851e3b9982df242f14878f2b",
+      "afterSHA256": "e380bc477a3b03aaa794a5326dae3caba8a092565b80f2d2bf27de0a4e44028f",
       "bytes": 6734,
       "operation": "replace",
       "replacements": [
         {
-          "before": "./finance-ui.mjs?build=41456a659304b826ff65eaa14ea06b2d2442999c",
-          "after": "./finance-ui.mjs?build=dd9986842ed12e28c61283a1f32fe092dea6d05d",
+          "before": "./finance-ui.mjs?build=dd9986842ed12e28c61283a1f32fe092dea6d05d",
+          "after": "./finance-ui.mjs?build=9b2d52cc13dbe69e53f139a1a9742bce189098af",
           "count": 1
         }
       ]
-    },
-    {
-      "path": "admin/orders/finance-activation.mjs",
-      "beforeSHA256": "cc3be2bf9482614e12cc25e4ea600d8a5e37fa0c762721581c8b9d8f9da554ff",
-      "afterSHA256": "9af57c229884ee3cb0186085700bab2a804f8f43fb58d8894c2d0f94a5d6775a",
-      "bytes": 361,
-      "operation": "compiled-admin",
-      "source": "release-overlays/black-ledger63-ACTIVE64/admin/orders/finance-activation.mjs"
     },
     {
       "path": "admin/orders/finance-ui.mjs",
-      "beforeSHA256": "b32f2e350febbda88e57a45959d0de9d0eb5d7f28e2684c8e00eca1e88167d26",
-      "afterSHA256": "dee93182c0e29202a91afc6e48a214a11605cb476fde7370de2e74c8e000494e",
-      "bytes": 39431,
-      "operation": "replace",
-      "replacements": [
-        {
-          "before": "./finance-activation.mjs?build=41456a659304b826ff65eaa14ea06b2d2442999c",
-          "after": "./finance-activation.mjs?build=dd9986842ed12e28c61283a1f32fe092dea6d05d",
-          "count": 1
-        }
-      ]
+      "beforeSHA256": "dee93182c0e29202a91afc6e48a214a11605cb476fde7370de2e74c8e000494e",
+      "afterSHA256": "9341847ff9f2998519c65f651afc8dd91cc9d5051a3b2d464ad704c01400494a",
+      "bytes": 39489,
+      "operation": "compiled-admin",
+      "source": "release-overlays/black-ledger63-WORDING65/admin/orders/finance-ui.mjs"
     },
     {
       "path": "admin/orders/financial-order.mjs",
-      "beforeSHA256": "4d85172dd8c3f79042a3d4768ce0246e5554e9d22ecf8eecfaf973feb2ea6a52",
-      "afterSHA256": "b372c3ac2482b9bcb28c7ba315b908665439dd5f20449c7831ba7bdee1196510",
+      "beforeSHA256": "b372c3ac2482b9bcb28c7ba315b908665439dd5f20449c7831ba7bdee1196510",
+      "afterSHA256": "3b974d767f9f0d3f8411dc77d4885b6d7587b81e406a3704a2f5cc5647e042c4",
       "bytes": 5411,
       "operation": "replace",
       "replacements": [
         {
-          "before": "./finance-activation.mjs?build=41456a659304b826ff65eaa14ea06b2d2442999c",
-          "after": "./finance-activation.mjs?build=dd9986842ed12e28c61283a1f32fe092dea6d05d",
+          "before": "./finance-ui.mjs?build=dd9986842ed12e28c61283a1f32fe092dea6d05d",
+          "after": "./finance-ui.mjs?build=9b2d52cc13dbe69e53f139a1a9742bce189098af",
           "count": 1
         },
         {
-          "before": "./finance-ui.mjs?build=41456a659304b826ff65eaa14ea06b2d2442999c",
-          "after": "./finance-ui.mjs?build=dd9986842ed12e28c61283a1f32fe092dea6d05d",
+          "before": "./financial-record.mjs?build=41456a659304b826ff65eaa14ea06b2d2442999c",
+          "after": "./financial-record.mjs?build=9b2d52cc13dbe69e53f139a1a9742bce189098af",
           "count": 1
         }
       ]
     },
     {
+      "path": "admin/orders/financial-record.mjs",
+      "beforeSHA256": "20f39bae614bf3756463060608f36370e8fd77c7eee7ad2cc26705d51790599c",
+      "afterSHA256": "5fe6841cee734dd6591ab154078371fa9be9974ce04d4881a4d4e91e85b273f9",
+      "bytes": 11303,
+      "operation": "compiled-admin",
+      "source": "release-overlays/black-ledger63-WORDING65/admin/orders/financial-record.mjs"
+    },
+    {
       "path": "admin/orders/index.html",
-      "beforeSHA256": "c6f9004f5c958d3eec4328601a3ed683f7d0e444f67fbd8c889954c9d00fa59c",
-      "afterSHA256": "63b156e66ea6d02a80b06bb165e93a981aabc9c9bb60a04c3b485272e34ff800",
+      "beforeSHA256": "63b156e66ea6d02a80b06bb165e93a981aabc9c9bb60a04c3b485272e34ff800",
+      "afterSHA256": "d57719e7f07373d454ef18833d2fd77876693c41d332251f5cc6d75fd540f07c",
       "bytes": 8101,
       "operation": "replace",
       "replacements": [
         {
-          "before": "./app.mjs?v=customer-aftercare-giga-v1&build=41456a659304b826ff65eaa14ea06b2d2442999c",
-          "after": "./app.mjs?v=customer-aftercare-giga-v1&build=dd9986842ed12e28c61283a1f32fe092dea6d05d",
+          "before": "./app.mjs?v=customer-aftercare-giga-v1&build=dd9986842ed12e28c61283a1f32fe092dea6d05d",
+          "after": "./app.mjs?v=customer-aftercare-giga-v1&build=9b2d52cc13dbe69e53f139a1a9742bce189098af",
           "count": 1
         }
       ]
     }
   ],
-  "ledgerManifestSHA256": "88bfbe42af11d1ca4d92083c41a64a710bebb682b6272ab9a7ef2145ca4afe79",
+  "ledgerManifestSHA256": "c80fde4b5593ebb018f20dc3a1a42199d55b14df336d10108006c9283b048c80",
   "baselineVerification": {
-    "/admin/orders/": "c6f9004f5c958d3eec4328601a3ed683f7d0e444f67fbd8c889954c9d00fa59c",
-    "/admin/orders/financial-order.mjs": "4d85172dd8c3f79042a3d4768ce0246e5554e9d22ecf8eecfaf973feb2ea6a52",
-    "/admin/orders/finance-activation.mjs": "cc3be2bf9482614e12cc25e4ea600d8a5e37fa0c762721581c8b9d8f9da554ff",
-    "/backend/image-delivery-config.mjs": "9d9e7e17b91d171e399b2e901b53210dc0232c514655c45bffd97a2a6624a358",
-    "/commercial/offer-activation.mjs": "c6b6d2969895a827f5a783babb7d5ed23b17bb54f7d230f01b4771600ead6e7c",
-    "/operations/snapshot.json": "fd5709af3c61bc8dfc945558ad805559845dacb9380f8451ce2cb8887d1d90b2",
-    "/": "155da9be7cd7ae7740c70c6d3cea8245e9428b0891e86474da8a32293da3e28c",
-    "/components/treble-bleeds/": "48a7a627b463cec6ff4a357d3ef7f4d9a5eca130319c75023a3e2d8bc530bb75"
-  },
-  "rollbackVerification": {
-    "/admin/orders/": "c6f9004f5c958d3eec4328601a3ed683f7d0e444f67fbd8c889954c9d00fa59c",
-    "/admin/orders/financial-order.mjs": "4d85172dd8c3f79042a3d4768ce0246e5554e9d22ecf8eecfaf973feb2ea6a52",
-    "/admin/orders/finance-activation.mjs": "cc3be2bf9482614e12cc25e4ea600d8a5e37fa0c762721581c8b9d8f9da554ff",
-    "/backend/image-delivery-config.mjs": "9d9e7e17b91d171e399b2e901b53210dc0232c514655c45bffd97a2a6624a358",
-    "/commercial/offer-activation.mjs": "c6b6d2969895a827f5a783babb7d5ed23b17bb54f7d230f01b4771600ead6e7c",
-    "/operations/snapshot.json": "fd5709af3c61bc8dfc945558ad805559845dacb9380f8451ce2cb8887d1d90b2",
-    "/": "155da9be7cd7ae7740c70c6d3cea8245e9428b0891e86474da8a32293da3e28c",
-    "/components/treble-bleeds/": "48a7a627b463cec6ff4a357d3ef7f4d9a5eca130319c75023a3e2d8bc530bb75"
-  },
-  "releaseVerification": {
     "/admin/orders/": "63b156e66ea6d02a80b06bb165e93a981aabc9c9bb60a04c3b485272e34ff800",
-    "/admin/orders/financial-order.mjs": "b372c3ac2482b9bcb28c7ba315b908665439dd5f20449c7831ba7bdee1196510",
+    "/admin/orders/finance-ui.mjs": "dee93182c0e29202a91afc6e48a214a11605cb476fde7370de2e74c8e000494e",
+    "/admin/orders/financial-record.mjs": "20f39bae614bf3756463060608f36370e8fd77c7eee7ad2cc26705d51790599c",
     "/admin/orders/finance-activation.mjs": "9af57c229884ee3cb0186085700bab2a804f8f43fb58d8894c2d0f94a5d6775a",
     "/backend/image-delivery-config.mjs": "9d9e7e17b91d171e399b2e901b53210dc0232c514655c45bffd97a2a6624a358",
     "/commercial/offer-activation.mjs": "c6b6d2969895a827f5a783babb7d5ed23b17bb54f7d230f01b4771600ead6e7c",
     "/operations/snapshot.json": "fd5709af3c61bc8dfc945558ad805559845dacb9380f8451ce2cb8887d1d90b2",
-    "/": "155da9be7cd7ae7740c70c6d3cea8245e9428b0891e86474da8a32293da3e28c",
-    "/components/treble-bleeds/": "48a7a627b463cec6ff4a357d3ef7f4d9a5eca130319c75023a3e2d8bc530bb75"
-  }
+    "/": "155da9be7cd7ae7740c70c6d3cea8245e9428b0891e86474da8a32293da3e28c"
+  },
+  "rollbackVerification": {
+    "/admin/orders/": "63b156e66ea6d02a80b06bb165e93a981aabc9c9bb60a04c3b485272e34ff800",
+    "/admin/orders/finance-ui.mjs": "dee93182c0e29202a91afc6e48a214a11605cb476fde7370de2e74c8e000494e",
+    "/admin/orders/financial-record.mjs": "20f39bae614bf3756463060608f36370e8fd77c7eee7ad2cc26705d51790599c",
+    "/admin/orders/finance-activation.mjs": "9af57c229884ee3cb0186085700bab2a804f8f43fb58d8894c2d0f94a5d6775a",
+    "/backend/image-delivery-config.mjs": "9d9e7e17b91d171e399b2e901b53210dc0232c514655c45bffd97a2a6624a358",
+    "/commercial/offer-activation.mjs": "c6b6d2969895a827f5a783babb7d5ed23b17bb54f7d230f01b4771600ead6e7c",
+    "/operations/snapshot.json": "fd5709af3c61bc8dfc945558ad805559845dacb9380f8451ce2cb8887d1d90b2",
+    "/": "155da9be7cd7ae7740c70c6d3cea8245e9428b0891e86474da8a32293da3e28c"
+  },
+  "releaseVerification": {
+    "/admin/orders/": "d57719e7f07373d454ef18833d2fd77876693c41d332251f5cc6d75fd540f07c",
+    "/admin/orders/finance-ui.mjs": "9341847ff9f2998519c65f651afc8dd91cc9d5051a3b2d464ad704c01400494a",
+    "/admin/orders/financial-record.mjs": "5fe6841cee734dd6591ab154078371fa9be9974ce04d4881a4d4e91e85b273f9",
+    "/admin/orders/finance-activation.mjs": "9af57c229884ee3cb0186085700bab2a804f8f43fb58d8894c2d0f94a5d6775a",
+    "/backend/image-delivery-config.mjs": "9d9e7e17b91d171e399b2e901b53210dc0232c514655c45bffd97a2a6624a358",
+    "/commercial/offer-activation.mjs": "c6b6d2969895a827f5a783babb7d5ed23b17bb54f7d230f01b4771600ead6e7c",
+    "/operations/snapshot.json": "fd5709af3c61bc8dfc945558ad805559845dacb9380f8451ce2cb8887d1d90b2",
+    "/": "155da9be7cd7ae7740c70c6d3cea8245e9428b0891e86474da8a32293da3e28c"
+  },
+  "wordingEvidenceSHA256": "9eda2846b639f07de96a98cb107519aefd6b9f9286116f1d5233a0a9c12500f0",
+  "preserveExistingFinancialPersistence": true,
+  "financialActivationChanged": false
 }
