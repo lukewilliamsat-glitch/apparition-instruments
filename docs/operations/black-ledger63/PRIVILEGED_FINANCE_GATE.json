@@ -1,0 +1,69 @@
+{
+  "status": "AWAITING_EXACT_OPERATION_APPROVAL",
+  "authority": "AUTHORISATION63 section10",
+  "project": "acdxpxvksvdwfajntzfx",
+  "schema": "public",
+  "migrationSource": "f2e3dea553d33d47887d823714435ec541756070",
+  "mechanism": "Supabase apply_migration",
+  "name": "black_ledger_financial_v1",
+  "sqlFile": "supabase/migrations/20261027140000_black_ledger_financial_v1.sql",
+  "sqlSHA256": "a6025c33e9a2936ce61f35af4cf514e49585a2ccdcf1b3e57966e8ed5f63c996",
+  "sqlUTF8Bytes": 30105,
+  "executionLimit": 1,
+  "precondition": "Confirmed intended project and exact new-object names unchanged; execute as an atomic migration. Stop on unexpected existing objects, permission rejection or any partial/unknown result. No automatic retry.",
+  "createdTables": [
+    "order_financial_records",
+    "order_financial_revisions",
+    "order_financial_requests"
+  ],
+  "clientRPCs": [
+    "command63_financial_read(uuid)",
+    "command63_financial_save(uuid,bigint,text,uuid,jsonb)",
+    "command63_financial_status(uuid)",
+    "command63_financial_batch(uuid[])"
+  ],
+  "security": "Existing auth.uid() and current admin_members only. Private RLS SELECT for Admin records/revisions. No direct financial table writes, receipt enumeration, anonymous or service-role execute grant. Helpers are not client callable.",
+  "existingObjectsModified": [],
+  "prohibitedSideEffects": [
+    "No updates to original Orders, Inventory or payments.",
+    "No fulfilment mutation, refunds, stock writer, email enqueue/send or catalogue generation.",
+    "No existing RLS/Auth/stock writer changes."
+  ],
+  "bounds": {
+    "documentUTF8Bytes": 32768,
+    "orderLines": 10,
+    "fees": 50,
+    "adjustments": 50,
+    "batchOrderIds": 50,
+    "batchJSONDocumentBytes": 196608,
+    "clientResponseBytes": 212992,
+    "clientDeadlineMs": 8000,
+    "lockTimeout": "1s",
+    "functionStatementTimeout": "5s",
+    "automaticRetries": 0,
+    "manualUncertainReceiptChecksPerAttempt": 3
+  },
+  "tested": {
+    "localDatabaseGroups": 33,
+    "clientDOMGroups": 15,
+    "nativeChromeGroups": 4,
+    "networkIsolationControls": 10,
+    "nativePostgres17Groups": 7,
+    "concurrentProcessesPerRace": 8,
+    "migrationFailureRollback": "PASS in isolated PostgreSQL17.6 and PGlite",
+    "directWritePermissionDenied": "PASS",
+    "financeCallBusinessSideEffects": "None in isolated tests"
+  },
+  "rollback": {
+    "sqlFile": "scripts/command-release/disable-financial63.sql",
+    "sqlSHA256": "922f24c110a0c08c070618889fe062792297e85c5e2f597c7ebcd387911d2d69",
+    "action": "Revoke authenticated execution of new save RPC and deploy disabled financial flag. Preserve all recorded financial inputs, revisions, receipts and Admin reads. No DROP or deletion of financial history."
+  },
+  "controlledAcceptance": {
+    "status": "OWNER_TEST_RECORD_ID_REQUIRED",
+    "allowed": "Only a clearly designated existing noncustomer external test order. Actual normal Admin session, save/reload of explicitly labelled test inputs, conflict/receipt checks only as necessary.",
+    "forbidden": "No fictitious economics on a real customer order. No production test-order creation, stock deduction, payment or message is included in this migration approval.",
+    "activation": "Keep financeActivation disabled until this exact database gate and controlled authenticated acceptance pass. The initial controlled UI stage must be restricted to the designated test order; it must not invent a livePersistenceEvidenceSHA256."
+  },
+  "separateFrontendPublicationGate": "Automatic approval review rejected main update for AUTHORISATION63 attachment-only authority. Direct typed owner confirmation for63 frontend publication is required; no retry or alternate route has been attempted."
+}

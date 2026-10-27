@@ -1,0 +1,34 @@
+{
+  "status": "INTEGRATION_PREPARED_ACTIVATION_DISABLED",
+  "acceptedRuntimeSource": "135d2c8c6b177631c5c06358030aa610e44e322d",
+  "acceptedEvidenceCheckpoint": "c3003c6a56075964f5036ea57507aed8f431b64e",
+  "runtimeFilesByteIdentical": [
+    "backend/catalogue-image-delivery.mjs",
+    "backend/demand-image-presentation.mjs",
+    "backend/static-image-contract.mjs",
+    "backend/verified-image-pool.mjs"
+  ],
+  "currentIntegration": "Add shared read-generation boundary, optional delivery injection and verified-demand handling to retained category and detail renderers. Preserve SENTINEL commerce imports and legacy category photo links.",
+  "localDOMGroups": 5,
+  "categories": 3,
+  "syntheticUniqueImageTransfers": 1,
+  "currentPublicImageIdentityMetadata": {
+    "readOnlyExecutions": 1,
+    "rows": 15,
+    "outputBytes": 1524,
+    "embeddedSourceBytes": 11937948,
+    "currentPhotos": 6,
+    "allMatchedInExistingVerifiedProductionPayload": true,
+    "additionalImageDownloads": 0
+  },
+  "activationGates": [
+    "Complete content-addressed asset manifest and durable image-history retention/publication using all six exact existing photograph byte sets.",
+    "Bounded native/live image decoding, host response and current image-free catalogue acceptance.",
+    "Complete exact release composition and rollback, including retained image history.",
+    "Resolve the shared AUTHORISATION63 typed production-publication approval rejection."
+  ],
+  "productionImageSwitch": false,
+  "billingSavingsClaimed": false,
+  "financialWorkstreamDependency": false,
+  "newProductionSQLRequiredByObservedView": "None identified: catalogue_delivery_v2 already exists with matching image identity projection, public grants and security_invoker=true. No view alteration was executed."
+}

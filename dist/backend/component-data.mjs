@@ -22,12 +22,12 @@ export function componentFromRow(row,inventory={},internal={}){
   kitPrice:row.kit_price,kitPriceQuantity:row.kit_price_quantity,image:row.image,
   stock:inventory.quantity,stockUnit:inventory.stock_unit??'item',internalUnitCost:internal.internal_unit_cost??null};
 }
-export function createPublicComponentRepository({config=publicBackendConfig,request=globalThis.fetch,includeImages=true}={}){
+export function createPublicComponentRepository({config=publicBackendConfig,request=globalThis.fetch,includeImages=true,delivery}={}){
  const blocked=async()=>{throw new Error('Shared Admin writes require authorised backend access.');};
  return Object.freeze({
   async list(id=null){
    const filter=id===null?'':'&id=eq.'+encodeURIComponent(id);
-   return (await (includeImages?readCatalogueComponents({config,request},componentColumns,filter):readPublicRows({config,request},'catalogue_components','?select='+technicalColumns+filter,'Public Component catalogue'))).map(row=>{
+   return (await (includeImages?readCatalogueComponents({config,request,delivery},componentColumns,filter):readPublicRows({config,request},'catalogue_components','?select='+technicalColumns+filter,'Public Component catalogue'))).map(row=>{
     if(!Number.isSafeInteger(row.stock)||row.stock<0)throw new Error('Public availability data is invalid.');
     return componentFromRow({...row,active:true},{quantity:row.stock});
    });

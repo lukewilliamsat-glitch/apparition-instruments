@@ -1,6 +1,7 @@
 import {refineProductPresentation} from './presentation.mjs';
 import {catalogue,refreshCatalogue,money} from '../components/catalogue.mjs';
 import {imageSource} from '../admin/images.mjs';
+import {isDemandImage,mountDemandImage,disposeDemandImages} from '../backend/demand-image-presentation.mjs';
 import {addComponent} from '../commerce.mjs?build=0f4b82d6f618ecc7e661c3b3ff13ca1b58b66ca4';
 import {bindPurchaseControl,assertPurchaseAllowed} from '../operations/purchase-controls.mjs';
 import {createPublicComponentRepository} from '../backend/component-data.mjs?v=p11ef';
@@ -9,10 +10,11 @@ import {categoryName,categoryPath,productContext,productDetails,productURL,produ
 
 const element=(doc,tag,cls,text)=>{const node=doc.createElement(tag);if(cls)node.className=cls;if(text!==undefined)node.textContent=text;return node;};
 export function renderProductDetail(root,product,{document:doc=root.ownerDocument,add=addComponent,options=[],related=catalogue}={}){
+ disposeDemandImages(root);
  const category=categoryName(product.category),context=productContext[product.category],e=(tag,cls,text)=>element(doc,tag,cls,text);
  const back=e('a','product-back','← '+category);back.href=categoryPath(product.category);
  const layout=e('div','product-layout'),visual=e('div','product-visual'),source=imageSource(product.image),fallback=e('div','product-image-fallback',category);
- if(source){const img=e('img','product-image');img.src=source;img.alt=product.name;img.addEventListener('error',()=>img.replaceWith(fallback),{once:true});visual.append(img);}else visual.append(fallback);
+ if(isDemandImage(product.image))mountDemandImage(visual,product.image,{alt:product.name,className:'product-image',fallback,immediate:true});else if(source){const img=e('img','product-image');img.src=source;img.alt=product.name;img.addEventListener('error',()=>img.replaceWith(fallback),{once:true});visual.append(img);}else visual.append(fallback);
  const info=e('div','product-info');info.append(e('p','eyebrow',category),e('h1','',product.productTitle?.trim()||product.name));
  const description=product.fullDescription?.trim()||product.shortDescription?.trim()||product.description?.trim();if(description)info.append(e('p','product-description',description));
  const stock=e('p','product-stock',product.stock===0?'Out of stock':'In stock'),price=e('p','product-price',money(product.price));

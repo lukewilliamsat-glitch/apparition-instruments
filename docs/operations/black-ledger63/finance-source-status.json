@@ -15,8 +15,31 @@
     "exactOrdersBootstrap": "PASS",
     "reconciliationDOM": "PASS"
   },
-  "nativePostgres17": "Pending isolated CI. Eight separate processes per race; not represented as covered by local PGlite.",
-  "nativeChrome": "Pending four changed-boundary fixture journeys with inherited network isolation. Historical 35 calculation groups remain reused.",
+  "nativePostgres17": {
+    "run": 40527123446,
+    "source": "f2e3dea553d33d47887d823714435ec541756070",
+    "result": "PASS",
+    "groups": 7,
+    "database": "PostgreSQL17.6 native",
+    "concurrentProcessesPerRace": 8,
+    "artifact": 12744203172,
+    "artifactSHA256": "c494523feba9b39b2afa63a4e718fe38a60863618cc389123b1ced6a8c0632de",
+    "originalBytesVerified": true,
+    "expiry": "2026-11-10T15:03:57Z"
+  },
+  "nativeChrome": {
+    "run": 40525724200,
+    "source": "d085c8968e37df3292650200321be6769f5c32e3",
+    "browser": "155.0.8059.39",
+    "groups": "4/4",
+    "isolation": "10/10",
+    "externalRequests": 0,
+    "screenshots": 0,
+    "artifact": 12742718558,
+    "artifactSHA256": "5cc5a028625e9236de4e9e86fbfea39e4df7874cba1862c70fbc989bc880fa28",
+    "originalBytesVerified": true,
+    "expiry": "2026-11-10T14:55:18Z"
+  },
   "productionGate": "No database operation until exact project, migration/hash, non-destructive rollback and controlled acceptance record have explicit approval. No financial data invented on real customer orders. Finance feature gate remains disabled with null live evidence.",
   "productionPublication": "RECON main update was rejected by automatic approval review. Direct typed owner confirmation covering AUTHORISATION63 is required. No alternative publication route attempted.",
   "nightfallProgress": {
@@ -41,5 +64,13 @@
     ],
     "productionChanges": 0
   },
-  "followUp": "One targeted acceptance after those two source-grounded corrections. Reuse unchanged 33 database groups by exact SQL/test/fixture/engine and financeDraft fingerprints."
+  "followUp": "One targeted acceptance after those two source-grounded corrections. Reuse unchanged 33 database groups by exact SQL/test/fixture/engine and financeDraft fingerprints.",
+  "nativeFixtureCorrection": {
+    "failedRun": 40525724200,
+    "failure": "Native fixture json_agg(r) used a column named r instead of its enclosing row. Financial schema and functions were not the cause.",
+    "correctionSource": "f2e3dea553d33d47887d823714435ec541756070",
+    "localAdapterGroups": 4,
+    "followUp": "Only native PostgreSQL job executed. Accepted Chrome job skipped because application/browser inputs were unchanged."
+  },
+  "livePersistence": "Not tested. Exact migration approval and a designated controlled noncustomer external order remain required."
 }
