@@ -1,0 +1,130 @@
+{
+  "authority": "AUTHORISATION_62_DIRECT_CONFIRMATION",
+  "financialPreview": {
+    "status": "LIVE_VERIFIED",
+    "productionSource": "aea018fc3bb24b4f0b86d0e1f217c6bc8f32c946",
+    "applicationSource": "6eadee6fe2a03db1fc77adce4421625603894f75",
+    "run": 40497839162,
+    "artifact": 12730892711,
+    "rollbackArtifact": 12730777849,
+    "candidateDigest": "283edca9da338bd4fbc7ab72e7908d0751f31596790340da70a26963984c7ae3",
+    "saving": false
+  },
+  "manufacturerWorkflow": {
+    "status": "LIVE_VERIFIED",
+    "productionSource": "572d2cf39484ee5f0bca953765565ae5dd87aebb",
+    "applicationSource": "d2c652e6a46e602b3505602e923066b2e0e682c4",
+    "run": 40499356777,
+    "artifact": 12731918101,
+    "rollbackArtifact": 12732162643,
+    "candidateDigest": "8ee2f99283a10d7c373731932bbab8cde2da5521050ebb92fc1418394b24a1bf",
+    "liveRecordsChanged": 0
+  },
+  "commerceStudio": {
+    "status": "LIVE_VERIFIED_PREVIEW_ONLY",
+    "productionSource": "66b944aad66ff694926eb2c1bf659748c5ee263e",
+    "applicationSource": "af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+    "run": 40504380105,
+    "candidateDigest": "377d9f3e6345d2f8f6f40fcfc7dc576b359f4f11078537138b1f68f0eda0b1fe",
+    "activePromotions": false,
+    "checkoutModified": false,
+    "initialProductionSource": "bf62a50dd81b45ff1c342704c503a619009991d7",
+    "initialRun": 40502019104,
+    "artifact": 12734401473,
+    "rollbackArtifact": 12734351467,
+    "rollbackDigest": "b5c09907fc68d98cbc58b0f663fe8b7abc9e52260737cba8130dd2a5d30b02f1",
+    "navigationApplicationSource": "0f80248903e246b9e7365853370a57284218b20d",
+    "navigationExecutionSource": "baa34384ab28bf2df7823712922af5317f4c0872",
+    "navigationNativeRun": 40503826884,
+    "navigationNativePassed": 2
+  },
+  "aftercare": {
+    "status": "EXISTING_MANUAL_WORKFLOW_PRESERVED_AUTOMATED_SENDING_BLOCKED",
+    "customerMessagesSent": 0,
+    "reason": "Existing server policy selects manual for eBay and strips its email recipient. No authorised order-associated transport is configured in this application."
+  },
+  "preserved": [
+    "OPEN operating state",
+    "Current storefront, basket, checkout, catalogue, images and News",
+    "Existing Admin authentication and business writers",
+    "Existing specialist workspaces"
+  ],
+  "disabled": [
+    "New financial persistence",
+    "Live promotional pricing",
+    "Advanced COMMAND catalogue adapter",
+    "IRONCLAD write activation"
+  ],
+  "newProductionSchemaRLSOrGrantChanges": false,
+  "newProductionOrderStockPaymentOrCustomerWrites": 0,
+  "evidenceReuse": {
+    "financialLogicGroupsReused": 35,
+    "financialUnchangedNativeJourneysReused": 2,
+    "historicalCommandOrTripleStrikeSuitesRerun": false
+  },
+  "newAcceptance": {
+    "financialNative": 5,
+    "manufacturerNative": 5,
+    "commerceNative": 5,
+    "isolationControlsPerRun": 10,
+    "manufacturerLogic": 7,
+    "offerLogic": 25,
+    "offerReference": 9,
+    "publicationGuards": 15,
+    "commerceNavigationNative": 2,
+    "navigationPublicationGuards": 14
+  },
+  "remainingGates": [
+    "Financial persistence needs separately approved backend contracts, permissions and audit acceptance.",
+    "Promotional activation needs trusted checkout enforcement, sale/refund snapshots and owner-defined commercial values.",
+    "Automatic eBay aftercare needs verified order-associated transport and exact server policy authority."
+  ],
+  "overall": "FRONTEND_RELEASES_LIVE_VERIFIED; AUTOMATIC_EBAY_AFTERCARE_BLOCKED",
+  "finalPublication": {
+    "productionSource": "66b944aad66ff694926eb2c1bf659748c5ee263e",
+    "run": 40504380105,
+    "artifact": 12734401473,
+    "artifactExpiresAt": "2026-11-10T12:31:27Z",
+    "originalZIPBytes": 20384272,
+    "originalZIPSHA256": "95dfed8ff238a0ff837af42aef493bcb539566dffb2d858b96ae16a7e136302a",
+    "tarSHA256": "2f8e283fcf105ccc7eebe749ae0eae4662ef5b5317ca0df6f398dc5351bca96a",
+    "candidateDigest": "377d9f3e6345d2f8f6f40fcfc7dc576b359f4f11078537138b1f68f0eda0b1fe",
+    "completePayloadFiles": 454,
+    "originalAndCompletePayloadIndependentlyReadBack": true,
+    "rollbackArtifact": 12734351467,
+    "rollbackExpiresAt": "2026-11-10T12:31:23Z",
+    "rollbackDigest": "b5c09907fc68d98cbc58b0f663fe8b7abc9e52260737cba8130dd2a5d30b02f1",
+    "rollbackTarSHA256": "26538dd26ab24b1924f7b9e7d24edfab284a4f4a0337cb6bd3d41a9536772e1f",
+    "rollbackFiles": 454,
+    "rollbackIndependentReadback": "The publisher downloaded and verified the entire officially packaged rollback before deployment. The prior complete C payload was also independently verified locally.",
+    "receiptArtifact": 12733379971,
+    "liveStaticFiles": 8,
+    "operations": {
+      "bytes": 437,
+      "mutations": 0,
+      "observedAt": "2026-10-27T12:31:53.307536+00:00",
+      "pause_from": null,
+      "requests": 1,
+      "resume_at": null,
+      "sha256": "fedf5cebfcdd079fd636fc9af3fbc3072c91f28572281c4ce7945e340723cf37",
+      "state": "OPEN",
+      "updated_at": "2026-10-26T11:58:26.803364+00:00"
+    },
+    "authenticatedNavigation": {
+      "workspace": "offers",
+      "selectedNavigation": "Offers & bundles",
+      "studioVisible": true,
+      "newsAndStoreControlsHiddenInOfferWorkspace": true,
+      "desktopDocumentOverflow": false,
+      "initialAutomaticReferenceRead": false,
+      "freshReferenceReadRepeatedForNavigationCorrection": false
+    },
+    "liveURL": "https://apparitioninstruments.co.uk/admin/site-operations/#commerce-offers",
+    "newBusinessMutations": 0
+  },
+  "productionVerificationLimitations": [
+    "No real manufacturer deletion, stock mutation, financial persistence, customer message, checkout order or payment was exercised.",
+    "Mobile and 200% text acceptance used isolated native Chrome fixtures; authenticated production smoke checks used the existing desktop session.",
+    "The production reference check used the unchanged C reader once: 10 products, two data GETs, 1733 reader-reported decoded bytes. Separate Auth traffic was not independently measured."
+  ]
+}

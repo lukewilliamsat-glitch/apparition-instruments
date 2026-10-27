@@ -1,5 +1,5 @@
 {
-  "status": "LIVE_VERIFIED_NAVIGATION_CORRECTION_PENDING",
+  "status": "LIVE_VERIFIED_PREVIEW_ONLY",
   "applicationSource": "af42ae3750eb7d6af2f9df91bfe35243fd30a863",
   "capabilities": [
     "Draft percentage/fixed/quantity-package offers with explicit product/category eligibility and UTC periods.",
@@ -67,6 +67,13 @@
       "temporaryPreviewBasketCleared": true,
       "businessMutations": 0
     },
-    "navigationDefect": "Existing prepareSalesContent removed the new local link and did not include the studio in workspace visibility routing. A focused route integration correction follows; calculation source is unchanged."
-  }
+    "navigationDefect": "Existing prepareSalesContent removed the new local link and did not include the studio in workspace visibility routing. A focused route integration correction follows; calculation source is unchanged.",
+    "navigationDefectResolvedBy": {
+      "source": "66b944aad66ff694926eb2c1bf659748c5ee263e",
+      "run": 40504380105,
+      "verification": "Dedicated sidebar navigation and separate visible workspace confirmed in authenticated production Admin."
+    }
+  },
+  "currentProductionSource": "66b944aad66ff694926eb2c1bf659748c5ee263e",
+  "currentProductionRun": 40504380105
 }

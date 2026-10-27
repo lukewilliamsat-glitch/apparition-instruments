@@ -1,5 +1,5 @@
 {
-  "status": "NATIVE_ACCEPTED_RELEASE_PREPARED",
+  "status": "LIVE_VERIFIED",
   "applicationSource": "0f80248903e246b9e7365853370a57284218b20d",
   "executionSource": "baa34384ab28bf2df7823712922af5317f4c0872",
   "reason": "Live verification showed the existing Operations presentation filter removed the new local Commerce link and left the studio outside its workspace visibility rules.",
@@ -46,5 +46,47 @@
   "commercialCalculationAndReaderBytesUnchanged": true,
   "activePromotions": false,
   "financialSaving": false,
-  "newStockWriters": false
+  "newStockWriters": false,
+  "publication": {
+    "productionSource": "66b944aad66ff694926eb2c1bf659748c5ee263e",
+    "run": 40504380105,
+    "artifact": 12734401473,
+    "artifactExpiresAt": "2026-11-10T12:31:27Z",
+    "originalZIPBytes": 20384272,
+    "originalZIPSHA256": "95dfed8ff238a0ff837af42aef493bcb539566dffb2d858b96ae16a7e136302a",
+    "tarSHA256": "2f8e283fcf105ccc7eebe749ae0eae4662ef5b5317ca0df6f398dc5351bca96a",
+    "candidateDigest": "377d9f3e6345d2f8f6f40fcfc7dc576b359f4f11078537138b1f68f0eda0b1fe",
+    "completePayloadFiles": 454,
+    "originalAndCompletePayloadIndependentlyReadBack": true,
+    "rollbackArtifact": 12734351467,
+    "rollbackExpiresAt": "2026-11-10T12:31:23Z",
+    "rollbackDigest": "b5c09907fc68d98cbc58b0f663fe8b7abc9e52260737cba8130dd2a5d30b02f1",
+    "rollbackTarSHA256": "26538dd26ab24b1924f7b9e7d24edfab284a4f4a0337cb6bd3d41a9536772e1f",
+    "rollbackFiles": 454,
+    "rollbackIndependentReadback": "The publisher downloaded and verified the entire officially packaged rollback before deployment. The prior complete C payload was also independently verified locally.",
+    "receiptArtifact": 12733379971,
+    "liveStaticFiles": 8,
+    "operations": {
+      "bytes": 437,
+      "mutations": 0,
+      "observedAt": "2026-10-27T12:31:53.307536+00:00",
+      "pause_from": null,
+      "requests": 1,
+      "resume_at": null,
+      "sha256": "fedf5cebfcdd079fd636fc9af3fbc3072c91f28572281c4ce7945e340723cf37",
+      "state": "OPEN",
+      "updated_at": "2026-10-26T11:58:26.803364+00:00"
+    },
+    "authenticatedNavigation": {
+      "workspace": "offers",
+      "selectedNavigation": "Offers & bundles",
+      "studioVisible": true,
+      "newsAndStoreControlsHiddenInOfferWorkspace": true,
+      "desktopDocumentOverflow": false,
+      "initialAutomaticReferenceRead": false,
+      "freshReferenceReadRepeatedForNavigationCorrection": false
+    },
+    "liveURL": "https://apparitioninstruments.co.uk/admin/site-operations/#commerce-offers",
+    "newBusinessMutations": 0
+  }
 }
