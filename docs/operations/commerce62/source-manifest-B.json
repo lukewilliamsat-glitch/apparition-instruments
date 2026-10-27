@@ -1,0 +1,37 @@
+{
+  "kind": "COMMERCE_FORGE_V1",
+  "phase": "B",
+  "sourceCommit": "d2c652e6a46e602b3505602e923066b2e0e682c4",
+  "baseSourceCommit": "84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
+  "unchangedRepositoryRevision": "84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
+  "entries": [
+    {
+      "path": "admin/catalogue-settings/settings.mjs",
+      "beforeSHA256": "658b9f54fb9f77f54e19b3623911ef0a397e1eb4113bc0e3e43f0fb4d2f3ac80",
+      "afterSHA256": "a386c0b89fc46d28e32321bce5f3ad1e6c7e39f6290126cd97724cab135de990",
+      "bytes": 8209,
+      "rawSourceSHA256": "94dc60689caafa1d992e43d8aecdb0161d1300ff414e4b69f1fde2e2355154e3"
+    },
+    {
+      "path": "backend/catalogue-options.mjs",
+      "beforeSHA256": "35a623b68ec023b5ea0f1f03496b3e8eca8b03a0cfe5cd891da9f456f2a23006",
+      "afterSHA256": "b1dfb24d997f11f28bfa8d46f90287d6c347871fbec523913f5db61d6edd5d28",
+      "bytes": 3878,
+      "rawSourceSHA256": "ad276b3cebdeb77e6044ce38e2d68a68cd9f2380077801d78bd364b3df0a36fd"
+    },
+    {
+      "path": "admin/admin.mjs",
+      "beforeSHA256": "c2396469d4df68131cc76869b97315082bcfb69ac5943d3d493754f00980153f",
+      "afterSHA256": "1ad9fd186e046d490572658b8e05ecc9f14f4d6ff4423e65f7f9ff8dbcec2232",
+      "bytes": 29494,
+      "rawSourceSHA256": "aea712b753665225624341c025c446af4b01240f84a8647493bbdd3056458dfd"
+    },
+    {
+      "path": "admin/application.css",
+      "beforeSHA256": "1b1214081fc905f9eaa7ff8a117689d78b867b589701a460d39968054560e18f",
+      "afterSHA256": "632eee0275dce8a8a21932a98837ff5e3e8be3236a23cd61f073562b7bc3047a",
+      "bytes": 51011,
+      "rawSourceSHA256": "632eee0275dce8a8a21932a98837ff5e3e8be3236a23cd61f073562b7bc3047a"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "status": "NATIVE_ACCEPTED_RELEASE_PREPARED",
+  "applicationSource": "d2c652e6a46e602b3505602e923066b2e0e682c4",
+  "observations": {
+    "existingDeleteConfirmationOpened": true,
+    "liveInspectionCancelled": true,
+    "themoist_men": "Disabled, one component reference; no live deletion or reassignment attempted.",
+    "verifiedProblem": "Existing usage count offered no direct reference inspection, and deletion dependencies were flattened into an error string. Native Delete confirmation itself worked."
+  },
+  "changes": [
+    "Visible manufacturer delete action and reference inspection.",
+    "Referenced components link to their existing authenticated editor.",
+    "Existing guarded RPC remains authoritative for Kit Definitions and concurrent reference changes.",
+    "Structured refusal/error feedback, explicit refresh, responsive table containment."
+  ],
+  "native": {
+    "run": 40498961302,
+    "passed": 5,
+    "total": 5,
+    "isolation": 10,
+    "artifact": 12732281883,
+    "artifactSHA256": "5a10bc316f427a3bca7e9a60a2e4ba3aebc47430f5a2179146b9fd941049b6d7",
+    "expiresAt": "2026-11-10T11:49:17Z",
+    "originalReadBack": true
+  },
+  "localWorkflowGroups": 7,
+  "existingP11Regression": "PASS",
+  "backendSchemaPolicyChanges": false,
+  "liveBusinessWrites": 0,
+  "release": {
+    "candidateDigest": "8ee2f99283a10d7c373731932bbab8cde2da5521050ebb92fc1418394b24a1bf",
+    "rollbackDigest": "283edca9da338bd4fbc7ab72e7908d0751f31596790340da70a26963984c7ae3",
+    "changedFiles": 28,
+    "unchangedBaselineFiles": 422
+  },
+  "limitations": [
+    "Referenced manufacturers are intentionally blocked until an Admin explicitly reassigns their references.",
+    "Real deletion was not exercised against production records."
+  ]
+}
