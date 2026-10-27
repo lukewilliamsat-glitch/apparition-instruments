@@ -25,7 +25,10 @@ export function createAdminOptionRepository(transport){
    if(result?.deleted===true)return result;
    if(Array.isArray(result?.dependencies)&&result.dependencies.length){
     const dependencies=result.dependencies.map(item=>item.kind+' '+item.id+(item.name?' ('+item.name+')':''));
-    throw Error('Cannot delete this manufacturer. It is used by '+dependencies.join('; ')+'. Reassign or remove these dependencies first.');
+    const error=Error('Cannot delete this manufacturer. It is used by '+dependencies.join('; ')+'. Reassign or remove these dependencies first.');
+    error.code='CATALOGUE_OPTION_IN_USE';
+    error.dependencies=result.dependencies.map(item=>({kind:String(item.kind||'Reference'),id:String(item.id||''),name:String(item.name||'')}));
+    throw error;
    }
    throw Error('Catalogue option deletion was refused. Refresh before retrying.');
   }});

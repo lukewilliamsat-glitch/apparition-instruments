@@ -1,5 +1,5 @@
 {
-  "status": "NATIVE_ACCEPTED_RELEASE_PREPARED",
+  "status": "LIVE_VERIFIED",
   "authority": "AUTHORISATION_62_DIRECT_OWNER_CONFIRMATION",
   "applicationSource": "6eadee6fe2a03db1fc77adce4421625603894f75",
   "native": {
@@ -52,5 +52,24 @@
       "issue": "Selectors matched hidden report totals; wrapped report selects lacked explicit accessible names. Two unaffected journeys passed and were reused."
     }
   ],
-  "publicationBoundaryChecks": 13
+  "publicationBoundaryChecks": 13,
+  "publication": {
+    "source": "aea018fc3bb24b4f0b86d0e1f217c6bc8f32c946",
+    "run": 40497839162,
+    "pagesArtifact": 12730892711,
+    "rollbackArtifact": 12730777849,
+    "receiptArtifact": 12732035841,
+    "candidateOriginalZIPReadBack": true,
+    "completePayloadReadBack": true,
+    "liveStaticFiles": 8,
+    "operations": "OPEN",
+    "authenticatedUI": {
+      "ordersLoaded": true,
+      "financialCoverageReportOpened": true,
+      "existingEbayOrderPreviewOpened": true,
+      "savingButtonDisabled": true,
+      "privateCostLookupInvoked": false,
+      "businessWrites": 0
+    }
+  }
 }

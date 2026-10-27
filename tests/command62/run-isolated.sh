@@ -15,6 +15,9 @@ phase=$("$node" -p "JSON.parse(require('fs').readFileSync('tests/command62/phase
 if [ "$phase" = A ]; then
  run_isolated tests/command62/reuse.mjs > "$output/reused-financial-evidence.txt"
  run_isolated tests/command61/browser.mjs "$output" "$browser" "$controller" "$commit"
+elif [ "$phase" = B ]; then
+ run_isolated tests/command62/manufacturers.mjs > "$output/manufacturer-logic.txt"
+ run_isolated tests/command62/browser.mjs "$output" "$browser" "$controller" "$commit"
 else
  echo 'Unknown isolated acceptance phase' >&2
  exit 1

@@ -8,6 +8,7 @@ import {stampSource} from '../stamp-static-assets.mjs';
 const unifiedCore=['admin/application.mjs','admin/application.css','admin/admin-gate.mjs','admin/overview.mjs','admin/command/index.html','admin/command-redirect.mjs'];
 const phases={A:['admin/application.css','admin/overview.mjs'],B:['admin/application.css','admin/admin.mjs'],C:['admin/application.css','admin/application.mjs','admin/orders/app.mjs','admin/orders/external-order.mjs','admin/orders/economics.mjs','admin/orders/finance-ui.mjs','admin/orders/finance-activation.mjs','admin/orders/cost-reference.mjs']};
 phases['62A']=phases.C;
+phases['62B']=['admin/catalogue-settings/settings.mjs','backend/catalogue-options.mjs','admin/admin.mjs','admin/application.css'];
 const sha=b=>createHash('sha256').update(b).digest('hex');
 const require=(v,m)=>{if(!v)throw Error(m);};
 async function tree(root){const files=new Map();async function walk(dir){for(const e of await readdir(dir,{withFileTypes:true})){const p=join(dir,e.name);require(!e.isSymbolicLink(),'Links refused');if(e.isDirectory())await walk(p);else{require(e.isFile(),'Special file refused');files.set(p.slice(root.length+1).replaceAll('\\','/'),await readFile(p));}}}await walk(root);return files;}

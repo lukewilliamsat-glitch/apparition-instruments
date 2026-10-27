@@ -158,7 +158,7 @@ $('#download-assembly-export').addEventListener('click',()=>{
 });
 for(const b of document.querySelectorAll('[data-view]'))b.addEventListener('click',()=>{view=b.dataset.view;for(const x of document.querySelectorAll('[data-view]'))x.setAttribute('aria-pressed',String(x===b));run(render);});
 $('#search').addEventListener('input',()=>run(render));$('#category-filter').addEventListener('change',()=>run(render));
-message('Loading components…');run(async()=>{repository=componentRepository();await loadComponents();await render();$('#add-component').disabled=false;message('');if(view==='components'&&new URLSearchParams(location.search).get('new')==='component')openEditor();});
+message('Loading components…');run(async()=>{repository=componentRepository();await loadComponents();await render();$('#add-component').disabled=false;message('');if(view==='components'){const params=new URLSearchParams(location.search);if(params.get('edit')==='component'&&params.get('component'))openEditor(params.get('component'));else if(params.get('new')==='component')openEditor();}});
 window.addEventListener('pageshow',()=>run(reconcileComponents));
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')run(reconcileComponents);});
 
