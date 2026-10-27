@@ -22,7 +22,7 @@ LEDGER_PHASES={'SAFE':{'backend/catalogue-image-delivery.mjs', 'components/cards
 LEDGER_PHASES.update({'CONTROLLED64':{'admin/orders/financial-order.mjs','admin/orders/finance-activation.mjs'},'ACTIVE64':{'admin/orders/finance-activation.mjs'}})
 LEDGER64_ORDER='3db324c2-4f60-45b6-b78c-29a3eceeb826'
 LEDGER64_MIGRATION='a6025c33e9a2936ce61f35af4cf514e49585a2ccdcf1b3e57966e8ed5f63c996'
-LEDGER64_BACKEND='f82253f824be700713a78c9314a1f5db08b5b965dd9a487bde9f87c114963d91'
+LEDGER64_BACKEND='4934e7f58863af0f70199fdd10ebebeedfae5d1c72e09078dbbaaf46d61af6d0'
 
 def ledger64(p):return p.get('feature')=='BLACK_LEDGER' and p.get('phase') in ('CONTROLLED64','ACTIVE64')
 
