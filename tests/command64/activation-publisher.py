@@ -8,6 +8,7 @@ legacy=copy.deepcopy(p);legacy.update(authority='AUTHORISATION_63',phase='SAFE',
 with tempfile.TemporaryDirectory() as t:
  path=pathlib.Path(t)/'legacy.json';path.write_text(json.dumps(legacy));assert plan_at(path)['authority']=='AUTHORISATION_63'
 p.update(authority='AUTHORISATION_64',phase='CONTROLLED64',financialPersistence=True,backendEvidenceSHA256=LEDGER64_BACKEND,migrationSHA256=LEDGER64_MIGRATION,designatedOrderId=LEDGER64_ORDER,livePersistenceEvidenceSHA256=None,targetedAcceptanceSHA256=sha((root/'docs/operations/black-ledger64/targeted-acceptance.json').read_bytes()))
+p['receiptCorrectionSHA256']=sha((root/'docs/operations/black-ledger64/receipt-correction.json').read_bytes())
 ledger64_evidence(p,root)
 count=2
 for key,value in [('backendEvidenceSHA256','0'*64),('migrationSHA256','0'*64),('designatedOrderId','10000000-0000-4000-8000-000000000003'),('targetedAcceptanceSHA256','0'*64),('livePersistenceEvidenceSHA256','0'*64)]:

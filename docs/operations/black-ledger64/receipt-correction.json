@@ -1,0 +1,10 @@
+{
+  "result": "PASS",
+  "newGroups": 4,
+  "affectedClientGroups": 15,
+  "sourceSHA256": "20f39bae614bf3756463060608f36370e8fd77c7eee7ad2cc26705d51790599c",
+  "test": "tests/command64/jsonb-receipt.mjs",
+  "testSHA256": "4752ef36c4d7fa7be99a5ec3d61cd2354d62baae769cd85bcdbcf9649bfa3395",
+  "liveWrites": 0,
+  "reason": "PostgreSQL jsonb key ordering is not document inequality. Values, types and array order stay significant. Genuine mismatches remain uncertain and block duplicate saves."
+}

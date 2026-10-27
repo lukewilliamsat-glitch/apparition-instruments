@@ -1,10 +1,12 @@
-import {createAdminAuth} from '../admin-auth.mjs';
-import {createAuthenticatedRepositoryTransport} from '../../backend/providers.mjs?v=p10g';
-import {boundedJSON} from '../command/bounded-json.mjs';
-import {calculateEconomicsV2,FINANCE_POLICY_V2} from './economics-v2.mjs';
+import {createAdminAuth} from '../admin-auth.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4';
+import {createAuthenticatedRepositoryTransport} from '../../backend/providers.mjs?v=p10g&build=b4d7e3708e1cd0153e922122fa2400f0c46d9ce7';
+import {boundedJSON} from '../command/bounded-json.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4';
+import {calculateEconomicsV2,FINANCE_POLICY_V2} from './economics-v2.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4';
 const uuid=v=>typeof v==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v);
 const hash=v=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v);
 const fail=(message,code='CONTRACT')=>Object.assign(Error(message),{code});
+// PostgreSQL jsonb may reorder object keys. Array order, types and values remain significant.
+const canonicalDocument=value=>JSON.stringify(value,(_key,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.keys(v).sort().map(k=>[k,v[k]])):v);
 function documentCheck(value){if(!value||value.policyVersion!==FINANCE_POLICY_V2||new TextEncoder().encode(JSON.stringify(value)).length>32768)throw fail('Unsupported financial document or size.');calculateEconomicsV2(value);return value;}
 function recordCheck(value,id){if(value?.version!==1||value.orderId!==id||!hash(value.orderBasisHash)||!Number.isSafeInteger(value.revision)||value.revision<0||value.revision>1000000000||value.revision===0&&value.document!==null||value.revision>0&&!value.document)throw fail('Financial record identity or revision is invalid.');if(value.document)documentCheck(value.document);return value;}
 export function createFinancialRepository({auth,request=globalThis.fetch,config}={}){
@@ -40,10 +42,10 @@ export function createFinancialRepository({auth,request=globalThis.fetch,config}
 // State controller has no stock, order, payment, email or catalogue mutation path.
 export function createFinancialSession({orderId,initialDraft,repository,onChange=()=>{}}){
  let ended=false,generation=0,record=null,draft=structuredClone(initialDraft),status='idle',message='',pending=null,checks=0,bytes=0;
- const baseline=()=>JSON.stringify(record?.document||initialDraft),dirty=()=>JSON.stringify(draft)!==baseline();
+ const baseline=()=>canonicalDocument(record?.document||initialDraft),dirty=()=>canonicalDocument(draft)!==baseline();
  const snapshot=()=>({status,message,dirty:dirty(),record,draft:structuredClone(draft),pendingRequestId:pending?.requestId||null,bytes,canReconcile:status==='uncertain'&&checks<3,canSave:!!record&&record.orderBasisMatches!==false&&(dirty()||record.revision===0)&&!['loading','saving','uncertain','conflict','expired','denied','ended','unavailable'].includes(status)});
  const emit=()=>{if(!ended)onChange(snapshot());};
- const accept=v=>{if(v.orderId!==orderId)throw fail('Receipt belongs to another order.');if(v.outcome==='committed'){if(pending&&JSON.stringify(v.document)!==JSON.stringify(pending.document))throw fail('Save receipt does not match the submitted financial inputs.');record={...record,revision:v.revision,orderBasisHash:v.orderBasisHash,document:structuredClone(v.document),orderBasisMatches:true,updatedAt:v.updatedAt,history:[{revision:v.revision,actor_id:v.updatedBy,recorded_at:v.updatedAt},...(record?.history||[]).filter(x=>x.revision!==v.revision)].slice(0,10)};draft=structuredClone(v.document);pending=null;status='committed';message='Financial record saved. Order, stock, payments and communications unchanged.';}else{status='conflict';message=v.outcome==='order-conflict'?'Original order financial values changed. Review the order and reload the saved record before saving.':'Another financial revision was saved. Your local inputs are retained; reload only when ready to discard them.';pending=null;}};
+ const accept=v=>{if(v.orderId!==orderId)throw fail('Receipt belongs to another order.');if(v.outcome==='committed'){if(pending&&canonicalDocument(v.document)!==canonicalDocument(pending.document))throw Object.assign(fail('Save receipt does not match the submitted financial inputs.'),{uncertain:true});record={...record,revision:v.revision,orderBasisHash:v.orderBasisHash,document:structuredClone(v.document),orderBasisMatches:true,updatedAt:v.updatedAt,history:[{revision:v.revision,actor_id:v.updatedBy,recorded_at:v.updatedAt},...(record?.history||[]).filter(x=>x.revision!==v.revision)].slice(0,10)};draft=structuredClone(v.document);pending=null;status='committed';message='Financial record saved. Order, stock, payments and communications unchanged.';}else{status='conflict';message=v.outcome==='order-conflict'?'Original order financial values changed. Review the order and reload the saved record before saving.':'Another financial revision was saved. Your local inputs are retained; reload only when ready to discard them.';pending=null;}};
  return Object.freeze({
   snapshot,
   edit(value){if(ended||['loading','saving','uncertain','ended'].includes(status))return false;draft=structuredClone(value);if(['ready','dirty','committed'].includes(status)){if(dirty())status='dirty';else if(status!=='committed')status='ready';}emit();return true;},

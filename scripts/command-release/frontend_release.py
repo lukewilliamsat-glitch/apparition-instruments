@@ -20,6 +20,7 @@ ASCENDANCE_PHASES={'A':{'admin/application.css','admin/overview.mjs'},'B':{'admi
 FORGE_PHASES={'C_NAV':{'admin/application.mjs','admin/sales-content-presentation.mjs'},'A':ASCENDANCE_PHASES['C'],'B':{'admin/catalogue-settings/settings.mjs','backend/catalogue-options.mjs','admin/admin.mjs','admin/application.css'},'C':{'admin/site-operations/index.html','commercial/offers-admin.mjs','commercial/offers.mjs','commercial/offer-reference.mjs','commercial/offer-activation.mjs','admin/application.css'}}
 LEDGER_PHASES={'SAFE':{'backend/catalogue-image-delivery.mjs', 'components/cards.mjs', 'products/app.mjs', 'admin/orders/financial-record.mjs', 'backend/static-image-contract.mjs', 'backend/demand-image-presentation.mjs', 'backend/verified-image-pool.mjs', 'backend/public-read.mjs', 'admin/orders/finance-ui.mjs', 'backend/component-data.mjs', 'admin/orders/app.mjs', 'admin/orders/financial-order.mjs', 'backend/providers.mjs'},'RECON':{'admin/orders/finance-ui.mjs','admin/orders/economics-v2.mjs'}}
 LEDGER_PHASES.update({'CONTROLLED64':{'admin/orders/financial-order.mjs','admin/orders/finance-activation.mjs'},'ACTIVE64':{'admin/orders/finance-activation.mjs'},'DISABLED64':{'admin/orders/finance-activation.mjs'}})
+LEDGER_PHASES['CONTROLLED64'].add('admin/orders/financial-record.mjs')
 LEDGER64_ORDER='3db324c2-4f60-45b6-b78c-29a3eceeb826'
 LEDGER64_MIGRATION='a6025c33e9a2936ce61f35af4cf514e49585a2ccdcf1b3e57966e8ed5f63c996'
 LEDGER64_BACKEND='4934e7f58863af0f70199fdd10ebebeedfae5d1c72e09078dbbaaf46d61af6d0'
@@ -40,6 +41,11 @@ def ledger64_evidence(p,root):
     require(sha(raw)==p.get('targetedAcceptanceSHA256'),'Targeted financial guard evidence differs')
     checks=strict_json(raw)
     require(checks.get('result')=='PASS' and checks.get('groups')==5 and checks.get('externalRequests')==checks.get('liveWrites')==0 and checks.get('sourceSHA256')==sha(bounded_file(root/'dist/admin/orders/financial-order.mjs',16384)),'Controlled guard regression required')
+    if p['phase']!='DISABLED64':
+        raw=bounded_file(root/'docs/operations/black-ledger64/receipt-correction.json',16384)
+        require(sha(raw)==p.get('receiptCorrectionSHA256'),'Receipt correction evidence differs')
+        correction=strict_json(raw)
+        require(correction.get('result')=='PASS' and correction.get('newGroups')==4 and correction.get('affectedClientGroups')==15 and correction.get('sourceSHA256')==sha(bounded_file(root/'dist/admin/orders/financial-record.mjs',16384)),'PostgreSQL JSONB receipt regression required')
     if p['phase']=='ACTIVE64':
         raw=bounded_file(root/'docs/operations/black-ledger64/live-acceptance.json',32768)
         require(sha(raw)==p.get('livePersistenceEvidenceSHA256'),'Live persistence evidence differs')
