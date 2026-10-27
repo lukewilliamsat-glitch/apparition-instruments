@@ -19,12 +19,12 @@ UNIFIED_ALLOWED={'admin/application.mjs','admin/application.css','admin/admin-ga
 ASCENDANCE_PHASES={'A':{'admin/application.css','admin/overview.mjs'},'B':{'admin/application.css','admin/admin.mjs'},'C':{'admin/application.css','admin/application.mjs','admin/orders/app.mjs','admin/orders/external-order.mjs','admin/orders/economics.mjs','admin/orders/finance-ui.mjs','admin/orders/finance-activation.mjs','admin/orders/cost-reference.mjs'}}
 FORGE_PHASES={'C_NAV':{'admin/application.mjs','admin/sales-content-presentation.mjs'},'A':ASCENDANCE_PHASES['C'],'B':{'admin/catalogue-settings/settings.mjs','backend/catalogue-options.mjs','admin/admin.mjs','admin/application.css'},'C':{'admin/site-operations/index.html','commercial/offers-admin.mjs','commercial/offers.mjs','commercial/offer-reference.mjs','commercial/offer-activation.mjs','admin/application.css'}}
 LEDGER_PHASES={'SAFE':{'backend/catalogue-image-delivery.mjs', 'components/cards.mjs', 'products/app.mjs', 'admin/orders/financial-record.mjs', 'backend/static-image-contract.mjs', 'backend/demand-image-presentation.mjs', 'backend/verified-image-pool.mjs', 'backend/public-read.mjs', 'admin/orders/finance-ui.mjs', 'backend/component-data.mjs', 'admin/orders/app.mjs', 'admin/orders/financial-order.mjs', 'backend/providers.mjs'},'RECON':{'admin/orders/finance-ui.mjs','admin/orders/economics-v2.mjs'}}
-LEDGER_PHASES.update({'CONTROLLED64':{'admin/orders/financial-order.mjs','admin/orders/finance-activation.mjs'},'ACTIVE64':{'admin/orders/finance-activation.mjs'}})
+LEDGER_PHASES.update({'CONTROLLED64':{'admin/orders/financial-order.mjs','admin/orders/finance-activation.mjs'},'ACTIVE64':{'admin/orders/finance-activation.mjs'},'DISABLED64':{'admin/orders/finance-activation.mjs'}})
 LEDGER64_ORDER='3db324c2-4f60-45b6-b78c-29a3eceeb826'
 LEDGER64_MIGRATION='a6025c33e9a2936ce61f35af4cf514e49585a2ccdcf1b3e57966e8ed5f63c996'
 LEDGER64_BACKEND='4934e7f58863af0f70199fdd10ebebeedfae5d1c72e09078dbbaaf46d61af6d0'
 
-def ledger64(p):return p.get('feature')=='BLACK_LEDGER' and p.get('phase') in ('CONTROLLED64','ACTIVE64')
+def ledger64(p):return p.get('feature')=='BLACK_LEDGER' and p.get('phase') in ('CONTROLLED64','ACTIVE64','DISABLED64')
 
 def financial64_flag(values):
     return ('// AUTHORISATION 64. Controlled acceptance precedes general financial activation.\nexport const financeActivation=Object.freeze('+json.dumps(values,separators=(',',':'))+');\n').encode()
@@ -63,7 +63,7 @@ def plan_at(path):
         require(p.get('financialPersistence') is False and p.get('activePromotions') is False,'Unapproved commercial activation refused')
     if p['feature']=='BLACK_LEDGER':
         require(p.get('phase') in LEDGER_PHASES and re.fullmatch('[a-f0-9]{40}',p.get('applicationSource','')) and re.fullmatch('[a-f0-9]{64}',p.get('ledgerManifestSHA256','')),'Black Ledger phase/source identity missing')
-        require(p.get('financialPersistence') is ledger64(p) and p.get('activePromotions') is False and p.get('nightfallActivation') is False,'Unapproved privileged commercial activation refused')
+        require(p.get('financialPersistence') is (ledger64(p) and p['phase']!='DISABLED64') and p.get('activePromotions') is False and p.get('nightfallActivation') is False,'Unapproved privileged commercial activation refused')
     require(p.get('siteURL')==SITE and p.get('commandReads') is False and p.get('commandWrites') is False,'Site or COMMAND activation mismatch')
     for key in ['baseTarSHA256','basePayloadDigest','candidateDigest','rollbackDigest']:
         require(re.fullmatch('[a-f0-9]{64}',p.get(key,'')),'Missing immutable payload identity')
@@ -186,6 +186,7 @@ def prepare(p,baseline,root,out):
         require(all(re.search(r'^\s*'+name+r'\s*:\s*null\s*,?\s*$',activation,re.M) for name in ['metadataEvidenceSHA256','liveReadEvidenceSHA256']),'COMMAND fabricated activation evidence refused')
     if ledger64(p):
         expected={'enabled':p['phase']=='ACTIVE64','controlledOrderId':LEDGER64_ORDER if p['phase']=='CONTROLLED64' else None,'backendEvidenceSHA256':LEDGER64_BACKEND,'livePersistenceEvidenceSHA256':p.get('livePersistenceEvidenceSHA256')}
+        if p['phase']=='DISABLED64':expected.update(backendEvidenceSHA256=None,livePersistenceEvidenceSHA256=None)
         require(files['admin/orders/finance-activation.mjs']==financial64_flag(expected),'Financial activation is not the exact approved stage')
     elif p['feature']=='COMMAND_ASCENDANCE' and p['phase']=='C' or p['feature'] in ('COMMERCE_FORGE','BLACK_LEDGER'):
         finance=files['admin/orders/finance-activation.mjs'].decode('utf-8')
