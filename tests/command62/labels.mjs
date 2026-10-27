@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import {Window} from 'happy-dom';
+import {mountFinanceWorkbench,mountFinanceReport} from '../../dist/admin/orders/finance-ui.mjs';
+const w=new Window({url:'https://fictional.invalid/admin/orders/',settings:{disableJavaScriptEvaluation:true,disableJavaScriptFileLoading:true,disableCSSFileLoading:true}}),d=w.document;d.body.innerHTML='<div id="detail"></div><div id="list"></div>';
+const order={id:'fictional',reference:'FX',channel:'EBAY',items:[{type:'component',productId:'fx',name:'Fictional',quantity:1,unitPrice:100,lineTotal:100,snapshot:{}}],pricing:{subtotal:100,delivery:0,total:100}};
+const panel=mountFinanceWorkbench({root:d.getElementById('detail'),document:d,order,reader:{dispose(){},read(){throw Error('No requests');}}});mountFinanceReport({root:d.getElementById('list'),document:d});
+assert(d.querySelector('select[aria-label="Marketplace"]'));assert(d.querySelector('input[aria-label="Actual customer payment"]'));assert(d.querySelector('select[aria-label="Stock cost basis"]'));
+for(const control of d.querySelectorAll('input:not([type=checkbox]),select'))assert(control.closest('label')&&control.getAttribute('aria-label'),'A precise accessible name and native label are both retained.');
+assert.equal(d.querySelectorAll('[data-finance-workbench] .finance-totals').length,1);assert.match(d.querySelector('[data-finance-workbench] .finance-totals').textContent,/Cost unknown/);
+panel.dispose();await w.happyDOM.close();console.log('Focused finance label and preview-selector regression PASS; no calculation suite rerun or requests.');
