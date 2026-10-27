@@ -2,7 +2,7 @@ name: BLACK LEDGER63 targeted acceptance
 on:
   push:
     branches: [engineering/command63-black-ledger]
-    paths: ['dist/admin/**', 'dist/commercial/**', 'tests/command63/**', '.github/workflows/command63-black-ledger.yml']
+    paths: ['dist/admin/**', 'dist/commercial/**', 'dist/backend/providers.mjs', 'supabase/migrations/20261027140000_black_ledger_financial_v1.sql', 'tests/fixtures/email-preview-database.mjs', 'tests/command63/**', '.github/workflows/command63-black-ledger.yml']
 permissions:
   contents: read
 concurrency:
@@ -29,7 +29,7 @@ jobs:
           test -n "$browser"
           printf '%s\n' "$browser" > "$RUNNER_TEMP/rebirth-tools/browser-path"
           "$browser" --version > "$RUNNER_TEMP/rebirth-evidence/browser-version.txt"
-          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install --prefix "$RUNNER_TEMP/rebirth-tools" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false playwright-core@1.56.1 happy-dom@20.14.5
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install --prefix "$RUNNER_TEMP/rebirth-tools" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false playwright-core@1.56.1 happy-dom@20.14.5 @electric-sql/pglite@0.5.8
           test "$(npm view playwright-core@1.56.1 dist.integrity)" = 'sha512-hutraynyn31F+Bifme+Ps9Vq59hKuUCz7H1kDOcBs+2oGguKkWTU50bBWrtz34OUWmIwpBTWDxaRPXrIXkgvmQ=='
           ln -s "$RUNNER_TEMP/rebirth-tools/node_modules" node_modules
       - name: Prove inherited network isolation then check only newly integrated Admin
@@ -47,3 +47,51 @@ jobs:
             ${{ runner.temp }}/rebirth-evidence/SCREENSHOTS/*.png
           retention-days: 14
           if-no-files-found: error
+
+  native-postgres:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/command63-black-ledger'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17.6
+        env:
+          POSTGRES_DB: command63_fixture
+          POSTGRES_USER: command63_fixture
+          POSTGRES_PASSWORD: disposable-ci-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.20.0'
+      - name: Install only the already declared fixture dependency
+        run: |
+          npm install --prefix "$RUNNER_TEMP/fixture-tools" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false @electric-sql/pglite@0.5.8
+          ln -s "$RUNNER_TEMP/fixture-tools/node_modules" node_modules
+      - name: Verify native PostgreSQL 17.6 concurrent financial receipts and rollback
+        env:
+          COMMAND63_NATIVE_FIXTURE: '1'
+          PGHOST: 127.0.0.1
+          PGPORT: '5432'
+          PGDATABASE: command63_fixture
+          PGUSER: command63_fixture
+          PGPASSWORD: disposable-ci-only
+        run: |
+          set -euo pipefail
+          command -v psql
+          node tests/command63/finance-postgres17.mjs | tee "$RUNNER_TEMP/finance-postgres17.txt"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: black-ledger63-native-postgres17
+          path: ${{ runner.temp }}/finance-postgres17.txt
+          retention-days: 14
+          if-no-files-found: warn

@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {PGlite} from '@electric-sql/pglite';
-export async function emailPreviewDatabase(){
-const db=new PGlite();
+export async function emailPreviewDatabase({database}={}){
+const db=database||new PGlite();
 const read=name=>readFileSync(new URL('../../supabase/migrations/'+name,import.meta.url),'utf8');
 // Only an ephemeral local database. This runner has no production URL or credentials.
 await db.exec(`create role anon;create role authenticated;create role service_role;
