@@ -1,0 +1,15 @@
+{
+  "source": "0630af43a8c1d87d70123b2615ff12e3a1669ed3",
+  "groups": 33,
+  "database": "PGlite 0.5.8 / PostgreSQL18.3",
+  "result": "PASS",
+  "evidence": "Exact local isolated result and the financial-database.txt retained by run40525124419. That run separately failed UI acknowledgement and native fixture JSON parsing; no database assertion was weakened.",
+  "files": {
+    "supabase/migrations/20261027140000_black_ledger_financial_v1.sql": "a6025c33e9a2936ce61f35af4cf514e49585a2ccdcf1b3e57966e8ed5f63c996",
+    "tests/command63/finance-database.mjs": "5c44168d64148fe3e6686ed09d2ed044b44e78a47786da5307550f30f83320ec",
+    "tests/fixtures/email-preview-database.mjs": "4d7f7d536460dcf252955274ef3301ebb08c9d70e6911283ecb9145994f7efc3",
+    "dist/admin/orders/economics.mjs": "a086dcef8f33b14d880c8accc91f2f5bfeabf463a3241237a7ac49392ebbba3a",
+    "dist/admin/orders/economics-v2.mjs": "78183785669c1f1cd6a646379398cb4ec7656eb6e4705be5e3316bb6be4fb963"
+  },
+  "financeDraftSHA256": "dd8cc60eb49f31fb40b021d3db6a3e47356398f29c78bc14144c187aad1d4418"
+}

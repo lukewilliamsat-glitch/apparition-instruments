@@ -29,5 +29,17 @@
     "assetBytes": 8953356,
     "privateImagePlan": true,
     "integration": "Pending targeted runtime integration; no production activation or billing-savings claim."
-  }
+  },
+  "firstNativeRun": {
+    "run": 40525124419,
+    "source": "0630af43a8c1d87d70123b2615ff12e3a1669ed3",
+    "isolation": 10,
+    "browserGroups": "1/4",
+    "rootCauses": [
+      "New application defect: saved form remount changed committed status to ready. Corrected lifecycle and strengthened DOM regression.",
+      "Fixture adapter parsed only last line of valid multi-line PostgreSQL JSON. Corrected to parse the complete quiet output; no SQL correction needed."
+    ],
+    "productionChanges": 0
+  },
+  "followUp": "One targeted acceptance after those two source-grounded corrections. Reuse unchanged 33 database groups by exact SQL/test/fixture/engine and financeDraft fingerprints."
 }
