@@ -1,5 +1,5 @@
 {
-  "status": "NATIVE_ACCEPTED_RELEASE_PREPARED",
+  "status": "LIVE_VERIFIED_NAVIGATION_CORRECTION_PENDING",
   "applicationSource": "af42ae3750eb7d6af2f9df91bfe35243fd30a863",
   "capabilities": [
     "Draft percentage/fixed/quantity-package offers with explicit product/category eligibility and UTC periods.",
@@ -48,5 +48,25 @@
     "Only individually sold component products are referenced; existing Wiring Kit Builder and assemblies remain unchanged.",
     "Production live-reader smoke verification follows publication; no payment/order/customer test is performed."
   ],
-  "publicationBoundaryChecks": 15
+  "publicationBoundaryChecks": 15,
+  "publication": {
+    "source": "bf62a50dd81b45ff1c342704c503a619009991d7",
+    "run": 40502019104,
+    "artifact": 12732927676,
+    "rollbackArtifact": 12732593517,
+    "receiptArtifact": 12733371781,
+    "completePayloadReadBack": true,
+    "liveStaticFiles": 8,
+    "operations": "OPEN",
+    "authenticatedLiveReferenceCheck": {
+      "productCount": 10,
+      "dataReads": 2,
+      "readerReportedDecodedBytes": 1733,
+      "separateAuthTrafficIndependentlyMeasured": false,
+      "undiscountedPreviewVerified": true,
+      "temporaryPreviewBasketCleared": true,
+      "businessMutations": 0
+    },
+    "navigationDefect": "Existing prepareSalesContent removed the new local link and did not include the studio in workspace visibility routing. A focused route integration correction follows; calculation source is unchanged."
+  }
 }

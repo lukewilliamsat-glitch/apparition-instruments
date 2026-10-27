@@ -17,7 +17,7 @@ FEATURES={'SPECTRE','LANTERN','SENTINEL','COMMAND_FRONTEND','COMMAND_UNIFIED_ADM
 COMMAND_SOURCE='df78c5bf5144b012a7d96c628186180fa6432df3'
 UNIFIED_ALLOWED={'admin/application.mjs','admin/application.css','admin/admin-gate.mjs','admin/overview.mjs','admin/command/index.html','admin/command-redirect.mjs'}
 ASCENDANCE_PHASES={'A':{'admin/application.css','admin/overview.mjs'},'B':{'admin/application.css','admin/admin.mjs'},'C':{'admin/application.css','admin/application.mjs','admin/orders/app.mjs','admin/orders/external-order.mjs','admin/orders/economics.mjs','admin/orders/finance-ui.mjs','admin/orders/finance-activation.mjs','admin/orders/cost-reference.mjs'}}
-FORGE_PHASES={'A':ASCENDANCE_PHASES['C'],'B':{'admin/catalogue-settings/settings.mjs','backend/catalogue-options.mjs','admin/admin.mjs','admin/application.css'},'C':{'admin/site-operations/index.html','commercial/offers-admin.mjs','commercial/offers.mjs','commercial/offer-reference.mjs','commercial/offer-activation.mjs','admin/application.css'}}
+FORGE_PHASES={'C_NAV':{'admin/application.mjs','admin/sales-content-presentation.mjs'},'A':ASCENDANCE_PHASES['C'],'B':{'admin/catalogue-settings/settings.mjs','backend/catalogue-options.mjs','admin/admin.mjs','admin/application.css'},'C':{'admin/site-operations/index.html','commercial/offers-admin.mjs','commercial/offers.mjs','commercial/offer-reference.mjs','commercial/offer-activation.mjs','admin/application.css'}}
 COMMAND_MANIFEST_SHA='899151248c2fe2492f198ae19bc36a975287d0edad55cf5168c2657184e17ff1'
 
 def plan_at(path):
@@ -144,7 +144,7 @@ def prepare(p,baseline,root,out):
         finance=files['admin/orders/finance-activation.mjs'].decode('utf-8')
         require(re.search(r'^\s*enabled\s*:\s*false\s*,?\s*$',finance,re.M),'Unapproved financial save activation refused')
         require(all(re.search(r'^\s*'+name+r'\s*:\s*null\s*,?\s*$',finance,re.M) for name in ['backendEvidenceSHA256','livePersistenceEvidenceSHA256']),'Unapproved financial activation evidence refused')
-    if p['feature']=='COMMERCE_FORGE' and p['phase']=='C':
+    if p['feature']=='COMMERCE_FORGE' and p['phase'] in ('C','C_NAV'):
         offers=files['commercial/offer-activation.mjs'].decode('utf-8')
         require(re.search(r'^\s*enabled\s*:\s*false\s*,?\s*$',offers,re.M),'Unapproved promotion activation refused')
         require(all(re.search(r'^\s*'+name+r'\s*:\s*null\s*,?\s*$',offers,re.M) for name in ['backendEvidenceSHA256','liveCheckoutEvidenceSHA256']),'Unapproved checkout evidence refused')

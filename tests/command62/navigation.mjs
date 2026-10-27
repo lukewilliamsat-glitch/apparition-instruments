@@ -1,0 +1,9 @@
+import assert from 'node:assert/strict';
+import {Window} from 'happy-dom';
+import {mountAdminShell,workspaceFor} from '../../dist/admin/application.mjs';
+const w=new Window({url:'https://fixture.invalid/admin/site-operations/#commerce-offers',settings:{disableCSSFileLoading:true,disableJavaScriptEvaluation:true,disableJavaScriptFileLoading:true}}),d=w.document;
+d.body.innerHTML='<main class="admin-main"><h1>Site Operations</h1><nav class="operations-local-nav"><a href="#store-status">Store Status</a><a href="#audit">Recent activity</a><a href="#commerce-offers">Offers &amp; bundles</a></nav><section id="store-status"></section><section id="news"><button id="new-post">New post</button></section><section id="announcements"></section><section id="audit"></section><section id="commercial-destinations"><button data-commercial-new>New destination</button></section><section id="commerce-offers"><p data-test-studio>Preview only</p></section></main>';
+mountAdminShell(d,d.createElement('button'));
+const route=(hash,id)=>{w.location.hash=hash;w.dispatchEvent(new w.HashChangeEvent('hashchange'));assert.equal(workspaceFor(w.location),id);assert.equal(d.body.dataset.adminWorkspace,id);return [...d.querySelectorAll('main>section')].filter(e=>!e.hidden).map(e=>e.id);};
+assert.deepEqual(route('#commerce-offers','offers'),['commerce-offers']);assert.equal(d.querySelector('a[data-workspace=offers]').getAttribute('aria-current'),'page');assert.deepEqual(route('#news','news'),['news']);assert.deepEqual(route('#commercial-destinations','destinations'),['commercial-destinations']);assert.deepEqual(route('','operations'),['store-status','audit']);assert.deepEqual(route('#commerce-offers','offers'),['commerce-offers']);assert.equal(d.querySelectorAll('[data-test-studio]').length,1);
+await w.happyDOM.close();console.log('Commerce route integration PASS: dedicated navigation, correct title, isolated section visibility and retained controller DOM.');

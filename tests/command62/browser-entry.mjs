@@ -5,7 +5,7 @@ import {setAssemblyRepository} from '/admin/assembly-repository.mjs';
 import {lesPaulKitAssembly} from '/admin/assemblies.mjs';
 import {createAdminOptionRepository,setAdminOptionRepository} from '/backend/catalogue-options.mjs';
 const phase=(await(await fetch('/tests/command62/phase.json')).json()).phase;
-if(phase==='C'){
+if(['C','C_NAV'].includes(phase)){
  const {setOperationsRepository}=await import('/backend/operations-admin.mjs');
  const {adminAuthSessionKey}=await import('/admin/admin-auth.mjs');
  const calls=[],businessWrites=[],params=new URLSearchParams(location.search),blocked=async()=>{businessWrites.push('BLOCKED');throw Error('Business writes forbidden in acceptance');};

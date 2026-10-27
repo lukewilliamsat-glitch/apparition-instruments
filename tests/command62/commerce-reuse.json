@@ -1,0 +1,17 @@
+{
+  "source": "af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+  "run": 40501427082,
+  "nativeGroups": 5,
+  "pricingGroups": 25,
+  "referenceGroups": 9,
+  "DOM": "PASS",
+  "sha256": {
+    "dist/commercial/offer-activation.mjs": "c6b6d2969895a827f5a783babb7d5ed23b17bb54f7d230f01b4771600ead6e7c",
+    "dist/commercial/offers.mjs": "78b62782acf82caedc84c0e8c50ce1a19583d6018df4da6ea94ce8201568beed",
+    "dist/commercial/offer-reference.mjs": "9780deb313cdfb28cf2dc39ae1b7c8d8a190e3aa97f05658236728e23767b9b3",
+    "dist/commercial/offers-admin.mjs": "08dfcea29893305aa07402a673253efcd6f03160b979e046e72b34467e5fb29c",
+    "tests/command62/offers.mjs": "0ce9d9c4fafb28ea84de4af34fd055a4548e458a21872476f00a4c3ece793bd7",
+    "tests/command62/offer-reference.mjs": "b315af1141ba4f408809c73413bc81d6b558191279eefe1c9e9666f4f1c4c18e",
+    "tests/command62/offer-ui.mjs": "84e09e582291c63f8effb67fd43cd7eca7ed8925928c162984bee6196c7df202"
+  }
+}
