@@ -9,8 +9,32 @@ concurrency:
   group: black-ledger63-isolated
   cancel-in-progress: false
 jobs:
+  scope:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    outputs:
+      browser: ${{ steps.scope.outputs.browser }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - id: scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          needed=false
+          while IFS= read -r path; do
+            case "$path" in
+              tests/command63/finance-postgres17.mjs|tests/command63/pg17-result.mjs|tests/command63/pg17-result-test.mjs|docs/operations/black-ledger63/*|.github/workflows/command63-black-ledger.yml) ;;
+              *) needed=true ;;
+            esac
+          done < <(git diff --name-only HEAD^ HEAD)
+          echo "browser=$needed" >> "$GITHUB_OUTPUT"
   acceptance:
-    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/command63-black-ledger'
+    needs: scope
+    if: needs.scope.outputs.browser == 'true' && github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/command63-black-ledger'
     runs-on: ubuntu-24.04
     timeout-minutes: 12
     steps:
@@ -49,6 +73,7 @@ jobs:
           if-no-files-found: error
 
   native-postgres:
+    needs: scope
     if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/command63-black-ledger'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -87,6 +112,7 @@ jobs:
         run: |
           set -euo pipefail
           command -v psql
+          node tests/command63/pg17-result-test.mjs
           node tests/command63/finance-postgres17.mjs | tee "$RUNNER_TEMP/finance-postgres17.txt"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
