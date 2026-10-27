@@ -1,17 +1,25 @@
-import {financeActivation} from './finance-activation.mjs';
-import {financeDraft,mountFinanceWorkbench} from './finance-ui.mjs';
-import {createFinancialRepository,createFinancialSession} from './financial-record.mjs';
+import {financeActivation} from './finance-activation.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4';
+import {financeDraft,mountFinanceWorkbench} from './finance-ui.mjs?build=b4d7e3708e1cd0153e922122fa2400f0c46d9ce7';
+import {createFinancialRepository,createFinancialSession} from './financial-record.mjs?build=b4d7e3708e1cd0153e922122fa2400f0c46d9ce7';
 const sessions=new WeakMap();
+const evidenceHash=value=>typeof value==='string'&&/^[a-f0-9]{64}$/.test(value);
+export function financialPersistenceAccess(activation,order){
+ if(activation?.enabled!==true&&activation?.controlledOrderId!==order?.id)return false;
+ const controlled=activation.enabled!==true;
+ if(controlled&&(order.id!=='3db324c2-4f60-45b6-b78c-29a3eceeb826'||order.reference!=='AI-010019'||order.channel!=='DIRECT'||order.externalReference!=='Test Order Reference'))throw Error('Controlled financial test order identity does not match.');
+ if(!evidenceHash(activation.backendEvidenceSHA256)||(!controlled&&!evidenceHash(activation.livePersistenceEvidenceSHA256))||(controlled&&activation.livePersistenceEvidenceSHA256!==null))throw Error('Financial activation evidence is incomplete.');
+ return controlled?'controlled':'active';
+}
 export function mountFinancialOrder({root,order,document:d=globalThis.document,activation=financeActivation,repository}={}){
- if(!activation.enabled)return mountFinanceWorkbench({root,order,document:d});
- if(!activation.backendEvidenceSHA256||!activation.livePersistenceEvidenceSHA256)throw Error('Financial activation evidence is incomplete.');
+ const access=financialPersistenceAccess(activation,order);
+ if(!access)return mountFinanceWorkbench({root,order,document:d});
  if(order.channel==='WEBSITE')return null;
  const prior=sessions.get(root),items=JSON.stringify(order.items);
  if(prior&&prior.orderId===order.id){if(!prior.host.isConnected)root.append(prior.host);if(prior.sourceItems!==items)prior.markStale();return prior;}
  prior?.dispose();
  const node=(tag,text)=>{const n=d.createElement(tag);if(text!==undefined)n.textContent=text;return n;};
  const host=node('section'),message=node('p','Loading financial record…'),actions=node('div'),reload=node('button','Reload saved record'),reconcile=node('button','Check original save receipt'),history=node('details'),historyBody=node('ol'),content=node('div');
- host.className='finance-record';host.dataset.financialRecord='';message.setAttribute('role','status');message.setAttribute('aria-live','polite');history.append(node('summary','Financial revision history'),historyBody);for(const b of [reload,reconcile])b.type='button';actions.append(reload,reconcile);host.append(message,actions,history,content);root.append(host);
+ host.className='finance-record';host.dataset.financialRecord='';if(access==='controlled')host.append(node('p','Controlled acceptance: AI-010019 only. All entered financial values are internal test evidence. General financial saving remains disabled.'));message.setAttribute('role','status');message.setAttribute('aria-live','polite');history.append(node('summary','Financial revision history'),historyBody);for(const b of [reload,reconcile])b.type='button';actions.append(reload,reconcile);host.append(message,actions,history,content);root.append(host);
  let view=null,disposed=false,valid=false,lastRevision=-1,stale=false,session;
  const beforeUnload=e=>{if(session?.snapshot().dirty||session?.snapshot().status==='uncertain'){e.preventDefault();e.returnValue='';}};
  const update=s=>{

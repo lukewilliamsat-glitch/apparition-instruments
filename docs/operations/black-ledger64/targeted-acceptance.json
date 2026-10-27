@@ -1,0 +1,9 @@
+{
+  "result": "PASS",
+  "groups": 5,
+  "externalRequests": 0,
+  "liveWrites": 0,
+  "sourceSHA256": "6531d7d68955365a0b55686b834df5a229c41b03d3b3361dca4fbad7e3f3a8ca",
+  "test": "tests/command64/controlled-finance.mjs",
+  "testSHA256": "44170addb530d89d60a51aa202a7c2e6bff7ca05cee68f44adf33d1bdbb97305"
+}
