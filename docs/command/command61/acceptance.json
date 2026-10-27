@@ -45,14 +45,25 @@
     "rollbackArtifact": 12722564317,
     "candidateDigest": "d935573cf69578612cce0bd029b7e3be66d0cdcd9520125614c7e3e23fd065a4",
     "rollbackDigest": "5c0130bc161585c4b5a3d4652a5c9d11d28536c63a0f13f0eb211d683be48df7",
-    "independentServedFiles": 8
+    "independentServedFiles": 8,
+    "liveBrowser": {
+      "route": "/admin/overview/",
+      "authenticated": true,
+      "ordinaryExistingSessionRestored": true,
+      "loadedAreas": 5,
+      "metricPanels": 4,
+      "unavailableMetrics": 0,
+      "documentOverflow": false,
+      "viewport": 1363,
+      "businessValuesPublished": false
+    }
   },
   "limits": [
     "Releases A/B add no application provider calls or polling. Existing bounded publication Operations guards were reused.",
     "No real stock, product, order, payment or customer communication operations were performed.",
     "Advanced COMMAND catalogue adapter and IRONCLAD remain disabled.",
-    "Authenticated production business journeys remain unverified; accepted fixtures used fictional sessions.",
-    "The current public storefront, authoritative OPEN state, News/closure announcement and Triple Strike payload were preserved."
+    "The current public storefront, authoritative OPEN state, News/closure announcement and Triple Strike payload were preserved.",
+    "Existing authenticated production Inventory and Overview were observed read-only. New credential entry, logout and actual business writes were not exercised; inherited/fictional evidence applies to those boundaries."
   ],
   "releaseB": {
     "status": "LIVE_VERIFIED",
@@ -112,7 +123,16 @@
     },
     "retainedArtifactExpiry": "2026-11-10",
     "rollbackIndependentReadBack": "Verified complete inventory by publication runner before deployment; receipt independently downloaded and verified.",
-    "rollbackUsed": false
+    "rollbackUsed": false,
+    "liveBrowser": {
+      "route": "/admin/",
+      "authenticated": true,
+      "inventoryPopulated": true,
+      "navigationLinks": 20,
+      "signOutControlVisible": true,
+      "stylesheetSource": "91a2512a0eacd27f2dc444add49eeafa280eeef3",
+      "businessValuesPublished": false
+    }
   },
   "financialWorkstream": {
     "status": "PUBLICATION_REJECTED_BY_AUTOMATIC_REVIEW",
