@@ -1,0 +1,74 @@
+{
+  "authority": "AUTHORISATION64_DIRECT_OWNER_APPROVAL",
+  "result": "PASS",
+  "orderId": "3db324c2-4f60-45b6-b78c-29a3eceeb826",
+  "orderReference": "AI-010019",
+  "source": "DIRECT",
+  "classification": "Owner-designated existing internal noncustomer test order",
+  "productionSource": "0bdb339a65a270d54608f57a72ed9917d002997f",
+  "applicationSource": "41456a659304b826ff65eaa14ea06b2d2442999c",
+  "runId": 40563926359,
+  "normalAdminSession": true,
+  "savedAndReloaded": true,
+  "calculationsVerified": true,
+  "revisionConflictVerified": true,
+  "businessStateUnchanged": true,
+  "accessRestricted": true,
+  "revision": 2,
+  "auditRevisions": 2,
+  "saveRequests": 3,
+  "requestOutcomes": [
+    "committed revision 1; original client rejected JSONB key order",
+    "committed revision 2; corrected acknowledgement",
+    "conflict at revision 2; stale draft retained and saving blocked"
+  ],
+  "testAmountsMinor": {
+    "grossCustomerPayment": 749,
+    "marketplacePassThrough": 49,
+    "netOrderRevenue": 700,
+    "sellerSettlement": 650,
+    "productCOGS": 125,
+    "fees": 50,
+    "fulfilmentExpenditure": 125,
+    "totalRecordedCosts": 300,
+    "contribution": 400
+  },
+  "testValuesExplicitlyLabelled": true,
+  "actualOrderFinancialValuesChanged": false,
+  "otherFinancialOrdersTouched": 0,
+  "preservation": {
+    "originalOrder": true,
+    "relevantInventory": true,
+    "paymentEvents": true,
+    "communications": true,
+    "fulfilment": true
+  },
+  "security": {
+    "anonymousRead": {
+      "httpStatus": 401,
+      "requests": 1,
+      "responseBytes": 111
+    },
+    "RLS": true,
+    "directTableWrites": false,
+    "adminMembershipCheck": "Existing auth.uid() and current admin_members, unchanged"
+  },
+  "correction": {
+    "sourceSHA256": "20f39bae614bf3756463060608f36370e8fd77c7eee7ad2cc26705d51790599c",
+    "localNewGroups": 4,
+    "affectedClientGroups": 15,
+    "description": "Canonical structural equality for JSONB receipts; genuine mismatches remain uncertain and cannot be resubmitted."
+  },
+  "rollbackExercise": {
+    "saveExecuteRevoked": true,
+    "disabledFrontendCommit": "fd3a2bc060326a0c1f545a7f391d870b6ae45a3d",
+    "disabledFrontendRun": 40563366867,
+    "auditRetained": true,
+    "restoredPermission": "Only the exact original authenticated EXECUTE grant on command63_financial_save(uuid,bigint,text,uuid,jsonb), after corrected test-only client served-byte verification."
+  },
+  "limitations": [
+    "No production financial write was made to any other order.",
+    "No unprivileged authenticated test account was created. Non-Admin denial is supported by inherited database acceptance and unchanged installed membership checks; anonymous denial was verified live.",
+    "Historical broad suites were reused, not repeated."
+  ]
+}
