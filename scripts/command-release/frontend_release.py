@@ -40,6 +40,7 @@ def plan_at(path):
     require(p.get('siteURL')==SITE and p.get('commandReads') is False and p.get('commandWrites') is False,'Site or COMMAND activation mismatch')
     for key in ['baseTarSHA256','basePayloadDigest','candidateDigest','rollbackDigest']:
         require(re.fullmatch('[a-f0-9]{64}',p.get(key,'')),'Missing immutable payload identity')
+    require(all(3<=len(p.get(k,{}))<=8 for k in ['baselineVerification','rollbackVerification','releaseVerification']),'Bounded live verification map required')
     require(0<len(p.get('changes',[]))<=256,'Change limit')
     require(len({c['path'] for c in p['changes']})==len(p['changes']),'Duplicate delta path')
     return p
