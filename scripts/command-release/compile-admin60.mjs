@@ -6,7 +6,7 @@ import {resolve,dirname,extname,join} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {stampSource} from '../stamp-static-assets.mjs';
 const unifiedCore=['admin/application.mjs','admin/application.css','admin/admin-gate.mjs','admin/overview.mjs','admin/command/index.html','admin/command-redirect.mjs'];
-const phases={A:['admin/application.css','admin/overview.mjs']};
+const phases={A:['admin/application.css','admin/overview.mjs'],B:['admin/application.css','admin/admin.mjs']};
 const sha=b=>createHash('sha256').update(b).digest('hex');
 const require=(v,m)=>{if(!v)throw Error(m);};
 async function tree(root){const files=new Map();async function walk(dir){for(const e of await readdir(dir,{withFileTypes:true})){const p=join(dir,e.name);require(!e.isSymbolicLink(),'Links refused');if(e.isDirectory())await walk(p);else{require(e.isFile(),'Special file refused');files.set(p.slice(root.length+1).replaceAll('\\','/'),await readFile(p));}}}await walk(root);return files;}

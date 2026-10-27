@@ -290,3 +290,56 @@
 @media(max-width:1200px){[data-admin-app=command] .admin-overview-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:850px){[data-admin-app=command] .admin-overview-workflow{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:600px){[data-admin-app=command] .admin-main{padding-top:20px}[data-admin-app=command] .admin-overview-kpis{gap:10px}[data-admin-app=command] .admin-kpi{padding:14px;gap:7px}[data-admin-app=command] .admin-kpi>strong{font-size:1.6rem}[data-admin-app=command] .admin-overview-sections{grid-template-columns:minmax(0,1fr)}[data-admin-app=command] :is(.admin-overview-area,.admin-overview-attention,.admin-overview-actions){padding:16px}}
+
+/* Inventory: one set of real controls, a compact table on desktop and cards on mobile. */
+[data-admin-app=command] #inventory-table[data-inventory-cards=true]{min-width:920px}
+[data-admin-app=command] #inventory-table[data-inventory-cards=true] :is(th,td){padding:12px;vertical-align:top}
+[data-admin-app=command] .inventory-identity{min-width:185px;max-width:310px}
+[data-admin-app=command] .inventory-identity :is(strong,code,small){display:block;overflow-wrap:anywhere}
+[data-admin-app=command] .inventory-name{font-size:.875rem;font-weight:600;line-height:1.45;color:#f0eee8}
+[data-admin-app=command] .inventory-sku{font:400 .6875rem/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;color:#d0c2a7;margin-top:5px}
+[data-admin-app=command] .inventory-category{color:#bbc3cd;font-size:.75rem}
+[data-admin-app=command] .inventory-spec-details{font-size:.75rem;max-width:300px}
+[data-admin-app=command] .inventory-spec-details summary{min-height:24px;line-height:1.6;color:#d0c2a7}
+[data-admin-app=command] .inventory-spec-details dl{margin:8px 0 0;display:grid;gap:6px}
+[data-admin-app=command] .inventory-spec-details dl>div{display:grid;grid-template-columns:minmax(65px,.7fr) minmax(0,1fr);gap:8px}
+[data-admin-app=command] .inventory-spec-details dt{color:#9da7b4;font-size:.6875rem;font-weight:400}
+[data-admin-app=command] .inventory-spec-details dd{margin:0;overflow-wrap:anywhere;color:#e1e4e8}
+[data-admin-app=command] .inventory-stock>strong{font-size:1rem;line-height:1.2;font-weight:600}
+[data-admin-app=command] .inventory-stock>small{display:inline;margin-left:5px}
+[data-admin-app=command] .inventory-prices :is(span,small){display:block;white-space:nowrap}
+[data-admin-app=command] .inventory-active label{display:flex;align-items:center;gap:7px;min-height:32px;font-size:.6875rem;white-space:nowrap}
+[data-admin-app=command] .inventory-active input{width:18px;height:18px}
+[data-admin-app=command] .inventory-actions{min-width:180px;white-space:normal}
+[data-admin-app=command] .inventory-actions>button{margin:0 5px 7px 0;min-height:36px}
+[data-admin-app=command] .inventory-actions>button:first-child{border-color:#a18d60;color:#e8d4a9}
+[data-admin-app=command] :is(.create-item,.dispatch-details,.external-order-edit){padding:18px;border:1px solid var(--admin-line);border-radius:7px;background:var(--admin-surface);min-width:0}
+[data-admin-app=command] :is(.create-item,.dispatch-details,.external-order-edit) h3{font:600 1rem/1.4 system-ui;letter-spacing:-.015em;margin:0 0 14px}
+[data-admin-app=command] .order-row-controls{gap:12px}
+[data-admin-app=command] :is(.create-item,.dispatch-details,.external-order-edit) label{color:#c5cbd2}
+@media(max-width:600px){
+ [data-admin-app=command] .admin-table-scroll:has(#inventory-table[data-inventory-cards=true]){border:0;background:transparent;overflow:visible;scrollbar-gutter:auto}
+ [data-admin-app=command] #inventory-table[data-inventory-cards=true]{display:block;width:100%;min-width:0;border:0}
+ [data-admin-app=command] #inventory-table[data-inventory-cards=true] caption{display:block;text-align:left;padding:0 0 12px}
+ [data-admin-app=command] #inventory-table[data-inventory-cards=true] thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+ [data-admin-app=command] #inventory-table[data-inventory-cards=true] tbody{display:grid;gap:14px}
+ [data-admin-app=command] #inventory-table[data-inventory-cards=true] tr.inventory-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px 16px;padding:16px;border:1px solid var(--admin-line);border-radius:8px;background:var(--admin-surface)}
+ [data-admin-app=command] #inventory-table[data-inventory-cards=true] td{display:block;padding:0!important;min-width:0!important;width:auto!important;max-width:none;border:0}
+ [data-admin-app=command] .inventory-identity{grid-column:1/-1}
+ [data-admin-app=command] .inventory-name{font-size:.9375rem}
+ [data-admin-app=command] .inventory-category{grid-column:1/-1;margin-top:-6px;color:#a9b3bf}
+ [data-admin-app=command] .inventory-stock{grid-column:1;grid-row:3}
+ [data-admin-app=command] .inventory-prices{grid-column:2;grid-row:3}
+ [data-admin-app=command] :is(.inventory-stock,.inventory-prices)::before{content:attr(data-label);display:block;color:#9fa9b6;font-size:.625rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+ [data-admin-app=command] .inventory-prices :is(span,small){white-space:normal}
+ [data-admin-app=command] .inventory-specifications{grid-column:1/-1}
+ [data-admin-app=command] .inventory-spec-details{max-width:none;border-block:1px solid var(--admin-line);padding:9px 0}
+ [data-admin-app=command] .inventory-spec-details summary{min-height:26px}
+ [data-admin-app=command] .inventory-active{grid-column:1/-1}
+ [data-admin-app=command] .inventory-active label{min-height:32px}
+ [data-admin-app=command] #inventory-table[data-inventory-cards=true] .inventory-actions{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:start;gap:8px}
+ [data-admin-app=command] .inventory-actions>button{min-height:44px;margin:0}
+ [data-admin-app=command] .inventory-actions .admin-action-menu{margin:0}
+ [data-admin-app=command] .inventory-actions .admin-action-menu>summary{min-height:44px}
+ [data-admin-app=command] .inventory-actions .admin-action-options{max-width:100%;white-space:normal}
+}

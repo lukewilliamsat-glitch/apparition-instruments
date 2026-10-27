@@ -11,6 +11,12 @@ chown -R "$owner" "$output"
 cd "$root"
 run_isolated(){ runuser -u "$owner" -- env -i HOME="$fixture_home" TMPDIR="$fixture_home" PATH="$(dirname "$node"):/usr/bin:/bin" LANG=C.UTF-8 "$node" "$@"; }
 run_isolated tests/command60/isolation.mjs "$output" "$browser" "$controller" "$parent_namespace" "$commit"
-run_isolated --import ./tests/fixtures/admin-offline.mjs tests/admin-v2-overview.mjs > "$output/inherited-overview.txt"
-run_isolated --import ./tests/fixtures/admin-offline.mjs tests/command61/overview.mjs > "$output/overview-results.txt"
+phase=$("$node" -p "JSON.parse(require('fs').readFileSync('tests/command61/phase.json')).phase")
+if [ "$phase" = A ]; then
+ run_isolated --import ./tests/fixtures/admin-offline.mjs tests/admin-v2-overview.mjs > "$output/inherited-overview.txt"
+ run_isolated --import ./tests/fixtures/admin-offline.mjs tests/command61/overview.mjs > "$output/overview-results.txt"
+fi
+if [ "$phase" = B ]; then
+ run_isolated tests/command61/inventory.mjs > "$output/inventory-results.txt"
+fi
 run_isolated tests/command61/browser.mjs "$output" "$browser" "$controller" "$commit"

@@ -16,7 +16,7 @@ SITE='https://apparitioninstruments.co.uk'
 FEATURES={'SPECTRE','LANTERN','SENTINEL','COMMAND_FRONTEND','COMMAND_UNIFIED_ADMIN','COMMAND_ASCENDANCE'}
 COMMAND_SOURCE='df78c5bf5144b012a7d96c628186180fa6432df3'
 UNIFIED_ALLOWED={'admin/application.mjs','admin/application.css','admin/admin-gate.mjs','admin/overview.mjs','admin/command/index.html','admin/command-redirect.mjs'}
-ASCENDANCE_PHASES={'A':{'admin/application.css','admin/overview.mjs'}}
+ASCENDANCE_PHASES={'A':{'admin/application.css','admin/overview.mjs'},'B':{'admin/application.css','admin/admin.mjs'}}
 COMMAND_MANIFEST_SHA='899151248c2fe2492f198ae19bc36a975287d0edad55cf5168c2657184e17ff1'
 
 def plan_at(path):
