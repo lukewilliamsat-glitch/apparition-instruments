@@ -1,0 +1,115 @@
+{
+  "authority": "AUTHORISATION64_DIRECT_OWNER_APPROVAL",
+  "status": "PASS_FINANCIAL_SAVING_LIVE_VERIFIED",
+  "liveURL": "https://apparitioninstruments.co.uk/admin/orders/",
+  "deployment": {
+    "source": "00f1c92b57544718432707a14108c38cae1c3e8a",
+    "tree": "5b49f72ac9135be617a96f79d6d3fb947283330d",
+    "applicationSource": "dd9986842ed12e28c61283a1f32fe092dea6d05d",
+    "runId": 40564863124,
+    "jobId": 122403312647,
+    "payloadDigest": "b7a0ec643c3e48346d5af16b3125b22553a9914ca5031c844415fc4f128866b4",
+    "tarSHA256": "f000a681dabdd6a957040a26a286e872e712af6d15b319a6c47648e10fdb8d64",
+    "files": 460,
+    "changedFromPrevious": 6,
+    "unexplainedDifferences": 0,
+    "staticVerification": {
+      "result": "PASS",
+      "requests": 8,
+      "bytes": 43353
+    },
+    "normalAdminBrowserSave": "COMMITTED revision 3 on the designated internal test order"
+  },
+  "migration": {
+    "project": "acdxpxvksvdwfajntzfx",
+    "name": "black_ledger_financial_v1",
+    "executions": 1,
+    "sha256": "a6025c33e9a2936ce61f35af4cf514e49585a2ccdcf1b3e57966e8ed5f63c996",
+    "result": "SUCCESS"
+  },
+  "controlledAcceptance": {
+    "evidenceSHA256": "aae05828dc31f10eead5fe84861223a0171b1e4485cca765b0037d4ce567a942",
+    "result": "PASS",
+    "testOrder": "AI-010019; owner-designated noncustomer record",
+    "savedReloadedRevision": 2,
+    "staleRevisionRejected": true,
+    "repeatedSaveBlocked": true,
+    "grossNetAndContributionVerified": true
+  },
+  "finalVerification": {
+    "financialRevision": 3,
+    "auditRevisions": 3,
+    "financialRequests": 4,
+    "otherFinancialOrders": 0,
+    "originalOrderUnchanged": true,
+    "relevantInventoryUnchanged": true,
+    "paymentEventsUnchanged": true,
+    "communicationsUnchanged": true,
+    "fulfilmentUnchanged": true,
+    "anonymousFinancialRead": "HTTP 401",
+    "normalAdminSession": true
+  },
+  "correction": {
+    "reason": "PostgreSQL jsonb object-key ordering caused a false receipt mismatch after a real commit.",
+    "result": "Canonical structural comparison preserves values, types and array order. Genuine receipt mismatches retain an uncertain state and prevent duplicate saves.",
+    "newRegressionGroups": 4,
+    "affectedClientDOMGroups": 15,
+    "controlledGateGroups": 5,
+    "publisherGateGroups": 8
+  },
+  "rollback": {
+    "runId": 40564863124,
+    "artifactId": 12761653782,
+    "source": "0bdb339a65a270d54608f57a72ed9917d002997f",
+    "payloadDigest": "71a7d8ea5a4e3dcbfc5d5f14bd5ae1ad7bc781136886cbf84e4be190798da523",
+    "tarSHA256": "58090db37f684d7bb81ca92de0fa202d82ce5a45055c1874de028da383a0303d",
+    "completeInventoryReadBack": "460 files verified by the publication job; receipt ZIP independently downloaded and SHA-256 verified",
+    "databaseSQL": "scripts/command-release/disable-financial63.sql",
+    "databaseSQLSHA256": "922f24c110a0c08c070618889fe062792297e85c5e2f597c7ebcd387911d2d69",
+    "historyDeletion": false,
+    "approvedDisableExercised": true,
+    "disabledFrontendRun": 40563366867,
+    "restoredOnlyOriginalReviewedSavePermission": true
+  },
+  "artifacts": [
+    {
+      "id": 12762193782,
+      "name": "frontend-release-receipt",
+      "bytes": 51253,
+      "sha256": "6ec2eb77bef8c57096577f6a63dbc005cb72165714f3d11658d5441e3ee0af01",
+      "expiresAt": "2026-11-10T18:59:10Z"
+    },
+    {
+      "id": 12761653782,
+      "name": "frontend-rollback",
+      "bytes": 20399841,
+      "sha256": "db18f08312f545c7816644011256e03e7f428e32cd871ce470dbf043133e108a",
+      "expiresAt": "2026-11-10T18:58:42Z"
+    },
+    {
+      "id": 12761234089,
+      "name": "github-pages",
+      "bytes": 20399917,
+      "sha256": "beab69a5cf89016e230119eb566d1ffff83cecbdab50c1afb8c6f314b562f0e5",
+      "expiresAt": "2026-11-10T18:58:48Z"
+    }
+  ],
+  "preservation": {
+    "storeOperations": "OPEN; authoritative RPC verified by publisher",
+    "pauseDates": null,
+    "news": "unchanged",
+    "publicStorefront": "unchanged",
+    "catalogueImages": "unchanged",
+    "nightfallImages": false,
+    "livePromotions": false,
+    "commandReads": false,
+    "ironcladWrites": false,
+    "backendDependentGeneration": false
+  },
+  "limitations": [
+    "No new unprivileged authenticated account was created. Non-Admin denial reuses accepted database tests and installed membership checks; anonymous denial was exercised live.",
+    "The inner calculator still uses its existing 'still unsaved' wording. The separate persistence status and revision correctly confirm saved/loaded records; no calculation or save result is inferred from that calculator label.",
+    "AI-010019 retains three explicitly labelled internal financial test revisions. No customer order received fictitious financial inputs."
+  ],
+  "stop": "AUTHORISATION64 complete. No unrelated activation or follow-on work."
+}
