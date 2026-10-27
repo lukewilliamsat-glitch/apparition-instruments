@@ -1,0 +1,23 @@
+{
+  "kind": "COMMERCE_FORGE_V1",
+  "phase": "C_NAV",
+  "sourceCommit": "0f80248903e246b9e7365853370a57284218b20d",
+  "baseSourceCommit": "84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
+  "unchangedRepositoryRevision": "84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
+  "entries": [
+    {
+      "path": "admin/application.mjs",
+      "beforeSHA256": "86c1ec1f75bc00e31cbe9c71da4a59c51279f5e41e38be6ecd7e39421b908339",
+      "afterSHA256": "90e647e4bc9ec8c3bdfb13db4aadd162ff5505103f84ea8465ea514d275e99f9",
+      "bytes": 12538,
+      "rawSourceSHA256": "89388dce21d57afeeb6e65836d474fa6aa72cf40608e22d47de75be9bc823f5b"
+    },
+    {
+      "path": "admin/sales-content-presentation.mjs",
+      "beforeSHA256": "7785ada2c8564ee219408e761a286a15cd5ed052f649d03cf16d4702be3fe654",
+      "afterSHA256": "e3a29bb52b92abbe7a1aab2cb76264b4782adc1f5069736b583a6340f4b70b47",
+      "bytes": 4477,
+      "rawSourceSHA256": "e3a29bb52b92abbe7a1aab2cb76264b4782adc1f5069736b583a6340f4b70b47"
+    }
+  ]
+}

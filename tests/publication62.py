@@ -23,8 +23,11 @@ with tempfile.TemporaryDirectory() as t:
     rejected(lambda:prepare(bad,sys.argv[1],'.',folder/'tamper'),'manifest changed')
     bad=copy.deepcopy(p);bad['baseTarSHA256']='0'*64
     rejected(lambda:prepare(bad,sys.argv[1],'.',folder/'baseline'),'baseline TAR changed')
-    expected={'head_sha':p['applicationSource'],'status':'completed','conclusion':'success','path':'.github/workflows/command62-commerce-forge.yml'}
-    assert unified_native_evidence(p,lambda _:expected)['applicationUnchanged'];count+=1
+    expected={'head_sha':p['nativeAcceptance'].get('executionSource',p['applicationSource']),'status':'completed','conclusion':'success','path':'.github/workflows/command62-commerce-forge.yml'}
+    comparison={'merge_base_commit':{'sha':p['applicationSource']},'status':'ahead','files':[{'filename':'tests/command62/browser.mjs','status':'modified'}]}
+    assert unified_native_evidence(p,lambda path:comparison if path.startswith('/compare/') else expected)['applicationUnchanged'];count+=1
+    if expected['head_sha']!=p['applicationSource']:
+        rejected(lambda:unified_native_evidence(p,lambda path:{**comparison,'files':[{'filename':'dist/admin/application.mjs','status':'modified'}]} if path.startswith('/compare/') else expected),'Application changed')
     rejected(lambda:unified_native_evidence(p,lambda _:{**expected,'path':'.github/workflows/static.yml'}),'Wrong Commerce')
     rejected(lambda:unified_native_evidence(p,lambda _:{**expected,'conclusion':'failure'}),'not successful')
     rejected(lambda:unified_native_evidence(p,lambda _:{**expected,'head_sha':'0'*40}),'not successful')

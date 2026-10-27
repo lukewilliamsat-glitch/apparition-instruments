@@ -2,16 +2,16 @@
   "version": 1,
   "authority": "AUTHORISATION_62",
   "feature": "COMMERCE_FORGE",
-  "phase": "C",
-  "applicationSource": "af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+  "phase": "C_NAV",
+  "applicationSource": "0f80248903e246b9e7365853370a57284218b20d",
   "siteURL": "https://apparitioninstruments.co.uk",
-  "baseSource": "572d2cf39484ee5f0bca953765565ae5dd87aebb",
-  "baseRunId": 40499356777,
-  "baseArtifactId": 12731918101,
-  "baseTarSHA256": "e0bd1f79698331dd3e72bbb5be16ffaa0c0ed98d317579d76e43808a4c587270",
-  "basePayloadDigest": "8ee2f99283a10d7c373731932bbab8cde2da5521050ebb92fc1418394b24a1bf",
-  "candidateDigest": "b5c09907fc68d98cbc58b0f663fe8b7abc9e52260737cba8130dd2a5d30b02f1",
-  "rollbackDigest": "8ee2f99283a10d7c373731932bbab8cde2da5521050ebb92fc1418394b24a1bf",
+  "baseSource": "bf62a50dd81b45ff1c342704c503a619009991d7",
+  "baseRunId": 40502019104,
+  "baseArtifactId": 12732927676,
+  "baseTarSHA256": "966694f6d7f17a94780069374ebbcb88f33d2d3be1aadd0389ace37d1f2ea96b",
+  "basePayloadDigest": "b5c09907fc68d98cbc58b0f663fe8b7abc9e52260737cba8130dd2a5d30b02f1",
+  "candidateDigest": "377d9f3e6345d2f8f6f40fcfc7dc576b359f4f11078537138b1f68f0eda0b1fe",
+  "rollbackDigest": "b5c09907fc68d98cbc58b0f663fe8b7abc9e52260737cba8130dd2a5d30b02f1",
   "commandReads": false,
   "commandWrites": false,
   "operationsEvidence": {
@@ -24,100 +24,68 @@
   },
   "knownFailedPublications": [],
   "baselineVerification": {
-    "/admin/site-operations/": "87ce6e1f13a5130fc8aa94569268076f54c4c73b4e3e01c996cfd6f1cfc7d179",
-    "/admin/application.css": "632eee0275dce8a8a21932a98837ff5e3e8be3236a23cd61f073562b7bc3047a",
-    "/admin/admin.mjs": "1ad9fd186e046d490572658b8e05ecc9f14f4d6ff4423e65f7f9ff8dbcec2232",
+    "/admin/site-operations/": "0b982512b45feb92b2a22a94dfdc05898757943c8e72ac859f8d333830140f7b",
+    "/admin/application.mjs": "86c1ec1f75bc00e31cbe9c71da4a59c51279f5e41e38be6ecd7e39421b908339",
+    "/admin/sales-content-presentation.mjs": "7785ada2c8564ee219408e761a286a15cd5ed052f649d03cf16d4702be3fe654",
     "/operations/snapshot.json": "fd5709af3c61bc8dfc945558ad805559845dacb9380f8451ce2cb8887d1d90b2",
     "/": "155da9be7cd7ae7740c70c6d3cea8245e9428b0891e86474da8a32293da3e28c",
     "/basket/": "7e9d0cf51d3c069aea68ca29cb96b23c5d6584619ee57782bbafa529f3d1b944",
     "/components/treble-bleeds/": "bb0b0aa51dc8dca6eb718448a9462b2657dc58299608f952df6fc153689dd5eb"
   },
   "rollbackVerification": {
-    "/admin/site-operations/": "87ce6e1f13a5130fc8aa94569268076f54c4c73b4e3e01c996cfd6f1cfc7d179",
-    "/admin/application.css": "632eee0275dce8a8a21932a98837ff5e3e8be3236a23cd61f073562b7bc3047a",
-    "/admin/admin.mjs": "1ad9fd186e046d490572658b8e05ecc9f14f4d6ff4423e65f7f9ff8dbcec2232",
+    "/admin/site-operations/": "0b982512b45feb92b2a22a94dfdc05898757943c8e72ac859f8d333830140f7b",
+    "/admin/application.mjs": "86c1ec1f75bc00e31cbe9c71da4a59c51279f5e41e38be6ecd7e39421b908339",
+    "/admin/sales-content-presentation.mjs": "7785ada2c8564ee219408e761a286a15cd5ed052f649d03cf16d4702be3fe654",
     "/operations/snapshot.json": "fd5709af3c61bc8dfc945558ad805559845dacb9380f8451ce2cb8887d1d90b2",
     "/": "155da9be7cd7ae7740c70c6d3cea8245e9428b0891e86474da8a32293da3e28c",
     "/basket/": "7e9d0cf51d3c069aea68ca29cb96b23c5d6584619ee57782bbafa529f3d1b944",
     "/components/treble-bleeds/": "bb0b0aa51dc8dca6eb718448a9462b2657dc58299608f952df6fc153689dd5eb"
   },
   "releaseVerification": {
-    "/admin/site-operations/": "0b982512b45feb92b2a22a94dfdc05898757943c8e72ac859f8d333830140f7b",
-    "/commercial/offers-admin.mjs": "2e59743e72b011ccfba34a90a2bafe5ab1b32bafba5c1766b8181f7deed214c7",
-    "/commercial/offers.mjs": "78b62782acf82caedc84c0e8c50ce1a19583d6018df4da6ea94ce8201568beed",
+    "/admin/site-operations/": "13ef949a17dd595eef63221713d97956e3fff5bfa8e236a224d0810dc03fde17",
+    "/admin/application.mjs": "90e647e4bc9ec8c3bdfb13db4aadd162ff5505103f84ea8465ea514d275e99f9",
+    "/admin/sales-content-presentation.mjs": "e3a29bb52b92abbe7a1aab2cb76264b4782adc1f5069736b583a6340f4b70b47",
     "/commercial/offer-activation.mjs": "c6b6d2969895a827f5a783babb7d5ed23b17bb54f7d230f01b4771600ead6e7c",
     "/operations/snapshot.json": "fd5709af3c61bc8dfc945558ad805559845dacb9380f8451ce2cb8887d1d90b2",
     "/": "155da9be7cd7ae7740c70c6d3cea8245e9428b0891e86474da8a32293da3e28c",
     "/basket/": "7e9d0cf51d3c069aea68ca29cb96b23c5d6584619ee57782bbafa529f3d1b944",
     "/components/treble-bleeds/": "bb0b0aa51dc8dca6eb718448a9462b2657dc58299608f952df6fc153689dd5eb"
   },
-  "forgeManifestSHA256": "d8f9fee7da6db64f614105c841b535c40a8a7605c5384e07e0693f5fb330ec5d",
+  "forgeManifestSHA256": "4fdcc138989804265bc73a7a147645ae7be93b55c710cf3bffadc38d93ecb058",
   "financialPersistence": false,
   "activePromotions": false,
   "nativeAcceptance": {
-    "runId": 40501427082,
-    "executionSource": "af42ae3750eb7d6af2f9df91bfe35243fd30a863",
-    "scope": "Five native offer-studio journeys at 390/1440px with bundles, bounded references, permissions, keyboard, increased text and logout; ten isolation controls. 25 new deterministic groups, nine reference-boundary groups and focused DOM checks."
+    "runId": 40503826884,
+    "executionSource": "baa34384ab28bf2df7823712922af5317f4c0872",
+    "scope": "Two native navigation/visibility/state-retention journeys at 390/1440px, including increased text; ten isolation controls. Five Commerce native journeys, 25 pricing groups, nine read-boundary groups and DOM evidence reused by exact source hashes."
   },
   "changes": [
     {
-      "path": "admin/site-operations/index.html",
+      "path": "admin/application.mjs",
       "operation": "compiled-admin",
-      "source": "release-overlays/commerce62-C/admin/site-operations/index.html",
-      "beforeSHA256": "87ce6e1f13a5130fc8aa94569268076f54c4c73b4e3e01c996cfd6f1cfc7d179",
-      "afterSHA256": "0b982512b45feb92b2a22a94dfdc05898757943c8e72ac859f8d333830140f7b",
-      "bytes": 8730
+      "source": "release-overlays/commerce62-C_NAV/admin/application.mjs",
+      "beforeSHA256": "86c1ec1f75bc00e31cbe9c71da4a59c51279f5e41e38be6ecd7e39421b908339",
+      "afterSHA256": "90e647e4bc9ec8c3bdfb13db4aadd162ff5505103f84ea8465ea514d275e99f9",
+      "bytes": 12538
     },
     {
-      "path": "commercial/offers-admin.mjs",
+      "path": "admin/sales-content-presentation.mjs",
       "operation": "compiled-admin",
-      "source": "release-overlays/commerce62-C/commercial/offers-admin.mjs",
-      "beforeSHA256": null,
-      "afterSHA256": "2e59743e72b011ccfba34a90a2bafe5ab1b32bafba5c1766b8181f7deed214c7",
-      "bytes": 15856
-    },
-    {
-      "path": "commercial/offers.mjs",
-      "operation": "compiled-admin",
-      "source": "release-overlays/commerce62-C/commercial/offers.mjs",
-      "beforeSHA256": null,
-      "afterSHA256": "78b62782acf82caedc84c0e8c50ce1a19583d6018df4da6ea94ce8201568beed",
-      "bytes": 9577
-    },
-    {
-      "path": "commercial/offer-reference.mjs",
-      "operation": "compiled-admin",
-      "source": "release-overlays/commerce62-C/commercial/offer-reference.mjs",
-      "beforeSHA256": null,
-      "afterSHA256": "316f801ae07c0256f0a8d9af11ec8acbaad45f191edb128d483bd3cb6cb890f5",
-      "bytes": 3390
-    },
-    {
-      "path": "commercial/offer-activation.mjs",
-      "operation": "compiled-admin",
-      "source": "release-overlays/commerce62-C/commercial/offer-activation.mjs",
-      "beforeSHA256": null,
-      "afterSHA256": "c6b6d2969895a827f5a783babb7d5ed23b17bb54f7d230f01b4771600ead6e7c",
-      "bytes": 206
-    },
-    {
-      "path": "admin/application.css",
-      "operation": "compiled-admin",
-      "source": "release-overlays/commerce62-C/admin/application.css",
-      "beforeSHA256": "632eee0275dce8a8a21932a98837ff5e3e8be3236a23cd61f073562b7bc3047a",
-      "afterSHA256": "6d68b81c1987095272e9a0e9daffc478633111e6a554d8cc7c08a01ff69c05a3",
-      "bytes": 53302
+      "source": "release-overlays/commerce62-C_NAV/admin/sales-content-presentation.mjs",
+      "beforeSHA256": "7785ada2c8564ee219408e761a286a15cd5ed052f649d03cf16d4702be3fe654",
+      "afterSHA256": "e3a29bb52b92abbe7a1aab2cb76264b4782adc1f5069736b583a6340f4b70b47",
+      "bytes": 4477
     },
     {
       "path": "admin/admin-gate.mjs",
       "operation": "replace",
-      "beforeSHA256": "518da64ce6539d1cffca27b64a4f1339618f3896d83e90a1b5bad881db441224",
-      "afterSHA256": "87bf7725d52501e83cbf31de3fb537e9609abc670a05c46ab82fb10233416984",
+      "beforeSHA256": "87bf7725d52501e83cbf31de3fb537e9609abc670a05c46ab82fb10233416984",
+      "afterSHA256": "28a06ec11e5222c0ca484b8f299e172c09f1cb5ce98624270174b7ccee5e6413",
       "bytes": 8213,
       "replacements": [
         {
-          "before": "./application.mjs?build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "./application.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "./application.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "./application.mjs?build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         }
       ]
@@ -125,27 +93,13 @@
     {
       "path": "admin/admin.mjs",
       "operation": "replace",
-      "beforeSHA256": "1ad9fd186e046d490572658b8e05ecc9f14f4d6ff4423e65f7f9ff8dbcec2232",
-      "afterSHA256": "fd80ee9b2d1adea2dad0a27761be4ef3351aba7c80ccd915c09e962746e69dc7",
+      "beforeSHA256": "fd80ee9b2d1adea2dad0a27761be4ef3351aba7c80ccd915c09e962746e69dc7",
+      "afterSHA256": "a960bb6cd15dcfc75997e50fc1a3222f3d64f369ba6e3c85f0801595042e5c41",
       "bytes": 29494,
       "replacements": [
         {
-          "before": "./application.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "./application.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
-          "count": 1
-        }
-      ]
-    },
-    {
-      "path": "admin/application.mjs",
-      "operation": "replace",
-      "beforeSHA256": "9a276e4f22861421310e449abc539152e701f140ea5b32d409553f8e57e7ec84",
-      "afterSHA256": "86c1ec1f75bc00e31cbe9c71da4a59c51279f5e41e38be6ecd7e39421b908339",
-      "bytes": 12310,
-      "replacements": [
-        {
-          "before": "./application.css?build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "./application.css?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "./application.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "./application.mjs?build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         }
       ]
@@ -153,13 +107,13 @@
     {
       "path": "admin/catalogue-settings/index.html",
       "operation": "replace",
-      "beforeSHA256": "c040a3f5e4bd9a3230737f98e7f5f10d0cd1fcf9da845dafe048c11b6d08ce6a",
-      "afterSHA256": "a14a0930d488acdeb4cf7443650af68a38ce999e28fcb4166cb5e4c93bc07408",
+      "beforeSHA256": "a14a0930d488acdeb4cf7443650af68a38ce999e28fcb4166cb5e4c93bc07408",
+      "afterSHA256": "4f96f01a8087cac4c114f85b8ee54df84e279fd7da9bd8adad66bf96e8ccbf04",
       "bytes": 1094,
       "replacements": [
         {
-          "before": "/admin/admin-gate.mjs?v=p10g&build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "/admin/admin-gate.mjs?v=p10g&build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "/admin/admin-gate.mjs?v=p10g&build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "/admin/admin-gate.mjs?v=p10g&build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         }
       ]
@@ -167,13 +121,13 @@
     {
       "path": "admin/command/command01/view.mjs",
       "operation": "replace",
-      "beforeSHA256": "c65f85f80b3b422ea5d9671df58d87ffef66709ae438f48818e935991eea4ebc",
-      "afterSHA256": "91f83cb656975fe214f8451f8da15f92bc6cee8a615909731f9d0da733296420",
+      "beforeSHA256": "91f83cb656975fe214f8451f8da15f92bc6cee8a615909731f9d0da733296420",
+      "afterSHA256": "2a9d0563995d08d89e727920818ab7b94e2fb31827870faa81bb7760ed356246",
       "bytes": 14365,
       "replacements": [
         {
-          "before": "../../application.mjs?build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "../../application.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "../../application.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "../../application.mjs?build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         }
       ]
@@ -181,13 +135,13 @@
     {
       "path": "admin/command/command02/editor-view.mjs",
       "operation": "replace",
-      "beforeSHA256": "aa1f25ed3a58deabe7c992d69d610e624789066be3b20ec75b7f0ae31f44c8ee",
-      "afterSHA256": "29e99513bf0f7a659c587e8ffb66cd1f4ac9a2323b41f219c8a13ee518513ce1",
+      "beforeSHA256": "29e99513bf0f7a659c587e8ffb66cd1f4ac9a2323b41f219c8a13ee518513ce1",
+      "afterSHA256": "8347441297676bb55194e61f0a86718108b4f1c66102da6586808e403f8a09c6",
       "bytes": 14819,
       "replacements": [
         {
-          "before": "../../application.mjs?build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "../../application.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "../../application.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "../../application.mjs?build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         }
       ]
@@ -195,18 +149,18 @@
     {
       "path": "admin/command/entry.mjs",
       "operation": "replace",
-      "beforeSHA256": "00ef2aa32babbd28c73dda0d319be7653111115377ba89847138b28df446eb35",
-      "afterSHA256": "3adb1a167ea28407aa0564b763bdf58dd4ab1c81f735f18b46533a6661f6ebef",
+      "beforeSHA256": "3adb1a167ea28407aa0564b763bdf58dd4ab1c81f735f18b46533a6661f6ebef",
+      "afterSHA256": "f4aaaccc234f68128849c19f36db61ff4b7cfe7da19b666fd4264a8ce4ba2642",
       "bytes": 6574,
       "replacements": [
         {
-          "before": "./command01/view.mjs?build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "./command01/view.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "./command01/view.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "./command01/view.mjs?build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         },
         {
-          "before": "./command02/editor-view.mjs?build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "./command02/editor-view.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "./command02/editor-view.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "./command02/editor-view.mjs?build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         }
       ]
@@ -214,13 +168,13 @@
     {
       "path": "admin/conjure/index.html",
       "operation": "replace",
-      "beforeSHA256": "994fed190040db4088f4f7ff55e7af0adc1c6e0c5f8e281931616c97820e8746",
-      "afterSHA256": "6ef1b4792ae09c3a8ea44085df9f39234840c861ba73d9683c1f0bcd33b57ad6",
+      "beforeSHA256": "6ef1b4792ae09c3a8ea44085df9f39234840c861ba73d9683c1f0bcd33b57ad6",
+      "afterSHA256": "653dc690fac53b400d5d87553dfae0cebb1b890703d70af5778a795f43aa6d7d",
       "bytes": 3843,
       "replacements": [
         {
-          "before": "/admin/admin-gate.mjs?build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "/admin/admin-gate.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "/admin/admin-gate.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "/admin/admin-gate.mjs?build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         }
       ]
@@ -228,13 +182,13 @@
     {
       "path": "admin/email-preview/index.html",
       "operation": "replace",
-      "beforeSHA256": "90243a3cc68c9380fc26c471494f60f373beef194733fa7fe177fb778bf03b89",
-      "afterSHA256": "3790b334ae36c60cebc6cbc3cf665eee8a71b73219652f52b63df75e4520c064",
+      "beforeSHA256": "3790b334ae36c60cebc6cbc3cf665eee8a71b73219652f52b63df75e4520c064",
+      "afterSHA256": "60ca6d4f94d23c6c2154ada701bb9660c1d2e116a773bd48a93ada75acdf79e4",
       "bytes": 2648,
       "replacements": [
         {
-          "before": "../admin-gate.mjs?v=p08b4&build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "../admin-gate.mjs?v=p08b4&build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "../admin-gate.mjs?v=p08b4&build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "../admin-gate.mjs?v=p08b4&build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         }
       ]
@@ -242,13 +196,13 @@
     {
       "path": "admin/email-templates/index.html",
       "operation": "replace",
-      "beforeSHA256": "7aa94ab346f6e0d600b1b6d9018b038b53c78656ca1881fae000919eb01314d2",
-      "afterSHA256": "f559c94938e57b2f6a442867a25760d935f81998f09bbf253f144d7f1ca2b1db",
+      "beforeSHA256": "f559c94938e57b2f6a442867a25760d935f81998f09bbf253f144d7f1ca2b1db",
+      "afterSHA256": "0877e8fdd42ed2920e38d56bc2786e468612a77fb42671d7e23c03157aaab6e2",
       "bytes": 5054,
       "replacements": [
         {
-          "before": "/admin/admin-gate.mjs?build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "/admin/admin-gate.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "/admin/admin-gate.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "/admin/admin-gate.mjs?build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         }
       ]
@@ -256,13 +210,13 @@
     {
       "path": "admin/hub-cms/admin.mjs",
       "operation": "replace",
-      "beforeSHA256": "504eec93decccfefafd364e7ba6039cd4bd1d453e78cb6f2576d5273c1455b0c",
-      "afterSHA256": "9b183bea810010f8c778acfe3c7429a77d8e4fbdda96997798b9b8df277f07cd",
+      "beforeSHA256": "9b183bea810010f8c778acfe3c7429a77d8e4fbdda96997798b9b8df277f07cd",
+      "afterSHA256": "31e473561898c8439319d0c903eefc0f73a26b91060b2fe3c93d8287465f447d",
       "bytes": 21538,
       "replacements": [
         {
-          "before": "../application.mjs?build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "../application.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "../application.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "../application.mjs?build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         }
       ]
@@ -270,18 +224,18 @@
     {
       "path": "admin/hub-cms/index.html",
       "operation": "replace",
-      "beforeSHA256": "661c6f7b04696788e6d4e9f67adc8a9487ed711fa43c66b810a2735615c7d2e4",
-      "afterSHA256": "31ef86b04ac9265138204fd0192f5cafea161186a43e2e2ef71d77cdaf7f0d7d",
+      "beforeSHA256": "31ef86b04ac9265138204fd0192f5cafea161186a43e2e2ef71d77cdaf7f0d7d",
+      "afterSHA256": "48407fd6a4f68a025738e1df547ebc9a586b827f459b0c888045acec3952cc6c",
       "bytes": 9148,
       "replacements": [
         {
-          "before": "/admin/admin-gate.mjs?build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "/admin/admin-gate.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "/admin/admin-gate.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "/admin/admin-gate.mjs?build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         },
         {
-          "before": "./admin.mjs?build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "./admin.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "./admin.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "./admin.mjs?build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         }
       ]
@@ -289,13 +243,13 @@
     {
       "path": "admin/hub-media/index.html",
       "operation": "replace",
-      "beforeSHA256": "15276bdcc080cd9d2bd4d214e67b5e4bbbabe485a59c3733cf808c858584741b",
-      "afterSHA256": "f430181954f64a8a19c48d5d48c6df03460e7fb80921c432e2e6c44498ec73ff",
+      "beforeSHA256": "f430181954f64a8a19c48d5d48c6df03460e7fb80921c432e2e6c44498ec73ff",
+      "afterSHA256": "cbce7fbe0146895d7f3fa2514cd2fd843a44b574c018ba802a55a380db4ee633",
       "bytes": 2376,
       "replacements": [
         {
-          "before": "/admin/admin-gate.mjs?build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "/admin/admin-gate.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "/admin/admin-gate.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "/admin/admin-gate.mjs?build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         }
       ]
@@ -303,18 +257,18 @@
     {
       "path": "admin/index.html",
       "operation": "replace",
-      "beforeSHA256": "2108aadda1e4ccd55fc5c566396bdabe873bab9c3358397829417f556b425e9c",
-      "afterSHA256": "338e68c18c0ff06bf2bc50e18e8a9c52a8fb0d62c326577c75ade025c8471e4c",
+      "beforeSHA256": "338e68c18c0ff06bf2bc50e18e8a9c52a8fb0d62c326577c75ade025c8471e4c",
+      "afterSHA256": "5337782f725c8e385b22d2b7f955e0db019fdf7b8a1da0336017267391fe7178",
       "bytes": 15314,
       "replacements": [
         {
-          "before": "../admin/admin-gate.mjs?v=p10hi&build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "../admin/admin-gate.mjs?v=p10hi&build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "../admin/admin-gate.mjs?v=p10hi&build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "../admin/admin-gate.mjs?v=p10hi&build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         },
         {
-          "before": "./admin.mjs?v=p11ef&build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "./admin.mjs?v=p11ef&build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "./admin.mjs?v=p11ef&build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "./admin.mjs?v=p11ef&build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         }
       ]
@@ -322,18 +276,18 @@
     {
       "path": "admin/orders/app.mjs",
       "operation": "replace",
-      "beforeSHA256": "ff5fdbdb4f4281b744601a8dcb1ef9a5b35b9b6cf1ea04c4e1b938f1f59cbdad",
-      "afterSHA256": "2f05d51b617df3a3ac4fa89b58099c90b3c84553b542448f281388ab8467556c",
+      "beforeSHA256": "2f05d51b617df3a3ac4fa89b58099c90b3c84553b542448f281388ab8467556c",
+      "afterSHA256": "336f6041c7819e75f84dd12e6a6b6770a089c8983c21bbd1d94834db87dec5b2",
       "bytes": 16165,
       "replacements": [
         {
-          "before": "./detail-presentation.mjs?build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "./detail-presentation.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "./detail-presentation.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "./detail-presentation.mjs?build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         },
         {
-          "before": "../application.mjs?build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "../application.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "../application.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "../application.mjs?build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         }
       ]
@@ -341,13 +295,13 @@
     {
       "path": "admin/orders/build-sheet/index.html",
       "operation": "replace",
-      "beforeSHA256": "582449114305b3999d104c979d972e37c06554217ae189c6032331088dff601c",
-      "afterSHA256": "effe0f16834f1b40c70a0c3ec7a63a9f6f69b661b315702769913b0814c47c51",
+      "beforeSHA256": "effe0f16834f1b40c70a0c3ec7a63a9f6f69b661b315702769913b0814c47c51",
+      "afterSHA256": "9753bf48a2f085a1473b9160c901f0066ea6a2503ed2f8945daf8f7229a9f7fd",
       "bytes": 5544,
       "replacements": [
         {
-          "before": "../../../admin/admin-gate.mjs?build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "../../../admin/admin-gate.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "../../../admin/admin-gate.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "../../../admin/admin-gate.mjs?build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         }
       ]
@@ -355,13 +309,13 @@
     {
       "path": "admin/orders/detail-presentation.mjs",
       "operation": "replace",
-      "beforeSHA256": "2c01657135962df21175fb56ecb91e0d9c385d5356063b15f40b26a6d0a328c1",
-      "afterSHA256": "95d5b9d96fd6a1229deca8294cb20aa7dafa9fbedcb5c8277d89446a5c9d3803",
+      "beforeSHA256": "95d5b9d96fd6a1229deca8294cb20aa7dafa9fbedcb5c8277d89446a5c9d3803",
+      "afterSHA256": "2441a74afb2de1b3daabbd16d7070254d37c89701792053ef745b5c35db887f3",
       "bytes": 2225,
       "replacements": [
         {
-          "before": "../application.mjs?build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "../application.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "../application.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "../application.mjs?build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         }
       ]
@@ -369,18 +323,18 @@
     {
       "path": "admin/orders/index.html",
       "operation": "replace",
-      "beforeSHA256": "008158e4ce113661d90902a53bcbbcde4e4034c155264935b0445620de402733",
-      "afterSHA256": "eb223a5d38392545a573047ad7a1cf6143479811e4600453826d8c2a258510a2",
+      "beforeSHA256": "eb223a5d38392545a573047ad7a1cf6143479811e4600453826d8c2a258510a2",
+      "afterSHA256": "cd2253010a3145075a312ef542a35ecb408f27879b95c1f0ad44076a5050bbb0",
       "bytes": 8101,
       "replacements": [
         {
-          "before": "../../admin/admin-gate.mjs?v=customer-aftercare-giga-v1&build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "../../admin/admin-gate.mjs?v=customer-aftercare-giga-v1&build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "../../admin/admin-gate.mjs?v=customer-aftercare-giga-v1&build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "../../admin/admin-gate.mjs?v=customer-aftercare-giga-v1&build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         },
         {
-          "before": "./app.mjs?v=customer-aftercare-giga-v1&build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "./app.mjs?v=customer-aftercare-giga-v1&build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "./app.mjs?v=customer-aftercare-giga-v1&build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "./app.mjs?v=customer-aftercare-giga-v1&build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         }
       ]
@@ -388,13 +342,13 @@
     {
       "path": "admin/orders/invoice/index.html",
       "operation": "replace",
-      "beforeSHA256": "6bb2d26587c38782980672aba08f32843f636e3372ed6504d7bc01c9b5241c8a",
-      "afterSHA256": "507ed924c6ef309742725cc9bfaec6b300bd5da112e797496d4139513f306d37",
+      "beforeSHA256": "507ed924c6ef309742725cc9bfaec6b300bd5da112e797496d4139513f306d37",
+      "afterSHA256": "1795733eedf6183f1deeed8d568941b894e37073cb167c7139b681944e8bb457",
       "bytes": 1000,
       "replacements": [
         {
-          "before": "../../admin-gate.mjs?v=external-v1&build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "../../admin-gate.mjs?v=external-v1&build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "../../admin-gate.mjs?v=external-v1&build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "../../admin-gate.mjs?v=external-v1&build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         }
       ]
@@ -402,18 +356,18 @@
     {
       "path": "admin/overview/index.html",
       "operation": "replace",
-      "beforeSHA256": "d17f987271b58b7b431abc4f3efc7af7a0ceef9884efe0db62c0ad570d161e66",
-      "afterSHA256": "66a7e80aeb597554dc1f40a19650f3320f3f6a01e30a98cde675537c4b54cf31",
+      "beforeSHA256": "66a7e80aeb597554dc1f40a19650f3320f3f6a01e30a98cde675537c4b54cf31",
+      "afterSHA256": "32120efd64f1161be0a6d6652fc0e61eba18f06cb9c1447c9699d3103400e16d",
       "bytes": 937,
       "replacements": [
         {
-          "before": "/admin/admin-gate.mjs?build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "/admin/admin-gate.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "/admin/admin-gate.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "/admin/admin-gate.mjs?build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         },
         {
-          "before": "../overview.mjs?build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "../overview.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "../overview.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "../overview.mjs?build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         }
       ]
@@ -421,13 +375,37 @@
     {
       "path": "admin/overview.mjs",
       "operation": "replace",
-      "beforeSHA256": "2eaa4ea30264e637340ea70691c8953e890f4778b70f72c9fbc80aaf3b409a26",
-      "afterSHA256": "33b66b63629639ccc443df363bb7615fd23b99d9df2c1a17332940035fdc7f87",
+      "beforeSHA256": "33b66b63629639ccc443df363bb7615fd23b99d9df2c1a17332940035fdc7f87",
+      "afterSHA256": "8954c8d780d523553dd2ff1b6b55d9ae77d3cb06ea9a23bdad17a93bbdfc8236",
       "bytes": 9842,
       "replacements": [
         {
-          "before": "./application.mjs?build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "./application.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "./application.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "./application.mjs?build=0f80248903e246b9e7365853370a57284218b20d",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "admin/site-operations/index.html",
+      "operation": "replace",
+      "beforeSHA256": "0b982512b45feb92b2a22a94dfdc05898757943c8e72ac859f8d333830140f7b",
+      "afterSHA256": "13ef949a17dd595eef63221713d97956e3fff5bfa8e236a224d0810dc03fde17",
+      "bytes": 8730,
+      "replacements": [
+        {
+          "before": "/admin/admin-gate.mjs?v=operations-v1&build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
+          "after": "/admin/admin-gate.mjs?v=operations-v1&build=0f80248903e246b9e7365853370a57284218b20d",
+          "count": 1
+        },
+        {
+          "before": "./operations.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
+          "after": "./operations.mjs?build=0f80248903e246b9e7365853370a57284218b20d",
+          "count": 1
+        },
+        {
+          "before": "../../commercial/admin.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
+          "after": "../../commercial/admin.mjs?build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         }
       ]
@@ -435,13 +413,13 @@
     {
       "path": "admin/site-operations/operations.mjs",
       "operation": "replace",
-      "beforeSHA256": "718e8cb7e67b11b8468599261c388b3403bbc9115268c4b8fa3ce3f3dc20dff9",
-      "afterSHA256": "8195e336905fa03013a174447df20b82b1c54966a7bb0a4b929e367cdd6e42e5",
+      "beforeSHA256": "8195e336905fa03013a174447df20b82b1c54966a7bb0a4b929e367cdd6e42e5",
+      "afterSHA256": "e4d1ad43bc3ec0f8e93214c4bea6ef3722b3201500ce9d4bcc323a5e69d3f6da",
       "bytes": 10691,
       "replacements": [
         {
-          "before": "../application.mjs?build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "../application.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "../application.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "../application.mjs?build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         }
       ]
@@ -449,13 +427,13 @@
     {
       "path": "admin/wiring-kit-master/index.html",
       "operation": "replace",
-      "beforeSHA256": "43d9dc5b64b5d2f2bfb688d8ca6da21eb536dbc434e7738dacb89f633bb5e23b",
-      "afterSHA256": "545f3f0a7e8d34eb31d1e961426689b49b165ed69f86e865772b30c296f5e8a3",
+      "beforeSHA256": "545f3f0a7e8d34eb31d1e961426689b49b165ed69f86e865772b30c296f5e8a3",
+      "afterSHA256": "0d9673e64d40916edd10dbfc09e75e9b207f0cd1b33cb876f7cbbb1897748aea",
       "bytes": 7821,
       "replacements": [
         {
-          "before": "../../admin/admin-gate.mjs?build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "../../admin/admin-gate.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "../../admin/admin-gate.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "../../admin/admin-gate.mjs?build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         }
       ]
@@ -463,13 +441,13 @@
     {
       "path": "commercial/admin.mjs",
       "operation": "replace",
-      "beforeSHA256": "e6f651adf208a87d2f0a886e08dcd92aedec2bd53d66cc84d202847dd0b1e9b7",
-      "afterSHA256": "b917bd881743c34156ab84cc071acea2ba3a3454bc3ce69fa478de09b63ad659",
+      "beforeSHA256": "b917bd881743c34156ab84cc071acea2ba3a3454bc3ce69fa478de09b63ad659",
+      "afterSHA256": "05f37fdd68eda010b3b3490223e7891a2947ec737ca7d9e0436ce2bc628d57f6",
       "bytes": 4954,
       "replacements": [
         {
-          "before": "../admin/application.mjs?build=d2c652e6a46e602b3505602e923066b2e0e682c4",
-          "after": "../admin/application.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "before": "../admin/application.mjs?build=af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+          "after": "../admin/application.mjs?build=0f80248903e246b9e7365853370a57284218b20d",
           "count": 1
         }
       ]

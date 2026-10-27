@@ -1,0 +1,50 @@
+{
+  "status": "NATIVE_ACCEPTED_RELEASE_PREPARED",
+  "applicationSource": "0f80248903e246b9e7365853370a57284218b20d",
+  "executionSource": "baa34384ab28bf2df7823712922af5317f4c0872",
+  "reason": "Live verification showed the existing Operations presentation filter removed the new local Commerce link and left the studio outside its workspace visibility rules.",
+  "changes": [
+    "Add Offers & bundles to the existing authenticated Admin navigation.",
+    "Map the existing #commerce-offers deep link and page title.",
+    "Include the studio in section visibility routing; retain its controller DOM/drafts across News and commercial navigation."
+  ],
+  "native": {
+    "run": 40503826884,
+    "passed": 2,
+    "total": 2,
+    "isolation": 10,
+    "artifact": 12733598590,
+    "artifactSHA256": "a2358e7a41e57b3d806f4120fbb56bacf07d99944ece6bc5d6c2c4fa508c83de",
+    "originalReadBack": true,
+    "expiresAt": "2026-11-10T12:27:17Z",
+    "viewports": [
+      390,
+      1440
+    ],
+    "increasedText": "200%"
+  },
+  "priorEvidenceReused": {
+    "source": "af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+    "run": 40501427082,
+    "nativeGroups": 5,
+    "pricingGroups": 25,
+    "referenceGroups": 9,
+    "DOM": "PASS",
+    "exactHashes": "tests/command62/commerce-reuse.json",
+    "unchangedSuitesRerun": false
+  },
+  "nativeFixtureOrderingCorrection": {
+    "run": 40503434585,
+    "result": "0/2; no application errors or external requests; ten isolation controls passed.",
+    "cause": "Visibility was asserted before the native hashchange handlers settled. The test now waits for the destination workspace state, retaining the original visibility assertions.",
+    "applicationChangeForTestCorrection": false
+  },
+  "publicationBoundaryChecks": 14,
+  "candidateDigest": "377d9f3e6345d2f8f6f40fcfc7dc576b359f4f11078537138b1f68f0eda0b1fe",
+  "rollbackDigest": "b5c09907fc68d98cbc58b0f663fe8b7abc9e52260737cba8130dd2a5d30b02f1",
+  "changedFiles": 26,
+  "commercialCalculationAndReaderBytesUnchanged": true,
+  "activePromotions": false,
+  "financialSaving": false,
+  "newStockWriters": false
+}
