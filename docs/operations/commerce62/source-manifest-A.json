@@ -1,0 +1,65 @@
+{
+  "kind": "COMMERCE_FORGE_V1",
+  "phase": "A",
+  "sourceCommit": "6eadee6fe2a03db1fc77adce4421625603894f75",
+  "baseSourceCommit": "84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
+  "unchangedRepositoryRevision": "84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
+  "entries": [
+    {
+      "path": "admin/application.css",
+      "beforeSHA256": "4971d40755fea2dc03c21b6e00cc7a357b960c1a875dcf428c831efca627db45",
+      "afterSHA256": "1b1214081fc905f9eaa7ff8a117689d78b867b589701a460d39968054560e18f",
+      "bytes": 50494,
+      "rawSourceSHA256": "1b1214081fc905f9eaa7ff8a117689d78b867b589701a460d39968054560e18f"
+    },
+    {
+      "path": "admin/application.mjs",
+      "beforeSHA256": "46dba1e76b047af7b3eb52c61ee8896e325dadf0b250013b282bb4a5e592c9fa",
+      "afterSHA256": "285d2431c2d38a5b665f25d9e09213e628d6aab3dd6627e82435496f896a3b29",
+      "bytes": 12310,
+      "rawSourceSHA256": "34914efee63f7263990e39692562b3660e0c80316ab7c2142c9048b093548730"
+    },
+    {
+      "path": "admin/orders/app.mjs",
+      "beforeSHA256": "0da7b3b254698e3d8cd32e5e7f9402d9a56d6c94f6c074c685bef2ebe15842da",
+      "afterSHA256": "145148bff71edbb0cbcadc80fa5ae935f19b448bca236a07ef8b2d0db3439374",
+      "bytes": 16165,
+      "rawSourceSHA256": "c89332f279eddd5f2621406c17462c4c399c98d97223f4ac4247d1ebe3523013"
+    },
+    {
+      "path": "admin/orders/external-order.mjs",
+      "beforeSHA256": "3925de6eb28c97f4b1ea3bfdf6f443672f9aea88af0f5021729ef05774a3d217",
+      "afterSHA256": "c7375788ae70f7c9f2e6632f2e167b15c4df7634802f08c0c212472867df4b76",
+      "bytes": 6734,
+      "rawSourceSHA256": "b16e296a0feff096605bb0762ed5e86994ecfeb7ad3635758b9d125e59a947db"
+    },
+    {
+      "path": "admin/orders/economics.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "a086dcef8f33b14d880c8accc91f2f5bfeabf463a3241237a7ac49392ebbba3a",
+      "bytes": 18976,
+      "rawSourceSHA256": "a086dcef8f33b14d880c8accc91f2f5bfeabf463a3241237a7ac49392ebbba3a"
+    },
+    {
+      "path": "admin/orders/finance-ui.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "88232161b1dac0ce42b4e435d532eafb2f61dbe865b173459d128461feae7d92",
+      "bytes": 29827,
+      "rawSourceSHA256": "bca95fe05b62368ea4e25c92fbc2a7827e2a21c40573659c418c5c04f9d80699"
+    },
+    {
+      "path": "admin/orders/finance-activation.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "5b6e51f669796ae9de650bc5f363bedb71973e0daea16911bd13981207e3b08e",
+      "bytes": 239,
+      "rawSourceSHA256": "5b6e51f669796ae9de650bc5f363bedb71973e0daea16911bd13981207e3b08e"
+    },
+    {
+      "path": "admin/orders/cost-reference.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "c8e119a1ac551ee4d9a9443bc2f6528c46340ce9085e4f3a00ac043b22749b91",
+      "bytes": 2876,
+      "rawSourceSHA256": "84df39006fd4781bfb42839e736b0ec7acb3ab2e244c171733a00c970d61fff1"
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "status": "NATIVE_ACCEPTED_RELEASE_PREPARED",
+  "authority": "AUTHORISATION_62_DIRECT_OWNER_CONFIRMATION",
+  "applicationSource": "6eadee6fe2a03db1fc77adce4421625603894f75",
+  "native": {
+    "run": 40496997757,
+    "passed": 5,
+    "total": 5,
+    "reused": 2,
+    "reuseRun": 40496214554,
+    "browser": "155.0.8059.39",
+    "isolationControls": 10,
+    "externalRequests": 0,
+    "artifact": 12731810089,
+    "artifactSHA256": "41a6f3a8b88c155689956e6ddaf018c634dff3f7368d3621aeea4191cb7ef1d8",
+    "expiresAt": "2026-11-10T11:33:36Z",
+    "originalContentsReadBack": true,
+    "screenshots": 2
+  },
+  "logic": {
+    "acceptedGroupsReused": 35,
+    "suiteRerun": false,
+    "engineSHA256": "a086dcef8f33b14d880c8accc91f2f5bfeabf463a3241237a7ac49392ebbba3a",
+    "testSHA256": "6aec303848dcfdbe53fa4bc8af03f85125b765ffbd838d808622145d0b208668"
+  },
+  "release": {
+    "baseSource": "dd05540bff85677ee9f54581b18daee26e4c5b06",
+    "baseArtifact": 12725100758,
+    "candidateDigest": "283edca9da338bd4fbc7ab72e7908d0751f31596790340da70a26963984c7ae3",
+    "rollbackDigest": "e0b509a1b0af2bfe0f3ef8ddd904725d2897ad9ad9e24d5201e54282b3ece593",
+    "changedFiles": 31,
+    "unchangedBaselineFiles": 419,
+    "candidateFiles": 450,
+    "allUnrelatedPublicFilesIdentical": true
+  },
+  "financialSaving": false,
+  "financialDatabaseMutations": false,
+  "stockAdjustments": false,
+  "activePromotions": false,
+  "productionBusinessRecordTests": false,
+  "limitations": [
+    "Financial amounts are unsaved previews; historical costs remain unknown without explicit available cost references.",
+    "Native journeys use fictional records and sessions. Authenticated production UI is checked separately after publication."
+  ],
+  "fixtureCorrections": [
+    {
+      "run": 40495656668,
+      "issue": "Fixture lacked the existing required AssemblyRepository.get method. No application journey ran."
+    },
+    {
+      "run": 40496214554,
+      "issue": "Selectors matched hidden report totals; wrapped report selects lacked explicit accessible names. Two unaffected journeys passed and were reused."
+    }
+  ],
+  "publicationBoundaryChecks": 13
+}
