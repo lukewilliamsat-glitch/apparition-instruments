@@ -48,12 +48,14 @@
     "independentServedFiles": 8
   },
   "limits": [
-    "No authenticated live business acceptance claimed.",
-    "No new provider calls, polling or business mutations.",
-    "Advanced COMMAND adapter and IRONCLAD remain disabled."
+    "Releases A/B add no application provider calls or polling. Existing bounded publication Operations guards were reused.",
+    "No real stock, product, order, payment or customer communication operations were performed.",
+    "Advanced COMMAND catalogue adapter and IRONCLAD remain disabled.",
+    "Authenticated production business journeys remain unverified; accepted fixtures used fictional sessions.",
+    "The current public storefront, authoritative OPEN state, News/closure announcement and Triple Strike payload were preserved."
   ],
   "releaseB": {
-    "status": "VERIFIED_CANDIDATE",
+    "status": "LIVE_VERIFIED",
     "source": "91a2512a0eacd27f2dc444add49eeafa280eeef3",
     "nativeRun": 40484108038,
     "nativeArtifact": 12723868202,
@@ -85,6 +87,46 @@
     "stockSaveDeleteHandlers": "Byte-identical to accepted current Admin",
     "newProviderRequests": 0,
     "limits": "Fictional sessions and records. Existing authenticated production business journeys not exercised.",
-    "prepublicationCorrection": "Scoped override for demonstrated legacy #table-body action stacking; desktop alignment assertion added."
+    "prepublicationCorrection": "Scoped override for demonstrated legacy #table-body action stacking; desktop alignment assertion added.",
+    "productionCommit": "dd05540bff85677ee9f54581b18daee26e4c5b06",
+    "deploymentRun": 40484816265,
+    "artifact": 12725100758,
+    "rollbackArtifact": 12724861237,
+    "candidateDigest": "e0b509a1b0af2bfe0f3ef8ddd904725d2897ad9ad9e24d5201e54282b3ece593",
+    "rollbackDigest": "d935573cf69578612cce0bd029b7e3be66d0cdcd9520125614c7e3e23fd065a4",
+    "independentServedFiles": 8,
+    "payloadArtifactSHA256": "a98c43c9341b836bcb8e39c20debdedc213272304ff2346431498fd8b46abb28",
+    "tarSHA256": "7c7e0c2100228fe6238ab548486c76fb7e0ad117b4abefa2bafa876aba59dc69",
+    "rollbackTarSHA256": "deccb6634ba28dd578b41f0e44e94d5e3dcb78ef2fb7772c1b1648240e7d1d78",
+    "rollbackArtifactSHA256": "35634fae264bdfbf9cd949136913298bf88923ea9e5bb9602ec02601954f3bf9",
+    "operations": {
+      "bytes": 437,
+      "mutations": 0,
+      "observedAt": "2026-10-27T09:59:04.898597+00:00",
+      "pause_from": null,
+      "requests": 1,
+      "resume_at": null,
+      "sha256": "2008f0fc9f25cca48823415cf71b38bdc62c62cd9db4223960e70c5a0660995f",
+      "state": "OPEN",
+      "updated_at": "2026-10-26T11:58:26.803364+00:00"
+    },
+    "retainedArtifactExpiry": "2026-11-10",
+    "rollbackIndependentReadBack": "Verified complete inventory by publication runner before deployment; receipt independently downloaded and verified.",
+    "rollbackUsed": false
+  },
+  "financialWorkstream": {
+    "status": "PUBLICATION_REJECTED_BY_AUTOMATIC_REVIEW",
+    "productionDeployed": false,
+    "engineeringCommitCreated": false,
+    "nativeAcceptance": "Not started: source publication was rejected.",
+    "localChecks": [
+      "35 deterministic calculation groups",
+      "Targeted financial UI/unknown-data/provenance checks",
+      "Bounded private cost-reader HTTP fixtures",
+      "Existing external-order create/detail compatibility",
+      "Existing external-order metadata-edit/notification safeguards"
+    ],
+    "productionFinancialPersistence": "Not enabled; no financial records written",
+    "blocker": "Automatic review classified marketplace economics/profitability source as outside the approved scope. Explicit owner confirmation is required to resolve this publication boundary."
   }
 }
