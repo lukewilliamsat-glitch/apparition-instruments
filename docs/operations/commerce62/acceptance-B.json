@@ -1,5 +1,5 @@
 {
-  "status": "NATIVE_ACCEPTED_RELEASE_PREPARED",
+  "status": "LIVE_VERIFIED",
   "applicationSource": "d2c652e6a46e602b3505602e923066b2e0e682c4",
   "observations": {
     "existingDeleteConfirmationOpened": true,
@@ -36,5 +36,16 @@
   "limitations": [
     "Referenced manufacturers are intentionally blocked until an Admin explicitly reassigns their references.",
     "Real deletion was not exercised against production records."
-  ]
+  ],
+  "publication": {
+    "source": "572d2cf39484ee5f0bca953765565ae5dd87aebb",
+    "run": 40499356777,
+    "pagesArtifact": 12731918101,
+    "rollbackArtifact": 12732162643,
+    "receiptArtifact": 12732410188,
+    "completePayloadReadBack": true,
+    "liveStaticFiles": 8,
+    "operations": "OPEN",
+    "authenticatedReferenceInspection": "TheMoist Men displays its blocking reference and existing editor link. No deletion/reassignment performed."
+  }
 }

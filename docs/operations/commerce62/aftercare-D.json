@@ -1,0 +1,26 @@
+{
+  "status": "AUTOMATED_SENDING_BLOCKED_EXISTING_MANUAL_PATH_PRESERVED",
+  "liveCustomerMessagesSent": 0,
+  "implementationChanged": false,
+  "existingSupportedRoute": "Copy the published order-support draft into the original eBay order conversation, then explicitly mark handled only after actual sending. Copying alone does not mark delivery or completion.",
+  "exactBlocker": "Current aftercare_state server policy only selects email for WEBSITE/DIRECT. EBAY is routed to manual and its customer email is stripped. The prepared send handler rejects confirm-aftercare unless context.route is email. No authorised order-associated eBay transport is present in the current application.",
+  "requiredSeparatePrivilegedChange": "A verified order-associated marketplace messaging transport or permitted buyer alias route, followed by an exact server policy/transport change with preview binding, idempotency and attempt/outcome auditing. A published template alone does not authorise a transport.",
+  "sourceEvidence": [
+    {
+      "path": "supabase/migrations/20261008143829_customer_aftercare_giga_v1.sql",
+      "contract": "aftercare_state: WEBSITE/DIRECT email eligibility; manual EBAY route, recipient removal, order-support-v1/manual-ebay-v1 policy."
+    },
+    {
+      "path": "supabase/functions/transactional-email/prepared.ts",
+      "contract": "confirm-aftercare rejects a non-email route before claim or SMTP send."
+    },
+    {
+      "path": "dist/admin/orders/email-review.mjs",
+      "contract": "Manual route hides email confirmation and provides truthful copy feedback."
+    },
+    {
+      "path": "dist/admin/orders/customer-aftercare.mjs",
+      "contract": "External handled action requires reason and explicit confirmation; records external handling, not provider delivery."
+    }
+  ]
+}

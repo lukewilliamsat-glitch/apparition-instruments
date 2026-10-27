@@ -30,6 +30,23 @@
 [data-admin-app] .catalogue-option-section td>button{display:block;margin-top:8px}
 [data-admin-app] .catalogue-dependency-notice{border:1px solid var(--admin-brass,#b49b66);border-radius:6px;padding:20px;margin:16px 0;background:#22211d;overflow-wrap:anywhere}
 [data-admin-app] .catalogue-dependency-notice a{display:inline-block;margin:8px 0 12px 16px}
+[data-admin-app] [data-offer-studio]{min-width:0;scroll-margin-top:90px}
+[data-admin-app] [data-offer-studio] .offer-panel{background:#1a1c1f;border:1px solid #383a3d;border-radius:7px;padding:22px;margin:18px 0;min-width:0}
+[data-admin-app] [data-offer-studio] :is(.offer-grid,.offer-workspaces){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;min-width:0}
+[data-admin-app] [data-offer-studio] .offer-workspaces{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);align-items:start}
+[data-admin-app] [data-offer-studio] label{display:grid;gap:8px;min-width:0;font-size:.9rem}
+[data-admin-app] [data-offer-studio] :is(input,select){box-sizing:border-box;min-width:0;max-width:100%;width:100%;min-height:44px;border:1px solid #66635d;background:#121417;color:#f0e9dc;padding:10px;font:inherit}
+[data-admin-app] [data-offer-studio] .offer-check{display:flex;align-items:center;gap:12px}
+[data-admin-app] [data-offer-studio] input[type=checkbox]{width:22px;min-height:22px;flex:0 0 22px}
+[data-admin-app] [data-offer-studio] fieldset{border:0;padding:0;margin:0;min-width:0}
+[data-admin-app] [data-offer-studio] .offer-actions{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
+[data-admin-app] [data-offer-studio] :is(.offer-state,.offer-notice){border-left:2px solid #b49b66;padding:14px;background:#27251f;line-height:1.6}
+[data-admin-app] [data-offer-studio] :is(.offer-help,.offer-draft p){color:#b7bdc5;font-size:.875rem;line-height:1.6}
+[data-admin-app] [data-offer-studio] :is(.offer-draft,.offer-bundle-row,.offer-basket-line){border-top:1px solid #44464a;padding:16px 0;overflow-wrap:anywhere}
+[data-admin-app] [data-offer-studio] .offer-bundle-row{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px}
+[data-admin-app] [data-offer-studio] .offer-quote dl>div{display:flex;justify-content:space-between;gap:16px;border-bottom:1px solid #44464a;padding:14px 0}
+[data-admin-app] [data-offer-studio] .offer-quote dd{margin:0;font-variant-numeric:tabular-nums}
+@media(max-width:900px){[data-admin-app] [data-offer-studio] :is(.offer-workspaces,.offer-grid,.offer-bundle-row){grid-template-columns:minmax(0,1fr)}[data-admin-app] [data-offer-studio] .offer-panel{padding:16px}[data-admin-app] [data-offer-studio] .offer-quote dl>div{flex-wrap:wrap}}
 [data-admin-app] table{font-size:13px;min-width:720px;width:100%;border-collapse:collapse;color:var(--admin-text)}
 [data-admin-app] th{background:#202520;color:#d2c5a6;font:500 11px/1.5 Inter,sans-serif;text-align:left;letter-spacing:.04em;text-transform:uppercase;position:sticky;top:0;padding:14px 16px}
 [data-admin-app] td{padding:13px 16px;border-top:1px solid var(--admin-line);line-height:1.5}

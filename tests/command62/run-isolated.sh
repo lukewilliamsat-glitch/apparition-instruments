@@ -18,6 +18,11 @@ if [ "$phase" = A ]; then
 elif [ "$phase" = B ]; then
  run_isolated tests/command62/manufacturers.mjs > "$output/manufacturer-logic.txt"
  run_isolated tests/command62/browser.mjs "$output" "$browser" "$controller" "$commit"
+elif [ "$phase" = C ]; then
+ run_isolated tests/command62/offers.mjs > "$output/offer-pricing.txt"
+ run_isolated tests/command62/offer-reference.mjs > "$output/offer-reference.txt"
+ run_isolated tests/command62/offer-ui.mjs > "$output/offer-ui.txt"
+ run_isolated tests/command62/browser.mjs "$output" "$browser" "$controller" "$commit"
 else
  echo 'Unknown isolated acceptance phase' >&2
  exit 1

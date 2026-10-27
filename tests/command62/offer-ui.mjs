@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {Window} from 'happy-dom';
+import {mountOfferStudio} from '../../dist/commercial/offers-admin.mjs';
+const w=new Window({url:'https://fixture.invalid/admin/site-operations/',settings:{disableCSSFileLoading:true,disableJavaScriptEvaluation:true,disableJavaScriptFileLoading:true}}),d=w.document;d.body.innerHTML='<main><section data-offer-studio></section></main>';
+const products=[{id:'fixture-a',name:'Fictional capacitor',sku:'FX-A',category:'capacitors',unitPriceMinor:199,currency:'GBP',stock:24},{id:'fixture-b',name:'Fictional switch',sku:'FX-B',category:'switches',unitPriceMinor:399,currency:'GBP',stock:5}];
+let calls=0,disposed=0;const studio=mountOfferStudio({document:d,readerFactory:()=>({read:async()=>{calls++;return {products,observedAt:'2026-10-27T12:00:00Z',bytes:220,requests:2};},dispose(){disposed++;}})});const root=studio.root;
+assert.equal(calls,0);assert(root.textContent.includes('Preview only'));assert(root.querySelector('fieldset').disabled);
+await studio.loadReferences();assert.equal(calls,1);assert.equal(root.querySelector('fieldset').disabled,false);
+const field=(name,value)=>{const e=root.querySelector('[aria-label="'+name+'"]');e.value=value;e.dispatchEvent(new w.Event('change',{bubbles:true}));return e;};
+field('Offer name','Fictional quantity draft');field('Quantity threshold','2');field('Discount value','10');root.querySelector('[aria-label="All loaded component products"]').checked=true;root.querySelector('form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));assert.equal(studio.getDrafts().length,1);assert.equal(studio.getDrafts()[0].active,false);
+field('Preview basket product','fixture-a');field('Preview basket quantity','2');[...root.querySelectorAll('button')].find(b=>b.textContent==='Add to preview basket').click();assert.match(root.querySelector('.offer-quote').textContent,/£3.58/);assert.equal(calls,1);assert.equal(w.localStorage.length,0);
+[...root.querySelectorAll('button')].find(b=>b.textContent==='Exclude from preview').click();assert.match(root.querySelector('.offer-quote').textContent,/£3.98/);assert.equal(calls,1);
+for(const e of root.querySelectorAll('input,select'))assert(e.closest('label'));
+d.dispatchEvent(new w.Event('admin:conceal'));assert.equal(root.children.length,0);assert.deepEqual(studio.getDrafts(),[]);assert.deepEqual(studio.getBasket(),[]);assert.equal(disposed,1);
+await w.happyDOM.close();console.log(JSON.stringify({offerUI:'PASS',explicitReadOnly:true,previewIsolation:true,logoutClearsDrafts:true,realWrites:0}));

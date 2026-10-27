@@ -2,7 +2,7 @@ name: COMMERCE62 targeted acceptance
 on:
   push:
     branches: [engineering/command62-commerce-forge]
-    paths: ['dist/admin/**', 'tests/command62/**', 'tests/command61/browser*', 'tests/command61/phase.json', '.github/workflows/command62-commerce-forge.yml']
+    paths: ['dist/admin/**', 'dist/commercial/**', 'tests/command62/**', 'tests/command61/browser*', 'tests/command61/phase.json', '.github/workflows/command62-commerce-forge.yml']
 permissions:
   contents: read
 concurrency:
