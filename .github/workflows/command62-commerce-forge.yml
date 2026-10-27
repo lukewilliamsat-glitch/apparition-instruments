@@ -1,0 +1,49 @@
+name: COMMERCE62 targeted acceptance
+on:
+  push:
+    branches: [engineering/command62-commerce-forge]
+    paths: ['dist/admin/**', 'tests/command62/**', 'tests/command61/browser*', 'tests/command61/phase.json', '.github/workflows/command62-commerce-forge.yml']
+permissions:
+  contents: read
+concurrency:
+  group: commerce62-isolated
+  cancel-in-progress: false
+jobs:
+  acceptance:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/command62-commerce-forge'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.20.0'
+      - name: Prepare existing pinned controller and disposable evidence
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/rebirth-evidence" "$RUNNER_TEMP/rebirth-tools"
+          browser=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || true)
+          test -n "$browser"
+          printf '%s\n' "$browser" > "$RUNNER_TEMP/rebirth-tools/browser-path"
+          "$browser" --version > "$RUNNER_TEMP/rebirth-evidence/browser-version.txt"
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install --prefix "$RUNNER_TEMP/rebirth-tools" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false playwright-core@1.56.1 happy-dom@20.14.5
+          test "$(npm view playwright-core@1.56.1 dist.integrity)" = 'sha512-hutraynyn31F+Bifme+Ps9Vq59hKuUCz7H1kDOcBs+2oGguKkWTU50bBWrtz34OUWmIwpBTWDxaRPXrIXkgvmQ=='
+          ln -s "$RUNNER_TEMP/rebirth-tools/node_modules" node_modules
+      - name: Prove inherited network isolation then check only newly integrated Admin
+        run: |
+          set -euo pipefail
+          browser=$(cat "$RUNNER_TEMP/rebirth-tools/browser-path")
+          sudo unshare --net --mount --pid --fork --mount-proc /bin/bash tests/command62/run-isolated.sh "$GITHUB_WORKSPACE" "$RUNNER_TEMP/rebirth-evidence" "$(command -v node)" "$browser" "$RUNNER_TEMP/rebirth-tools/node_modules/playwright-core/index.mjs" "$(id -un)" "$(readlink /proc/self/ns/net)" "$GITHUB_SHA"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: commerce62-targeted-synthetic-acceptance
+          path: |
+            ${{ runner.temp }}/rebirth-evidence/*.json
+            ${{ runner.temp }}/rebirth-evidence/*.txt
+            ${{ runner.temp }}/rebirth-evidence/SCREENSHOTS/*.png
+          retention-days: 14
+          if-no-files-found: error

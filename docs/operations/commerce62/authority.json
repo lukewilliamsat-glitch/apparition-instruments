@@ -1,0 +1,22 @@
+{
+  "authority": "AUTHORISATION_62",
+  "ownerBriefSHA256": "818729946c56d7606ba11c9e271f988b94ef2d66fa4819d843bbab6cca13bcae",
+  "financialPreviewScopeConfirmation": "This authorisation expressly resolves that ambiguity for the exact reviewed frontend-only financial preview.",
+  "approvedPatchSHA256": "0ab84780d8174903ee6a88f0be1a9c162c09b560a32f73a41a25ab866765a4e0",
+  "financialSaving": false,
+  "newFinancialDatabaseWrites": false,
+  "migrationsRLSPrivilegedEndpoints": false,
+  "productionPublicationAuthority": "Sections 4, 16 and 19: publish independently verified frontend releases immediately.",
+  "activeCommercialValues": "Owner configuration and trusted checkout enforcement required; no invented or unverified live discounts.",
+  "directOwnerConfirmation": {
+    "date": "2026-10-27",
+    "text": "Execute AUTHORISATION 62 as attached, including publication of the financial preview with saving disabled.",
+    "scope": [
+      "Marketplace Intelligence frontend preview",
+      "Catalogue manufacturer deletion workflow preserving referential integrity",
+      "Independently safe Commerce V2; promotional pricing gated by trusted checkout",
+      "Supported eBay Aftercare; no real customer messages during testing"
+    ],
+    "privilegedProductionMutations": "Remain separately gated"
+  }
+}

@@ -13,15 +13,16 @@ from frontend import get_bytes,NoRedirect
 from transport import REPOSITORY
 
 SITE='https://apparitioninstruments.co.uk'
-FEATURES={'SPECTRE','LANTERN','SENTINEL','COMMAND_FRONTEND','COMMAND_UNIFIED_ADMIN','COMMAND_ASCENDANCE'}
+FEATURES={'SPECTRE','LANTERN','SENTINEL','COMMAND_FRONTEND','COMMAND_UNIFIED_ADMIN','COMMAND_ASCENDANCE','COMMERCE_FORGE'}
 COMMAND_SOURCE='df78c5bf5144b012a7d96c628186180fa6432df3'
 UNIFIED_ALLOWED={'admin/application.mjs','admin/application.css','admin/admin-gate.mjs','admin/overview.mjs','admin/command/index.html','admin/command-redirect.mjs'}
-ASCENDANCE_PHASES={'A':{'admin/application.css','admin/overview.mjs'},'B':{'admin/application.css','admin/admin.mjs'}}
+ASCENDANCE_PHASES={'A':{'admin/application.css','admin/overview.mjs'},'B':{'admin/application.css','admin/admin.mjs'},'C':{'admin/application.css','admin/application.mjs','admin/orders/app.mjs','admin/orders/external-order.mjs','admin/orders/economics.mjs','admin/orders/finance-ui.mjs','admin/orders/finance-activation.mjs','admin/orders/cost-reference.mjs'}}
+FORGE_PHASES={'A':ASCENDANCE_PHASES['C']}
 COMMAND_MANIFEST_SHA='899151248c2fe2492f198ae19bc36a975287d0edad55cf5168c2657184e17ff1'
 
 def plan_at(path):
     p=strict_json(bounded_file(path,262144))
-    require(p.get('version')==1 and p.get('feature') in FEATURES and p.get('authority')==('AUTHORISATION_58' if p['feature']=='COMMAND_FRONTEND' else 'AUTHORISATION_60' if p['feature']=='COMMAND_UNIFIED_ADMIN' else 'AUTHORISATION_61' if p['feature']=='COMMAND_ASCENDANCE' else 'AUTHORISATION_57'),'Wrong frontend authority/scope')
+    require(p.get('version')==1 and p.get('feature') in FEATURES and p.get('authority')==('AUTHORISATION_58' if p['feature']=='COMMAND_FRONTEND' else 'AUTHORISATION_60' if p['feature']=='COMMAND_UNIFIED_ADMIN' else 'AUTHORISATION_61' if p['feature']=='COMMAND_ASCENDANCE' else 'AUTHORISATION_62' if p['feature']=='COMMERCE_FORGE' else 'AUTHORISATION_57'),'Wrong frontend authority/scope')
     if p['feature']=='COMMAND_FRONTEND':
         require(p.get('applicationSource')==p.get('visualAcceptedSource')==COMMAND_SOURCE,'COMMAND accepted source mismatch')
         require(p.get('commandManifestSHA256')==COMMAND_MANIFEST_SHA,'COMMAND compiled source manifest mismatch')
@@ -29,6 +30,9 @@ def plan_at(path):
         require(re.fullmatch('[a-f0-9]{40}',p.get('applicationSource','')) and re.fullmatch('[a-f0-9]{64}',p.get('unifiedManifestSHA256','')),'Unified source identity missing')
     if p['feature']=='COMMAND_ASCENDANCE':
         require(p.get('phase') in ASCENDANCE_PHASES and re.fullmatch('[a-f0-9]{40}',p.get('applicationSource','')) and re.fullmatch('[a-f0-9]{64}',p.get('ascendanceManifestSHA256','')),'Ascendance phase/source identity missing')
+    if p['feature']=='COMMERCE_FORGE':
+        require(p.get('phase') in FORGE_PHASES and re.fullmatch('[a-f0-9]{40}',p.get('applicationSource','')) and re.fullmatch('[a-f0-9]{64}',p.get('forgeManifestSHA256','')),'Commerce phase/source identity missing')
+        require(p.get('financialPersistence') is False and p.get('activePromotions') is False,'Unapproved commercial activation refused')
     require(p.get('siteURL')==SITE and p.get('commandReads') is False and p.get('commandWrites') is False,'Site or COMMAND activation mismatch')
     for key in ['baseTarSHA256','basePayloadDigest','candidateDigest','rollbackDigest']:
         require(re.fullmatch('[a-f0-9]{64}',p.get(key,'')),'Missing immutable payload identity')
@@ -87,10 +91,16 @@ def prepare(p,baseline,root,out):
         require(sha(canonical(manifest))==p['ascendanceManifestSHA256'] and manifest.get('kind')=='COMMAND_ASCENDANCE_V1' and manifest.get('phase')==p['phase'] and manifest.get('sourceCommit')==p['applicationSource'],'Ascendance source manifest changed')
         command_entries={e['path']:e for e in manifest['entries']}
         require(set(command_entries)==compiled_allowed and {c['path'] for c in p['changes'] if c.get('operation')=='compiled-admin'}==compiled_allowed,'Exact Ascendance phase overlay required')
+    if p['feature']=='COMMERCE_FORGE':
+        compiled_allowed=FORGE_PHASES[p['phase']];compiled_namespace='commerce62-'+p['phase']
+        manifest=strict_json(bounded_file(Path(root)/('docs/operations/commerce62/source-manifest-'+p['phase']+'.json'),65536))
+        require(sha(canonical(manifest))==p['forgeManifestSHA256'] and manifest.get('kind')=='COMMERCE_FORGE_V1' and manifest.get('phase')==p['phase'] and manifest.get('sourceCommit')==p['applicationSource'],'Commerce source manifest changed')
+        command_entries={e['path']:e for e in manifest['entries']}
+        require(set(command_entries)==compiled_allowed and {c['path'] for c in p['changes'] if c.get('operation')=='compiled-admin'}==compiled_allowed,'Exact Commerce phase overlay required')
     for c in p['changes']:
         path=c['path'];before=files.get(path)
         require(not path.startswith('supabase/'),'Backend delta refused')
-        if p['feature'] in ('COMMAND_UNIFIED_ADMIN','COMMAND_ASCENDANCE'):
+        if p['feature'] in ('COMMAND_UNIFIED_ADMIN','COMMAND_ASCENDANCE','COMMERCE_FORGE'):
             if path in command_entries:
                 e=command_entries[path]
                 require(c.get('operation')=='compiled-admin' and c.get('source')=='release-overlays/'+compiled_namespace+'/'+path and all(c.get(k)==e[k] for k in ['beforeSHA256','afterSHA256','bytes']),'Unified approved source mismatch')
@@ -104,7 +114,7 @@ def prepare(p,baseline,root,out):
         if p['feature']=='SPECTRE':require(path in {'customer-ui.css','index.html','operations/snapshot.json'},'SPECTRE delta exceeded')
         require((sha(before) if before is not None else None)==c['beforeSHA256'],'Delta preimage mismatch: '+path)
         if c['operation']=='compiled-admin':
-            require(p['feature'] in ('COMMAND_UNIFIED_ADMIN','COMMAND_ASCENDANCE') and c['source']=='release-overlays/'+compiled_namespace+'/'+path and path in compiled_allowed,'Unapproved compiled Admin source')
+            require(p['feature'] in ('COMMAND_UNIFIED_ADMIN','COMMAND_ASCENDANCE','COMMERCE_FORGE') and c['source']=='release-overlays/'+compiled_namespace+'/'+path and path in compiled_allowed,'Unapproved compiled Admin source')
             data=bounded_file(Path(root)/c['source'],8*1024*1024)
         elif c['operation']=='source':
             require(c['source'].startswith('dist/') and '..' not in c['source'].split('/'),'Unapproved overlay source')
@@ -126,10 +136,14 @@ def prepare(p,baseline,root,out):
         else:raise ValueError('Unsupported delta operation')
         require(sha(data)==c['afterSHA256'] and len(data)==c['bytes'],'Delta postimage mismatch: '+path)
         files[path]=data;changes.append({'path':path,'beforeSHA256':c['beforeSHA256'],'afterSHA256':sha(data),'bytes':len(data)})
-    if p['feature'] in ('COMMAND_FRONTEND','COMMAND_UNIFIED_ADMIN','COMMAND_ASCENDANCE'):
+    if p['feature'] in ('COMMAND_FRONTEND','COMMAND_UNIFIED_ADMIN','COMMAND_ASCENDANCE','COMMERCE_FORGE'):
         activation=files['admin/command/read-activation.mjs'].decode('utf-8')
         require(all(re.search(r'^\s*'+name+r'\s*:\s*false\s*,?\s*$',activation,re.M) for name in ['enabled','inventoryRead']),'COMMAND unverified activation refused')
         require(all(re.search(r'^\s*'+name+r'\s*:\s*null\s*,?\s*$',activation,re.M) for name in ['metadataEvidenceSHA256','liveReadEvidenceSHA256']),'COMMAND fabricated activation evidence refused')
+    if p['feature']=='COMMAND_ASCENDANCE' and p['phase']=='C' or p['feature']=='COMMERCE_FORGE':
+        finance=files['admin/orders/finance-activation.mjs'].decode('utf-8')
+        require(re.search(r'^\s*enabled\s*:\s*false\s*,?\s*$',finance,re.M),'Unapproved financial save activation refused')
+        require(all(re.search(r'^\s*'+name+r'\s*:\s*null\s*,?\s*$',finance,re.M) for name in ['backendEvidenceSHA256','livePersistenceEvidenceSHA256']),'Unapproved financial activation evidence refused')
     candidate=Payload(files);restore=Payload(rollback)
     require(candidate.digest()==p['candidateDigest'] and restore.digest()==p['rollbackDigest'],'Complete candidate/rollback identity mismatch')
     require({k for k in set(files)|set(base.files) if files.get(k)!=base.files.get(k)}=={c['path'] for c in p['changes']},'Unexplained payload delta')
@@ -177,11 +191,12 @@ def unified_native_evidence(p,read):
     accepted=read('/actions/runs/'+str(evidence['runId']))
     require(accepted.get('head_sha')==execution and accepted.get('status')=='completed' and accepted.get('conclusion')=='success','Unified native acceptance is not successful for exact source')
     if p['feature']=='COMMAND_ASCENDANCE':require(accepted.get('path')=='.github/workflows/command61-ascendance.yml','Wrong Ascendance acceptance workflow')
+    if p['feature']=='COMMERCE_FORGE':require(accepted.get('path')=='.github/workflows/command62-commerce-forge.yml','Wrong Commerce acceptance workflow')
     if execution!=p['applicationSource']:
         compared=read('/compare/'+p['applicationSource']+'...'+execution)
         require(compared.get('merge_base_commit',{}).get('sha')==p['applicationSource'] and compared.get('status')=='ahead','Native reuse ancestry differs')
         files=compared.get('files',[])
-        test_prefix='tests/command61/' if p['feature']=='COMMAND_ASCENDANCE' else 'tests/command60/'
+        test_prefix='tests/command62/' if p['feature']=='COMMERCE_FORGE' else 'tests/command61/' if p['feature']=='COMMAND_ASCENDANCE' else 'tests/command60/'
         require(0<len(files)<=10 and all(f.get('filename','').startswith(test_prefix) and f.get('status') in ('added','modified') for f in files),'Application changed after native reuse source')
     return {'runId':evidence['runId'],'applicationSource':p['applicationSource'],'executionSource':execution,'applicationUnchanged':True}
 
@@ -203,7 +218,7 @@ def preflight(p,get=None,public_get=get_bytes,final=False,operation='release',re
             raw=get_bytes('https://api.github.com/repos/'+REPOSITORY+path,786432,{'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'})
             total+=len(raw);require(total<=4194304,'Metadata byte ceiling');value=strict_json(raw)
         cache[path]=value;return value
-    if p['feature'] in ('COMMAND_UNIFIED_ADMIN','COMMAND_ASCENDANCE'):unified_native_evidence(p,read)
+    if p['feature'] in ('COMMAND_UNIFIED_ADMIN','COMMAND_ASCENDANCE','COMMERCE_FORGE'):unified_native_evidence(p,read)
     require(read('/git/ref/heads/main').get('object',{}).get('sha')==source,'Current main changed')
     pages=read('/pages');require(pages.get('build_type')=='workflow' and pages.get('html_url','').rstrip('/')==SITE and pages.get('https_enforced') is True,'Pages target/settings changed')
     for state in ['in_progress','queued','waiting','pending','requested']:

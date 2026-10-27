@@ -1,5 +1,6 @@
 import {el,money} from './view.mjs?v=external-v1';
 import {deploymentPath} from '../../deployment.mjs';
+import {mountFinanceWorkbench} from './finance-ui.mjs';
 
 export function poundsToPence(value){
  if(!/^\d+(?:\.\d{1,2})?$/.test(String(value)))throw new Error('Enter GBP amounts with at most two decimal places.');
@@ -10,8 +11,12 @@ export async function mountExternalOrderForm({repository,document=globalThis.doc
  const $=selector=>document.querySelector(selector),form=$('#create-order-form'),picker=$('#external-product-picker'),add=$('#external-add-line'),save=$('#save-order'),error=$('#create-order-error');
  $('#order-editor').hidden=false;const now=new Date();form.elements.orderDate.value=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
  let products=[],lines=[],busy=false,requestId=uuid(),lastPayload=null;
+ const financialPreview=document.createElement('button');financialPreview.type='button';financialPreview.textContent='Preview discounts, fees & contribution';financialPreview.className='finance-preview-entry';form.after(financialPreview);let preview=null;
+ financialPreview.addEventListener('click',()=>{if(preview&&!preview.panel.hasAttribute('data-sale-stale')){preview.panel.open=true;preview.panel.querySelector('summary').focus();return;}try{if(!lines.length)throw Error('Add existing products to the sale form first.');const items=lines.map(line=>({type:line.product.type,productId:line.product.id,name:line.product.name,sku:line.product.sku,quantity:Number(line.quantity),unitPrice:poundsToPence(line.price),lineTotal:poundsToPence(line.price)*Number(line.quantity),snapshot:{}})),postage=poundsToPence(form.elements.postage.value);preview?.dispose();preview=mountFinanceWorkbench({root:$('#order-editor'),order:{id:'unsaved-external-order',reference:'Unsaved external sale',channel:form.elements.channel.value,externalReference:form.elements.externalReference.value,orderDate:form.elements.orderDate.value,items,pricing:{subtotal:items.reduce((n,x)=>n+x.lineTotal,0),delivery:postage,total:items.reduce((n,x)=>n+x.lineTotal,0)+postage}},document,newSale:true});preview.panel.open=true;preview.panel.querySelector('summary').focus();}catch(caught){error.textContent=caught.message;}});
+ const saleChanged=()=>{if(preview){preview.markSaleChanged();financialPreview.textContent='Sale inputs changed · replace financial preview';}};
+ form.addEventListener('input',saleChanged);form.addEventListener('change',saleChanged);
  const totals=()=>{try{const subtotal=lines.reduce((sum,line)=>sum+poundsToPence(line.price)*Number(line.quantity),0),postage=poundsToPence(form.elements.postage.value);$('#create-order-total').textContent='Items '+money(subtotal)+' + postage '+money(postage)+' = '+money(subtotal+postage);}catch{$('#create-order-total').textContent='Enter valid quantities and prices to calculate the total.';}};
- const render=()=>{const root=$('#create-order-items');root.replaceChildren();lines.forEach((line,index)=>{
+ const render=()=>{saleChanged();const root=$('#create-order-items');root.replaceChildren();lines.forEach((line,index)=>{
   const article=el('article',undefined,'create-item');article.append(el('h3',line.product.name+' · '+line.product.sku));const controls=el('div',undefined,'order-row-controls');
   for(const [key,label,type,min,max,step] of [['quantity','Quantity','number','1','99','1'],['price','Agreed unit price (£)','number','0','10000000','0.01']]){const field=el('label',label),input=el('input');input.type=type;input.required=true;input.min=min;input.max=max;input.step=step;input.value=line[key];input.setAttribute('aria-label',label+' for '+line.product.sku);input.addEventListener('input',()=>{line[key]=input.value;totals();});field.append(input);controls.append(field);}
   const remove=el('button','Remove');remove.type='button';remove.addEventListener('click',()=>{lines.splice(index,1);render();});controls.append(remove);article.append(controls);root.append(article);

@@ -1,0 +1,61 @@
+{
+  "project": "acdxpxvksvdwfajntzfx",
+  "association": "Verified against the latest complete deployed Admin public configuration",
+  "businessRowsRead": 0,
+  "databaseMutations": 0,
+  "metadataStatements": 3,
+  "firstReport": "Returned only a byte-ceiling rejection (9,868 bytes proposed); narrowed to the required fields, not retried unchanged.",
+  "limits": {
+    "statementTimeoutSeconds": 5,
+    "lockTimeoutSeconds": 1,
+    "catalogueReportBytes": 8192,
+    "resultRows": 1
+  },
+  "queries": [
+    {
+      "file": "provider-metadata-bounded.sql",
+      "sha256": "cd5f9d48d694cc2699606eadb630b8c8cd8551327d06eba49614d4022da55cdf"
+    },
+    {
+      "file": "provider-cost-metadata.sql",
+      "sha256": "aa55a7ebd4e2716eb5350108ea922dbcf255ad0c6ad1dbdf5208a9c527377d57"
+    }
+  ],
+  "existingContracts": {
+    "orders": {
+      "id": "uuid",
+      "items": "jsonb",
+      "sales_channel": "text",
+      "order_date": "date",
+      "subtotal_pence": "bigint",
+      "delivery_pence": "bigint",
+      "total_pence": "bigint",
+      "updated_at": "timestamp with time zone"
+    },
+    "privateCostTable": "component_internal",
+    "privateCostProjection": [
+      "component_id",
+      "internal_unit_cost",
+      "updated_at"
+    ],
+    "privateCostRLS": true,
+    "privateCostAnonymousSelect": false,
+    "privateCostPolicy": "Current trusted Admin membership, authenticated role; unredacted expressions retained privately",
+    "existingRPCBodiesMatchCanonicalSource": [
+      "create_external_order",
+      "edit_external_order",
+      "apply_order_inventory"
+    ],
+    "currentCostBasis": "Nullable current reference unit cost, not a historical acquisition/issue snapshot",
+    "acquisitionContract": "No batch/WAC or marketplace-finance contract found in the current application and targeted metadata. No financial business records were downloaded."
+  },
+  "privateEvidenceSHA256": {
+    "orders": "49930ff0e9ebf3e28b4a41d5699f82b7813b38ff2130b7cd43a343186ade75ec",
+    "costs": "21b6cbdad8a9e3157ac3c63f5ac8648f64419c065691ba75359fd458541b58a6"
+  },
+  "activation": {
+    "advancedCommandReads": false,
+    "ironcladWrites": false,
+    "financialPersistence": false
+  }
+}

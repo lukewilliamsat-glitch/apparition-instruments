@@ -19,4 +19,9 @@ fi
 if [ "$phase" = B ]; then
  run_isolated tests/command61/inventory.mjs > "$output/inventory-results.txt"
 fi
+if [ "$phase" = C ]; then
+ run_isolated tests/command61/economics.mjs > "$output/economics-results.txt"
+ run_isolated --import ./tests/fixtures/admin-offline.mjs tests/command61/finance-ui.mjs > "$output/finance-ui-results.txt"
+ run_isolated --import ./tests/fixtures/admin-offline.mjs tests/command61/cost-reference.mjs > "$output/cost-reference-results.txt"
+fi
 run_isolated tests/command61/browser.mjs "$output" "$browser" "$controller" "$commit"

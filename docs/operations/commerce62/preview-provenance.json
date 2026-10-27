@@ -1,0 +1,28 @@
+{
+  "patchSHA256": "0ab84780d8174903ee6a88f0be1a9c162c09b560a32f73a41a25ab866765a4e0",
+  "patchParent": "dd05540bff85677ee9f54581b18daee26e4c5b06",
+  "acceptedPendingTree": "9f133441783487e18d502a6889e5e7b2233fbe8f",
+  "currentProduction": "dd05540bff85677ee9f54581b18daee26e4c5b06",
+  "unchangedFiles": [
+    {
+      "path": "dist/admin/orders/economics.mjs",
+      "sha256": "a086dcef8f33b14d880c8accc91f2f5bfeabf463a3241237a7ac49392ebbba3a"
+    },
+    {
+      "path": "tests/command61/economics.mjs",
+      "sha256": "6aec303848dcfdbe53fa4bc8af03f85125b765ffbd838d808622145d0b208668"
+    },
+    {
+      "path": "dist/admin/orders/finance-ui.mjs",
+      "sha256": "216eced2fe0d1d3ef3fd67fe49f71c57fbab6cd02bba26d491213eb717b745ba"
+    },
+    {
+      "path": "dist/admin/orders/cost-reference.mjs",
+      "sha256": "84df39006fd4781bfb42839e736b0ec7acb3ab2e244c171733a00c970d61fff1"
+    },
+    {
+      "path": "dist/admin/orders/finance-activation.mjs",
+      "sha256": "5b6e51f669796ae9de650bc5f363bedb71973e0daea16911bd13981207e3b08e"
+    }
+  ]
+}

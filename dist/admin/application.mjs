@@ -19,7 +19,7 @@ export function mountAdminSkin(d){
  d.body.dataset.commandSkin='nocturne';
  if(!d.querySelector('link[data-admin-styles]')){const css=d.createElement('link');css.rel='stylesheet';const url=new URL('./application.css',import.meta.url);url.search=new URL(import.meta.url).search;css.href=url.href;css.dataset.adminStyles='command';d.head.append(css);}
 }
-export function concealAdminShell(d){shells.get(d)?.close(false);for(const dialog of d.querySelectorAll('dialog[open]'))dialog.close();}
+export function concealAdminShell(d){shells.get(d)?.close(false);for(const dialog of d.querySelectorAll('dialog[open]'))dialog.close();d.dispatchEvent(new d.defaultView.Event('admin:conceal'));}
 const icons={Workspace:'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z',Catalogue:'M4 5h16v15H4z M8 2v6 M16 2v6 M4 11h16',Sales:'M4 4h16v16H4z M8 9h8 M8 13h6 M8 17h4',Website:'M3 4h18v16H3z M3 9h18 M8 9v11',Operations:'M4 6h16 M4 12h16 M4 18h16 M8 3v6 M16 9v6 M10 15v6',Instruments:'M4 18l10-10 2 2L6 20z M14 8l4-5 3 3-5 4',Communications:'M3 5h18v14H3z M3 5l9 8 9-8',System:'M5 5h14v14H5z M9 9h6v6H9z'};
 function icon(d,group){const svg=d.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');svg.classList.add('admin-nav-icon');const path=d.createElementNS(svg.namespaceURI,'path');path.setAttribute('d',icons[group]||icons.Workspace);svg.append(path);return svg;}
 export function mountAdminShell(d,signOut){

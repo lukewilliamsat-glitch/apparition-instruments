@@ -12,8 +12,9 @@ import {channels} from './model.mjs';
 import {deploymentPath} from '../../deployment.mjs';
 import {createAdminAuth} from '../admin-auth.mjs';
 import {publicBackendConfig} from '../../backend/public-config.mjs';
+import {mountFinanceWorkbench,mountFinanceReport} from './finance-ui.mjs';
 const $=selector=>document.querySelector(selector);
-let records=[],aftercare=[],aftercareUnavailable=false;
+let records=[],aftercare=[],aftercareUnavailable=false,financeReport=null;
 const aftercareView=new URLSearchParams(location.search).get('view')==='aftercare';
 $('#order-create-actions').hidden=false;
 $('#order-editor').hidden=true;
@@ -23,6 +24,7 @@ const attempts=new URLSearchParams(location.search).get('view')==='attempts';
 for(const [key,label] of Object.entries(fulfilmentLabels)){const option=el('option',label);option.value=key;$('#order-filter').append(option);}
 const deliveryLabels={in_production:'In Production',ready_to_dispatch:'Ready to Dispatch',dispatched:'Dispatched',full_refund:'Refund Processed'};
 function appendEmailStatus(order){
+ mountFinanceWorkbench({root:$('#detail-content'),order});
  const section=el('section',undefined,'order-email-status');section.append(el('h3','Customer communications'));
  if(order.channel!=='WEBSITE'){mountExternalEditing(order,{root:$('#detail-content'),repository:currentAdminOrderRepository(),refresh,message:$('#order-message')});return;}
  section.append(el('p','Lifecycle and refund email delivery is not yet active. Existing order confirmations remain on the approved production path.','storage-note'));
@@ -92,7 +94,7 @@ function render(){
  $('#order-rows').replaceChildren();$('#orders-empty').hidden=!!rows.length;
  for(const order of rows){const row=el('tr'),cell=el('td'),link=el('a',order.reference);link.href=deploymentPath('/admin/orders/?id='+encodeURIComponent(order.id));cell.append(link);if(order.externalReference)cell.append(el('small',' · '+order.externalReference));row.append(cell,el('td',channels[order.channel]||order.channel),...[order.orderDate||date(order.createdAt),order.customer.name||'Not supplied',money(order.pricing.total),paymentLabels[order.paymentStatus]||order.paymentStatus,isPaidOrder(order)?fulfilmentLabels[order.fulfilmentStatus]||order.fulfilmentStatus:'Checkout attempt'].map((value,index)=>{const cell=el('td',index===3||index===4?undefined:value,index===3||index===4?'order-state':'');if(index===3||index===4)cell.append(statusBadge(document,value,index===3&&['unpaid','partially_refunded'].includes(order.paymentStatus)||index===4&&['pending','ready_to_dispatch'].includes(order.fulfilmentStatus)?'warning':'neutral'));if(index===4&&order.paymentStatus==='partially_refunded'&&!order.partialRefundAcknowledged)cell.append(statusBadge(document,'Refund review required','warning'));return cell;}));$('#order-rows').append(row);}
 }
-async function refresh(){if(document.querySelector('.external-order-edit,.external-dispatch-dialog'))return;try{const repository=currentAdminOrderRepository();aftercareUnavailable=false;[records,aftercare]=await Promise.all([repository.list(),repository.aftercare?repository.aftercare().catch(()=>{aftercareUnavailable=true;return [];}):[]]);$('#order-message').textContent='';render();}catch(error){$('#order-message').textContent=error.message;}}
+async function refresh(){if(document.querySelector('.external-order-edit,.external-dispatch-dialog'))return;try{const repository=currentAdminOrderRepository();aftercareUnavailable=false;[records,aftercare]=await Promise.all([repository.list(),repository.aftercare?repository.aftercare().catch(()=>{aftercareUnavailable=true;return [];}):[]]);$('#order-message').textContent='';render();if(!creating&&!aftercareView&&!attempts){financeReport||=mountFinanceReport({root:$('#order-list')});financeReport.update(records);}}catch(error){$('#order-message').textContent=error.message;financeReport?.unavailable();}}
 $('#order-search').addEventListener('input',render);$('#order-filter').addEventListener('change',render);
 $('#order-status-form').addEventListener('submit',async event=>{event.preventDefault();const id=new URLSearchParams(location.search).get('id'),order=records.find(item=>item.id===id),next=nextFulfilment(order);
  if(!order||!next||$('#detail-status').value!==next)return;
