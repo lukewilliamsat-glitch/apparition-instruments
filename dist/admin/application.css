@@ -310,8 +310,10 @@
 [data-admin-app=command] .inventory-prices :is(span,small){display:block;white-space:nowrap}
 [data-admin-app=command] .inventory-active label{display:flex;align-items:center;gap:7px;min-height:32px;font-size:.6875rem;white-space:nowrap}
 [data-admin-app=command] .inventory-active input{width:18px;height:18px}
-[data-admin-app=command] .inventory-actions{min-width:180px;white-space:normal}
+[data-admin-app=command] .inventory-actions{min-width:220px;white-space:normal}
 [data-admin-app=command] .inventory-actions>button{margin:0 5px 7px 0;min-height:36px}
+body[data-admin-app=command] #table-body .inventory-actions>button{display:inline-flex;align-items:center;vertical-align:top;margin:0 5px 6px 0}
+body[data-admin-app=command] #table-body .inventory-actions>.admin-action-menu{vertical-align:top;margin-top:0}
 [data-admin-app=command] .inventory-actions>button:first-child{border-color:#a18d60;color:#e8d4a9}
 [data-admin-app=command] :is(.create-item,.dispatch-details,.external-order-edit){padding:18px;border:1px solid var(--admin-line);border-radius:7px;background:var(--admin-surface);min-width:0}
 [data-admin-app=command] :is(.create-item,.dispatch-details,.external-order-edit) h3{font:600 1rem/1.4 system-ui;letter-spacing:-.015em;margin:0 0 14px}
