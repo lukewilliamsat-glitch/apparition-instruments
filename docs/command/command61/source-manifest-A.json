@@ -1,0 +1,23 @@
+{
+  "kind": "COMMAND_ASCENDANCE_V1",
+  "phase": "A",
+  "sourceCommit": "b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+  "baseSourceCommit": "84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
+  "unchangedRepositoryRevision": "84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
+  "entries": [
+    {
+      "path": "admin/application.css",
+      "beforeSHA256": "e236bf64da6ab626e47e1f5894d4b01abd0d741a540a9bc83d6cc69ce9daaad2",
+      "afterSHA256": "3691cd93d9deccc9cd14ed012406da3eb9fcb19927c6b6da790092e8fa692246",
+      "bytes": 39316,
+      "rawSourceSHA256": "3691cd93d9deccc9cd14ed012406da3eb9fcb19927c6b6da790092e8fa692246"
+    },
+    {
+      "path": "admin/overview.mjs",
+      "beforeSHA256": "d5c58762ed498c56190ce9c99374f2609e7fb082cb11a7a07a1e90fafee9d513",
+      "afterSHA256": "2e973a3dc71173f91f3cece8866a7c9e1e70f890f4d5a602843787943b67dfda",
+      "bytes": 9842,
+      "rawSourceSHA256": "6a24e4677e8669801cfc19f085abbafd2e40d3ad3b014c45c460d486050d7111"
+    }
+  ]
+}

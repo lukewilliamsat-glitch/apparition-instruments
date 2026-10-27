@@ -1,0 +1,48 @@
+{
+  "authority": "AUTHORISATION_61",
+  "preservedFoundation": "AUTHORISATION_60",
+  "releaseA": {
+    "status": "VERIFIED_CANDIDATE",
+    "source": "b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+    "nativeRun": 40481988467,
+    "nativeArtifact": 12722809493,
+    "nativeGroups": 6,
+    "isolationControls": 10,
+    "browser": "155.0.8059.39",
+    "local": [
+      "Inherited Overview regression",
+      "New factual KPI/error/retry checks",
+      "Nine publication guard checks",
+      "Composed repository singleton regression"
+    ],
+    "captures": [
+      {
+        "file": "overview-390.png",
+        "bytes": 61328,
+        "sha256": "b0166f17e0b16d4db2f2ce36846f2c444efd458b37153a2a3334fd0d6860d487",
+        "width": 390,
+        "height": 1000,
+        "source": "b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+        "fictional": true,
+        "originalPNG": true
+      },
+      {
+        "file": "overview-1440.png",
+        "bytes": 134103,
+        "sha256": "aad0d2a9343619c9f3629288c92ae093ca1c0e1f13cf95cb8b8424f1a78e57f1",
+        "width": 1440,
+        "height": 1000,
+        "source": "b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+        "fictional": true,
+        "originalPNG": true
+      }
+    ],
+    "productionBaselineRun": 40474471264,
+    "productionBaselineArtifact": 12720340159
+  },
+  "limits": [
+    "No authenticated live business acceptance claimed.",
+    "No new provider calls, polling or business mutations.",
+    "Advanced COMMAND adapter and IRONCLAD remain disabled."
+  ]
+}
