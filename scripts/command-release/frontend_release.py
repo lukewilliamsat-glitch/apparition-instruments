@@ -21,11 +21,22 @@ FORGE_PHASES={'C_NAV':{'admin/application.mjs','admin/sales-content-presentation
 LEDGER_PHASES={'SAFE':{'backend/catalogue-image-delivery.mjs', 'components/cards.mjs', 'products/app.mjs', 'admin/orders/financial-record.mjs', 'backend/static-image-contract.mjs', 'backend/demand-image-presentation.mjs', 'backend/verified-image-pool.mjs', 'backend/public-read.mjs', 'admin/orders/finance-ui.mjs', 'backend/component-data.mjs', 'admin/orders/app.mjs', 'admin/orders/financial-order.mjs', 'backend/providers.mjs'},'RECON':{'admin/orders/finance-ui.mjs','admin/orders/economics-v2.mjs'}}
 LEDGER_PHASES.update({'CONTROLLED64':{'admin/orders/financial-order.mjs','admin/orders/finance-activation.mjs'},'ACTIVE64':{'admin/orders/finance-activation.mjs'},'DISABLED64':{'admin/orders/finance-activation.mjs'}})
 LEDGER_PHASES['CONTROLLED64'].add('admin/orders/financial-record.mjs')
+LEDGER_PHASES['WORDING65']={'admin/orders/finance-ui.mjs','admin/orders/financial-record.mjs'}
 LEDGER64_ORDER='3db324c2-4f60-45b6-b78c-29a3eceeb826'
 LEDGER64_MIGRATION='a6025c33e9a2936ce61f35af4cf514e49585a2ccdcf1b3e57966e8ed5f63c996'
 LEDGER64_BACKEND='4934e7f58863af0f70199fdd10ebebeedfae5d1c72e09078dbbaaf46d61af6d0'
 
 def ledger64(p):return p.get('feature')=='BLACK_LEDGER' and p.get('phase') in ('CONTROLLED64','ACTIVE64','DISABLED64')
+def wording65(p):return p.get('feature')=='BLACK_LEDGER' and p.get('phase')=='WORDING65'
+
+def wording65_evidence(p,root):
+    root=Path(root);raw=bounded_file(root/'docs/operations/nightfall65/targeted-verification.json',16384)
+    require(sha(raw)==p.get('wordingEvidenceSHA256'),'Financial wording evidence changed')
+    checks=strict_json(raw)
+    require(checks.get('result')=='PASS' and checks.get('wordingGroups')==4 and checks.get('affectedClientGroups')==15 and checks.get('receiptGroups')==4 and checks.get('liveWrites')==0,'Targeted financial presentation acceptance required')
+    for path,expected in checks['sourceSHA256'].items():
+        require(path in {'dist/admin/orders/finance-ui.mjs','dist/admin/orders/financial-record.mjs'} and sha(bounded_file(root/path,65536))==expected,'Wording source changed after acceptance')
+    require(set(checks['sourceSHA256'])=={'dist/admin/orders/finance-ui.mjs','dist/admin/orders/financial-record.mjs'},'Incomplete wording source evidence')
 
 def financial64_flag(values):
     return ('// AUTHORISATION 64. Controlled acceptance precedes general financial activation.\nexport const financeActivation=Object.freeze('+json.dumps(values,separators=(',',':'))+');\n').encode()
@@ -56,7 +67,7 @@ COMMAND_MANIFEST_SHA='899151248c2fe2492f198ae19bc36a975287d0edad55cf5168c2657184
 
 def plan_at(path):
     p=strict_json(bounded_file(path,262144))
-    require(p.get('version')==1 and p.get('feature') in FEATURES and p.get('authority')==('AUTHORISATION_64' if ledger64(p) else 'AUTHORISATION_58' if p['feature']=='COMMAND_FRONTEND' else 'AUTHORISATION_60' if p['feature']=='COMMAND_UNIFIED_ADMIN' else 'AUTHORISATION_61' if p['feature']=='COMMAND_ASCENDANCE' else 'AUTHORISATION_62' if p['feature']=='COMMERCE_FORGE' else 'AUTHORISATION_63' if p['feature']=='BLACK_LEDGER' else 'AUTHORISATION_57'),'Wrong frontend authority/scope')
+    require(p.get('version')==1 and p.get('feature') in FEATURES and p.get('authority')==('AUTHORISATION_65' if wording65(p) else 'AUTHORISATION_64' if ledger64(p) else 'AUTHORISATION_58' if p['feature']=='COMMAND_FRONTEND' else 'AUTHORISATION_60' if p['feature']=='COMMAND_UNIFIED_ADMIN' else 'AUTHORISATION_61' if p['feature']=='COMMAND_ASCENDANCE' else 'AUTHORISATION_62' if p['feature']=='COMMERCE_FORGE' else 'AUTHORISATION_63' if p['feature']=='BLACK_LEDGER' else 'AUTHORISATION_57'),'Wrong frontend authority/scope')
     if p['feature']=='COMMAND_FRONTEND':
         require(p.get('applicationSource')==p.get('visualAcceptedSource')==COMMAND_SOURCE,'COMMAND accepted source mismatch')
         require(p.get('commandManifestSHA256')==COMMAND_MANIFEST_SHA,'COMMAND compiled source manifest mismatch')
@@ -69,7 +80,7 @@ def plan_at(path):
         require(p.get('financialPersistence') is False and p.get('activePromotions') is False,'Unapproved commercial activation refused')
     if p['feature']=='BLACK_LEDGER':
         require(p.get('phase') in LEDGER_PHASES and re.fullmatch('[a-f0-9]{40}',p.get('applicationSource','')) and re.fullmatch('[a-f0-9]{64}',p.get('ledgerManifestSHA256','')),'Black Ledger phase/source identity missing')
-        require(p.get('financialPersistence') is (ledger64(p) and p['phase']!='DISABLED64') and p.get('activePromotions') is False and p.get('nightfallActivation') is False,'Unapproved privileged commercial activation refused')
+        require(p.get('financialPersistence') is (wording65(p) or ledger64(p) and p['phase']!='DISABLED64') and p.get('activePromotions') is False and p.get('nightfallActivation') is False,'Unapproved privileged commercial activation refused')
     require(p.get('siteURL')==SITE and p.get('commandReads') is False and p.get('commandWrites') is False,'Site or COMMAND activation mismatch')
     for key in ['baseTarSHA256','basePayloadDigest','candidateDigest','rollbackDigest']:
         require(re.fullmatch('[a-f0-9]{64}',p.get(key,'')),'Missing immutable payload identity')
@@ -141,6 +152,9 @@ def prepare(p,baseline,root,out):
         if ledger64(p):
             ledger64_evidence(p,root)
             manifest_path='docs/operations/black-ledger64/source-manifest-'+p['phase']+'.json'
+        if wording65(p):
+            wording65_evidence(p,root)
+            manifest_path='docs/operations/nightfall65/source-manifest-WORDING65.json'
         manifest=strict_json(bounded_file(Path(root)/manifest_path,65536))
         require(sha(canonical(manifest))==p['ledgerManifestSHA256'] and manifest.get('kind')=='BLACK_LEDGER_V1' and manifest.get('phase')==p['phase'] and manifest.get('sourceCommit')==p['applicationSource'],'Black Ledger source manifest changed')
         command_entries={e['path']:e for e in manifest['entries']}
@@ -184,13 +198,15 @@ def prepare(p,baseline,root,out):
         else:raise ValueError('Unsupported delta operation')
         require(sha(data)==c['afterSHA256'] and len(data)==c['bytes'],'Delta postimage mismatch: '+path)
         files[path]=data;changes.append({'path':path,'beforeSHA256':c['beforeSHA256'],'afterSHA256':sha(data),'bytes':len(data)})
-    if p['feature']=='BLACK_LEDGER' and (p['phase']=='SAFE' or ledger64(p)):
+    if p['feature']=='BLACK_LEDGER' and (p['phase']=='SAFE' or ledger64(p) or wording65(p)):
         require('enabled:false' in files['backend/image-delivery-config.mjs'].decode().replace(' ',''),'Unapproved NIGHTFALL activation refused')
     if p['feature'] in ('COMMAND_FRONTEND','COMMAND_UNIFIED_ADMIN','COMMAND_ASCENDANCE','COMMERCE_FORGE','BLACK_LEDGER'):
         activation=files['admin/command/read-activation.mjs'].decode('utf-8')
         require(all(re.search(r'^\s*'+name+r'\s*:\s*false\s*,?\s*$',activation,re.M) for name in ['enabled','inventoryRead']),'COMMAND unverified activation refused')
         require(all(re.search(r'^\s*'+name+r'\s*:\s*null\s*,?\s*$',activation,re.M) for name in ['metadataEvidenceSHA256','liveReadEvidenceSHA256']),'COMMAND fabricated activation evidence refused')
-    if ledger64(p):
+    if wording65(p):
+        require(sha(files['admin/orders/finance-activation.mjs'])=='9af57c229884ee3cb0186085700bab2a804f8f43fb58d8894c2d0f94a5d6775a','Verified financial activation must remain unchanged')
+    elif ledger64(p):
         expected={'enabled':p['phase']=='ACTIVE64','controlledOrderId':LEDGER64_ORDER if p['phase']=='CONTROLLED64' else None,'backendEvidenceSHA256':LEDGER64_BACKEND,'livePersistenceEvidenceSHA256':p.get('livePersistenceEvidenceSHA256')}
         if p['phase']=='DISABLED64':expected.update(backendEvidenceSHA256=None,livePersistenceEvidenceSHA256=None)
         require(files['admin/orders/finance-activation.mjs']==financial64_flag(expected),'Financial activation is not the exact approved stage')
@@ -246,6 +262,11 @@ def operations(p,get=None):
 def unified_native_evidence(p,read):
     evidence=p['nativeAcceptance'];execution=evidence.get('executionSource',p['applicationSource'])
     require(re.fullmatch('[a-f0-9]{40}',execution),'Native execution source missing')
+    if wording65(p):
+        wording65_evidence(p,Path('.'))
+        prior=read('/actions/runs/40564863124')
+        require(prior.get('head_sha')=='00f1c92b57544718432707a14108c38cae1c3e8a' and prior.get('status')=='completed' and prior.get('conclusion')=='success' and prior.get('path')=='.github/workflows/frontend-publication.yml','Accepted financial production source differs')
+        return {'reusedProductionSource':prior['head_sha'],'wordingGroups':4,'affectedClientGroups':15,'receiptGroups':4,'scope':'Presentation only; financial activation, calculations, server contracts and permissions unchanged'}
     if ledger64(p):
         ledger64_evidence(p,Path('.'))
         require(execution=='d085c8968e37df3292650200321be6769f5c32e3' and evidence['runId']==40525724200,'Wrong inherited financial acceptance')

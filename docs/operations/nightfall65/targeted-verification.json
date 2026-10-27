@@ -1,0 +1,12 @@
+{
+  "result": "PASS",
+  "wordingGroups": 4,
+  "affectedClientGroups": 15,
+  "receiptGroups": 4,
+  "liveWrites": 0,
+  "sourceSHA256": {
+    "dist/admin/orders/finance-ui.mjs": "d5177c1b23befcebb8200221ef3ee9143bd383d3a31501b4656ee97725c7f88b",
+    "dist/admin/orders/financial-record.mjs": "5fe6841cee734dd6591ab154078371fa9be9974ce04d4881a4d4e91e85b273f9"
+  },
+  "fixture": "Use tests/command65/prepare-finance-fixture.mjs before the three test scripts. Only fixture-local activation is disabled; inherited assertions and production guards are preserved."
+}
