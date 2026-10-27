@@ -1,0 +1,39 @@
+{
+  "authority": "AUTHORISATION63 direct typed frontend publication approval",
+  "status": "PARTIAL",
+  "main": "4da0fb6d9294c713e6fed706d1178e758e167cd4",
+  "liveVerified": {
+    "feature": "Marketplace gross/net reconciliation preview",
+    "source": "0c12543621bc3ea939979376d7531c33b248badf",
+    "initialRun": 40530081573,
+    "artifact": 12746545545,
+    "payloadDigest": "07896d435f26ac95f3afefc822ee1a6a17de49b05202a37378bb685f39f3224a",
+    "independentLiveChecks": 8,
+    "restoredArtifact": 12746996409,
+    "restoreRun": 40531133959
+  },
+  "fullFrontend": {
+    "approvedSource": "b4d7e3708e1cd0153e922122fa2400f0c46d9ce7",
+    "releaseSource": "f731f40652a45baac7d3585ef61cf6adfa4e92ff",
+    "payloadDigest": "238c176d63da87b99d3c1e69ed972dab5fc726a69a1362ba282049721bd8a07c",
+    "run": 40531133959,
+    "deployment": "Succeeded, then restored",
+    "reason": "Release verification map contained12 paths; existing maximum8 guard correctly rejected it. Automatic restoration deployed the verified reconciliation payload. Immediate restoration HTTP verification initially saw stale content; a subsequent independent bounded eight-path check matched restored payload exactly.",
+    "correctionSource": "4da0fb6d9294c713e6fed706d1178e758e167cd4",
+    "correction": "Use8 live paths and reject oversized maps in plan preflight, preserving existing limit. Four targeted regression groups passed. Application payload unchanged.",
+    "correctedRun": 40548752980,
+    "correctedResult": "Preflight failed: archive_core.Rejected: Unknown or uncertain later deployment",
+    "deploymentAttemptedInCorrectedRun": false
+  },
+  "remaining": "Reconcile the current GitHub Pages deployment/environment record with the independently verified restored complete payload before another guarded publication. No guard bypass or further retries.",
+  "productionBoundaries": {
+    "financialMigrationExecuted": false,
+    "financialSaving": false,
+    "activePromotions": false,
+    "nightfallImageActivation": false,
+    "commandReads": false,
+    "commandWrites": false,
+    "businessRecordsMutated": false,
+    "existingOperationsAndImagesPreserved": true
+  }
+}
