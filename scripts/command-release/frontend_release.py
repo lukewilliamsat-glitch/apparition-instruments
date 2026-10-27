@@ -80,7 +80,10 @@ def plan_at(path):
         require(p.get('financialPersistence') is False and p.get('activePromotions') is False,'Unapproved commercial activation refused')
     if p['feature']=='BLACK_LEDGER':
         require(p.get('phase') in LEDGER_PHASES and re.fullmatch('[a-f0-9]{40}',p.get('applicationSource','')) and re.fullmatch('[a-f0-9]{64}',p.get('ledgerManifestSHA256','')),'Black Ledger phase/source identity missing')
-        require(p.get('financialPersistence') is (wording65(p) or ledger64(p) and p['phase']!='DISABLED64') and p.get('activePromotions') is False and p.get('nightfallActivation') is False,'Unapproved privileged commercial activation refused')
+        if wording65(p):
+            require(p.get('preserveExistingFinancialPersistence') is True and p.get('financialActivationChanged') is False and all(k not in p for k in ['financialPersistence','designatedOrderId','migrationSHA256','backendEvidenceSHA256','livePersistenceEvidenceSHA256']),'Wording release must contain no financial activation or test-order metadata')
+        else:require(p.get('financialPersistence') is (ledger64(p) and p['phase']!='DISABLED64'),'Unapproved privileged commercial activation refused')
+        require(p.get('activePromotions') is False and p.get('nightfallActivation') is False,'Unapproved image or promotion activation refused')
     require(p.get('siteURL')==SITE and p.get('commandReads') is False and p.get('commandWrites') is False,'Site or COMMAND activation mismatch')
     for key in ['baseTarSHA256','basePayloadDigest','candidateDigest','rollbackDigest']:
         require(re.fullmatch('[a-f0-9]{64}',p.get(key,'')),'Missing immutable payload identity')
