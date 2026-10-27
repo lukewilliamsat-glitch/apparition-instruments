@@ -2,6 +2,7 @@ import {refineCatalogueCard} from '../products/presentation.mjs';
 import {money} from './catalogue.mjs';
 import {categories} from '../admin/data.mjs';
 import {imageSource} from '../admin/images.mjs';
+import {isDemandImage,mountDemandImage,disposeDemandImages} from '../backend/demand-image-presentation.mjs';
 import {deploymentPath} from '../deployment.mjs';
 import {eligibleProduct,productURL} from '../products/model.mjs?v=p11ef';
 const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
@@ -13,12 +14,12 @@ export function renderComponentCards(catalogue){
   const filters=document.querySelector('.component-filters');if(filters){const link=el('a','',categories[category]);link.href=deploymentPath('/components/?category='+category);link.dataset.categoryFilter=category;filters.append(link);}
  }
  for(const section of document.querySelectorAll('.component-section')){
-  const grid=section.querySelector('.component-grid');grid.replaceChildren();
+  const grid=section.querySelector('.component-grid');disposeDemandImages(grid);grid.replaceChildren();
   for(const p of catalogue.filter(p=>p.category===section.id)){
    const card=el('article','component-card');card.id=p.id;card.dataset.product=p.id;
    const fallback=fallbacks.get(p.category)?.cloneNode(true)||el('div','component-mark');if(!fallback.firstChild)fallback.append(el('span','',categories[p.category]));
    const markValue=fallback.querySelector('span');if(markValue)markValue.textContent=p.specs.Resistance||p.specs.Value||p.specs.Capacitor||categories[p.category];
-   const detail=eligibleProduct(p)?productURL(p.id):null,source=imageSource(p.image);if(source){const image=el('img','component-image');image.src=source;image.alt=p.name;image.loading='lazy';image.addEventListener('error',()=>image.replaceWith(fallback),{once:true});if(detail){const imageLink=el('a','component-detail-image');imageLink.href=detail;imageLink.setAttribute('aria-label','View '+p.name+' details');imageLink.append(image);card.append(imageLink);}else card.append(image);}else card.append(fallback);
+   const detail=eligibleProduct(p)?productURL(p.id):null,source=imageSource(p.image);if(isDemandImage(p.image)){const host=el(detail?'a':'div','component-detail-image');if(detail){host.href=detail;host.setAttribute('aria-label','View '+p.name+' details');}card.append(host);mountDemandImage(host,p.image,{alt:p.name,className:'component-image',fallback});}else if(source){const image=el('img','component-image');image.src=source;image.alt=p.name;image.loading='lazy';image.addEventListener('error',()=>image.replaceWith(fallback),{once:true});if(detail){const imageLink=el('a','component-detail-image');imageLink.href=detail;imageLink.setAttribute('aria-label','View '+p.name+' details');imageLink.append(image);card.append(imageLink);}else card.append(image);}else card.append(fallback);
    const body=el('div','component-card-body'),title=el('h3');if(detail){const a=el('a','component-detail-link',p.name);a.href=detail;title.append(a);}else title.textContent=p.name;body.append(el('p','component-stock'+(p.stock===0?' stock-empty':''),p.stock===0?'Out of stock':'In stock'),title);
    if(p.cardDescription)body.append(el('p','component-description',p.cardDescription));
    const dl=el('dl');for(const {label:key,value} of p.displaySpecifications){const row=el('div');row.append(el('dt','',key),el('dd','',value));dl.append(row);}body.append(dl);

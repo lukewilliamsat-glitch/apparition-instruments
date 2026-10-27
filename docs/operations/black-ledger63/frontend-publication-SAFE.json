@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "newPublicationGroups": 10,
+  "changedApplicationFiles": 13,
+  "cacheReferenceOnlyFiles": 195,
+  "candidateDigest": "238c176d63da87b99d3c1e69ed972dab5fc726a69a1362ba282049721bd8a07c",
+  "rollbackDigest": "07896d435f26ac95f3afefc822ee1a6a17de49b05202a37378bb685f39f3224a",
+  "sqlIncluded": false,
+  "financialSaving": false,
+  "promotions": false,
+  "nightfallActivation": false,
+  "ownerAuthority": "Direct typed AUTHORISATION63 confirmation",
+  "nativeEvidenceReused": "4 Chrome/10 isolation; exact financial application unchanged. Verified result artifact identity and successful acceptance job. Separate PostgreSQL job success retained independently."
+}

@@ -1,0 +1,40 @@
+import {createLocalComponentRepository} from '../admin/component-repository.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4';
+import {createLocalAssemblyRepository} from '../admin/assembly-repository.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4';
+import {publicBackendConfig} from './public-config.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4';
+import {createPublicComponentRepository} from './component-data.mjs?build=b4d7e3708e1cd0153e922122fa2400f0c46d9ce7';
+import {createPublicAssemblyRepository} from './assembly-data.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4';
+import {readCatalogueComponents} from './catalogue-image-delivery.mjs?build=b4d7e3708e1cd0153e922122fa2400f0c46d9ce7';
+import {readPublicRows,componentColumns,kitColumns,invalidatePublicReads} from './public-read.mjs?build=b4d7e3708e1cd0153e922122fa2400f0c46d9ce7';
+
+// The local provider remains available for isolated tests and migration diagnostics.
+export function createRepositoryProviders({source='local',storage,config=publicBackendConfig,request=globalThis.fetch}={}){
+ if(source==='local'){
+  if(!storage)throw new Error('A browser storage adapter is required.');
+  return Object.freeze({components:createLocalComponentRepository(storage),assemblies:createLocalAssemblyRepository(storage)});
+ }
+ if(source!=='supabase')throw new Error('Unknown repository provider.');
+ return Object.freeze({
+  components:createPublicComponentRepository({config,request}),
+  assemblies:createPublicAssemblyRepository({config,request})
+ });
+}
+
+export function createPublicCatalogueClient(config=publicBackendConfig,request=globalThis.fetch){
+ const {url,publishableKey}=config||{};
+ if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(url||'')||!/^sb_publishable_[A-Za-z0-9_-]+$/.test(publishableKey||'')||typeof request!=='function')throw new Error('Invalid public Supabase configuration.');
+ const read=view=>view==='catalogue_components'?readCatalogueComponents({config,request}):readPublicRows({config,request},view,'?select='+kitColumns);
+ return Object.freeze({listComponents:()=>read('catalogue_components'),listWiringKits:()=>read('catalogue_wiring_kits')});
+}
+
+// Shared Admin repositories use this transport with the current Auth token.
+// It carries the real user's refreshed Auth token; the publishable key never bypasses RLS.
+export function createAuthenticatedRepositoryTransport(auth,{config=publicBackendConfig,request=globalThis.fetch}={}){
+ if(!auth||typeof auth.accessToken!=='function'||!/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(config?.url||'')||!/^sb_publishable_[A-Za-z0-9_-]+$/.test(config?.publishableKey||'')||typeof request!=='function')throw new Error('Invalid authenticated repository transport.');
+ return Object.freeze({async send(table,{method='GET',query='',body,prefer}={}){
+  if(!['commercial_destinations','components','component_internal','inventory','assemblies','assembly_bom','kit_definitions','kit_definition_internal','kit_permitted_components','catalogue_options','orders','partial_refund_reviews','order_email_deliveries','site_operations','news_posts','site_operations_audit','rpc/set_store_operations','rpc/save_news_post','rpc/create_external_order','rpc/edit_external_order','rpc/correct_order_fulfilment','rpc/delete_unused_component','rpc/delete_unused_catalogue_option','rpc/advance_order_fulfilment','rpc/acknowledge_partial_refund','rpc/record_order_dispatch_details','rpc/get_customer_aftercare','rpc/update_customer_aftercare','rpc/get_admin_email_templates','rpc/mutate_email_template','rpc/command63_financial_read','rpc/command63_financial_save','rpc/command63_financial_status','rpc/command63_financial_batch'].includes(table))throw new Error('Unsupported Admin repository resource.');
+  const token=await auth.accessToken();
+  const response=await request(config.url+'/rest/v1/'+table+query,{method,headers:{apikey:config.publishableKey,Authorization:'Bearer '+token,'Content-Type':'application/json',...prefer?{Prefer:prefer}:{}},...body===undefined?{}:{body:JSON.stringify(body)}});
+  if(response.ok&&method!=='GET'&&['components','inventory','assemblies','assembly_bom','kit_definitions','kit_permitted_components','catalogue_options','rpc/delete_unused_component','rpc/delete_unused_catalogue_option'].includes(table))invalidatePublicReads();
+  return response;
+ }});
+}

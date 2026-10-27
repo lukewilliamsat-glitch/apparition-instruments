@@ -1,0 +1,100 @@
+{
+  "kind": "BLACK_LEDGER_V1",
+  "phase": "SAFE",
+  "sourceCommit": "b4d7e3708e1cd0153e922122fa2400f0c46d9ce7",
+  "baseSourceCommit": "84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
+  "unchangedRepositoryRevision": "84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
+  "entries": [
+    {
+      "path": "admin/orders/app.mjs",
+      "beforeSHA256": "ce56ad98ab806e6a3f41bfe512d08c0a3008bdd5ee07f9aa6041b43464802ac9",
+      "afterSHA256": "4342d353d6605146e07e764f5617bfb0d602e2b5399950f49db7f1440300f169",
+      "bytes": 16274,
+      "rawSourceSHA256": "3045ea0e132e2a7a2a3ff03ae851765df3a757627ae1fb045c2cc58e4fcf150b"
+    },
+    {
+      "path": "admin/orders/finance-ui.mjs",
+      "beforeSHA256": "5bb929b6fc98400f4d0804514a67babefccda7e4a1ace10a8aa14ce74af99d2f",
+      "afterSHA256": "ce3294ddbb5485eae9234deba274ca1264a95c128a00a4fb8f4ff22b50ff918d",
+      "bytes": 39431,
+      "rawSourceSHA256": "3ccaf3be2d9f387976e900af2b7ff382dee1fb0e9c2a990178fd5b059c160c65"
+    },
+    {
+      "path": "admin/orders/financial-order.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "95d19665ceb2b841b118f0568659ac6deb5a16360f626e5eb6843bf0865814a4",
+      "bytes": 4500,
+      "rawSourceSHA256": "7c26b66e7d3aa867a2cd22058cb4c869bd641a3ff02477dd2ce08aab6aef1f35"
+    },
+    {
+      "path": "admin/orders/financial-record.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "3a84194797e9f62097b8e8065a2c5f91980289d9a8931b6daf34365d390f83ba",
+      "bytes": 10793,
+      "rawSourceSHA256": "c9cf3e1ae9622ffab2ea68c98845b273d566f6174193da6248a4cf1be0d8ac26"
+    },
+    {
+      "path": "backend/providers.mjs",
+      "beforeSHA256": "732d2e717de055bae7b134f0d57c49f32c8a1f24ef95c5ffabd0e62abb8cd922",
+      "afterSHA256": "1ffb37c6dd02f7038fb648c22867361a744db2007d62295ecbc4809679495350",
+      "bytes": 4316,
+      "rawSourceSHA256": "3a08f4ba100b4e0361bb008c88ffb8ea6fb7181c515b49b532c2ed7d09240108"
+    },
+    {
+      "path": "backend/catalogue-image-delivery.mjs",
+      "beforeSHA256": "7c4e285c2fd390dff7087c4645b13bcf470d99b1bae8e18b79050bb57522f265",
+      "afterSHA256": "cb14f012aabfd59284e299f3c3062558713f5503f20baf2e2f7fcaf7d861c1f1",
+      "bytes": 10590,
+      "rawSourceSHA256": "cc6bca0abbc50b0832b91206e4a79c631ace7ebdfcffd9d6312b13fb9704671c"
+    },
+    {
+      "path": "backend/component-data.mjs",
+      "beforeSHA256": "cb31f646f49b7637d2d2718e3ee39bb9d609e3490dcb0b33b9839b3710ea41fe",
+      "afterSHA256": "e4e3077cb576ab1dc80d745ae24d68a53566a6a26eff3ebfd79451fdff649465",
+      "bytes": 8746,
+      "rawSourceSHA256": "c9007c73bebc96f7152838ba876b397b8bd17b06080907c769eaac7f97d01022"
+    },
+    {
+      "path": "backend/public-read.mjs",
+      "beforeSHA256": "0cf7f6b681c2f56017210715a3382533d643266e4c423d5375237ba9a22a2a6b",
+      "afterSHA256": "6c25f198e6282360ba7cae00cfdfb457e4c2a2ee298eb7f196e06f1a76232cd9",
+      "bytes": 7921,
+      "rawSourceSHA256": "6c25f198e6282360ba7cae00cfdfb457e4c2a2ee298eb7f196e06f1a76232cd9"
+    },
+    {
+      "path": "backend/demand-image-presentation.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "a8c0839e5b5bde028e29506b11065a36db9c3318499f113716886cbf5cc23a2a",
+      "bytes": 2912,
+      "rawSourceSHA256": "b3bd7d08ec7f82aac0013e7fc6991162fadc46249c471787a22a754c71c39ed3"
+    },
+    {
+      "path": "backend/static-image-contract.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "5f71c9dd3670428abfe2a8b858c4c6c4d5564fe26d9ebb2a5b19e6cdf305b270",
+      "bytes": 899,
+      "rawSourceSHA256": "5f71c9dd3670428abfe2a8b858c4c6c4d5564fe26d9ebb2a5b19e6cdf305b270"
+    },
+    {
+      "path": "backend/verified-image-pool.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "c1f221d2c81ba11147e59aab67f241451806d546c5247ec8fdfa6204383b07f5",
+      "bytes": 3517,
+      "rawSourceSHA256": "c1f221d2c81ba11147e59aab67f241451806d546c5247ec8fdfa6204383b07f5"
+    },
+    {
+      "path": "components/cards.mjs",
+      "beforeSHA256": "d8150985885b3b6a5d33941559c4e11b4067597545fd75cfba494e8634e9163d",
+      "afterSHA256": "2203d9cdb9e489f512f2b7c25f4a168759efd9465b02837601799a92bf927208",
+      "bytes": 4633,
+      "rawSourceSHA256": "9c4be5e38fad7673cd4624ff18aaf418136d6685272916614e0452d84a8cf275"
+    },
+    {
+      "path": "products/app.mjs",
+      "beforeSHA256": "bc04558f7c27cea741ff17290c9e7ec7662724f587bdcb9ac0619eeed9d10ef6",
+      "afterSHA256": "dd8d99cccfd30488e95068a8a1a920b30d566ccef044ce5c99e80a13d1f75d46",
+      "bytes": 7182,
+      "rawSourceSHA256": "2d5d59350e5f558f5404b2d33817ca81927931f773f3496cc28f37e9af843e83"
+    }
+  ]
+}

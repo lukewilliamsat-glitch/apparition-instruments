@@ -18,7 +18,7 @@ COMMAND_SOURCE='df78c5bf5144b012a7d96c628186180fa6432df3'
 UNIFIED_ALLOWED={'admin/application.mjs','admin/application.css','admin/admin-gate.mjs','admin/overview.mjs','admin/command/index.html','admin/command-redirect.mjs'}
 ASCENDANCE_PHASES={'A':{'admin/application.css','admin/overview.mjs'},'B':{'admin/application.css','admin/admin.mjs'},'C':{'admin/application.css','admin/application.mjs','admin/orders/app.mjs','admin/orders/external-order.mjs','admin/orders/economics.mjs','admin/orders/finance-ui.mjs','admin/orders/finance-activation.mjs','admin/orders/cost-reference.mjs'}}
 FORGE_PHASES={'C_NAV':{'admin/application.mjs','admin/sales-content-presentation.mjs'},'A':ASCENDANCE_PHASES['C'],'B':{'admin/catalogue-settings/settings.mjs','backend/catalogue-options.mjs','admin/admin.mjs','admin/application.css'},'C':{'admin/site-operations/index.html','commercial/offers-admin.mjs','commercial/offers.mjs','commercial/offer-reference.mjs','commercial/offer-activation.mjs','admin/application.css'}}
-LEDGER_PHASES={'RECON':{'admin/orders/finance-ui.mjs','admin/orders/economics-v2.mjs'}}
+LEDGER_PHASES={'SAFE':{'backend/catalogue-image-delivery.mjs', 'components/cards.mjs', 'products/app.mjs', 'admin/orders/financial-record.mjs', 'backend/static-image-contract.mjs', 'backend/demand-image-presentation.mjs', 'backend/verified-image-pool.mjs', 'backend/public-read.mjs', 'admin/orders/finance-ui.mjs', 'backend/component-data.mjs', 'admin/orders/app.mjs', 'admin/orders/financial-order.mjs', 'backend/providers.mjs'},'RECON':{'admin/orders/finance-ui.mjs','admin/orders/economics-v2.mjs'}}
 COMMAND_MANIFEST_SHA='899151248c2fe2492f198ae19bc36a975287d0edad55cf5168c2657184e17ff1'
 
 def plan_at(path):
@@ -114,7 +114,7 @@ def prepare(p,baseline,root,out):
             if path in command_entries:
                 e=command_entries[path]
                 require(c.get('operation')=='compiled-admin' and c.get('source')=='release-overlays/'+compiled_namespace+'/'+path and all(c.get(k)==e[k] for k in ['beforeSHA256','afterSHA256','bytes']),'Unified approved source mismatch')
-            else:require((path.startswith('admin/') or path=='commercial/admin.mjs') and path.endswith(('.html','.mjs')) and cache_reference_only(c),'Unified unrelated delta refused')
+            else:require((p['feature']=='BLACK_LEDGER' and p['phase']=='SAFE' or path.startswith('admin/') or path=='commercial/admin.mjs') and path.endswith(('.html','.mjs','.js')) and cache_reference_only(c),'Unified unrelated delta refused')
         elif p['feature']=='COMMAND_FRONTEND':
             if path in command_entries:
                 e=command_entries[path]
@@ -146,6 +146,8 @@ def prepare(p,baseline,root,out):
         else:raise ValueError('Unsupported delta operation')
         require(sha(data)==c['afterSHA256'] and len(data)==c['bytes'],'Delta postimage mismatch: '+path)
         files[path]=data;changes.append({'path':path,'beforeSHA256':c['beforeSHA256'],'afterSHA256':sha(data),'bytes':len(data)})
+    if p['feature']=='BLACK_LEDGER' and p['phase']=='SAFE':
+        require('enabled:false' in files['backend/image-delivery-config.mjs'].decode().replace(' ',''),'Unapproved NIGHTFALL activation refused')
     if p['feature'] in ('COMMAND_FRONTEND','COMMAND_UNIFIED_ADMIN','COMMAND_ASCENDANCE','COMMERCE_FORGE','BLACK_LEDGER'):
         activation=files['admin/command/read-activation.mjs'].decode('utf-8')
         require(all(re.search(r'^\s*'+name+r'\s*:\s*false\s*,?\s*$',activation,re.M) for name in ['enabled','inventoryRead']),'COMMAND unverified activation refused')
@@ -202,6 +204,18 @@ def operations(p,get=None):
 def unified_native_evidence(p,read):
     evidence=p['nativeAcceptance'];execution=evidence.get('executionSource',p['applicationSource'])
     require(re.fullmatch('[a-f0-9]{40}',execution),'Native execution source missing')
+    if p['feature']=='BLACK_LEDGER' and p['phase']=='SAFE':
+        require(p['applicationSource']=='b4d7e3708e1cd0153e922122fa2400f0c46d9ce7' and execution=='d085c8968e37df3292650200321be6769f5c32e3' and evidence['runId']==40525724200,'Wrong explicitly approved SAFE source')
+        accepted=read('/actions/runs/40525724200')
+        require(accepted.get('head_sha')==execution and accepted.get('status')=='completed' and accepted.get('path')=='.github/workflows/command63-black-ledger.yml','Wrong financial acceptance run')
+        job=read('/actions/jobs/122264638013')
+        require(job.get('run_id')==40525724200 and job.get('name')=='acceptance' and job.get('conclusion')=='success','Financial Chrome job not successful')
+        artifact=read('/actions/artifacts/12742718558')
+        require(artifact.get('digest')=='sha256:5cc5a028625e9236de4e9e86fbfea39e4df7874cba1862c70fbc989bc880fa28' and artifact.get('size_in_bytes')==3534 and artifact.get('workflow_run',{}).get('head_sha')==execution and not artifact.get('expired'),'Verified browser evidence identity changed')
+        compared=read('/compare/'+execution+'...'+p['applicationSource'])
+        permitted={'.github/workflows/command63-black-ledger.yml','tests/command63/finance-postgres17.mjs','tests/command63/pg17-result-test.mjs','tests/command63/pg17-result.mjs','tests/nightfall63-integration.mjs','docs/operations/black-ledger63/PRIVILEGED_FINANCE_GATE.json','docs/operations/black-ledger63/finance-source-status.json','docs/operations/black-ledger63/nightfall-integration-status.json','dist/backend/catalogue-image-delivery.mjs','dist/backend/component-data.mjs','dist/backend/demand-image-presentation.mjs','dist/backend/public-read.mjs','dist/backend/static-image-contract.mjs','dist/backend/verified-image-pool.mjs','dist/components/cards.mjs','dist/products/app.mjs'}
+        require(compared.get('merge_base_commit',{}).get('sha')==execution and compared.get('status')=='ahead' and {f.get('filename') for f in compared.get('files',[])}==permitted,'Financial application changed after accepted browser source')
+        return {'runId':40525724200,'jobId':122264638013,'applicationSource':p['applicationSource'],'executionSource':execution,'financialApplicationUnchanged':True,'nightfall':'Accepted runtime and targeted DOM integration, activation remains false'}
     accepted=read('/actions/runs/'+str(evidence['runId']))
     require(accepted.get('head_sha')==execution and accepted.get('status')=='completed' and accepted.get('conclusion')=='success','Unified native acceptance is not successful for exact source')
     if p['feature']=='COMMAND_ASCENDANCE':require(accepted.get('path')=='.github/workflows/command61-ascendance.yml','Wrong Ascendance acceptance workflow')

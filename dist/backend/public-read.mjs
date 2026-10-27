@@ -31,3 +31,6 @@ export async function readPublicRows({config,request=globalThis.fetch,maxAgeMs=p
  let load=reads.get(key);if(!load){const before=generation(request);load=(async()=>{if(maxAgeMs){const saved=await persistentRead(request,key);if(saved&&before===generation(request)){store(request,c,key,saved.rows,saved.expires);return saved.rows;}}const response=await request(url,{cache:'no-store',headers:{apikey:config.publishableKey,Accept:'application/json'}});if(!response.ok)throw Error(label+' is unavailable ('+response.status+'). No browser-local data was used. No local configuration was substituted.');const rows=await response.json();if(!Array.isArray(rows))throw Error('Invalid '+label+' response.');if(maxAgeMs&&before===generation(request)){const expires=Date.now()+maxAgeMs;store(request,c,key,rows,expires);await persistentWrite(request,key,rows,expires,before);}return rows;})();reads.set(key,load);load.finally(()=>{if(reads.get(key)===load)reads.delete(key);}).catch(()=>{});}
  return structuredClone(await load);
 }
+
+// Share catalogue invalidation with verified image leases.
+export const publicReadGeneration=request=>generation(request);
