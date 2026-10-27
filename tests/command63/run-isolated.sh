@@ -11,6 +11,6 @@ chown -R "$owner" "$output"
 cd "$root"
 run_isolated(){ runuser -u "$owner" -- env -i HOME="$fixture_home" TMPDIR="$fixture_home" PATH="$(dirname "$node"):/usr/bin:/bin" LANG=C.UTF-8 "$node" "$@"; }
 run_isolated tests/command60/isolation.mjs "$output" "$browser" "$controller" "$parent_namespace" "$commit"
-run_isolated tests/command63/reconciliation.mjs > "$output/reconciliation.txt"
-run_isolated tests/command63/reconciliation-ui.mjs > "$output/reconciliation-ui.txt"
+run_isolated tests/command63/reuse-recon.mjs > "$output/reused-reconciliation.txt"
+run_isolated tests/command63/bootstrap.mjs > "$output/fixture-bootstrap.txt"
 run_isolated tests/command63/browser.mjs "$output" "$browser" "$controller" "$commit"

@@ -1,0 +1,16 @@
+{
+  "source": "d68f04e79109c1ab40a536cf451aacefefe12b69",
+  "run": 40516052555,
+  "newCalculationGroups": 19,
+  "acceptedV1Groups": 35,
+  "DOM": "PASS",
+  "reason": "The original runner completed both Node commands before entering native Chrome; only the missing fixture Kit Definition is corrected.",
+  "sha256": {
+    "dist/admin/orders/economics.mjs": "a086dcef8f33b14d880c8accc91f2f5bfeabf463a3241237a7ac49392ebbba3a",
+    "dist/admin/orders/economics-v2.mjs": "78183785669c1f1cd6a646379398cb4ec7656eb6e4705be5e3316bb6be4fb963",
+    "dist/admin/orders/finance-ui.mjs": "f694d56a3f65c3cfdbb3c59f401d5349936243fd51b472dc2d0c241cd7c21907",
+    "tests/command61/economics.mjs": "6aec303848dcfdbe53fa4bc8af03f85125b765ffbd838d808622145d0b208668",
+    "tests/command63/reconciliation.mjs": "9401a3bb53c20474aae939e67ddd2e62375305281f2fb7e9c0f9b64925776805",
+    "tests/command63/reconciliation-ui.mjs": "4a78be9c4711279013b9f088ecbde81b075f35dba732f794faa0e0f43153a66c"
+  }
+}
