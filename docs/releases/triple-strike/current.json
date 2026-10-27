@@ -5,10 +5,10 @@
   "phase": "SAFE",
   "applicationSource": "b4d7e3708e1cd0153e922122fa2400f0c46d9ce7",
   "siteURL": "https://apparitioninstruments.co.uk",
-  "baseSource": "f731f40652a45baac7d3585ef61cf6adfa4e92ff",
-  "baseRunId": 40531133959,
-  "baseArtifactId": 12746996409,
-  "baseTarSHA256": "8f3e58e864845649ef235919e8c869082a2f4a74c754888bbbd6b34f5303d954",
+  "baseSource": "0c12543621bc3ea939979376d7531c33b248badf",
+  "baseRunId": 40530081573,
+  "baseArtifactId": 12746545545,
+  "baseTarSHA256": "95d1b174e3a98480666371a880605b81faa8e33972f2726c7be8f703d43a2be7",
   "basePayloadDigest": "07896d435f26ac95f3afefc822ee1a6a17de49b05202a37378bb685f39f3224a",
   "candidateDigest": "238c176d63da87b99d3c1e69ed972dab5fc726a69a1362ba282049721bd8a07c",
   "rollbackDigest": "07896d435f26ac95f3afefc822ee1a6a17de49b05202a37378bb685f39f3224a",
@@ -22,7 +22,24 @@
     "observedAt": "2026-10-26T16:07:59.974137+00:00",
     "sha256": "1040aa31f8c5c5a874c46259d08fd2c0400f6d3eac8421bd7e1529d4b0d27a25"
   },
-  "knownFailedPublications": [],
+  "knownFailedPublications": [
+    {
+      "runId": 40548752980,
+      "source": "4da0fb6d9294c713e6fed706d1178e758e167cd4",
+      "jobId": 122346434460,
+      "kind": "preflight",
+      "deployStep": "Publish the verified complete frontend once",
+      "restoreStep": "Restore complete verified current rollback on a confirmed live verification failure"
+    },
+    {
+      "runId": 40531133959,
+      "source": "f731f40652a45baac7d3585ef61cf6adfa4e92ff",
+      "jobId": 122283922788,
+      "kind": "restored",
+      "deployStep": "Publish the verified complete frontend once",
+      "restoreStep": "Restore complete verified current rollback on a confirmed live verification failure"
+    }
+  ],
   "baselineVerification": {
     "/admin/orders/": "59028eda8224a3cbaf493b3cb9e3925851687ed179ea231a931d50de3f97065b",
     "/admin/orders/finance-ui.mjs": "5bb929b6fc98400f4d0804514a67babefccda7e4a1ace10a8aa14ce74af99d2f",

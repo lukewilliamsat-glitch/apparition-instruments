@@ -230,6 +230,34 @@ def unified_native_evidence(p,read):
         require(0<len(files)<=10 and all(f.get('filename','').startswith(test_prefix) and f.get('status') in ('added','modified') for f in files),'Application changed after native reuse source')
     return {'runId':evidence['runId'],'applicationSource':p['applicationSource'],'executionSource':execution,'applicationUnchanged':True}
 
+def restored_publication(p,k,actual,read,download=None):
+    import io,zipfile
+    require(p['feature']=='BLACK_LEDGER' and p['phase']=='SAFE' and k.get('runId')==40531133959 and k.get('source')=='f731f40652a45baac7d3585ef61cf6adfa4e92ff','Restoration scope mismatch')
+    steps={x['name']:x.get('conclusion') for x in actual.get('steps',[])}
+    for name in [k['deployStep'],k['restoreStep'],'Independently read back the retained complete rollback','Verify every retained rollback file and its exact payload identity']:
+        require(steps.get(name)=='success','Restoration or retained rollback was not successful')
+    receipt=read('/actions/artifacts/12745263557');archive=read('/actions/artifacts/12746996409')
+    for a,digest,size in [(receipt,'9444a4d21ac2fe280becf26448c9bfed826439b9d1cbd27019493cd294d41ab5',68462),(archive,'550df49188e8dfdaba1dd9e21ab53800d551fc8349c4504d0d0f1ba4dc57dafc',20387747)]:
+        require(a.get('digest')=='sha256:'+digest and a.get('size_in_bytes')==size and not a.get('expired') and a.get('workflow_run',{}).get('id')==40531133959 and a.get('workflow_run',{}).get('head_sha')==k['source'],'Restoration artifact identity changed')
+    if download:raw=download()
+    else:
+        url='https://api.github.com/repos/'+REPOSITORY+'/actions/artifacts/12745263557/zip'
+        req=urllib.request.Request(url,headers={'Authorization':'Bearer '+os.environ.get('GH_TOKEN',''),'Accept':'application/vnd.github+json'})
+        try:
+            with urllib.request.build_opener(NoRedirect).open(req,timeout=5) as r:raw=r.read(131073)
+        except urllib.error.HTTPError as e:
+            require(e.code in (301,302,303,307),'Restoration receipt download unavailable')
+            location=e.headers.get('Location','');u=urllib.parse.urlsplit(location)
+            require(u.scheme=='https' and not u.username and not u.password and (u.hostname or '').endswith(('.blob.core.windows.net','.actions.githubusercontent.com')),'Unexpected restoration receipt host')
+            raw=get_bytes(location,131072)
+    require(len(raw)==68462 and sha(raw)=='9444a4d21ac2fe280becf26448c9bfed826439b9d1cbd27019493cd294d41ab5','Restoration receipt bytes changed')
+    with zipfile.ZipFile(io.BytesIO(raw)) as z:
+        infos=z.infolist();require(len(infos)<=16 and len({x.filename for x in infos})==len(infos) and all('/' not in x.filename and x.file_size<=262144 for x in infos),'Invalid restoration receipt archive')
+        r=strict_json(z.read('frontend-receipt.json'));v=strict_json(z.read('frontend-rollback-verified.json'))
+    require(r.get('GITHUB_SHA')==k['source'] and r.get('GITHUB_RUN_ID')=='40531133959' and r.get('OPERATION')=='release' and r.get('ROLLBACK_ARTIFACT')=='12746996409' and r.get('DEPLOY_OUTCOME')=='success' and r.get('LIVE_OUTCOME')=='failure' and r.get('RESTORE_OUTCOME')=='success','Original restoration receipt differs')
+    require(r.get('rollbackDigest')==v.get('payloadDigest')==p['basePayloadDigest']==p['rollbackDigest'] and v.get('kind')=='rollback' and v.get('tarSHA256')=='8f3e58e864845649ef235919e8c869082a2f4a74c754888bbbd6b34f5303d954','Restored complete payload differs from baseline')
+    return {'runId':40531133959,'rollbackArtifact':12746996409,'payloadDigest':v['payloadDigest'],'receiptSHA256':sha(raw)}
+
 def preflight(p,get=None,public_get=get_bytes,final=False,operation='release',restore_run=None):
     if p['feature']=='SENTINEL':
         decision=p.get('evidenceReuse',{}).get('interactionDecision')
@@ -275,6 +303,10 @@ def preflight(p,get=None,public_get=get_bytes,final=False,operation='release',re
         require(prior.get('status')=='completed' and prior.get('conclusion')=='failure' and prior.get('head_sha')==k['source'],'Prior failure is not completed/unchanged')
         actual=read('/actions/jobs/'+str(k['jobId']));require(actual.get('run_id')==int(prior_run) and actual.get('conclusion')=='failure','Failed job identity drift')
         steps={x['name']:x.get('conclusion') for x in actual.get('steps',[])}
+        if k['kind']=='restored':
+            require(d['id']==7362675635 and k['jobId']==122283922788 and job=='122283922788','Restoration deployment/job association changed')
+            restored_publication(p,k,actual,read)
+            excluded.append(int(prior_run));continue
         require(steps.get(k['deployStep'])==('skipped' if k['kind']=='preflight' else 'failure'),'Prior deploy outcome uncertain')
         require(steps.get(k['restoreStep'])=='skipped','Prior restore outcome uncertain')
         if k['kind']=='terminal':

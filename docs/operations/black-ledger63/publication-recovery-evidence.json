@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "targetedPublisherGroups": 16,
+  "reconciledEnvironmentRecords": [
+    7365302103,
+    7362675635
+  ],
+  "successfulBaselineDeployment": 7362511613,
+  "payloadDigest": "07896d435f26ac95f3afefc822ee1a6a17de49b05202a37378bb685f39f3224a",
+  "applicationPayloadChanged": false,
+  "scope": "Publication recovery only. Exact artifact/receipt/source/job association plus freshly verified8 live baseline URLs. No application rebuild or backend mutations.",
+  "candidateDigest": "238c176d63da87b99d3c1e69ed972dab5fc726a69a1362ba282049721bd8a07c",
+  "approval": "Direct typed AUTHORISATION63 targeted publication recovery."
+}
