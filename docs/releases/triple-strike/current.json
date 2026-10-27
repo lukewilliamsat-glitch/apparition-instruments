@@ -2,17 +2,17 @@
   "version": 1,
   "authority": "AUTHORISATION_61",
   "feature": "COMMAND_ASCENDANCE",
-  "phase": "A",
-  "applicationSource": "b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+  "phase": "B",
+  "applicationSource": "91a2512a0eacd27f2dc444add49eeafa280eeef3",
   "siteURL": "https://apparitioninstruments.co.uk",
-  "baseSource": "84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-  "baseRunId": 40474471264,
-  "baseArtifactId": 12720340159,
-  "baseTarSHA256": "b9d84ab4d2eebfadde27adc7090b796928a30e0d31780ac8d2f289a838619382",
-  "basePayloadDigest": "5c0130bc161585c4b5a3d4652a5c9d11d28536c63a0f13f0eb211d683be48df7",
-  "candidateDigest": "d935573cf69578612cce0bd029b7e3be66d0cdcd9520125614c7e3e23fd065a4",
-  "rollbackDigest": "5c0130bc161585c4b5a3d4652a5c9d11d28536c63a0f13f0eb211d683be48df7",
-  "ascendanceManifestSHA256": "9cc62044724320622ff6c02c54d4943d1d576ee7a6f5a3a1f717c578068abc32",
+  "baseSource": "a06f0a5ba30b28f461f560d3eb4a4f36a84c7369",
+  "baseRunId": 40482474043,
+  "baseArtifactId": 12722964360,
+  "baseTarSHA256": "e4554b895c7d65176354ff84b56524b4d1b62a62caca72748d9cb51741abedc7",
+  "basePayloadDigest": "d935573cf69578612cce0bd029b7e3be66d0cdcd9520125614c7e3e23fd065a4",
+  "candidateDigest": "e0b509a1b0af2bfe0f3ef8ddd904725d2897ad9ad9e24d5201e54282b3ece593",
+  "rollbackDigest": "d935573cf69578612cce0bd029b7e3be66d0cdcd9520125614c7e3e23fd065a4",
+  "ascendanceManifestSHA256": "f9e231d8ce71ceecccce293bb6179276f687baa402922aff52560f87f053c180",
   "commandReads": false,
   "commandWrites": false,
   "operationsEvidence": {
@@ -25,81 +25,67 @@
   },
   "knownFailedPublications": [],
   "baselineVerification": {
-    "/admin/": "7d7113c5759887db2f3e1cbd59005f3d858b4ec44c24b78e9ec64fa35265d0ae",
-    "/admin/overview/": "cb09ffd6e8b61c8e955d56e85b570cddeec6e07e9042c1e048fffd9f832ad607",
-    "/admin/overview.mjs": "d5c58762ed498c56190ce9c99374f2609e7fb082cb11a7a07a1e90fafee9d513",
-    "/admin/application.css": "e236bf64da6ab626e47e1f5894d4b01abd0d741a540a9bc83d6cc69ce9daaad2",
+    "/admin/": "97a2340841faa5985bc629fa604cc07bbfdb00581e0ca6fb874c2479c30f6201",
+    "/admin/admin.mjs": "617236ec746fa7a1b3abdf166c579d42b910fb7e71d4fa0212f0f3f5aab0d668",
+    "/admin/application.css": "3691cd93d9deccc9cd14ed012406da3eb9fcb19927c6b6da790092e8fa692246",
+    "/admin/overview.mjs": "2e973a3dc71173f91f3cece8866a7c9e1e70f890f4d5a602843787943b67dfda",
     "/operations/snapshot.json": "fd5709af3c61bc8dfc945558ad805559845dacb9380f8451ce2cb8887d1d90b2",
     "/": "155da9be7cd7ae7740c70c6d3cea8245e9428b0891e86474da8a32293da3e28c",
     "/basket/": "7e9d0cf51d3c069aea68ca29cb96b23c5d6584619ee57782bbafa529f3d1b944",
     "/components/treble-bleeds/": "bb0b0aa51dc8dca6eb718448a9462b2657dc58299608f952df6fc153689dd5eb"
   },
   "rollbackVerification": {
-    "/admin/": "7d7113c5759887db2f3e1cbd59005f3d858b4ec44c24b78e9ec64fa35265d0ae",
-    "/admin/overview/": "cb09ffd6e8b61c8e955d56e85b570cddeec6e07e9042c1e048fffd9f832ad607",
-    "/admin/overview.mjs": "d5c58762ed498c56190ce9c99374f2609e7fb082cb11a7a07a1e90fafee9d513",
-    "/admin/application.css": "e236bf64da6ab626e47e1f5894d4b01abd0d741a540a9bc83d6cc69ce9daaad2",
+    "/admin/": "97a2340841faa5985bc629fa604cc07bbfdb00581e0ca6fb874c2479c30f6201",
+    "/admin/admin.mjs": "617236ec746fa7a1b3abdf166c579d42b910fb7e71d4fa0212f0f3f5aab0d668",
+    "/admin/application.css": "3691cd93d9deccc9cd14ed012406da3eb9fcb19927c6b6da790092e8fa692246",
+    "/admin/overview.mjs": "2e973a3dc71173f91f3cece8866a7c9e1e70f890f4d5a602843787943b67dfda",
     "/operations/snapshot.json": "fd5709af3c61bc8dfc945558ad805559845dacb9380f8451ce2cb8887d1d90b2",
     "/": "155da9be7cd7ae7740c70c6d3cea8245e9428b0891e86474da8a32293da3e28c",
     "/basket/": "7e9d0cf51d3c069aea68ca29cb96b23c5d6584619ee57782bbafa529f3d1b944",
     "/components/treble-bleeds/": "bb0b0aa51dc8dca6eb718448a9462b2657dc58299608f952df6fc153689dd5eb"
   },
   "releaseVerification": {
-    "/admin/": "97a2340841faa5985bc629fa604cc07bbfdb00581e0ca6fb874c2479c30f6201",
-    "/admin/overview/": "434b438f208747903f7b261a52bdb66db907fed2e27733a63bc4dac32df7d650",
-    "/admin/overview.mjs": "2e973a3dc71173f91f3cece8866a7c9e1e70f890f4d5a602843787943b67dfda",
-    "/admin/application.css": "3691cd93d9deccc9cd14ed012406da3eb9fcb19927c6b6da790092e8fa692246",
+    "/admin/": "8e6d0be6ad0fcb5f8a07da9c9aec782b22800ee76bdeec47664822c93f8131ea",
+    "/admin/admin.mjs": "f5c6ae465dc4b1e22473d9260a0bed65c05756bbfbaf1fdd4c928d9956bc8668",
+    "/admin/application.css": "4971d40755fea2dc03c21b6e00cc7a357b960c1a875dcf428c831efca627db45",
+    "/admin/overview.mjs": "41ae1b023196a81514b6b22729baf14bcdf3ff425ab8d1d99ac32610f921e0a4",
     "/operations/snapshot.json": "fd5709af3c61bc8dfc945558ad805559845dacb9380f8451ce2cb8887d1d90b2",
     "/": "155da9be7cd7ae7740c70c6d3cea8245e9428b0891e86474da8a32293da3e28c",
     "/basket/": "7e9d0cf51d3c069aea68ca29cb96b23c5d6584619ee57782bbafa529f3d1b944",
     "/components/treble-bleeds/": "bb0b0aa51dc8dca6eb718448a9462b2657dc58299608f952df6fc153689dd5eb"
   },
   "nativeAcceptance": {
-    "runId": 40481988467,
-    "executionSource": "b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
-    "scope": "Six focused changed-presentation journeys; fictional Auth; no business writes."
+    "runId": 40484108038,
+    "executionSource": "91a2512a0eacd27f2dc444add49eeafa280eeef3",
+    "scope": "Five Inventory/shared-style journeys, including compact desktop row-action assertion."
   },
   "changes": [
     {
       "path": "admin/application.css",
       "operation": "compiled-admin",
-      "source": "release-overlays/command61-A/admin/application.css",
-      "beforeSHA256": "e236bf64da6ab626e47e1f5894d4b01abd0d741a540a9bc83d6cc69ce9daaad2",
-      "afterSHA256": "3691cd93d9deccc9cd14ed012406da3eb9fcb19927c6b6da790092e8fa692246",
-      "bytes": 39316
+      "source": "release-overlays/command61-B/admin/application.css",
+      "beforeSHA256": "3691cd93d9deccc9cd14ed012406da3eb9fcb19927c6b6da790092e8fa692246",
+      "afterSHA256": "4971d40755fea2dc03c21b6e00cc7a357b960c1a875dcf428c831efca627db45",
+      "bytes": 44931
     },
     {
-      "path": "admin/overview.mjs",
+      "path": "admin/admin.mjs",
       "operation": "compiled-admin",
-      "source": "release-overlays/command61-A/admin/overview.mjs",
-      "beforeSHA256": "d5c58762ed498c56190ce9c99374f2609e7fb082cb11a7a07a1e90fafee9d513",
-      "afterSHA256": "2e973a3dc71173f91f3cece8866a7c9e1e70f890f4d5a602843787943b67dfda",
-      "bytes": 9842
+      "source": "release-overlays/command61-B/admin/admin.mjs",
+      "beforeSHA256": "617236ec746fa7a1b3abdf166c579d42b910fb7e71d4fa0212f0f3f5aab0d668",
+      "afterSHA256": "f5c6ae465dc4b1e22473d9260a0bed65c05756bbfbaf1fdd4c928d9956bc8668",
+      "bytes": 29368
     },
     {
       "path": "admin/admin-gate.mjs",
       "operation": "replace",
-      "beforeSHA256": "68859654060b26b104ce4e610f9b7f0eef401f6264a57f4cf4b593ee58775083",
-      "afterSHA256": "bd1ad6ce6ff2c1c5f6e58bda688da9dc558ddf159835442c5890df8f196f36fc",
+      "beforeSHA256": "bd1ad6ce6ff2c1c5f6e58bda688da9dc558ddf159835442c5890df8f196f36fc",
+      "afterSHA256": "9a3451ac398b4d4b57ff137caa5ec55f18ab2dc41f1e6009e9f9c37415827c16",
       "bytes": 8213,
       "replacements": [
         {
-          "before": "./application.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "./application.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
-          "count": 1
-        }
-      ]
-    },
-    {
-      "path": "admin/admin.mjs",
-      "operation": "replace",
-      "beforeSHA256": "80998565182863f6af8e402c3b1b9018b3c1b52074032d44623dc0c8865699e4",
-      "afterSHA256": "617236ec746fa7a1b3abdf166c579d42b910fb7e71d4fa0212f0f3f5aab0d668",
-      "bytes": 27851,
-      "replacements": [
-        {
-          "before": "./application.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "./application.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "./application.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "./application.mjs?build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         }
       ]
@@ -107,13 +93,13 @@
     {
       "path": "admin/application.mjs",
       "operation": "replace",
-      "beforeSHA256": "fb85319a9752bcde271e6e2c2606a3e2b9fcb4e7b0d315fdc0ccfb1cf07646a9",
-      "afterSHA256": "134ee3a4a4c25a4ef6097538c8fa050871d3d09979ee62e461427527e394ffd5",
+      "beforeSHA256": "134ee3a4a4c25a4ef6097538c8fa050871d3d09979ee62e461427527e394ffd5",
+      "afterSHA256": "46dba1e76b047af7b3eb52c61ee8896e325dadf0b250013b282bb4a5e592c9fa",
       "bytes": 12252,
       "replacements": [
         {
-          "before": "./application.css?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "./application.css?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "./application.css?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "./application.css?build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         }
       ]
@@ -121,13 +107,13 @@
     {
       "path": "admin/catalogue-settings/index.html",
       "operation": "replace",
-      "beforeSHA256": "1ccdeebb671fdc13c9f74d6d09fd02bc0e9195eb4510d102b0689a1e3e34dd99",
-      "afterSHA256": "07510b20be228be0eda1b73730e4f34428ac2545985ff61c9800d87e1f9d6622",
+      "beforeSHA256": "07510b20be228be0eda1b73730e4f34428ac2545985ff61c9800d87e1f9d6622",
+      "afterSHA256": "654158b1ab092cbf879e7492f0579429a7f7358633676b1be37e5b723a34e99e",
       "bytes": 1094,
       "replacements": [
         {
-          "before": "/admin/admin-gate.mjs?v=p10g&build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "/admin/admin-gate.mjs?v=p10g&build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "/admin/admin-gate.mjs?v=p10g&build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "/admin/admin-gate.mjs?v=p10g&build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         }
       ]
@@ -135,13 +121,13 @@
     {
       "path": "admin/command/command01/view.mjs",
       "operation": "replace",
-      "beforeSHA256": "c3f4f44812d10900351467f16f2203c70ef03c5a9c569de5561df10f7d29276a",
-      "afterSHA256": "a51a40a6db22404c7a24330281fadbb7c198d20a4c1a4bd382d701becf991178",
+      "beforeSHA256": "a51a40a6db22404c7a24330281fadbb7c198d20a4c1a4bd382d701becf991178",
+      "afterSHA256": "722f2765722fdf7af8662ecef49b8a11bb4e98736c02d88eed96c71e5354dd49",
       "bytes": 14365,
       "replacements": [
         {
-          "before": "../../application.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "../../application.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "../../application.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "../../application.mjs?build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         }
       ]
@@ -149,13 +135,13 @@
     {
       "path": "admin/command/command02/editor-view.mjs",
       "operation": "replace",
-      "beforeSHA256": "109c9a281d714f8877b69616692a320212aa6aaa797474e44653b107ab9d4958",
-      "afterSHA256": "50b78ba311c7ea5612e162e2cc46c103ab53bb650b7e70f87001e24f4800f1b8",
+      "beforeSHA256": "50b78ba311c7ea5612e162e2cc46c103ab53bb650b7e70f87001e24f4800f1b8",
+      "afterSHA256": "dddc925abda3b21004e93c1c434ffb94fb521d362693352a4aff6e4690cf0662",
       "bytes": 14819,
       "replacements": [
         {
-          "before": "../../application.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "../../application.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "../../application.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "../../application.mjs?build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         }
       ]
@@ -163,18 +149,18 @@
     {
       "path": "admin/command/entry.mjs",
       "operation": "replace",
-      "beforeSHA256": "784278beba2c5bc225b52fe048a01881748beb51c714e4efd9073cd41b742b6d",
-      "afterSHA256": "ed0aebec1884cc088a58b18ad9869fb68a7517a20287108540e242184d5a3ba8",
+      "beforeSHA256": "ed0aebec1884cc088a58b18ad9869fb68a7517a20287108540e242184d5a3ba8",
+      "afterSHA256": "96858747bcae9737d762e18dedf4b84e77c0af18dea3ffd1b782eef49d9df79d",
       "bytes": 6574,
       "replacements": [
         {
-          "before": "./command01/view.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "./command01/view.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "./command01/view.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "./command01/view.mjs?build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         },
         {
-          "before": "./command02/editor-view.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "./command02/editor-view.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "./command02/editor-view.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "./command02/editor-view.mjs?build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         }
       ]
@@ -182,13 +168,13 @@
     {
       "path": "admin/conjure/index.html",
       "operation": "replace",
-      "beforeSHA256": "4bddd090737a885d275fccbf29c541a1e321698ccf217294c04a22c86dec96f1",
-      "afterSHA256": "89477d5cc4cf70acaf6694a69898104cf3913128cde93e4fcd80ec54cb79abac",
+      "beforeSHA256": "89477d5cc4cf70acaf6694a69898104cf3913128cde93e4fcd80ec54cb79abac",
+      "afterSHA256": "e1876341c8451cc2fd9c7a5aaa91c8b061de8eb6bfc3d1b930c4d79b1d11e1a8",
       "bytes": 3843,
       "replacements": [
         {
-          "before": "/admin/admin-gate.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "/admin/admin-gate.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "/admin/admin-gate.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "/admin/admin-gate.mjs?build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         }
       ]
@@ -196,13 +182,13 @@
     {
       "path": "admin/email-preview/index.html",
       "operation": "replace",
-      "beforeSHA256": "c89591840235e5da1597fb6f94ee7912b8c10e78b9efdc5b7fb90769fdc5dc16",
-      "afterSHA256": "67cf4bb7ebc3d524c219dde5c79774723ac9b77935a684f5ef9f068899abfd51",
+      "beforeSHA256": "67cf4bb7ebc3d524c219dde5c79774723ac9b77935a684f5ef9f068899abfd51",
+      "afterSHA256": "a06dd0d664aa22e02afd4c7afe992a3772d39ec73333ca50e2c06339983b601c",
       "bytes": 2648,
       "replacements": [
         {
-          "before": "../admin-gate.mjs?v=p08b4&build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "../admin-gate.mjs?v=p08b4&build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "../admin-gate.mjs?v=p08b4&build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "../admin-gate.mjs?v=p08b4&build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         }
       ]
@@ -210,13 +196,13 @@
     {
       "path": "admin/email-templates/index.html",
       "operation": "replace",
-      "beforeSHA256": "f3f53750119db1384bd2e23c1e1d1398d38932eaf4fd5753059acb1ea1545c40",
-      "afterSHA256": "a9c977380d975ff68c6d7ddf592fb4781073218ee0bfed06c859c4dcc58ce7d7",
+      "beforeSHA256": "a9c977380d975ff68c6d7ddf592fb4781073218ee0bfed06c859c4dcc58ce7d7",
+      "afterSHA256": "ced2963065be3118404ea03afc4a86a42c6649c18b100545ef5bc9ab4c41a66a",
       "bytes": 5054,
       "replacements": [
         {
-          "before": "/admin/admin-gate.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "/admin/admin-gate.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "/admin/admin-gate.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "/admin/admin-gate.mjs?build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         }
       ]
@@ -224,13 +210,13 @@
     {
       "path": "admin/hub-cms/admin.mjs",
       "operation": "replace",
-      "beforeSHA256": "43d35beaefdd2b434a20c69f5724c73f95a5778a430956f6f9bb9e934d4522e9",
-      "afterSHA256": "f8975c0c31c3495d6dfd78a943414128dcdd555faaf3391a3f7ebc0948d41e83",
+      "beforeSHA256": "f8975c0c31c3495d6dfd78a943414128dcdd555faaf3391a3f7ebc0948d41e83",
+      "afterSHA256": "db3614d0be6fcd3dd7085cea35cfd9d39f606a95d35e68becd8a9200b5966a3a",
       "bytes": 21538,
       "replacements": [
         {
-          "before": "../application.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "../application.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "../application.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "../application.mjs?build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         }
       ]
@@ -238,18 +224,18 @@
     {
       "path": "admin/hub-cms/index.html",
       "operation": "replace",
-      "beforeSHA256": "114c22c06ff11f62a3b91ad24f44b8200cd11775dca29593349237cc3d75bf40",
-      "afterSHA256": "815606e4d3101fecf7a8bdc261c9f73a775f0519680148c3eecc537c1144aa76",
+      "beforeSHA256": "815606e4d3101fecf7a8bdc261c9f73a775f0519680148c3eecc537c1144aa76",
+      "afterSHA256": "9d3456d46c1e7b90d9d4693fc6b16cc4042fe29652a628b4e1ad423a50b3acf5",
       "bytes": 9148,
       "replacements": [
         {
-          "before": "/admin/admin-gate.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "/admin/admin-gate.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "/admin/admin-gate.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "/admin/admin-gate.mjs?build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         },
         {
-          "before": "./admin.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "./admin.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "./admin.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "./admin.mjs?build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         }
       ]
@@ -257,13 +243,13 @@
     {
       "path": "admin/hub-media/index.html",
       "operation": "replace",
-      "beforeSHA256": "cf76df0bf710af61bdbbd116675bcb8d0f27f51a4b8d6077387d1f3cf7179788",
-      "afterSHA256": "9d976afb7917393f9fbe49d8477050b58a60e2708b989a5305a61b15915ea0dc",
+      "beforeSHA256": "9d976afb7917393f9fbe49d8477050b58a60e2708b989a5305a61b15915ea0dc",
+      "afterSHA256": "1d18c843b8ee4a0f6082130ab232ecbf9fbc345630a2c5b8061f62d2fd790b0a",
       "bytes": 2376,
       "replacements": [
         {
-          "before": "/admin/admin-gate.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "/admin/admin-gate.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "/admin/admin-gate.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "/admin/admin-gate.mjs?build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         }
       ]
@@ -271,18 +257,18 @@
     {
       "path": "admin/index.html",
       "operation": "replace",
-      "beforeSHA256": "7d7113c5759887db2f3e1cbd59005f3d858b4ec44c24b78e9ec64fa35265d0ae",
-      "afterSHA256": "97a2340841faa5985bc629fa604cc07bbfdb00581e0ca6fb874c2479c30f6201",
+      "beforeSHA256": "97a2340841faa5985bc629fa604cc07bbfdb00581e0ca6fb874c2479c30f6201",
+      "afterSHA256": "8e6d0be6ad0fcb5f8a07da9c9aec782b22800ee76bdeec47664822c93f8131ea",
       "bytes": 15314,
       "replacements": [
         {
-          "before": "../admin/admin-gate.mjs?v=p10hi&build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "../admin/admin-gate.mjs?v=p10hi&build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "../admin/admin-gate.mjs?v=p10hi&build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "../admin/admin-gate.mjs?v=p10hi&build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         },
         {
-          "before": "./admin.mjs?v=p11ef&build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "./admin.mjs?v=p11ef&build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "./admin.mjs?v=p11ef&build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "./admin.mjs?v=p11ef&build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         }
       ]
@@ -290,18 +276,18 @@
     {
       "path": "admin/orders/app.mjs",
       "operation": "replace",
-      "beforeSHA256": "49bdc3141594e72c55f5dd7cdb8f36ed53ee0f6e1b478aa07068e347fec6b0fd",
-      "afterSHA256": "1a9fbc5f6c1e8e26fccbbdd91d803c9a574443b21ebaea4754c8b62628b699c5",
+      "beforeSHA256": "1a9fbc5f6c1e8e26fccbbdd91d803c9a574443b21ebaea4754c8b62628b699c5",
+      "afterSHA256": "0da7b3b254698e3d8cd32e5e7f9402d9a56d6c94f6c074c685bef2ebe15842da",
       "bytes": 15804,
       "replacements": [
         {
-          "before": "./detail-presentation.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "./detail-presentation.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "./detail-presentation.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "./detail-presentation.mjs?build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         },
         {
-          "before": "../application.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "../application.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "../application.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "../application.mjs?build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         }
       ]
@@ -309,13 +295,13 @@
     {
       "path": "admin/orders/build-sheet/index.html",
       "operation": "replace",
-      "beforeSHA256": "c4245a9297cd22eac02e943246766952dc0230b52ec93becf1d36fe23b5f8304",
-      "afterSHA256": "7f2284b8377656611d379de3d27072db4f8b27548cd026cb8aee7fdce06ee507",
+      "beforeSHA256": "7f2284b8377656611d379de3d27072db4f8b27548cd026cb8aee7fdce06ee507",
+      "afterSHA256": "5ada4e36abe0202b0b46e7691e47993461e1c9ce1d0395cbdb243ad7779372b3",
       "bytes": 5544,
       "replacements": [
         {
-          "before": "../../../admin/admin-gate.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "../../../admin/admin-gate.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "../../../admin/admin-gate.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "../../../admin/admin-gate.mjs?build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         }
       ]
@@ -323,13 +309,13 @@
     {
       "path": "admin/orders/detail-presentation.mjs",
       "operation": "replace",
-      "beforeSHA256": "d03a6296a5fcdcd0781c808c1137f05c295d99bccfcfcd543d5bce7ccea604c1",
-      "afterSHA256": "b5069f18346202d1eac7424119c7f99607717e45639ca402c39ce66ed2ea16fe",
+      "beforeSHA256": "b5069f18346202d1eac7424119c7f99607717e45639ca402c39ce66ed2ea16fe",
+      "afterSHA256": "996d2a72cb0874d50d99d88398c5238ce4bb598ad13902d6dbadeffdd1528690",
       "bytes": 2225,
       "replacements": [
         {
-          "before": "../application.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "../application.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "../application.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "../application.mjs?build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         }
       ]
@@ -337,18 +323,18 @@
     {
       "path": "admin/orders/index.html",
       "operation": "replace",
-      "beforeSHA256": "9e43f24afa92b99f0eb020fcd23fb4bb0988b8ef9a347eebea16fc051c614e72",
-      "afterSHA256": "221d86c92bbd898552b4dafa3d5a1b984a3ff21885760923cad5188f21de6656",
+      "beforeSHA256": "221d86c92bbd898552b4dafa3d5a1b984a3ff21885760923cad5188f21de6656",
+      "afterSHA256": "34ab44ae1fa2bab28a6040446c8b5c9fe6c9ac5e8595b25465a67a8b53ebe782",
       "bytes": 8101,
       "replacements": [
         {
-          "before": "../../admin/admin-gate.mjs?v=customer-aftercare-giga-v1&build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "../../admin/admin-gate.mjs?v=customer-aftercare-giga-v1&build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "../../admin/admin-gate.mjs?v=customer-aftercare-giga-v1&build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "../../admin/admin-gate.mjs?v=customer-aftercare-giga-v1&build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         },
         {
-          "before": "./app.mjs?v=customer-aftercare-giga-v1&build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "./app.mjs?v=customer-aftercare-giga-v1&build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "./app.mjs?v=customer-aftercare-giga-v1&build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "./app.mjs?v=customer-aftercare-giga-v1&build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         }
       ]
@@ -356,13 +342,13 @@
     {
       "path": "admin/orders/invoice/index.html",
       "operation": "replace",
-      "beforeSHA256": "f66c3b4906d0e1f4ec3d81a16354dea9f83fa027c98d3aec5cc95e5cba4cecb1",
-      "afterSHA256": "8b05dfb7c065e914f9ae678340a94d20653f992bebd079ec4bf1682af72c48ea",
+      "beforeSHA256": "8b05dfb7c065e914f9ae678340a94d20653f992bebd079ec4bf1682af72c48ea",
+      "afterSHA256": "448e2c3f22762f07e014f8069b70164f38f0ef6f73e868f9e33af8ecebcaf4d8",
       "bytes": 1000,
       "replacements": [
         {
-          "before": "../../admin-gate.mjs?v=external-v1&build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "../../admin-gate.mjs?v=external-v1&build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "../../admin-gate.mjs?v=external-v1&build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "../../admin-gate.mjs?v=external-v1&build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         }
       ]
@@ -370,18 +356,32 @@
     {
       "path": "admin/overview/index.html",
       "operation": "replace",
-      "beforeSHA256": "cb09ffd6e8b61c8e955d56e85b570cddeec6e07e9042c1e048fffd9f832ad607",
-      "afterSHA256": "434b438f208747903f7b261a52bdb66db907fed2e27733a63bc4dac32df7d650",
+      "beforeSHA256": "434b438f208747903f7b261a52bdb66db907fed2e27733a63bc4dac32df7d650",
+      "afterSHA256": "f22b1046670bc85b03d84d34778804a5f04e27150f3d2ef735be5cec4caba2fd",
       "bytes": 937,
       "replacements": [
         {
-          "before": "/admin/admin-gate.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "/admin/admin-gate.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "/admin/admin-gate.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "/admin/admin-gate.mjs?build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         },
         {
-          "before": "../overview.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "../overview.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "../overview.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "../overview.mjs?build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "admin/overview.mjs",
+      "operation": "replace",
+      "beforeSHA256": "2e973a3dc71173f91f3cece8866a7c9e1e70f890f4d5a602843787943b67dfda",
+      "afterSHA256": "41ae1b023196a81514b6b22729baf14bcdf3ff425ab8d1d99ac32610f921e0a4",
+      "bytes": 9842,
+      "replacements": [
+        {
+          "before": "./application.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
+          "after": "./application.mjs?build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         }
       ]
@@ -389,23 +389,23 @@
     {
       "path": "admin/site-operations/index.html",
       "operation": "replace",
-      "beforeSHA256": "d81de4662facb54aea632b5745170aad792fb2e5e92f09fca7cc683179d83f24",
-      "afterSHA256": "71d6906dc37123cea30174660f0f708c252c1ec720b8e69c4711f0e25c8093b4",
+      "beforeSHA256": "71d6906dc37123cea30174660f0f708c252c1ec720b8e69c4711f0e25c8093b4",
+      "afterSHA256": "cfdeea88f5c8d005f0a58e988999306e53aad9b8ee344a0cad377fb08211b34f",
       "bytes": 8505,
       "replacements": [
         {
-          "before": "/admin/admin-gate.mjs?v=operations-v1&build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "/admin/admin-gate.mjs?v=operations-v1&build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "/admin/admin-gate.mjs?v=operations-v1&build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "/admin/admin-gate.mjs?v=operations-v1&build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         },
         {
-          "before": "./operations.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "./operations.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "./operations.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "./operations.mjs?build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         },
         {
-          "before": "../../commercial/admin.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "../../commercial/admin.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "../../commercial/admin.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "../../commercial/admin.mjs?build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         }
       ]
@@ -413,13 +413,13 @@
     {
       "path": "admin/site-operations/operations.mjs",
       "operation": "replace",
-      "beforeSHA256": "3de738761c76400a90ccca95b488ab14238c79d8d60521ab336dc99fc4e31354",
-      "afterSHA256": "ec2a30dd2c1cc497f4d542472dbeb01cd0c57057fe7ec067cbcee40b7e1d2f7b",
+      "beforeSHA256": "ec2a30dd2c1cc497f4d542472dbeb01cd0c57057fe7ec067cbcee40b7e1d2f7b",
+      "afterSHA256": "2d3eca7fa2ed54ed24417c047ff214d159babc3ba6c5308a39d797c969912d2f",
       "bytes": 10691,
       "replacements": [
         {
-          "before": "../application.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "../application.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "../application.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "../application.mjs?build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         }
       ]
@@ -427,13 +427,13 @@
     {
       "path": "admin/wiring-kit-master/index.html",
       "operation": "replace",
-      "beforeSHA256": "0a07f8f6b511e26c86594bb139d7f3c9e690e53b8f99a69027208f616e027592",
-      "afterSHA256": "0a72dd136e0514c416e6e8f13de3bd00a2d6f049e1a52776a46bbb1767a071eb",
+      "beforeSHA256": "0a72dd136e0514c416e6e8f13de3bd00a2d6f049e1a52776a46bbb1767a071eb",
+      "afterSHA256": "19087d54b37b0fc45adc4d8f9c2bc822cffa8f21af16761c56f534c20ecdb8ae",
       "bytes": 7821,
       "replacements": [
         {
-          "before": "../../admin/admin-gate.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "../../admin/admin-gate.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "../../admin/admin-gate.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "../../admin/admin-gate.mjs?build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         }
       ]
@@ -441,13 +441,13 @@
     {
       "path": "commercial/admin.mjs",
       "operation": "replace",
-      "beforeSHA256": "9a6b25cb26eec625f151df94ec641017df180380f6d5f9ff39a658d4f085c110",
-      "afterSHA256": "506b6d772f65f65de62de7535bafdbbcd643d16579a2618dc63b85ec3a7e4f68",
+      "beforeSHA256": "506b6d772f65f65de62de7535bafdbbcd643d16579a2618dc63b85ec3a7e4f68",
+      "afterSHA256": "1381cee52d05f3b711944d362c4320b9ecb2673abc27e69c6b0d7e92051a7e25",
       "bytes": 4954,
       "replacements": [
         {
-          "before": "../admin/application.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
-          "after": "../admin/application.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "before": "../admin/application.mjs?build=b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
+          "after": "../admin/application.mjs?build=91a2512a0eacd27f2dc444add49eeafa280eeef3",
           "count": 1
         }
       ]

@@ -2,7 +2,7 @@
   "authority": "AUTHORISATION_61",
   "preservedFoundation": "AUTHORISATION_60",
   "releaseA": {
-    "status": "VERIFIED_CANDIDATE",
+    "status": "LIVE_VERIFIED",
     "source": "b9b6e2197fc50ccda99655fd332f3ce5e4cd00ce",
     "nativeRun": 40481988467,
     "nativeArtifact": 12722809493,
@@ -38,11 +38,53 @@
       }
     ],
     "productionBaselineRun": 40474471264,
-    "productionBaselineArtifact": 12720340159
+    "productionBaselineArtifact": 12720340159,
+    "productionCommit": "a06f0a5ba30b28f461f560d3eb4a4f36a84c7369",
+    "deploymentRun": 40482474043,
+    "artifact": 12722964360,
+    "rollbackArtifact": 12722564317,
+    "candidateDigest": "d935573cf69578612cce0bd029b7e3be66d0cdcd9520125614c7e3e23fd065a4",
+    "rollbackDigest": "5c0130bc161585c4b5a3d4652a5c9d11d28536c63a0f13f0eb211d683be48df7",
+    "independentServedFiles": 8
   },
   "limits": [
     "No authenticated live business acceptance claimed.",
     "No new provider calls, polling or business mutations.",
     "Advanced COMMAND adapter and IRONCLAD remain disabled."
-  ]
+  ],
+  "releaseB": {
+    "status": "VERIFIED_CANDIDATE",
+    "source": "91a2512a0eacd27f2dc444add49eeafa280eeef3",
+    "nativeRun": 40484108038,
+    "nativeArtifact": 12723868202,
+    "nativeGroups": 5,
+    "isolationControls": 10,
+    "browser": "155.0.8059.39",
+    "captures": [
+      {
+        "file": "inventory-390.png",
+        "bytes": 56597,
+        "sha256": "47b3e48b87021cf78077cdfc18070f4c88f77eb245179cc532a475c9a82496f7",
+        "width": 390,
+        "height": 1000,
+        "source": "91a2512a0eacd27f2dc444add49eeafa280eeef3",
+        "fictional": true,
+        "originalPNG": true
+      },
+      {
+        "file": "inventory-1440.png",
+        "bytes": 113251,
+        "sha256": "db28cf0e1ebcca93ff75244110c4c5dff469c2783113805f2730a0d5bdf767cc",
+        "width": 1440,
+        "height": 1000,
+        "source": "91a2512a0eacd27f2dc444add49eeafa280eeef3",
+        "fictional": true,
+        "originalPNG": true
+      }
+    ],
+    "stockSaveDeleteHandlers": "Byte-identical to accepted current Admin",
+    "newProviderRequests": 0,
+    "limits": "Fictional sessions and records. Existing authenticated production business journeys not exercised.",
+    "prepublicationCorrection": "Scoped override for demonstrated legacy #table-body action stacking; desktop alignment assertion added."
+  }
 }
