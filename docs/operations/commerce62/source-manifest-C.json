@@ -1,0 +1,51 @@
+{
+  "kind": "COMMERCE_FORGE_V1",
+  "phase": "C",
+  "sourceCommit": "af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+  "baseSourceCommit": "84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
+  "unchangedRepositoryRevision": "84079ed8ddb6abc6ed134bc4bc3a163da155cde4",
+  "entries": [
+    {
+      "path": "admin/site-operations/index.html",
+      "beforeSHA256": "87ce6e1f13a5130fc8aa94569268076f54c4c73b4e3e01c996cfd6f1cfc7d179",
+      "afterSHA256": "0b982512b45feb92b2a22a94dfdc05898757943c8e72ac859f8d333830140f7b",
+      "bytes": 8730,
+      "rawSourceSHA256": "c713bf9593a195183fdbc5b0ffc75969abfe9ae903f20fb0678762805b9cbe55"
+    },
+    {
+      "path": "commercial/offers-admin.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "2e59743e72b011ccfba34a90a2bafe5ab1b32bafba5c1766b8181f7deed214c7",
+      "bytes": 15856,
+      "rawSourceSHA256": "08dfcea29893305aa07402a673253efcd6f03160b979e046e72b34467e5fb29c"
+    },
+    {
+      "path": "commercial/offers.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "78b62782acf82caedc84c0e8c50ce1a19583d6018df4da6ea94ce8201568beed",
+      "bytes": 9577,
+      "rawSourceSHA256": "78b62782acf82caedc84c0e8c50ce1a19583d6018df4da6ea94ce8201568beed"
+    },
+    {
+      "path": "commercial/offer-reference.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "316f801ae07c0256f0a8d9af11ec8acbaad45f191edb128d483bd3cb6cb890f5",
+      "bytes": 3390,
+      "rawSourceSHA256": "9780deb313cdfb28cf2dc39ae1b7c8d8a190e3aa97f05658236728e23767b9b3"
+    },
+    {
+      "path": "commercial/offer-activation.mjs",
+      "beforeSHA256": null,
+      "afterSHA256": "c6b6d2969895a827f5a783babb7d5ed23b17bb54f7d230f01b4771600ead6e7c",
+      "bytes": 206,
+      "rawSourceSHA256": "c6b6d2969895a827f5a783babb7d5ed23b17bb54f7d230f01b4771600ead6e7c"
+    },
+    {
+      "path": "admin/application.css",
+      "beforeSHA256": "632eee0275dce8a8a21932a98837ff5e3e8be3236a23cd61f073562b7bc3047a",
+      "afterSHA256": "6d68b81c1987095272e9a0e9daffc478633111e6a554d8cc7c08a01ff69c05a3",
+      "bytes": 53302,
+      "rawSourceSHA256": "6d68b81c1987095272e9a0e9daffc478633111e6a554d8cc7c08a01ff69c05a3"
+    }
+  ]
+}

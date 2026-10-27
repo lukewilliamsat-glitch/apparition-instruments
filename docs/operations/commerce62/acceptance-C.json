@@ -1,0 +1,52 @@
+{
+  "status": "NATIVE_ACCEPTED_RELEASE_PREPARED",
+  "applicationSource": "af42ae3750eb7d6af2f9df91bfe35243fd30a863",
+  "capabilities": [
+    "Draft percentage/fixed/quantity-package offers with explicit product/category eligibility and UTC periods.",
+    "Explicit exclusive/sequential stacking; overlapping-offer diagnostics.",
+    "Component bundle constituents, basket reference availability, integer price reconciliation.",
+    "Unsaved plan export; no localStorage or backend draft persistence.",
+    "Explicit image-free ordinary-Admin references: max 200 products, two bounded GETs, 128 KiB data ceiling, five seconds, cancellation and no automatic retries."
+  ],
+  "native": {
+    "run": 40501427082,
+    "passed": 5,
+    "total": 5,
+    "isolation": 10,
+    "browser": "155.0.8059.39",
+    "artifact": 12732812303,
+    "artifactSHA256": "a33b9fefc635d9405bd0534b37fb95a3ba65f186c18536d2bd6a12d851c67c9f",
+    "expiresAt": "2026-11-10T12:08:46Z",
+    "originalReadBack": true,
+    "genuineFictionalScreenshot": 1
+  },
+  "local": {
+    "pricingGroups": 25,
+    "referenceGroups": 9,
+    "DOM": "PASS"
+  },
+  "activePromotions": false,
+  "financialSaving": false,
+  "newStockWriters": false,
+  "productionBusinessWrites": 0,
+  "release": {
+    "candidateDigest": "b5c09907fc68d98cbc58b0f663fe8b7abc9e52260737cba8130dd2a5d30b02f1",
+    "rollbackDigest": "8ee2f99283a10d7c373731932bbab8cde2da5521050ebb92fc1418394b24a1bf",
+    "changedFiles": 30,
+    "unchangedBaselineFiles": 424,
+    "allExistingPublicStorefrontFilesIdentical": true,
+    "existingOperationsAndNewsSnapshotIdentical": true
+  },
+  "checkoutContract": {
+    "status": "PROMOTIONAL_ACTIVATION_BLOCKED",
+    "existingTrustedPricing": "Existing create_guest_kit_order reads and locks component/kit prices and verifies stock. create-checkout verifies stored order item totals and Stripe amount. These files and their publication are unchanged.",
+    "missing": "A persisted, versioned, authorised offer contract and trusted checkout recalculation for eligibility, dates, stacking, bundle allocations and historical sale/refund snapshots. Requires exact privileged backend approval and owner commercial values.",
+    "clientTampering": "Preview engine ignores supplied client prices/discounts and derives from its catalogue reference, but is not payment-authoritative."
+  },
+  "limitations": [
+    "Drafts and preview amounts are not published promotions or guaranteed checkout prices.",
+    "Only individually sold component products are referenced; existing Wiring Kit Builder and assemblies remain unchanged.",
+    "Production live-reader smoke verification follows publication; no payment/order/customer test is performed."
+  ],
+  "publicationBoundaryChecks": 15
+}

@@ -1,8 +1,9 @@
 """Targeted AUTHORISATION 62 release boundary checks, using the real complete baseline."""
-import copy,json,sys,tempfile
+import copy,json,sys,tempfile,shutil
 from pathlib import Path
 sys.path.insert(0,'scripts/command-release')
 from frontend_release import plan_at,prepare,unified_native_evidence
+from archive_core import canonical,sha
 p=json.loads(Path('docs/releases/triple-strike/current.json').read_text())
 count=0
 def rejected(fn,part):
@@ -27,4 +28,18 @@ with tempfile.TemporaryDirectory() as t:
     rejected(lambda:unified_native_evidence(p,lambda _:{**expected,'path':'.github/workflows/static.yml'}),'Wrong Commerce')
     rejected(lambda:unified_native_evidence(p,lambda _:{**expected,'conclusion':'failure'}),'not successful')
     rejected(lambda:unified_native_evidence(p,lambda _:{**expected,'head_sha':'0'*40}),'not successful')
+    if p['phase']=='C':
+        for old,new,reason in [('enabled:false','enabled:true','promotion activation'),('liveCheckoutEvidenceSHA256:null','liveCheckoutEvidenceSHA256:"'+'0'*64+'"','checkout evidence')]:
+            # Even an internally consistent forged manifest cannot activate checkout.
+            sandbox=folder/str(count);sandbox.mkdir();shutil.copytree('release-overlays/commerce62-C',sandbox/'release-overlays/commerce62-C')
+            target='commercial/offer-activation.mjs';overlay=sandbox/'release-overlays/commerce62-C'/target
+            data=overlay.read_bytes().replace(old.encode(),new.encode());overlay.write_bytes(data)
+            bad=copy.deepcopy(p);manifest=json.loads(Path('docs/operations/commerce62/source-manifest-C.json').read_text())
+            for entry in manifest['entries']:
+                if entry['path']==target:entry.update(afterSHA256=sha(data),bytes=len(data))
+            for change in bad['changes']:
+                if change['path']==target:change.update(afterSHA256=sha(data),bytes=len(data))
+            (sandbox/'docs/operations/commerce62').mkdir(parents=True);(sandbox/'docs/operations/commerce62/source-manifest-C.json').write_text(json.dumps(manifest))
+            bad['forgeManifestSHA256']=sha(canonical(manifest))
+            rejected(lambda:prepare(bad,sys.argv[1],sandbox,folder/('rejected-'+str(count))),reason)
 print(json.dumps({'newPublicationGuards':count,'result':'PASS'}))
