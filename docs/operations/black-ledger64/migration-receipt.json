@@ -1,0 +1,50 @@
+{
+  "authority": "AUTHORISATION64_DIRECT_OWNER_APPROVAL",
+  "status": "MIGRATION_APPLIED_AUTHENTICATED_ACCEPTANCE_PENDING",
+  "project": "acdxpxvksvdwfajntzfx",
+  "migration": {
+    "name": "black_ledger_financial_v1",
+    "source": "b4d7e3708e1cd0153e922122fa2400f0c46d9ce7",
+    "path": "supabase/migrations/20261027140000_black_ledger_financial_v1.sql",
+    "sha256": "a6025c33e9a2936ce61f35af4cf514e49585a2ccdcf1b3e57966e8ed5f63c996",
+    "utf8Bytes": 30105,
+    "executions": 1,
+    "result": {
+      "success": true
+    }
+  },
+  "checks": {
+    "designatedExistingNoncustomerOrderIdentity": "EXACT_MATCH",
+    "originalOrderFingerprintUnchanged": true,
+    "existingNewObjectCollisions": 0,
+    "financeTables": 3,
+    "financeTablesRLS": true,
+    "directAuthenticatedTableWrites": false,
+    "anonymousRPCExecute": false,
+    "serviceRoleRPCExecute": false,
+    "helperClientExecuteGrants": 0,
+    "testOrderFinancialRecords": 0
+  },
+  "acceptance": {
+    "status": "NOT_EXECUTED",
+    "reason": "Normal Admin sign-in returned Sign-in failed. Check your email and password. No financial save attempted.",
+    "controlledFrontendPublished": false,
+    "generalActivation": false
+  },
+  "production": {
+    "commit": "24e0bfbc959619ddad304d7b00e0e4816094bad1",
+    "run": 40550780745,
+    "changed": false,
+    "financeActivation": false,
+    "nightfallImages": false,
+    "livePromotions": false
+  },
+  "rollback": {
+    "path": "scripts/command-release/disable-financial63.sql",
+    "sha256": "922f24c110a0c08c070618889fe062792297e85c5e2f597c7ebcd387911d2d69",
+    "executed": false,
+    "action": "Revoke authenticated save RPC execution; publish disabled frontend; retain financial history."
+  },
+  "evidenceReuse": "Accepted 33 DB,15 client/DOM,4 Chrome,7 native PostgreSQL groups unchanged; not rerun.",
+  "next": "Restore normal Admin-session access, configure and verify the test-order-only frontend stage, perform controlled acceptance, then activate general saving only on success."
+}
