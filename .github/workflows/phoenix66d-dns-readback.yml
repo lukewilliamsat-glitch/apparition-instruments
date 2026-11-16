@@ -1,4 +1,4 @@
-name: PHOENIX 66D authoritative DNS readback
+name: PHOENIX 66E delegation and service readback
 on:
   push:
     branches: [engineering/phoenix66d-dns-readback]
@@ -19,9 +19,9 @@ jobs:
           fi
           zone=apparitioninstruments.co.uk.
           query() {
-            printf 'DNS66D-BEGIN %s %s %s\n' "$1" "$2" "$3"
+            printf 'DNS66E-BEGIN %s %s %s\n' "$1" "$2" "$3"
             dig "@$1" "$2" "$3" +norecurse +dnssec +bufsize=1232 +time=4 +tries=1 +noall +comments +answer +authority +stats
-            printf 'DNS66D-END\n'
+            printf 'DNS66E-END\n'
           }
           for ns in chin.ns.cloudflare.com wilson.ns.cloudflare.com; do
             for type in A AAAA MX TXT CAA HTTPS; do query "$ns" "$zone" "$type"; done
@@ -33,4 +33,46 @@ jobs:
           for parent in dns1.nic.uk dns2.nic.uk; do
             query "$parent" "$zone" DS
             query "$parent" "$zone" NS
+          done
+          for resolver in 1.1.1.1 8.8.8.8 9.9.9.9 208.67.222.222; do
+            for type in NS A MX TXT DS; do
+              printf 'DNS66E-BEGIN %s %s %s\n' "$resolver" "$zone" "$type"
+              dig "@$resolver" "$zone" "$type" +recurse +dnssec +bufsize=1232 +time=4 +tries=1 +noall +comments +answer +authority +stats || true
+              printf 'DNS66E-END\n'
+            done
+            for name in www google._domainkey _domainconnect; do
+              case "$name" in google._domainkey) type=TXT;; *) type=CNAME;; esac
+              target="$name.$zone"
+              printf 'DNS66E-BEGIN %s %s %s\n' "$resolver" "$target" "$type"
+              dig "@$resolver" "$target" "$type" +recurse +dnssec +bufsize=1232 +time=4 +tries=1 +noall +comments +answer +authority +stats || true
+              printf 'DNS66E-END\n'
+            done
+          done
+      - name: Check public HTTPS and prove the private Pages hosts still require Access
+        shell: bash
+        run: |
+          set -eu
+          tmp="$(mktemp -d)"
+          trap 'rm -rf "$tmp"' EXIT
+          apex=apparitioninstruments.co.uk
+          n=0
+          for url in "https://$apex/" "https://www.$apex/" "https://$apex/components/treble-bleeds/" "https://$apex/products/bleed-cap/" "https://$apex/wiring-kits/" "https://$apex/basket/" "https://$apex/checkout/"; do
+            n=$((n+1))
+            if ! curl --silent --show-error --location --max-redirs 4 --connect-timeout 8 --max-time 20 --proto '=https' --proto-redir '=https' --dump-header "$tmp/$n.headers" -o "$tmp/$n.body" --write-out "WEB66E $url %{http_code} %{url_effective} %{remote_ip} %{ssl_verify_result} %{num_redirects} %{size_download}\n" "$url"; then
+              printf 'WEB66E-ERROR %s\n' "$url"
+              continue
+            fi
+            origin="$(grep -iE '^server:[[:space:]]+(GitHub.com|cloudflare)' "$tmp/$n.headers" | tail -n 1 | tr -d '\r' || true)"
+            printf 'WEB66E-ORIGIN %s %s\n' "$url" "$origin"
+            sha="$(sha256sum "$tmp/$n.body" | cut -d' ' -f1)"
+            printf 'WEB66E-SHA %s %s\n' "$url" "$sha"
+          done
+          for host in apparition-instruments.pages.dev 69e29ee3.apparition-instruments.pages.dev; do
+            if ! curl --silent --show-error --connect-timeout 8 --max-time 20 --proto '=https' --output /dev/null --dump-header "$tmp/access" --write-out "ACCESS66E $host %{http_code} %{ssl_verify_result}\n" "https://$host/"; then
+              printf 'ACCESS66E-ERROR %s\n' "$host"
+              continue
+            fi
+            if grep -iqE '^location: https://[A-Za-z0-9.-]+\.cloudflareaccess\.com/cdn-cgi/access/login/' "$tmp/access"; then
+              printf 'ACCESS66E-GATED %s\n' "$host"
+            fi
           done
