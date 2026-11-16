@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { setTimeout as wait } from 'node:timers/promises';
 import { immutableHost, verifyGate } from './stage-baseline.mjs';
 
 const account = '5ecc2102d615e638e3b0ec932f941232';
@@ -77,10 +78,6 @@ async function publicReadback(pin) {
 
 async function main() {
   const root = resolve(process.argv[2]);
-  assert(process.env.PHOENIX66_NIGHTFALL_PRODUCTION === 'true', 'Explicit production target missing');
-  const token = process.env.CLOUDFLARE_API_TOKEN;
-  const wrangler = process.env.WRANGLER_BIN;
-  assert(token && wrangler && process.env.CLOUDFLARE_ACCOUNT_ID === account, 'Missing approved publishing configuration');
   const receipt = JSON.parse(await readFile(resolve(root, 'receipt.json'), 'utf8'));
   assert(receipt.sourceArtifact === sourceArtifact && receipt.sourceRun === sourceRun, 'Unapproved package receipt');
   for (const [name, rev, zip] of [['baseline', baseline, baselineZip], ['nightfall', candidate, candidateZip]]) {
@@ -88,6 +85,20 @@ async function main() {
     assert(pin.applicationCommit === rev && pin.zipSha256 === zip && pin.files.length === 460, 'Unapproved upload identity');
     assert.equal(sha(await readFile(resolve(root, name + '.zip'))), zip, 'ZIP SHA-256 mismatch');
   }
+  if (process.argv[3] === '--verify-served') {
+    assert(!process.env.CLOUDFLARE_API_TOKEN, 'Read-only verifier must not receive deployment credentials');
+    await Promise.all([verifyGate(primary), verifySeparatePreview(preview), verifySeparatePreview(nightfallPreview),
+      publicReadback(receipt.payloads.nightfall)]);
+    const live = process.argv[4];
+    assert.equal(live, '7bfe4df0-02be-4bf2-9130-7e200be3688d', 'Unrecognised deployment receipt');
+    await verifyGate(immutableHost('https://' + live.split('-')[0] + '.apparition-instruments.pages.dev'));
+    console.log('PASS: production NIGHTFALL files and Access protection independently verified without uploading');
+    return;
+  }
+  assert(process.argv.length === 3 && process.env.PHOENIX66_NIGHTFALL_PRODUCTION === 'true', 'Explicit production target missing');
+  const token = process.env.CLOUDFLARE_API_TOKEN;
+  const wrangler = process.env.WRANGLER_BIN;
+  assert(token && wrangler && process.env.CLOUDFLARE_ACCOUNT_ID === account, 'Missing approved publishing configuration');
   const url = 'https://api.cloudflare.com/client/v4/accounts/' + account + '/pages/projects/' + project;
   async function api(path = '') {
     const response = await fetch(url + path, { headers: { Authorization: 'Bearer ' + token },
@@ -119,6 +130,9 @@ async function main() {
   assert(isDeployment(deployed, candidate) && deployed.id !== rollback &&
     deployed.deployment_trigger.metadata.commit_message === message, 'Expected production identity was not read back');
   console.log(JSON.stringify({ deployment: deployed.id, application: candidate, rollback, zip: candidateZip }));
+  // A new canonical deployment can take a moment to reach the custom domain.
+  // This waits once before the public read-back; it never issues a second upload.
+  await wait(12000);
   await Promise.all([verifyGate(primary), verifyGate(immutableHost(deployed.url)), verifySeparatePreview(preview),
     verifySeparatePreview(nightfallPreview), publicReadback(receipt.payloads.nightfall)]);
   assert(isDeployment(await api('/deployments/' + rollback), baseline), 'Rollback became unavailable after release');

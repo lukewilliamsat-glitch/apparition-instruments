@@ -15,7 +15,7 @@ on:
       deployment_target:
         description: Explicit preview, staging, or pinned NIGHTFALL production target
         type: choice
-        options: [preview, protected-baseline-stage, protected-nightfall-production]
+        options: [preview, protected-baseline-stage, protected-nightfall-production, verify-nightfall-production]
         default: preview
 permissions:
   contents: read
@@ -65,7 +65,7 @@ jobs:
           retention-days: 30
           if-no-files-found: error
   preview:
-    if: inputs.deployment_target != 'protected-nightfall-production' && github.event_name == 'workflow_dispatch' && github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview'
+    if: inputs.deployment_target != 'protected-nightfall-production' && inputs.deployment_target != 'verify-nightfall-production' && github.event_name == 'workflow_dispatch' && github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview'
     runs-on: ubuntu-latest
     timeout-minutes: 12
     environment: phoenix66-preview
@@ -109,7 +109,7 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
         run: node scripts/phoenix66/stage-baseline.mjs "$RUNNER_TEMP/phoenix66"
   production_gate:
-    if: github.event_name == 'workflow_dispatch' && github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview' && inputs.deployment_target == 'protected-nightfall-production' && inputs.package_run == '43845328622'
+    if: github.event_name == 'workflow_dispatch' && github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview' && (inputs.deployment_target == 'protected-nightfall-production' || inputs.deployment_target == 'verify-nightfall-production') && inputs.package_run == '43845328622'
     runs-on: ubuntu-latest
     timeout-minutes: 2
     environment: phoenix66-production
@@ -148,9 +148,14 @@ jobs:
             unzip -p "$RUNNER_TEMP/phoenix66-package.zip" "$member" > "$RUNNER_TEMP/phoenix66/$member"
           done
           python3 scripts/phoenix66/unpack.py "$RUNNER_TEMP/phoenix66"
+      - name: Verify the candidate already served in production (read only)
+        if: inputs.deployment_target == 'verify-nightfall-production'
+        run: node scripts/phoenix66/production.mjs "$RUNNER_TEMP/phoenix66" --verify-served 7bfe4df0-02be-4bf2-9130-7e200be3688d
       - name: Prepare the existing pinned Cloudflare uploader
+        if: inputs.deployment_target == 'protected-nightfall-production'
         run: npm install --prefix "$RUNNER_TEMP/cloudflare-uploader" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false wrangler@4.162.0
       - name: Verify baseline, deploy exact NIGHTFALL and verify public read-back
+        if: inputs.deployment_target == 'protected-nightfall-production'
         env:
           PHOENIX66_NIGHTFALL_PRODUCTION: 'true'
           WRANGLER_BIN: ${{ runner.temp }}/cloudflare-uploader/node_modules/.bin/wrangler
