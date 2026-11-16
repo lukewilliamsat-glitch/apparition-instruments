@@ -1,0 +1,103 @@
+name: Commerce 67 protected fixture preview
+on:
+  push:
+    branches: [engineering/phoenix66-preview]
+    paths:
+      - '.github/workflows/commerce67-protected-preview.yml'
+      - 'scripts/phoenix66/commerce67-preview.mjs'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: phoenix66-pages-publisher
+  cancel-in-progress: false
+env:
+  CANDIDATE: '81cc0d0c742c1f0fb07c0fa755b13011b642b8a9'
+jobs:
+  acceptance:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.CANDIDATE }}
+          fetch-depth: 2
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Install locked test dependencies and verify source
+        run: |
+          test "$(git rev-parse HEAD)" = "$CANDIDATE"
+          test "$(git rev-parse HEAD^)" = afbac1358e782b588d222960eebb03f170a026bb
+          npm ci --ignore-scripts --no-audit --no-fund
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install --prefix "$RUNNER_TEMP/commerce67-tools" --no-save --package-lock=false --ignore-scripts --no-audit --no-fund playwright-core@1.56.1 pg@8.16.3
+      - name: Test the exact migration and existing checkout boundaries
+        run: |
+          set -euo pipefail
+          sha256sum supabase/migrations/20261116213239_commerce_ascendant.sql
+          node tests/commerce67/db.mjs
+          node --experimental-strip-types tests/commerce67/checkout.mjs
+          node --experimental-strip-types tests/p07b-checkout.mjs
+          node --experimental-strip-types tests/p07b2a-webhook.mjs
+          node tests/command62/offers.mjs
+          node tests/command62/offer-ui.mjs
+      - name: Native PostgreSQL concurrent stock acceptance
+        run: |
+          set -euo pipefail
+          bin=$(dirname "$(find /usr/lib/postgresql -path '*/bin/initdb' -type f | sort -V | tail -1)")
+          data=$(mktemp -d)
+          trap '"$bin/pg_ctl" -D "$data/db" -m immediate stop >/dev/null 2>&1 || true' EXIT
+          "$bin/initdb" -D "$data/db" -U fixture -A trust --no-locale
+          "$bin/pg_ctl" -D "$data/db" -l "$data/pg.log" -o "-h 127.0.0.1 -p 55467 -k '' -F" start
+          "$bin/createdb" -h 127.0.0.1 -p 55467 -U fixture commerce67_local
+          COMMERCE67_PG_DSN=postgresql://fixture@127.0.0.1:55467/commerce67_local COMMERCE67_PG_MODULE="$RUNNER_TEMP/commerce67-tools/node_modules/pg" node tests/commerce67/db.mjs
+      - name: Build and test the preview with process-level network isolation
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/nightfall-reference"
+          git archive HEAD^ dist | tar -x -C "$RUNNER_TEMP/nightfall-reference"
+          mkdir "$RUNNER_TEMP/commerce67-tested"
+          python3 tests/commerce67/package-preview.py "$RUNNER_TEMP/commerce67-tested/site" > "$RUNNER_TEMP/commerce67-tested/inventory.json"
+          chrome=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium)
+          sudo unshare --net bash -eu -c '
+            ip link set lo up
+            test -z "$(ip route show table main)"
+            test -z "$(ip -6 route show table main)"
+            exec runuser -u "$1" -- env -i PATH=/usr/bin:/bin HOME="$2" CHROME_BIN="$3" PLAYWRIGHT_MODULE="$2/commerce67-tools/node_modules/playwright-core" "$4" "$5" "$6"
+          ' _ "$(id -un)" "$RUNNER_TEMP" "$chrome" "$(command -v node)" "$PWD/tests/commerce67/browser.mjs" "$RUNNER_TEMP/commerce67-tested/site"
+          node tests/nightfall65b/catalogue-reads.mjs "$RUNNER_TEMP/nightfall-reference/dist" "$PWD/dist" --unit-only
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: commerce67-accepted-fixture
+          path: ${{ runner.temp }}/commerce67-tested
+          retention-days: 14
+          if-no-files-found: error
+  protected_preview:
+    needs: acceptance
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: phoenix66-preview
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: commerce67-accepted-fixture
+          path: ${{ runner.temp }}/commerce67-tested
+      - name: Prepare existing pinned Cloudflare uploader
+        run: npm install --prefix "$RUNNER_TEMP/cloudflare-uploader" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false wrangler@4.162.0
+      - name: Upload only the tested fixture to the private preview branch
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
+          PHOENIX66_ACCESS_CLIENT_ID: ${{ secrets.PHOENIX66_ACCESS_CLIENT_ID }}
+          PHOENIX66_ACCESS_CLIENT_SECRET: ${{ secrets.PHOENIX66_ACCESS_CLIENT_SECRET }}
+          WRANGLER_BIN: ${{ runner.temp }}/cloudflare-uploader/node_modules/.bin/wrangler
+        run: node scripts/phoenix66/commerce67-preview.mjs "$RUNNER_TEMP/commerce67-tested/site" "$RUNNER_TEMP/commerce67-tested/inventory.json" "$CANDIDATE"
