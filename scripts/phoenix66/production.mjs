@@ -3,12 +3,14 @@ import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { immutableHost, verifyGate } from './stage-baseline.mjs';
 
 const account = '5ecc2102d615e638e3b0ec932f941232';
 const project = 'apparition-instruments';
 const primary = 'https://apparition-instruments.pages.dev';
 const preview = 'https://apparition-phoenix-preview.pages.dev';
+const nightfallPreview = 'https://nightfall.apparition-phoenix-preview.pages.dev';
 const apex = 'https://apparitioninstruments.co.uk';
 const www = 'https://www.apparitioninstruments.co.uk';
 const rollback = '69e29ee3-e5e6-4101-a72e-4555ec18e593';
@@ -34,6 +36,19 @@ const sha = bytes => createHash('sha256').update(bytes).digest('hex');
 const isDeployment = (d, commit) => d?.environment === 'production' && d.latest_stage?.name === 'deploy' &&
   d.latest_stage.status === 'success' && d.deployment_trigger?.metadata?.branch === 'production' &&
   d.deployment_trigger.metadata.commit_hash === commit;
+
+export async function verifySeparatePreview(origin, request = fetch) {
+  assert([preview, nightfallPreview].includes(origin), 'Unapproved separate preview hostname');
+  const r = await request(origin + '/', {
+    redirect: 'manual', cache: 'no-store', signal: AbortSignal.timeout(15000),
+  });
+  const location = r.headers.get('location');
+  await r.body?.cancel();
+  assert([302, 303, 307, 308].includes(r.status) && location, 'Expected a preview Access login redirect');
+  const login = new URL(location, origin);
+  assert(login.protocol === 'https:' && login.hostname.endsWith('.cloudflareaccess.com') &&
+    login.pathname.startsWith('/cdn-cgi/access/login/'), 'Unexpected preview login target');
+}
 
 async function publicReadback(pin) {
   const files = new Map(pin.files.map(f => [f.path, f]));
@@ -92,8 +107,8 @@ async function main() {
   assert(old.id === rollback && isDeployment(old, baseline), 'Approved rollback deployment is unavailable');
   assert(p.canonical_deployment?.id === rollback && isDeployment(p.canonical_deployment, baseline),
     'Canonical production deployment changed');
-  await Promise.all([verifyGate(primary), verifyGate(immutableHost(old.url)), verifyGate(preview),
-    verifyGate('https://nightfall.apparition-phoenix-preview.pages.dev'), publicReadback(receipt.payloads.baseline)]);
+  await Promise.all([verifyGate(primary), verifyGate(immutableHost(old.url)), verifySeparatePreview(preview),
+    verifySeparatePreview(nightfallPreview), publicReadback(receipt.payloads.baseline)]);
   assert((await api()).canonical_deployment?.id === rollback, 'Production changed before publication');
 
   const proc = spawnSync(wrangler, ['pages', 'deploy', resolve(root, 'nightfall'), '--project-name', project,
@@ -104,11 +119,11 @@ async function main() {
   assert(isDeployment(deployed, candidate) && deployed.id !== rollback &&
     deployed.deployment_trigger.metadata.commit_message === message, 'Expected production identity was not read back');
   console.log(JSON.stringify({ deployment: deployed.id, application: candidate, rollback, zip: candidateZip }));
-  await Promise.all([verifyGate(primary), verifyGate(immutableHost(deployed.url)), verifyGate(preview),
-    verifyGate('https://nightfall.apparition-phoenix-preview.pages.dev'), publicReadback(receipt.payloads.nightfall)]);
+  await Promise.all([verifyGate(primary), verifyGate(immutableHost(deployed.url)), verifySeparatePreview(preview),
+    verifySeparatePreview(nightfallPreview), publicReadback(receipt.payloads.nightfall)]);
   assert(isDeployment(await api('/deployments/' + rollback), baseline), 'Rollback became unavailable after release');
   assert.equal((await api()).canonical_deployment?.id, deployed.id, 'Production changed during verification');
   console.log('PASS: approved NIGHTFALL production deployment, rollback and anonymous preview protection independently read back');
 }
 
-await main();
+if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) await main();
