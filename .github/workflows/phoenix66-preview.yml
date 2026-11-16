@@ -1,0 +1,96 @@
+name: PHOENIX 66 package and Cloudflare preview
+on:
+  push:
+    branches: [engineering/phoenix66-preview]
+    paths:
+      - 'scripts/phoenix66/package.py'
+      - 'scripts/phoenix66/source-pins.json'
+      - 'scripts/phoenix66/smoke.mjs'
+  workflow_dispatch:
+    inputs:
+      package_run:
+        description: Successful PHOENIX package run ID
+        required: true
+        type: string
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: phoenix66-preview-only
+  cancel-in-progress: false
+jobs:
+  package:
+    if: github.event_name == 'push' && github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Assemble and verify both complete static deployments
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/14157650445/zip" > "$RUNNER_TEMP/baseline.zip"
+          python3 scripts/phoenix66/package.py "$RUNNER_TEMP/baseline.zip" "$RUNNER_TEMP/phoenix66"
+          mkdir "$RUNNER_TEMP/phoenix-home"
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install --prefix "$RUNNER_TEMP/phoenix-tools" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false playwright-core@1.56.1
+      - name: Verify actual deployment roots with loopback fixtures
+        run: |
+          set -euo pipefail
+          chrome=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium)
+          sudo unshare --net bash -eu -c '
+            ip link set lo up
+            test -z "$(ip route show table main)"
+            test -z "$(ip -6 route show table main)"
+            exec runuser -u "$1" -- env -i PATH=/usr/bin:/bin HOME="$2/phoenix-home" CHROME_BIN="$3" PLAYWRIGHT_MODULE="$2/phoenix-tools/node_modules/playwright-core" "$4" "$5" "$2/phoenix66"
+          ' _ "$(id -un)" "$RUNNER_TEMP" "$chrome" "$(command -v node)" "$PWD/scripts/phoenix66/smoke.mjs"
+      - name: Retain immutable upload ZIPs and complete inventory
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: phoenix66-static-uploads
+          path: |
+            ${{ runner.temp }}/phoenix66/baseline.zip
+            ${{ runner.temp }}/phoenix66/nightfall.zip
+            ${{ runner.temp }}/phoenix66/receipt.json
+          retention-days: 30
+          if-no-files-found: error
+  preview:
+    if: github.event_name == 'workflow_dispatch' && github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    environment: phoenix66-preview
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Restore a successful immutable package
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PACKAGE_RUN: ${{ inputs.package_run }}
+        run: |
+          set -euo pipefail
+          [[ "$PACKAGE_RUN" =~ ^[0-9]{6,16}$ ]]
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${PACKAGE_RUN}" | jq -e --arg branch 'engineering/phoenix66-preview' '.conclusion == "success" and .head_branch == $branch and .path == ".github/workflows/phoenix66-preview.yml"' >/dev/null
+          gh run download "$PACKAGE_RUN" -n phoenix66-static-uploads -D "$RUNNER_TEMP/phoenix66"
+          python3 scripts/phoenix66/unpack.py "$RUNNER_TEMP/phoenix66"
+          node --test scripts/phoenix66/preview-access.test.mjs
+      - name: Prepare pinned Cloudflare uploader
+        run: npm install --prefix "$RUNNER_TEMP/cloudflare-uploader" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false wrangler@4.162.0
+      - name: Deploy the verified payloads to the preview project only
+        env:
+          PHOENIX66_PREVIEW_ONLY: 'true'
+          WRANGLER_BIN: ${{ runner.temp }}/cloudflare-uploader/node_modules/.bin/wrangler
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
+          PHOENIX66_ACCESS_CLIENT_ID: ${{ secrets.PHOENIX66_ACCESS_CLIENT_ID }}
+          PHOENIX66_ACCESS_CLIENT_SECRET: ${{ secrets.PHOENIX66_ACCESS_CLIENT_SECRET }}
+        run: node scripts/phoenix66/publish-preview.mjs "$RUNNER_TEMP/phoenix66"
