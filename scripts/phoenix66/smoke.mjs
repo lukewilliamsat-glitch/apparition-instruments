@@ -100,7 +100,7 @@ try{
  await go('/wiring-generator/','#generator-mount svg');
  await go('/treble-bleed-designer/','#response-graph');
  await go('/les-paul-kits/','#kit-options .kit-section summary');
- await go('/circuit-forge/','#forge-controls');
+ await go('/circuit-forge/','#forge-diagram svg');
  await go('/admin/','.admin-access-gate input[name="password"]');
  await page.evaluate(()=>localStorage.setItem('apparition.admin.supabase-session.v1',JSON.stringify({access_token:'fixture-admin-session',refresh_token:'unused',expires_at:Math.floor(Date.now()/1000)+3600})));
  await go('/admin/?view=inventory','[data-component-id],#add-component:enabled');

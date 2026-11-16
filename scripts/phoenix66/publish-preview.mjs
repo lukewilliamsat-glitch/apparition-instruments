@@ -19,7 +19,7 @@ async function metadata(suffix=''){
 }
 const settings=await metadata();
 assert(settings.name===project&&settings.subdomain===host&&settings.production_branch==='production','Unexpected staging project identity or production branch.');
-assert(!settings.source?.type,'Expected an isolated Direct Upload project.');
+assert(!settings.source?.type||settings.source.type==='direct_upload','Expected an isolated Direct Upload project.');
 assert(Array.isArray(settings.domains)&&settings.domains.every(domain=>domain===host),'Preview project has a custom domain.');
 
 const receipt=JSON.parse(await readFile(resolve(root,'receipt.json'),'utf8'));
@@ -51,13 +51,28 @@ for(const [label,pin] of Object.entries(expected)){
 }
 for(const [label,pin] of Object.entries(expected)){
  const branch='phoenix66-'+label;
+ const started=Date.now();
  const r=spawnSync(wrangler,['pages','deploy',resolve(root,label),'--project-name',project,'--branch',branch,'--commit-hash',pin.commit,'--commit-dirty=true'],
      {stdio:'inherit',timeout:180000,env:{...process.env,WRANGLER_SEND_METRICS:'false'}});
  assert.equal(r.status,0,'Preview upload was not confirmed for '+label);
  const deployments=await metadata('/deployments?env=preview&per_page=20');
- const d=deployments.find(d=>d.environment==='preview'&&d.deployment_trigger?.metadata?.branch===branch&&d.deployment_trigger.metadata.commit_hash===pin.commit);
+ const d=deployments.find(d=>d.environment==='preview'&&d.deployment_trigger?.metadata?.branch===branch&&d.deployment_trigger.metadata.commit_hash===pin.commit&&Date.parse(d.created_on)>started-60000);
  assert(d&&d.latest_stage?.name==='deploy'&&d.latest_stage?.status==='success','Preview identity or success could not be read back.');
  const u=new URL(d.url);
  assert(u.protocol==='https:'&&u.hostname.endsWith('.'+host)&&!u.username&&!u.password,'Unexpected preview URL.');
- console.log(JSON.stringify({kind:label,source:pin.commit,payloadDigest:pin.digest,deploymentId:d.id,preview:u.origin}));
+ const probes=[['/','index.html','text/html'],['/products/bleed-cap/','products/bleed-cap/index.html','text/html'],['/products/bleed-cap/image.png','products/bleed-cap/image.png','image/png'],['/backend/component-data.mjs','backend/component-data.mjs','(?:application|text)/javascript'],['/admin/orders/','admin/orders/index.html','text/html'],['/operations/snapshot.json','operations/snapshot.json','application/json']];
+ for(const [route,path,mime] of probes){
+  const bytes=await readFile(resolve(root,label,path));
+  const response=await fetch(new URL(route,u),{redirect:'error',cache:'no-store',signal:AbortSignal.timeout(15000)});
+  assert.equal(response.status,200,'Preview route failed: '+route);
+  assert(new RegExp('^'+mime+'(?:;|$)','i').test(response.headers.get('content-type')||''),'Unexpected preview MIME: '+route);
+  if(route==='/')assert(/(?:^|[ ,])noindex(?:$|[ ,])/i.test(response.headers.get('x-robots-tag')||''),'Expected a non-indexed preview.');
+  const reader=response.body.getReader();
+  const hash=createHash('sha256');
+  let count=0;
+  try{for(;;){const {done,value}=await reader.read();if(done)break;count+=value.byteLength;assert(count<=bytes.length,'Unexpected preview response size: '+route);hash.update(value);}}
+  finally{await reader.cancel().catch(()=>{});}
+  assert(count===bytes.length&&hash.digest('hex')===sha(bytes),'Preview bytes differed: '+route);
+ }
+ console.log(JSON.stringify({kind:label,source:pin.commit,payloadDigest:pin.digest,deploymentId:d.id,preview:u.origin,verifiedPaths:probes.map(x=>x[0])}));
 }
