@@ -1,0 +1,43 @@
+name: NIGHTFALL 65B isolated catalogue reads
+on:
+  push:
+    branches: [engineering/nightfall65b-simplification]
+    paths:
+      - 'dist/**'
+      - 'tests/nightfall65b/**'
+      - '.github/workflows/nightfall65b-read-check.yml'
+permissions:
+  contents: read
+jobs:
+  catalogue:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Prepare exact sources and browser driver
+        run: |
+          set -euo pipefail
+          baseline=53331335fe3f1418bc8ea77b82e29ef5ae58c9f1
+          mkdir -p "$RUNNER_TEMP/65b/before" "$RUNNER_TEMP/65b/after" "$RUNNER_TEMP/65b/home"
+          git archive "$baseline" dist | tar -xC "$RUNNER_TEMP/65b/before"
+          cp -a dist "$RUNNER_TEMP/65b/after/"
+          node scripts/stamp-static-assets.mjs "$RUNNER_TEMP/65b/before/dist"
+          node scripts/stamp-static-assets.mjs "$RUNNER_TEMP/65b/after/dist"
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install --prefix "$RUNNER_TEMP/65b" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false playwright-core@1.56.1
+      - name: Compare browser reads using loopback fixtures only
+        run: |
+          set -euo pipefail
+          chrome=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium)
+          sudo unshare --net bash -eu -c '
+            ip link set lo up
+            test -z "$(ip route show table main)"
+            test -z "$(ip -6 route show table main)"
+            exec runuser -u "$1" -- env -i PATH=/usr/bin:/bin HOME="$2/home" CHROME_BIN="$3" PLAYWRIGHT_MODULE="$2/node_modules/playwright-core" "$4" "$5" "$2/before/dist" "$2/after/dist"
+          ' _ "$(id -un)" "$RUNNER_TEMP/65b" "$chrome" "$(command -v node)" "$PWD/tests/nightfall65b/catalogue-reads.mjs"

@@ -31,6 +31,12 @@ export function createPublicComponentRepository({config=publicBackendConfig,requ
     if(!Number.isSafeInteger(row.stock)||row.stock<0)throw new Error('Public availability data is invalid.');
     return componentFromRow({...row,active:true},{quantity:row.stock});
    });
+  },async imageFor(id){
+   if(typeof id!=='string'||!id||id.length>120)throw new Error('Invalid component reference.');
+   const rows=await readCatalogueComponents({config,request,delivery},'id,image','&id=eq.'+encodeURIComponent(id)+'&limit=1');
+   if(rows.length===0)return null;
+   if(rows.length!==1||rows[0]?.id!==id||!Object.hasOwn(rows[0],'image'))throw new Error('Invalid component image response.');
+   return rows[0].image;
   },save:blocked,changeStock:blocked
  });
 }
@@ -64,7 +70,10 @@ export function createAdminComponentRepository(transport){
   await write('inventory','PATCH',idQuery(id)+'&quantity=eq.'+before.quantity,{quantity:next});
   return (await list()).find(item=>item.id===id);
  };
- return Object.freeze({list,changeStock,async remove(id){
+ // Catalogue option counts use these component fields only. Do not load
+ // photos, stock or private costs, or cache the authorised response.
+ const listReferences=async()=>(await read('components','?select=id,name,category,manufacturer,specs,product_content')).map(row=>componentFromRow(row));
+ return Object.freeze({list,listReferences,changeStock,async remove(id){
   if(typeof id!=='string'||!id.trim())throw new Error('Choose a Component to delete.');
   const response=await transport.send('rpc/delete_unused_component',{method:'POST',body:{p_component_id:id}});
   if(!response.ok){

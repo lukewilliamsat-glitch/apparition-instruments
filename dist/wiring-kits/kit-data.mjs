@@ -1,5 +1,5 @@
 import {kitDefinitions as original} from './kit-seed.mjs';
-import {componentRepository} from '../admin/component-repository.mjs';
+import {storefrontComponentRepository} from '../admin/component-repository.mjs';
 import {lesPaulKitAssembly,lesPaulKitDefinitionId,normaliseKitDefinition} from '../admin/assemblies.mjs';
 import {assemblyRepository} from '../admin/assembly-repository.mjs';
 import {resolveMappedComponent,availableBuilderValues} from './builder-options.mjs';
@@ -30,7 +30,7 @@ export function configuredKitDefinitions(records,assembly=lesPaulKitAssembly){
 }
 export function resolveKitComponent(kit,selection){return resolveMappedComponent(kit.builderModel,selection,kit.builderModel.components);}
 export function availableKitValues(kit,groupKey,selection){return availableBuilderValues(kit.builderModel,groupKey,selection,kit.builderModel.components);}
-export async function loadConfiguredKitDefinitions(repository=componentRepository(),assembly=null,definitions=assemblyRepository()){
+export async function loadConfiguredKitDefinitions(repository=storefrontComponentRepository(),assembly=null,definitions=assemblyRepository()){
  const [records,kits]=await Promise.all([repository.list(),assembly?Promise.resolve([assembly]):definitions.list()]);
  const selected=assembly||kits.find(item=>item.id===lesPaulKitDefinitionId||item.kind==='wiring-kit'&&item.kitDefinition?.family==='les-paul');
  if(!selected)throw new Error('Les Paul Wiring Kit Definition is unavailable.');

@@ -35,14 +35,16 @@ export function renderProductDetail(root,product,{document:doc=root.ownerDocumen
  bindPurchaseControl(button,{available:()=>product.stock>0&&Number.isSafeInteger(product.price)&&product.price>0});
  return {button,feedback};
 }
-export async function startProductDetail({document:doc=document,location:loc=location,load=()=>refreshCatalogue(createPublicComponentRepository()),loadOptions=()=>createPublicOptionRepository().list()}={}){
+export async function startProductDetail({document:doc=document,location:loc=location,load=refreshCatalogue,loadOptions=()=>createPublicOptionRepository().list(),loadImage=id=>createPublicComponentRepository().imageFor(id)}={}){
  const status=doc.getElementById('product-status'),root=doc.getElementById('product-detail');
  try{await load();const match=loc.pathname.match(/^\/products\/([^/]+)\/$/),id=match?catalogue.find(p=>productSlug(p.id)===decodeURIComponent(match[1]))?.id:new URLSearchParams(loc.search).get('id'),product=resolveProduct(catalogue,id);
   if(!product){status.textContent='This component is not currently available. Browse the component collection for current products.';root.hidden=true;return null;}
   const title=(product.productTitle?.trim()||product.name)+' | Apparition Instruments',description=(product.shortDescription||product.cardDescription||product.description||'Explore the specification and current availability of '+product.name+'.').trim();
   doc.title=title;doc.querySelector('meta[name="description"]').content=description.slice(0,160);
   doc.querySelector('link[rel="canonical"]').href='https://apparitioninstruments.co.uk'+productURL(product.id);
-  let options=[];try{options=await loadOptions();}catch{}renderProductDetail(root,product,{document:doc,options});status.textContent='';return product;
+  const [options,image]=await Promise.all([Promise.resolve().then(loadOptions).catch(()=>[]),product.image===undefined?Promise.resolve().then(()=>loadImage(product.id)).catch(()=>null):product.image]);
+  const detail={...product,image};
+  renderProductDetail(root,detail,{document:doc,options});status.textContent='';return detail;
  }catch(error){root.hidden=true;status.textContent='Component details are temporarily unavailable. Please try again later.';return null;}
 }
 if(typeof document!=='undefined'&&document.getElementById('product-detail'))await startProductDetail();

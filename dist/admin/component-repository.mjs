@@ -12,15 +12,22 @@ export function createLocalComponentRepository(storage){
  });
 }
 
-let browserRepository;
-export function componentRepository(){
+let browserRepository,publicWithImages,publicWithoutImages;
+export function componentRepository({includeImages=true}={}){
  if(typeof window==='undefined'){
   const memory=new Map(),storage={getItem:key=>memory.get(key)??null,setItem:(key,value)=>memory.set(key,value)};
   return createLocalComponentRepository(storage);
  }
  if(browserRepository)return browserRepository;
- browserRepository=createPublicComponentRepository();
- return browserRepository;
+ if(includeImages)return publicWithImages??=createPublicComponentRepository();
+ return publicWithoutImages??=createPublicComponentRepository({includeImages:false});
+}
+
+// These are the public views that render a collection of component photographs.
+// Product detail separately requests one photo; basket and utility views use metadata.
+export function storefrontComponentRepository(doc=globalThis.document){
+ const includeImages=!!(doc?.getElementById('component-status')||doc?.getElementById('kit-options'));
+ return componentRepository({includeImages});
 }
 
 export function setComponentRepository(repository){

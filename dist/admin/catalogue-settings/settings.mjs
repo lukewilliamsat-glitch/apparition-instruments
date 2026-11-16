@@ -29,7 +29,11 @@ function selected(item,set){
  if(set==='bleed_topology'&&item.category==='treble-bleeds')return bleedValues(item).topology;
  return null;
 }
-async function refresh(){[options,components]=await Promise.all([repo.list(),componentRepo.list()]);references.hidden=true;render();}
+async function refresh(){
+ const readReferences=componentRepo.listReferences||componentRepo.list;
+ [options,components]=await Promise.all([repo.list(),readReferences.call(componentRepo)]);
+ references.hidden=true;render();
+}
 function render(){root.replaceChildren();for(const [set,title] of Object.entries(optionSets)){
  const section=node('section');section.className='catalogue-option-section';section.append(node('h2',title));
  if(['pot_taper','bleed_topology'].includes(set))section.append(node('p','Electrical meanings are fixed. Existing labels can be renamed.'));
