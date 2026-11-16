@@ -29,6 +29,7 @@ const photo='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCA
 const rows=initialComponents().map((x,i)=>({id:x.id,sku:'FIXTURE-'+i,name:'Fixture '+x.id,category:x.category,manufacturer:'Fixture',description:'Fictional component',specs:x.specs,
  product_content:{productTitle:'Fixture '+x.id,technicalSpecs:x.technicalSpecs},individually:true,in_kits:true,active:true,sale_price:500,kit_price:250,kit_price_quantity:1,stock:10,image:photo}));
 const kit=lesPaulKitAssembly.kitDefinition;
+const kitRow={id:lesPaulKitAssembly.id,assembly_id:lesPaulKitAssembly.id,name:'Fixture kit',sku:'FIX-KIT',category:'kits',kind:'wiring-kit',active:true,slug:'les-paul',family:'les-paul',base_price:1000,show_on_wiring_kits:true,builder_enabled:true,default_wiring_style:'modern',defaults:kit.defaults,builder_options:kit.builderOptions,component_resolvers:kit.componentResolvers};
 const mime={'.html':'text/html','.mjs':'text/javascript','.js':'text/javascript','.css':'text/css','.json':'application/json','.png':'image/png','.svg':'image/svg+xml','.webp':'image/webp'};
 let root=candidate;
 const server=createServer(async(req,res)=>{
@@ -69,7 +70,8 @@ try{
    const id=url.searchParams.get('id')?.replace(/^eq\./,''),cols=url.searchParams.get('select').split(',');
    return reply(rows.filter(x=>!id||id===x.id).map(x=>Object.fromEntries(cols.map(k=>[k,x[k]]))));
   }
-  if(p==='/rest/v1/catalogue_wiring_kits')return reply([{id:lesPaulKitAssembly.id,name:'Fixture kit',sku:'FIX-KIT',category:'kits',slug:'les-paul',base_price:1000,show_on_wiring_kits:true,builder_enabled:true,default_wiring_style:'modern',defaults:kit.defaults,builder_options:kit.builderOptions,component_resolvers:kit.componentResolvers}]);
+  if(['/rest/v1/catalogue_wiring_kits','/rest/v1/assemblies','/rest/v1/kit_definitions'].includes(p))return reply([kitRow]);
+  if(p==='/rest/v1/kit_definition_internal')return reply([{assembly_id:kitRow.id,metadata:kit.metadata||{}}]);
   if(p==='/rest/v1/kit_permitted_components')return reply(rows.map(r=>({assembly_id:lesPaulKitAssembly.id,component_id:r.id})));
   if(p==='/rest/v1/commerce_shipping')return reply([{standard_delivery_pence:300,free_delivery_threshold_pence:3000}]);
   if(p==='/rest/v1/components')return reply(rows);
@@ -104,9 +106,15 @@ try{
  await go('/admin/','.admin-access-gate input[name="password"]');
  await page.evaluate(()=>localStorage.setItem('apparition.admin.supabase-session.v1',JSON.stringify({access_token:'fixture-admin-session',refresh_token:'unused',expires_at:Math.floor(Date.now()/1000)+3600})));
  await go('/admin/?view=inventory','[data-component-id],#add-component:enabled');
- await go('/admin/orders/','#orders-empty');
+ await go('/admin/orders/','body.admin-authorized #orders-empty');
+ await page.evaluate(async({orderId,record})=>{
+  const {mountFinancialOrder}=await import('/admin/orders/financial-order.mjs');
+  const fixtureRoot=document.createElement('div');fixtureRoot.id='finance-fixture';document.body.append(fixtureRoot);
+  mountFinancialOrder({root:fixtureRoot,order:{id:orderId,reference:'FIXTURE-ONLY',channel:'DIRECT',items:[],pricing:{delivery:0,total:0}},repository:{async read(){return {record,bytes:0};},dispose(){}}});
+ },{orderId,record});
+ await show('#finance-fixture [data-finance-workbench]');
  await go('/admin/hub-cms/','#cms-new');
  assert.deepEqual(blockedWrites,[]);
  await ctx.close();
- console.log(JSON.stringify({browser:browser.version(),routes:cases,blackLedgerSyntheticRead:true,checkoutFixtureCalls:checkouts,productionRequests:0}));
+ console.log(JSON.stringify({browser:browser.version(),routes:cases,blackLedgerSyntheticReadAndInterface:true,checkoutFixtureCalls:checkouts,productionRequests:0}));
 }finally{await browser?.close();await new Promise(r=>server.close(r));}
