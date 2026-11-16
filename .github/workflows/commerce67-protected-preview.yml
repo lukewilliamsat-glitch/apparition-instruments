@@ -12,7 +12,8 @@ concurrency:
   group: phoenix66-pages-publisher
   cancel-in-progress: false
 env:
-  CANDIDATE: 'c8e94735f061dc4a25c32e3e77d401a2ae045bf7'
+  COMMERCE67_SENTINEL_TEST: 'true'
+  CANDIDATE: '2a70ebe09856044e2d19e7d6a28577698ac71122'
 jobs:
   acceptance:
     if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview'
@@ -22,7 +23,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: ${{ env.CANDIDATE }}
-          fetch-depth: 3
+          fetch-depth: 4
           persist-credentials: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
@@ -30,14 +31,15 @@ jobs:
       - name: Install locked test dependencies and verify source
         run: |
           test "$(git rev-parse HEAD)" = "$CANDIDATE"
-          test "$(git rev-parse HEAD~2)" = afbac1358e782b588d222960eebb03f170a026bb
+          test "$(git rev-parse HEAD~3)" = afbac1358e782b588d222960eebb03f170a026bb
           npm ci --ignore-scripts --no-audit --no-fund
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install --prefix "$RUNNER_TEMP/commerce67-tools" --no-save --package-lock=false --ignore-scripts --no-audit --no-fund playwright-core@1.56.1 pg@8.16.3
       - name: Test the exact migration and existing checkout boundaries
         run: |
           set -euo pipefail
-          sha256sum supabase/migrations/20261116213239_commerce_ascendant.sql
+          sha256sum supabase/migrations/20261116213239_commerce_ascendant.sql supabase/migrations/20261116221000_commerce_sentinel.sql
           node tests/commerce67/db.mjs
+          node --experimental-strip-types tests/commerce67/sentinel.mjs
           node --experimental-strip-types tests/commerce67/checkout.mjs
           node --experimental-strip-types tests/p07b-checkout.mjs
           node --experimental-strip-types tests/p07b2a-webhook.mjs
@@ -57,7 +59,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir "$RUNNER_TEMP/nightfall-reference"
-          git archive HEAD~2 dist | tar -x -C "$RUNNER_TEMP/nightfall-reference"
+          git archive HEAD~3 dist | tar -x -C "$RUNNER_TEMP/nightfall-reference"
           mkdir "$RUNNER_TEMP/commerce67-tested"
           python3 tests/commerce67/package-preview.py "$RUNNER_TEMP/commerce67-tested/site" > "$RUNNER_TEMP/commerce67-tested/inventory.json"
           chrome=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium)
