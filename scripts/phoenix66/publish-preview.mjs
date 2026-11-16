@@ -4,11 +4,14 @@ import {readdir,readFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {createHash} from 'node:crypto';
 import {spawnSync} from 'node:child_process';
+import {createPreviewAccess} from './preview-access.mjs';
 
 const root=resolve(process.argv[2]);
 const account=process.env.CLOUDFLARE_ACCOUNT_ID,project=process.env.CLOUDFLARE_PAGES_PROJECT,token=process.env.CLOUDFLARE_API_TOKEN,wrangler=process.env.WRANGLER_BIN;
-assert(/^[a-f0-9]{32}$/.test(account||'')&&/^apparition-phoenix(?:-[a-z0-9]+){1,4}$/.test(project||'')&&token&&wrangler,'Set the preview-scoped account, project, token and pinned Wrangler binary.');
+assert(/^[a-f0-9]{32}$/.test(account||'')&&project==='apparition-phoenix-preview'&&token&&wrangler,'Set the preview-scoped account, project, token and pinned Wrangler binary.');
 assert.equal(process.env.PHOENIX66_PREVIEW_ONLY,'true','Explicit preview flag is required.');
+const {PHOENIX66_ACCESS_CLIENT_ID:clientId,PHOENIX66_ACCESS_CLIENT_SECRET:clientSecret,...uploadEnv}=process.env;
+assert(clientId&&clientSecret,'Configure preview-only Access service credentials before deploying.');
 const host=project+'.pages.dev', base='https://api.cloudflare.com/client/v4/accounts/'+account+'/pages/projects/'+project;
 async function metadata(suffix=''){
  const r=await fetch(base+suffix,{headers:{Authorization:'Bearer '+token},redirect:'error',signal:AbortSignal.timeout(15000)});
@@ -53,18 +56,18 @@ for(const [label,pin] of Object.entries(expected)){
  const branch='phoenix66-'+label;
  const started=Date.now();
  const r=spawnSync(wrangler,['pages','deploy',resolve(root,label),'--project-name',project,'--branch',branch,'--commit-hash',pin.commit,'--commit-dirty=true'],
-     {stdio:'inherit',timeout:180000,env:{...process.env,WRANGLER_SEND_METRICS:'false'}});
+     {stdio:'inherit',timeout:180000,env:{...uploadEnv,WRANGLER_SEND_METRICS:'false'}});
  assert.equal(r.status,0,'Preview upload was not confirmed for '+label);
  const deployments=await metadata('/deployments?env=preview&per_page=20');
  const d=deployments.find(d=>d.environment==='preview'&&d.deployment_trigger?.metadata?.branch===branch&&d.deployment_trigger.metadata.commit_hash===pin.commit&&Date.parse(d.created_on)>started-60000);
  assert(d&&d.latest_stage?.name==='deploy'&&d.latest_stage?.status==='success','Preview identity or success could not be read back.');
  const u=new URL(d.url);
- assert(u.protocol==='https:'&&u.hostname.endsWith('.'+host)&&!u.username&&!u.password,'Unexpected preview URL.');
+ const access=createPreviewAccess(u,project,{clientId,clientSecret});
+ await access.assertProtected();
  const probes=[['/','index.html','text/html'],['/products/bleed-cap/','products/bleed-cap/index.html','text/html'],['/products/bleed-cap/image.png','products/bleed-cap/image.png','image/png'],['/backend/component-data.mjs','backend/component-data.mjs','(?:application|text)/javascript'],['/admin/orders/','admin/orders/index.html','text/html'],['/operations/snapshot.json','operations/snapshot.json','application/json']];
  for(const [route,path,mime] of probes){
   const bytes=await readFile(resolve(root,label,path));
-  const response=await fetch(new URL(route,u),{redirect:'error',cache:'no-store',signal:AbortSignal.timeout(15000)});
-  assert.equal(response.status,200,'Preview route failed: '+route);
+  const response=await access.get(route);
   assert(new RegExp('^'+mime+'(?:;|$)','i').test(response.headers.get('content-type')||''),'Unexpected preview MIME: '+route);
   if(route==='/')assert(/(?:^|[ ,])noindex(?:$|[ ,])/i.test(response.headers.get('x-robots-tag')||''),'Expected a non-indexed preview.');
   const reader=response.body.getReader();

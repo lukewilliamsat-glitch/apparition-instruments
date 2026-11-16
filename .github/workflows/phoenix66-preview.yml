@@ -2,7 +2,10 @@ name: PHOENIX 66 package and Cloudflare preview
 on:
   push:
     branches: [engineering/phoenix66-preview]
-    paths: ['scripts/phoenix66/**', '.github/workflows/phoenix66-preview.yml']
+    paths:
+      - 'scripts/phoenix66/package.py'
+      - 'scripts/phoenix66/source-pins.json'
+      - 'scripts/phoenix66/smoke.mjs'
   workflow_dispatch:
     inputs:
       package_run:
@@ -78,6 +81,7 @@ jobs:
           gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${PACKAGE_RUN}" | jq -e --arg branch 'engineering/phoenix66-preview' '.conclusion == "success" and .head_branch == $branch and .path == ".github/workflows/phoenix66-preview.yml"' >/dev/null
           gh run download "$PACKAGE_RUN" -n phoenix66-static-uploads -D "$RUNNER_TEMP/phoenix66"
           python3 scripts/phoenix66/unpack.py "$RUNNER_TEMP/phoenix66"
+          node --test scripts/phoenix66/preview-access.test.mjs
       - name: Prepare pinned Cloudflare uploader
         run: npm install --prefix "$RUNNER_TEMP/cloudflare-uploader" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false wrangler@4.162.0
       - name: Deploy the verified payloads to the preview project only
@@ -87,4 +91,6 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
+          PHOENIX66_ACCESS_CLIENT_ID: ${{ secrets.PHOENIX66_ACCESS_CLIENT_ID }}
+          PHOENIX66_ACCESS_CLIENT_SECRET: ${{ secrets.PHOENIX66_ACCESS_CLIENT_SECRET }}
         run: node scripts/phoenix66/publish-preview.mjs "$RUNNER_TEMP/phoenix66"
