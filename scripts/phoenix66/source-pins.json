@@ -1,0 +1,8 @@
+{
+  "admin/catalogue-settings/settings.mjs": "2c57c7427fcdae1fda0b2ff791e34476435a675d83cb5fb11e6bef2473744fb3",
+  "admin/component-repository.mjs": "a8dadac1379bd3c2cdaec615aa6dae8969441d4ed766214351c3ee02d8444a54",
+  "backend/component-data.mjs": "fb5a30d60ab350fda09f5e2645132b839102324723f7f91af8c189e238722aaf",
+  "components/catalogue.mjs": "71eb8bf2bed1a01727e8cd5293f300090555444399eb1f3f0c7cbf7aff899bc7",
+  "products/app.mjs": "dece0cc602fb737550ed77990cbdc6afbe7fbcca6530373cb89555fcc80f9a07",
+  "wiring-kits/kit-data.mjs": "bb0663525e33b4808fcfe745a12020a4cfb85d8f760ddbc3b206a4780c967734"
+}
