@@ -1,6 +1,7 @@
 // P07B.2A receiver. Stripe owns payment status; only this signed, live-mode path
 // can ask the service-only database function to apply inventory fulfilment.
 import {storeVerifiedContact} from './contact.ts';
+import {observeProvider} from '../_shared/commerce67-payments.ts';
 import {sendConfirmedOrderOnce} from './delivery.ts';
 import {recordStripeRefund} from './refund.ts';
 type Environment={get:(name:string)=>string|undefined};
@@ -40,6 +41,12 @@ export async function receiveStripeWebhook(req:Request,env:Environment=Deno.env,
     s?.status!=='expired'||s?.payment_status!=='unpaid'||!/^cs_live_[A-Za-z0-9]{8,}$/.test(s.id??'')||
     !/^AI-\d+$/.test(s.client_reference_id??'')||s.metadata?.order_reference!==s.client_reference_id||
     !/^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/i.test(s.metadata?.order_id??''))return reply(400,'Invalid expired Checkout session');
+  if(env.get('COMMERCE67_SENTINEL_EVENTS')==='true'){
+   try{
+    const observed=await observeProvider(env,request,s);
+    return ['expired','paid','legacy'].includes(observed)?reply(200,'Checkout expiry recorded'):reply(503,'Checkout expiry could not be matched');
+   }catch{return reply(503,'Checkout expiry could not be verified');}
+  }
   const released=await request(url+'/rest/v1/rpc/commerce67_expire_checkout',{method:'POST',
    headers:{apikey:service,Authorization:'Bearer '+service,'Content-Type':'application/json'},
    body:JSON.stringify({p_order:s.metadata.order_id,p_session:s.id,p_reference:s.client_reference_id})});
@@ -57,6 +64,12 @@ export async function receiveStripeWebhook(req:Request,env:Environment=Deno.env,
   ||session.currency!=='gbp'||!/^AI-\d+$/.test(session.client_reference_id||'')
   ||!/^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/i.test(session.metadata?.order_id||'')
   ||session.metadata?.order_reference!==session.client_reference_id)return reply(400,'Checkout reference is invalid');
+ if(env.get('COMMERCE67_SENTINEL_EVENTS')==='true'){
+  try{
+   const observed=await observeProvider(env,request,session);
+   if(!['legacy','paid_needs_event','paid'].includes(observed))return reply(503,'Payment session differs from its reserved order');
+  }catch{return reply(503,'Payment session attachment could not be confirmed');}
+ }
  // Persist only Stripe-collected details from this signed event before payment
  // fulfilment. On missing details return a retryable error without stock writes.
  if(!await storeVerifiedContact(session,env,request))return reply(503,'Order delivery information is unavailable');

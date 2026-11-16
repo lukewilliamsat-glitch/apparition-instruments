@@ -1,5 +1,6 @@
 // P07B guest entry point. Stripe secrets and privileged database credentials stay server-side.
 import {verifiedCustomer} from '../_shared/customer-auth.ts';
+import {paymentStatus,secureSentinelCheckout,verifiedGuestProof} from '../_shared/commerce67-payments.ts';
 const origin='https://apparitioninstruments.co.uk';
 const checkoutPage=origin+'/checkout/success/';
 const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:{'Content-Type':'application/json','Access-Control-Allow-Origin':origin,'Vary':'Origin'}});
@@ -26,25 +27,28 @@ export async function startCheckout(req:Request,env:Environment=Deno.env,request
  let input:any;try{const raw=await req.text();if(raw.length>250000)return err('Basket is too large.');input=JSON.parse(raw);}catch{return err('Basket could not be read.');}
  if(!input||typeof input!=='object'||!Array.isArray(input.items)||input.items.length<1||input.items.length>10||typeof input.requestId!=='string'||!/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(input.requestId))return err('Invalid basket request.');
  const commerce=input.commerceV2===true;
+ const sentinel=env.get('COMMERCE67_SENTINEL_ENABLED')==='true';
  if(commerce&&env.get('COMMERCE67_CHECKOUT_ENABLED')!=='true')return err('Commercial checkout is not enabled.',503);
  if(commerce&&(!/^[a-f0-9]{32}$/.test(input.quoteId??'')||
   (input.code!=null&&(typeof input.code!=='string'||!/^\s*[A-Za-z0-9-]{3,32}\s*$/.test(input.code)))))return err('Refresh your commerce quote before checkout.');
  const hasAuthorization=req.headers.has('Authorization');
  const owner=hasAuthorization?await verifiedCustomer(req,env,request):null;
  if(hasAuthorization&&!owner)return err('Your account session has expired. Sign in again or continue as a guest.',401);
+ if(sentinel&&!owner&&!await verifiedGuestProof(env,request,input.turnstileToken))return err('Please complete the checkout verification and retry.',429);
  const storeError=await availability(supabaseUrl,serviceKey,request);if(storeError)return storeError;
  // This privileged RPC remains independently validating. Browser callers have no EXECUTE permission.
  const rpcName=commerce?'commerce67_start_checkout':'create_guest_kit_order';
  const checkoutIdentity=commerce?{quoteId:input.quoteId,code:input.code?.trim().toUpperCase()??null}:{checkoutMode:'stripe'};
  const rpc=await request(supabaseUrl+'/rest/v1/rpc/'+rpcName,{method:'POST',headers:{apikey:serviceKey,Authorization:'Bearer '+serviceKey,'Content-Type':'application/json'},body:JSON.stringify({p_request:{requestId:input.requestId,items:input.items,...checkoutIdentity,...(owner?{ownerUserId:owner.id}:{})}})});
- if(!rpc.ok){const details=await rpc.json().catch(()=>({}));if(details?.message==='Orders are temporarily paused')return json({code:'STORE_PAUSED',message:'Orders are temporarily paused. '+String(details.details||'Your basket remains saved.').slice(0,1000)},409);const stale=/price|total|unavailable/i.test(details?.message||'');return err(stale?'The basket price or configuration has changed. Review your basket before checkout.':'Your basket could not be verified. Review your selections before checkout.',commerce&&stale?409:400);}
- const receipt=await rpc.json();if(!/^[0-9a-f-]{36}$/i.test(receipt?.id||'')||!/^AI-\d+$/.test(receipt?.reference||''))return err('Order validation response was incomplete.',502);
+ if(!rpc.ok){const details=await rpc.json().catch(()=>({}));if(details?.code==='P0067')return err('Checkout is temporarily busy. Your basket is saved; please retry shortly.',429);if(details?.message==='Orders are temporarily paused')return json({code:'STORE_PAUSED',message:'Orders are temporarily paused. '+String(details.details||'Your basket remains saved.').slice(0,1000)},409);const stale=/price|total|unavailable/i.test(details?.message||'');return err(stale?'The basket price or configuration has changed. Review your basket before checkout.':'Your basket could not be verified. Review your selections before checkout.',commerce&&stale?409:400);}
+ const receipt=await rpc.json();if(receipt?.sentinel===true&&!sentinel)return err('Reservation processing is unavailable. No payment session was opened.',503);
+ if(!/^[0-9a-f-]{36}$/i.test(receipt?.id||'')||!/^AI-\d+$/.test(receipt?.reference||''))return err('Order validation response was incomplete.',502);
  const orderResponse=await request(supabaseUrl+'/rest/v1/orders?id=eq.'+encodeURIComponent(receipt.id)+'&select=id,reference,subtotal_pence,delivery_pence,total_pence,payment_status,status,stripe_checkout_session_id,owner_user_id,items',{headers:{apikey:serviceKey,Authorization:'Bearer '+serviceKey}});
  if(!orderResponse.ok)return err('Order could not be verified for checkout.',502);
  const order=(await orderResponse.json())?.[0];
  if(!order||order.reference!==receipt.reference||order.total_pence!==receipt.totalPence||order.status!=='pending'||order.payment_status!=='unpaid'||!Array.isArray(order.items)||!Number.isSafeInteger(order.subtotal_pence)||!Number.isSafeInteger(order.delivery_pence)||order.total_pence!==order.subtotal_pence+order.delivery_pence)return err('Order amount could not be verified.',502);
  if((order.owner_user_id??null)!==(owner?.id??null))return err('This checkout request belongs to a different account. Start again with a fresh basket.',409);
- if(order.stripe_checkout_session_id)return err('This order already has a secure checkout. Refresh your basket before retrying.',409);
+ if(order.stripe_checkout_session_id&&!sentinel)return err('This order already has a secure checkout. Refresh your basket before retrying.',409);
  const amount=order.items.reduce((sum:number,item:any)=>sum+item.unitPrice*item.quantity,0);
  if(amount!==order.subtotal_pence||!order.items.every((item:any)=>Number.isSafeInteger(item.unitPrice)&&item.unitPrice>0&&Number.isSafeInteger(item.quantity)&&item.quantity>0))return err('Order item prices could not be verified.',502);
  const form=new URLSearchParams({mode:'payment',locale:'en-GB',client_reference_id:order.reference,success_url:checkoutPage+'?session_id={CHECKOUT_SESSION_ID}',cancel_url:origin+'/basket/?checkout=cancel','name_collection[individual][enabled]':'true','name_collection[individual][optional]':'false','shipping_address_collection[allowed_countries][0]':'GB','metadata[order_id]':order.id,'metadata[order_reference]':order.reference,'shipping_options[0][shipping_rate_data][display_name]':'UK Delivery','shipping_options[0][shipping_rate_data][type]':'fixed_amount','shipping_options[0][shipping_rate_data][fixed_amount][amount]':String(order.delivery_pence),'shipping_options[0][shipping_rate_data][fixed_amount][currency]':'gbp'});
@@ -54,6 +58,18 @@ export async function startCheckout(req:Request,env:Environment=Deno.env,request
   if(description)form.set(`line_items[${index}][price_data][product_data][description]`,description);
  }});
  const finalStoreError=await availability(supabaseUrl,serviceKey,request);if(finalStoreError)return finalStoreError;
+ if(sentinel){
+  try{
+   const reservation=await paymentStatus(env,request,order.id);
+   if(!reservation){
+    if(commerce||order.stripe_checkout_session_id)return err('This checkout cannot be resumed safely.',409);
+   }else{
+    if(reservation.reference!==order.reference||reservation.amount!==order.total_pence)return err('Reserved order differs from checkout.',502);
+    const url=await secureSentinelCheckout(env,request,reservation,form);
+    return url?json({url,reference:order.reference,totalPence:order.total_pence}):err('Payment session could not be confirmed. Retry using the same checkout or contact Apparition with your reference.',409);
+   }
+  }catch{return err('Payment session outcome could not be confirmed. The reservation is retained pending provider reconciliation.',503);}
+ }
  const stripe=await request('https://api.stripe.com/v1/checkout/sessions',{method:'POST',headers:{Authorization:'Bearer '+stripeKey,'Content-Type':'application/x-www-form-urlencoded','Idempotency-Key':'apparition-'+order.id},body:form});
  if(!stripe.ok)return err('Secure checkout is temporarily unavailable. Your order remains Pending and Unpaid. Retry shortly.',502);
  const session=await stripe.json();if(session?.livemode!==true||!/^cs_live_[A-Za-z0-9]+$/.test(session?.id||'')||!/^https:\/\/checkout\.stripe\.com\//.test(session?.url||'')||session?.amount_total!==order.total_pence||session?.currency!=='gbp')return err('Stripe did not return a valid live Checkout session.',502);

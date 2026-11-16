@@ -8,8 +8,37 @@ import {productById} from '../components/catalogue.mjs?build=2e3c45a6836bd5c9a1e
 import {customerAuth} from '../account/client.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f';
 const content=document.querySelector('#checkout-content'),repository=createSecureCheckoutRepository();
 const quoteReader=createQuoteReader();
+let challengeLoader;
+const tokenStorage='apparition:sentinel-checkout:v1';
 let requestId=crypto.randomUUID(),shipping=null,mounted=null,renderKey=null,submitting=false,uncertain=false,queued=false;
 window.apparitionStoreState||={state:'UNAVAILABLE',customer_message:'Checking current store availability…'};
+async function sameAttempt(payload){
+ // Keep the same intent ID when a response is lost or this tab reloads.
+ // The fingerprint excludes the challenge, which is consumed once per attempt.
+ const {requestId,...intent}=payload;
+ const hash=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(intent)));
+ const key=Array.from(new Uint8Array(hash),n=>n.toString(16).padStart(2,'0')).join('');
+ try{
+  const now=Date.now(),data=JSON.parse(sessionStorage.getItem(tokenStorage)??'[]');
+  const saved=(Array.isArray(data)?data:[]).filter(r=>Number.isSafeInteger(r.at)&&now-r.at<40*60*1000&&
+   /^[a-f0-9-]{36}$/i.test(r.id??''));
+  const old=saved.find(r=>r.key===key);
+  if(old)return old.id;
+  const id=crypto.randomUUID();sessionStorage.setItem(tokenStorage,JSON.stringify([{at:now,key,id},...saved].slice(0,8)));
+  return id;
+ }catch{throw Error('Secure checkout needs session storage to resume safely. Allow site storage and retry.');}
+}
+function loadChallenge(){
+ if(window.turnstile)return Promise.resolve(window.turnstile);
+ return challengeLoader??=new Promise((resolve,reject)=>{
+  const script=document.createElement('script');
+  script.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';script.async=true;
+  const timer=setTimeout(()=>reject(Error('Checkout verification could not load.')),8000);
+  script.onload=()=>{clearTimeout(timer);window.turnstile?resolve(window.turnstile):reject(Error('Checkout verification is unavailable.'));};
+  script.onerror=()=>{clearTimeout(timer);reject(Error('Checkout verification is unavailable.'));};
+  document.head.append(script);
+ }).catch(e=>{challengeLoader=undefined;throw e;});
+}
 async function loadShipping(){
  const response=await fetch(publicBackendConfig.url+'/rest/v1/commerce_shipping?country=eq.GB&select=*',{headers:{apikey:publicBackendConfig.publishableKey}});
  if(!response.ok)throw new Error('UK delivery prices are unavailable. Please retry later.');
@@ -23,6 +52,9 @@ function orderForm(items){
  let quote=null,quotePending=false,codeUsed=null;
  const subtotal=intents?0:items.reduce((sum,item)=>sum+(item.product==='component'?productById(item.sku).price:item.record.pricing.total)*item.quantity,0),delivery=subtotal>=shipping.free_delivery_threshold_pence?0:shipping.standard_delivery_pence;
  const button=el('button','button','Proceed to Secure Checkout'),status=el('p','status-message'),availability=el('p','status-message');button.type='submit';button.id='checkout-submit';status.setAttribute('role','status');availability.setAttribute('role','status');form.append(title,note,button,status,availability);
+ const challenge=el('div','checkout-verification');
+ let challengeId=null,challengeToken=null,challengeApi=null;
+ if(commerce67Activation.sentinel)form.insertBefore(challenge,button);
  let availabilityKey=null;
  const updateAvailability=()=>{
   const store=window.apparitionStoreState,open=store?.state==='OPEN',next=JSON.stringify([store?.state,store?.customer_title,store?.customer_message]),hadFocus=document.activeElement===button;
@@ -65,12 +97,26 @@ function orderForm(items){
    if(intents&&!accepted)throw new Error('Check offers before submitting payment.');
    const payload=intents?{requestId,commerceV2:true,quoteId:accepted.quoteId,code:codeUsed,items:intents}:
     {requestId,items:current.map(item=>item.product==='component'?{product:'component',sku:item.sku,quantity:item.quantity}:{product:item.product,quantity:item.quantity,record:item.record})};
+   if(commerce67Activation.sentinel){
+    payload.requestId=await sameAttempt(payload);
+    if(!session?.session?.access_token){
+     if(!commerce67Activation.turnstileSiteKey)throw Error('Guest verification is unavailable. Please sign in to continue.');
+     if(!challengeToken){
+      challengeApi=await loadChallenge();
+      if(challengeId===null)challengeId=challengeApi.render(challenge,{sitekey:commerce67Activation.turnstileSiteKey,
+       action:'commerce_checkout',callback:token=>{challengeToken=token;status.textContent='Verification complete. Continue to secure checkout.';},
+       'expired-callback':()=>{challengeToken=null;},'error-callback':()=>{challengeToken=null;}});
+      throw Error('Complete the checkout verification, then continue to secure checkout.');
+     }
+     payload.turnstileToken=challengeToken;challengeToken=null;challengeApi.reset(challengeId);
+    }
+   }
    creating=true;const result=await repository.create(payload,{accessToken:session?.session?.access_token||null});confirmed=true;
    if(result.totalPence!==(intents?accepted.totalMinor:subtotal+delivery))throw new Error('The current checkout price differs from your basket. Refresh and review your kit.');
    if(window.apparitionStoreState?.state!=='OPEN'||JSON.stringify(readBasket())!==JSON.stringify(current)){uncertain=true;throw new Error('Ordering availability or your basket changed while checkout was being prepared. Please contact us before starting another checkout.');}
    window.location.assign(result.url);
   }catch(error){
-   if(creating&&!confirmed&&(['TypeError','SyntaxError','AbortError','TimeoutError'].includes(error?.name)||/secure checkout link was unreadable/i.test(error?.message||'')))uncertain=true;
+   if(!commerce67Activation.sentinel&&creating&&!confirmed&&(['TypeError','SyntaxError','AbortError','TimeoutError'].includes(error?.name)||/secure checkout link was unreadable/i.test(error?.message||'')))uncertain=true;
    status.textContent=uncertain?'We could not confirm a safe checkout handoff. Your basket is still here. Please avoid starting another checkout straight away; contact us if you need help.':error.message;
    if(uncertain)button.textContent='Checkout outcome unconfirmed';
   }finally{

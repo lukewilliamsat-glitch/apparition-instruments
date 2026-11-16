@@ -155,5 +155,71 @@ if(pool){
 await exec('update commerce67.control set enabled=false');
 assert.deepEqual(await result('select public.commerce67_order_snapshot($1) result',[order.id]),snapshot);
 await assert.rejects(quote(caps(2)),/disabled/);
+if(process.env.COMMERCE67_SENTINEL_TEST==='true'){
+ const sentinel=read('20261116221000_commerce_sentinel.sql');
+ await assert.rejects(exec(sentinel),/no open Commerce reservations/);
+ await exec('rollback');
+ const outstanding=(await db.query("select s.order_id,o.reference from commerce67.sessions s join public.orders o on o.id=s.order_id where s.state='open' order by s.order_id")).rows;
+ for(let i=0;i<outstanding.length;i++){
+  const r=outstanding[i],sid='cs_live_migrate000'+i;
+  await db.query('update public.orders set stripe_checkout_session_id=$1 where id=$2',[sid,r.order_id]);
+  assert.equal(await expire(r.order_id,sid,r.reference),true);
+ }
+ await exec(sentinel);
+ assert.deepEqual(await result('select public.commerce67_order_snapshot($1) result',[order.id]),snapshot);
+ await assert.rejects(quote(caps(2)),/disabled/);
+ await exec("set role authenticated; select set_config('request.jwt.claim.sub','"+customer+"',false)");
+ await assert.rejects(one('select * from commerce67.payment_audit'),e=>e.code==='42501');
+ await assert.rejects(one('select public.commerce67_reservation_diagnostics()'),e=>e.code==='42501');
+ await assert.rejects(one('select public.commerce67_payment_status($1)',[order.id]),e=>e.code==='42501');
+ await exec("reset role; select set_config('request.jwt.claim.sub','"+admin+"',false); update commerce67.control set enabled=true");
+ const q=await quote(caps(1)),fresh=(owner)=>({...request(caps(1),q),...(owner?{ownerUserId:owner}:{})});
+ const r=fresh(customer),newOrder=await start(r);
+ assert.equal(newOrder.sentinel,true);
+ assert.equal((await start(r)).id,newOrder.id);
+ const status=id=>result('select public.commerce67_payment_status($1) result',[id]);
+ const claim=(id,body)=>result('select public.commerce67_payment_claim($1,$2) result',[id,body]);
+ const observe=(r,id,state,amount=r.totalPence,currency='gbp')=>result('select public.commerce67_payment_observe($1,$2,$3,$4,$5,$6) result',[r.id,id,r.reference,amount,currency,state]);
+ const release=id=>result('select public.commerce67_abandon_never_sent($1) result',[id]);
+ assert.equal((await status(newOrder.id)).dispatch,'new');
+ assert.equal(await release(newOrder.id),false);
+ assert.equal(await observe(newOrder,'cs_live_Sentinel123','expired'),'mismatch');
+ assert.deepEqual(await claim(newOrder.id,'mode=payment'),{body:'mode=payment'});
+ assert.equal(await claim(newOrder.id,'mode=changed'),null);
+ assert.equal(await claim(newOrder.id,'mode=payment'),null);
+ assert.equal(await observe(newOrder,'cs_live_Sentinel123','expired',newOrder.totalPence+1),'mismatch');
+ assert.equal(await observe(newOrder,'cs_live_Sentinel123','expired',newOrder.totalPence,'usd'),'mismatch');
+ assert.equal(await observe(newOrder,'cs_live_Sentinel123','paid'),'paid_needs_event');
+ const late=['evt_SENTINEL123','checkout.session.completed',newOrder.id,newOrder.reference,'cs_live_Sentinel123','pi_SENTINEL123',newOrder.totalPence,'gbp'];
+ assert.equal(await pay(late),'paid');assert.equal(await pay(late),'already_paid');
+ assert.equal(await observe(newOrder,'cs_live_Sentinel123','expired'),'paid');
+ const beforePayment=(await one("select quantity from public.inventory where component_id='cap1'")).quantity;
+ assert.equal(Number(beforePayment),9);
+ const never=await start(fresh());
+ await db.query("update commerce67.sessions set created_at=now()-interval '4 minutes' where order_id=$1",[never.id]);
+ assert.equal(await release(never.id),true);
+ const uncertain=await start(fresh());
+ assert.equal((await claim(uncertain.id,'mode=payment')).body,'mode=payment');
+ await db.query("update commerce67.sessions set created_at=now()-interval '45 minutes' where order_id=$1",[uncertain.id]);
+ assert.equal(await release(uncertain.id),false);
+ assert.equal((await status(uncertain.id)).state,'open');
+ assert.equal(await observe(uncertain,'cs_live_Uncertain67','expired'),'expired');
+ assert.equal(await observe(uncertain,'cs_live_Uncertain67','expired'),'expired');
+ assert.equal((await status(uncertain.id)).state,'expired');
+ const d=(await one('select public.commerce67_reservation_diagnostics() as data')).data;
+ assert(Array.isArray(d));assert(!JSON.stringify(d).includes('cs_live_'));
+ if(pool){
+  const go=()=>pool.query('select public.commerce67_start_checkout($1::jsonb)',[JSON.stringify(fresh(customer))]);
+  const batch=await Promise.allSettled([go(),go(),go(),go()]);
+  assert.equal(batch.filter(x=>x.status==='fulfilled').length,2);
+  assert(batch.filter(x=>x.status==='rejected').every(x=>x.reason.code==='P0067'));
+  console.log('Sentinel native concurrent per-account cap: two of four independent transactions admitted');
+ }
+ await exec('update commerce67.control set enabled=false');
+ await assert.rejects(start(fresh()),/disabled/);
+ const transition=await one("select count(*) n from commerce67.payment_audit where order_id=$1 and transition='paid'",[newOrder.id]);
+ assert.equal(Number(transition.n),1);
+ console.log('Sentinel DB: additive migration, access boundaries, durable retries, signed-state fixtures, rollback gate and exactly-once settlement PASS');
+}
 await db.close();
 console.log('Commerce 67 '+(pool?'native PostgreSQL':'PGlite')+': persistence, roles, revisions, scheduling, pricing, exclusions, shared stock, measurements, stale quotes, Stripe settlement/replay and expiry PASS');
