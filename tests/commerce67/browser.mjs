@@ -23,6 +23,7 @@ try{
   const page=await browser.newPage({viewport:{width,height:880}}),outside=[];
   await page.route('**/*',r=>{if(r.request().url().startsWith(url))return r.continue();outside.push(r.request().url());return r.abort();});
   await page.goto(url);
+  page.setDefaultTimeout(12000);
   assert(await page.getByText('Applied savings: £1.05').isVisible());
   await page.getByRole('button',{name:'Add Electronics pair (fixture) to basket'}).click();
   assert(await page.getByText('Payable total: £14.98').isVisible());
@@ -30,6 +31,7 @@ try{
   await page.getByLabel('Name',{exact:true}).fill('Fictional promo');
   await page.getByLabel(/Quantity lines/).fill('2,percent,10');
   await page.getByRole('button',{name:'Save configuration',exact:true}).click();
+  await page.getByText('Configuration saved.',{exact:true}).waitFor();
   await page.getByRole('button',{name:'Edit Fictional promo',exact:true}).waitFor();
   await page.reload();await page.getByRole('button',{name:'Load saved commerce configuration'}).click();
   await page.getByRole('button',{name:'Edit Fictional promo',exact:true}).waitFor();

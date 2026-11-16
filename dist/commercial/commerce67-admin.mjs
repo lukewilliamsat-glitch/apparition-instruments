@@ -25,7 +25,7 @@ export function mountCommerce67({document:d,client,root=d.querySelector('[data-c
  const state=select(form,'Lifecycle','state',['draft','scheduled','active','paused','archived'].map(s=>[s,s]));
  const start=label(form,'Start UTC (optional)','start','input','datetime-local'),end=label(form,'End UTC (optional)','end','input','datetime-local');
  const code=label(form,'Promotional code','code');code.maxLength=32;
- const priority=label(form,'Priority','priority','input','number');priority.value='0';priority.min='0';priority.max='999';
+ const priority=label(form,'Priority','priority','input','number');priority.defaultValue='0';priority.min='0';priority.max='999';
  const all=label(form,'All eligible components','all','input','checkbox');
  const products=label(form,'Eligible product or variant IDs (comma-separated)','products');
  const cats=select(form,'Eligible categories','categories',Object.entries(categories),true);
