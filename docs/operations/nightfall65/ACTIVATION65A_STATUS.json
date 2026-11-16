@@ -1,0 +1,73 @@
+{
+  "status": "PARTIAL_ARCHIVE_PROTECTIONS_ACTIVE_PRODUCTION_ACTIVATION_BLOCKED",
+  "observed": "2026-11-16",
+  "production": {
+    "source": "53331335fe3f1418bc8ea77b82e29ef5ae58c9f1",
+    "runId": 43703349542,
+    "artifactId": 14157650445,
+    "files": 460,
+    "artifactSha256": "f5aea757ff50a7abc6c87bf125d9f5bc276041cfc77a80bb40217f1dc794f23f",
+    "tarSha256": "7f98f203d31604de1438860c9100a61a2495f7aa4a493ec0a993dd4efff280a6",
+    "payloadDigest": "d82ba2358bd5e5d4a6bc803f1c092cecd707cfb27a2e515b220281d4f29101b5",
+    "rollbackZipSha256": "7673b29448d046e923e6d393260082a01f1ea8d42d4a3d8dcbd0570ce02e113a",
+    "rollbackReceiptSha256": "31180e8af0e6308719fab25ffaea9cf189823a2538edd3a23c97ae25f3755656",
+    "originalArchivePreservedPrivately": true,
+    "liveExactByteSamples": [
+      "/index.html",
+      "/backend/image-delivery-config.mjs",
+      "/products/bleed-cap/image.png",
+      "/admin/orders/index.html"
+    ]
+  },
+  "archive": {
+    "branchRule": {
+      "id": 27359642,
+      "target": "refs/heads/catalogue-image-assets",
+      "enforcement": "active",
+      "rules": [
+        "deletion",
+        "non_fast_forward"
+      ],
+      "bypassActors": []
+    },
+    "tagRule": {
+      "id": 27359749,
+      "target": "refs/tags/catalogue-images-initialised",
+      "enforcement": "active",
+      "rules": [
+        "deletion",
+        "non_fast_forward",
+        "update"
+      ],
+      "bypassActors": []
+    },
+    "serverRefsInitialised": false,
+    "archivePublisherWritePermissionGranted": false,
+    "requiredPolicyEnabled": false,
+    "retainedManifestRehearsed": "bf38f41bc3bbf514c83f07fa50cc06eea82fe1fdc607c7585de4d3ba8cdf70e9",
+    "verifiedPhotos": 6,
+    "imageBytes": 8953356,
+    "additionalPhotosPublished": 0
+  },
+  "outstanding": [
+    {
+      "gate": "Immutable image response headers",
+      "observedLiveImageCacheControl": "max-age=600",
+      "host": "GitHub Pages",
+      "reference": "https://github.com/orgs/community/discussions/54257"
+    },
+    {
+      "gate": "Complete payload envelope",
+      "testedOverlayZipBytes": 29020597,
+      "currentZipLimitBytes": 23068672
+    },
+    {
+      "gate": "Required history across publishers",
+      "detail": "The scheduled Pages publisher and guarded release/restore paths must enforce the independent policy and retain every committed archive asset before bootstrap; the accepted portable fixture is not production enforcement."
+    }
+  ],
+  "demandRuntimeEnabled": false,
+  "productionDeploymentAttempted": false,
+  "measuredBeforeAfterSupabaseTransfer": null,
+  "billingPeriodEgress": null
+}
