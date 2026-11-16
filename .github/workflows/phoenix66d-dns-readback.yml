@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 6
     steps:
-      - name: Read public authoritative RRsets and UK parent DS
+      - name: Read public authoritative RRsets and pending Cloudflare mirror
         shell: bash
         run: |
           set -euo pipefail
@@ -23,19 +23,13 @@ jobs:
             dig "@$1" "$2" "$3" +norecurse +dnssec +bufsize=1232 +time=4 +tries=1 +noall +comments +answer +authority +stats
             printf 'DNS66D-END\n'
           }
-          for i in 1 2 3 4; do
-            ns=ns-cloud-b${i}.googledomains.com
-            for type in A AAAA MX TXT CAA NS HTTPS; do query "$ns" "$zone" "$type"; done
+          for ns in chin.ns.cloudflare.com wilson.ns.cloudflare.com; do
+            for type in A AAAA MX TXT CAA HTTPS; do query "$ns" "$zone" "$type"; done
             query "$ns" "www.$zone" CNAME
             query "$ns" "_domainconnect.$zone" CNAME
             query "$ns" "google._domainkey.$zone" TXT
             query "$ns" "_dmarc.$zone" TXT
           done
-          query ns-cloud-b1.googledomains.com "_mta-sts.$zone" TXT
-          query ns-cloud-b1.googledomains.com "_smtp._tls.$zone" TXT
-          query ns-cloud-b1.googledomains.com "mta-sts.$zone" A
-          query ns-cloud-b1.googledomains.com "autodiscover.$zone" CNAME
-          query ns-cloud-b1.googledomains.com "_autodiscover._tcp.$zone" SRV
           for parent in dns1.nic.uk dns2.nic.uk; do
             query "$parent" "$zone" DS
             query "$parent" "$zone" NS
