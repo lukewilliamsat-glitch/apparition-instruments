@@ -1,19 +1,23 @@
 import {createKitSnapshot,validateKitSnapshot} from './les-paul-kits/snapshot.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f';
 import {productById} from './components/catalogue.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f';
 import {basketStorageKey as STORAGE_KEY,readSavedBasket} from './basket-storage.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f';
+import {commerce67Activation} from './commercial/commerce67-activation.mjs';
 export const MAX_QUANTITY=99;
 function validSavedComponent(sku){return typeof sku==='string'&&sku.length>0&&sku.length<=120&&sku.trim()===sku&&!/[\u0000-\u001f\u007f<>]/.test(sku)&&!['__proto__','constructor','prototype'].includes(sku)&&!/^(?:javascript|data|vbscript):/i.test(sku);}
-export const hasUnavailableItems=items=>items.some(item=>item.product==='component'&&!productById(item.sku));
+const configChoice=value=>value&&['component','bundle','set'].includes(value.kind)&&validSavedComponent(value.id)&&
+ (value.kind==='component'?/^[0-9a-f-]{36}$/i.test(value.addon??''):value.addon==null&&/^[0-9a-f-]{36}$/i.test(value.id));
+export const hasUnavailableItems=items=>items.some(item=>(item.product==='component'&&!productById(item.sku))||
+ (item.product==='commercial'&&!commerce67Activation.storefront));
 export function readBasket(){
  const data=readSavedBasket();
  const seen=new Set();
  return data.items.slice(0,50).filter(item=>{
-  if(!item||typeof item.id!=='string'||!/^[a-zA-Z0-9-]{1,80}$/.test(item.id)||seen.has(item.id)||!Number.isInteger(item.quantity)||item.quantity<1||item.quantity>MAX_QUANTITY||!['les-paul','component'].includes(item.product)||(item.product==='component'&&!validSavedComponent(item.sku)))return false;
+  if(!item||typeof item.id!=='string'||!/^[a-zA-Z0-9-]{1,80}$/.test(item.id)||seen.has(item.id)||!Number.isInteger(item.quantity)||item.quantity<1||item.quantity>MAX_QUANTITY||!['les-paul','component','commercial'].includes(item.product)||(item.product==='commercial'&&!configChoice(item.choice))||(item.product==='component'&&!validSavedComponent(item.sku)))return false;
   seen.add(item.id);return true;
- }).map(item=>item.product==='les-paul'?{id:item.id,product:'les-paul',quantity:item.quantity,configuration:structuredClone((item.record||{}).configuration||item.configuration),record:item.record?validateKitSnapshot(item.record):{...createKitSnapshot(item.configuration),legacyReconstructed:true}}:{id:item.id,product:'component',sku:item.sku,quantity:item.quantity,...(!productById(item.sku)?{unavailable:true}:{})});
+ }).map(item=>item.product==='commercial'?{id:item.id,product:item.product,quantity:item.quantity,choice:{...item.choice},label:String(item.label||'Configured product').slice(0,160)}:item.product==='les-paul'?{id:item.id,product:'les-paul',quantity:item.quantity,configuration:structuredClone((item.record||{}).configuration||item.configuration),record:item.record?validateKitSnapshot(item.record):{...createKitSnapshot(item.configuration),legacyReconstructed:true}}:{id:item.id,product:'component',sku:item.sku,quantity:item.quantity,...(!productById(item.sku)?{unavailable:true}:{})});
 }
 function save(items){
- items=items.map(item=>item.product==='les-paul'?{...item,record:validateKitSnapshot(item.record)}:{id:item.id,product:'component',sku:item.sku,quantity:item.quantity});
+ items=items.map(item=>item.product==='commercial'?{id:item.id,product:item.product,quantity:item.quantity,choice:item.choice,label:item.label}:item.product==='les-paul'?{...item,record:validateKitSnapshot(item.record)}:{id:item.id,product:'component',sku:item.sku,quantity:item.quantity});
  try{localStorage.setItem(STORAGE_KEY,JSON.stringify({version:1,items}));}catch{throw new Error('Your basket could not be saved. Allow site storage or free some browser storage, then try again.');}
  window.dispatchEvent(new CustomEvent('apparition:basket-changed'));
  return items;
@@ -28,7 +32,7 @@ export function addKit(value,editId=null,drawing={}){
  const id=globalThis.crypto?.randomUUID?.()||`kit-${Date.now()}-${Math.random().toString(36).slice(2,10)}`;
  items.push({id,product:'les-paul',quantity:1,configuration,record});save(items);return id;
 }
-export function changeQuantity(id,quantity){if(!Number.isInteger(quantity)||quantity<1||quantity>MAX_QUANTITY)throw new Error('Enter a whole quantity between 1 and 99.');const items=readBasket(),item=items.find(x=>x.id===id);if(!item)throw new Error('This kit is no longer in your basket. Please reload the page.');if(item.product==='component')checkStock(productById(item.sku),quantity);item.quantity=quantity;return save(items);}
+export function changeQuantity(id,quantity){if(!Number.isInteger(quantity)||quantity<1||quantity>MAX_QUANTITY)throw new Error('Enter a whole quantity between 1 and 99.');const items=readBasket(),item=items.find(x=>x.id===id);if(!item)throw new Error('This kit is no longer in your basket. Please reload the page.');if(item.product==='commercial'&&quantity>(item.choice.kind==='set'?1:60))throw Error('The selected quantity exceeds this configuration limit.');if(item.product==='component')checkStock(productById(item.sku),quantity);item.quantity=quantity;return save(items);}
 export function removeKit(id){return save(readBasket().filter(x=>x.id!==id));}
 export function basketCount(items=readBasket()){return items.reduce((n,item)=>n+item.quantity,0);}
 
@@ -40,4 +44,15 @@ export function addComponent(sku){
  if(items.length>=50)throw new Error('Your basket holds 50 different items. Remove an item before adding another.');
  const id=globalThis.crypto?.randomUUID?.()||`part-${Date.now()}-${Math.random().toString(36).slice(2,10)}`;
  items.push({id,product:'component',sku,quantity:1});save(items);return id;
+}
+
+export function addCommercialChoice(choice,label){
+ if(!commerce67Activation.storefront||!configChoice(choice))throw Error('This commercial configuration is unavailable.');
+ const items=readBasket();
+ if(items.some(i=>i.product==='les-paul'))throw Error('Review your configured wiring kit separately from this commercial selection.');
+ const found=items.find(i=>i.product==='commercial'&&i.choice.kind===choice.kind&&i.choice.id===choice.id&&i.choice.addon===choice.addon);
+ if(found){if(choice.kind==='set'||found.quantity>=60)throw Error('This selection is already at its quantity limit.');found.quantity++;save(items);return found.id;}
+ if(items.length>=10)throw Error('A commercial basket supports up to ten selections.');
+ const id=crypto.randomUUID();
+ items.push({id,product:'commercial',quantity:1,choice:{...choice},label:String(label).slice(0,160)});save(items);return id;
 }

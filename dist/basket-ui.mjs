@@ -9,6 +9,17 @@ export function emptyBasket(){const box=el('section','empty-basket');box.append(
 export function itemCard(item,{editable=false,onQuantity,onRemove}={}){
  const product=item.product==='component'?productById(item.sku):null;
  const article=el('article','basket-item');article.dataset.itemId=item.id;
+ if(item.product==='commercial'){
+  article.append(el('h2','',item.label),el('p','','Current configuration price and availability are verified at checkout.'));
+  if(editable){
+   const actions=el('div','basket-actions'),remove=el('button','','Remove '+item.label);remove.type='button';
+   remove.addEventListener('click',()=>onRemove(item.id));actions.append(remove);
+   if(item.choice.kind!=='set'){const label=el('label','','Quantity'),field=el('input');field.type='number';field.min='1';field.max='60';
+    field.value=item.quantity;field.id='quantity-'+item.id;field.addEventListener('change',()=>onQuantity(item.id,Number(field.value),field));label.append(field);actions.append(label);}
+   article.append(actions);
+  }else article.append(el('p','checkout-quantity','Quantity: '+item.quantity));
+  return article;
+ }
  if(item.product==='component'&&!product){
   article.dataset.unavailable='true';article.append(el('h2','','Unavailable component'));
   const note=el('p','status-message','This saved component cannot currently be checked against the catalogue. Your selection is retained; no price, stock or reservation is assumed.');note.setAttribute('role','status');article.append(note);
@@ -28,6 +39,12 @@ export function itemCard(item,{editable=false,onQuantity,onRemove}={}){
 export function totalCard(items,checkout=false,shipping=null,store=globalThis.window?.apparitionStoreState){
  const box=el('aside',`basket-total${checkout?' checkout-total':''}`);box.setAttribute('aria-label','Basket summary');box.append(el('p','eyebrow','THE COMPLETE PICTURE'),el('h2','','Your basket summary'));
  if(hasUnavailableItems(items)){const note=el('p','','Some saved items are temporarily unavailable. Remove those items deliberately or return later before checkout. Your selections stay saved; a complete checkout total cannot be confirmed.');note.setAttribute('role','status');box.append(el('p','','Saved quantity: '+basketCount(items)),note,link(checkout?'Return to your basket':'Continue exploring',checkout?'/basket/':'/components/'));return box;}
+ if(items.some(i=>i.product==='commercial')){
+  box.append(el('p','','Saved quantity: '+basketCount(items)),el('p','','Check current prices, savings and availability before payment.'));
+  if(!checkout&&store?.state==='OPEN'&&!items.some(i=>i.product==='les-paul'))box.append(link('Review checkout →','/checkout/','button'));
+  else box.append(link(checkout?'Return to your basket':'Continue exploring',checkout?'/basket/':'/components/'));
+  return box;
+ }
  const count=basketCount(items),parts=items.filter(x=>x.product==='component'),kits=items.filter(x=>x.product==='les-paul'),partTotal=parts.reduce((sum,x)=>sum+productById(x.sku).price*x.quantity,0),kitTotal=kits.reduce((sum,x)=>sum+x.record.pricing.total*x.quantity,0),subtotal=partTotal+kitTotal,delivery=checkout&&shipping?(subtotal>=shipping.free_delivery_threshold_pence?0:shipping.standard_delivery_pence):null,lines=[['Items',String(count)],...(parts.length?[['Components',money(partTotal)]]:[]),...(kits.length?[['Configured wiring kits',money(kitTotal)]]:[]),['Basket subtotal',money(subtotal)],['Delivery',delivery===null?'Calculated at checkout':delivery===0?'FREE':money(delivery)],...(delivery!==null?[['Estimated payable total',money(subtotal+delivery)]]:[])];
  lines.forEach(([label,value])=>{const row=el('div','total-line');row.append(el('span','',label),el('span','',value));box.append(row);});
  box.append(el('p','',checkout?'The final amount is verified on the server before Stripe checkout. Your order remains Pending and Unpaid until payment is independently confirmed.':'Your selections are saved locally for planning; no order has been placed. Delivery is calculated at checkout. Editing a kit applies current options and prices.'));

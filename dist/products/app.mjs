@@ -1,3 +1,6 @@
+import {commerce67Activation} from '../commercial/commerce67-activation.mjs';
+import {commerce67Client,paintConfigurations,paintProductTerms} from '../commercial/commerce67-client.mjs';
+import {addCommercialChoice} from '../commerce.mjs?build=2e3c45a6836bd5c9a1e6ec39acab027eaeb0bf8f';
 import {refineProductPresentation} from './presentation.mjs';
 import {catalogue,refreshCatalogue,money} from '../components/catalogue.mjs';
 import {imageSource} from '../admin/images.mjs';
@@ -44,7 +47,12 @@ export async function startProductDetail({document:doc=document,location:loc=loc
   doc.querySelector('link[rel="canonical"]').href='https://apparitioninstruments.co.uk'+productURL(product.id);
   const [options,image]=await Promise.all([Promise.resolve().then(loadOptions).catch(()=>[]),product.image===undefined?Promise.resolve().then(()=>loadImage(product.id)).catch(()=>null):product.image]);
   const detail={...product,image};
-  renderProductDetail(root,detail,{document:doc,options});status.textContent='';return detail;
+  renderProductDetail(root,detail,{document:doc,options});status.textContent='';
+  if(commerce67Activation.storefront){const client=commerce67Client();const area=root.querySelector('.product-detail')||root;
+   void client.terms(product.id).then(terms=>paintProductTerms(area,terms)).catch(()=>{});
+   void client.configurations(product.id).then(rows=>paintConfigurations(area,rows,product.id,(choice,label)=>{assertPurchaseAllowed(doc.defaultView);return addCommercialChoice(choice,label);})).catch(()=>{});
+  }
+  return detail;
  }catch(error){root.hidden=true;status.textContent='Component details are temporarily unavailable. Please try again later.';return null;}
 }
 if(typeof document!=='undefined'&&document.getElementById('product-detail'))await startProductDetail();

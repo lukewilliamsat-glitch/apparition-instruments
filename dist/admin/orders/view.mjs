@@ -12,12 +12,21 @@ export function showItem(item){const box=el('article',undefined,'order-item');bo
   const parts=el('details');parts.append(el('summary','Resolved physical Components and quantities'),definition((item.snapshot.components||[]).filter(part=>part.quantity>0).map(part=>[part.role,part.quantity+' × '+(part.component?.name||part.name)+' · '+part.componentId+' · '+money(part.priceContribution||0)])));box.append(parts);
   const details=el('details');details.append(el('summary','Configured price breakdown'),definition(item.snapshot.pricing.lines.map(l=>[l.label,l.price?money(l.price):'Included'])));box.append(details);
  }else if(item.type==='assembly'){
-  box.append(el('h4','Saved assembly BOM'),definition((item.snapshot.components||[]).map(part=>[part.sku||part.componentId,part.quantity+' × '+part.name])));
+  const s=item.snapshot;
+  box.append(el('h4','Saved assembly BOM'),definition((s.components||s.stockRequirements||[]).map(part=>[part.sku||part.componentId,part.quantity+' × '+part.name])));
+  if(s.addon)box.append(definition([['Add-on',s.addon.name],['Fulfilment instructions',s.addon.instructions]]));
+  if(s.measuredSet)box.append(el('h4','Measured units for fulfilment'),
+   definition((s.measuredSet.units||[]).map(u=>[u.id,(u.ohms/1000).toFixed(3)+' kΩ'])));
+
  }else{
   const s=item.snapshot,entries=s.productSpecifications?.length?s.productSpecifications.map(p=>[p.label,p.value]):Object.entries(s.specification||{});
   box.append(definition([['Manufacturer',s.manufacturer],...entries]));
   if(s.description){const d=el('details');d.append(el('summary','Saved product description'),el('p',s.description,'saved-description'));box.append(d);}
- }return box;
+ }
+ if(Number.isSafeInteger(item.snapshot?.originalUnitPrice)&&item.snapshot.originalUnitPrice>item.unitPrice)
+  box.append(definition([['Original unit price',money(item.snapshot.originalUnitPrice)],
+    ['Commercial saving',money((item.snapshot.originalUnitPrice-item.unitPrice)*item.quantity)]]));
+ return box;
 }
 export function showOrder(record,root){root.replaceChildren();const top=el('div',undefined,'order-columns'),customer=el('section'),meta=el('section');
  customer.append(el('h3','Customer'),definition([['Name',record.customer.name],['Email',record.customer.email]]),el('h3','Delivery address'));

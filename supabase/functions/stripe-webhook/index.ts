@@ -34,6 +34,17 @@ export async function receiveStripeWebhook(req:Request,env:Environment=Deno.env,
   if(event.livemode!==true)return reply(400,'Invalid live refund event');
   return await recordStripeRefund(event,env,request)?reply(200,'Refund recorded'):reply(503,'Refund could not be verified');
  }
+ if(event?.type==='checkout.session.expired'&&env.get('COMMERCE67_RESERVATION_EVENTS')==='true'){
+  const s=event?.data?.object;
+  if(event.livemode!==true||s?.livemode!==true||s?.object!=='checkout.session'||s?.mode!=='payment'||
+    s?.status!=='expired'||s?.payment_status!=='unpaid'||!/^cs_live_[A-Za-z0-9]{8,}$/.test(s.id??'')||
+    !/^AI-\d+$/.test(s.client_reference_id??'')||s.metadata?.order_reference!==s.client_reference_id||
+    !/^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/i.test(s.metadata?.order_id??''))return reply(400,'Invalid expired Checkout session');
+  const released=await request(url+'/rest/v1/rpc/commerce67_expire_checkout',{method:'POST',
+   headers:{apikey:service,Authorization:'Bearer '+service,'Content-Type':'application/json'},
+   body:JSON.stringify({p_order:s.metadata.order_id,p_session:s.id,p_reference:s.client_reference_id})});
+  return released.ok&&await released.json()===true?reply(200,'Checkout expiry recorded'):reply(503,'Checkout expiry could not be verified');
+ }
  if(!['checkout.session.completed','checkout.session.async_payment_succeeded'].includes(event?.type))return reply(200,'Event ignored');
  const session=event?.data?.object;
  if(event.livemode!==true||session?.livemode!==true||session?.object!=='checkout.session'
