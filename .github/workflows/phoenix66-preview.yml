@@ -12,6 +12,11 @@ on:
         description: Successful PHOENIX package run ID
         required: true
         type: string
+      deployment_target:
+        description: Deploy only to protected pages.dev hosts
+        type: choice
+        options: [preview, protected-baseline-stage]
+        default: preview
 permissions:
   contents: read
   actions: read
@@ -85,6 +90,7 @@ jobs:
       - name: Prepare pinned Cloudflare uploader
         run: npm install --prefix "$RUNNER_TEMP/cloudflare-uploader" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false wrangler@4.162.0
       - name: Deploy the verified payloads to the preview project only
+        if: inputs.deployment_target == 'preview'
         env:
           PHOENIX66_PREVIEW_ONLY: 'true'
           WRANGLER_BIN: ${{ runner.temp }}/cloudflare-uploader/node_modules/.bin/wrangler
@@ -94,3 +100,11 @@ jobs:
           PHOENIX66_ACCESS_CLIENT_ID: ${{ secrets.PHOENIX66_ACCESS_CLIENT_ID }}
           PHOENIX66_ACCESS_CLIENT_SECRET: ${{ secrets.PHOENIX66_ACCESS_CLIENT_SECRET }}
         run: node scripts/phoenix66/publish-preview.mjs "$RUNNER_TEMP/phoenix66"
+      - name: Stage only the unchanged baseline behind verified Access
+        if: inputs.deployment_target == 'protected-baseline-stage' && inputs.package_run == '43845328622'
+        env:
+          PHOENIX66_PRIVATE_BASELINE_STAGE: 'true'
+          WRANGLER_BIN: ${{ runner.temp }}/cloudflare-uploader/node_modules/.bin/wrangler
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
+        run: node scripts/phoenix66/stage-baseline.mjs "$RUNNER_TEMP/phoenix66"
