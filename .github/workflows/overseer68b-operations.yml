@@ -1,0 +1,94 @@
+name: Overseer 68B Operations production
+on:
+  push:
+    branches: [engineering/phoenix66-preview]
+    paths:
+      - '.github/workflows/overseer68b-operations.yml'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: phoenix66-pages-publisher
+  cancel-in-progress: false
+env:
+  CANDIDATE: f277e1ec0f5ab4fb8630ad48ebf1efa81a7d8877
+jobs:
+  package:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          path: publisher
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.CANDIDATE }}
+          fetch-depth: 2
+          persist-credentials: false
+          path: source
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Check exact candidate and isolate the production overlay
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git -C source rev-parse HEAD)" = "$CANDIDATE"
+          test "$(git -C source rev-parse HEAD^)" = 'bc5c1bbf241e7f5e583a35fc4339f28f14117985'
+          node --check source/dist/admin/site-operations/operations.mjs
+          node --check source/dist/backend/operations-admin.mjs
+          pkg="$RUNNER_TEMP/phoenix68b"
+          mkdir "$pkg"
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/43845328622/artifacts" | jq -e '.artifacts | map(select(.id == 14215042306 and .name == "phoenix66-static-uploads" and .expired == false and .digest == "sha256:0ca639d068c16783c1b7b26f1580307f1ab7a0de8d5c78c9e599fd74eabb26e8")) | length == 1' >/dev/null
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14215042306/zip" > "$RUNNER_TEMP/phoenix68b-package.zip"
+          echo '0ca639d068c16783c1b7b26f1580307f1ab7a0de8d5c78c9e599fd74eabb26e8  '"$RUNNER_TEMP/phoenix68b-package.zip" | sha256sum -c
+          for m in baseline.zip nightfall.zip receipt.json; do unzip -p "$RUNNER_TEMP/phoenix68b-package.zip" "$m" > "$pkg/$m"; done
+          python3 publisher/scripts/phoenix66/unpack.py "$pkg"
+          node publisher/scripts/phoenix66/overseer68b-operations.mjs prepare source/dist "$pkg" "$CANDIDATE"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: overseer68b-operations-exact
+          path: |
+            ${{ runner.temp }}/phoenix68b/release
+            ${{ runner.temp }}/phoenix68b/operations-receipt.json
+          retention-days: 14
+          if-no-files-found: error
+  production_gate:
+    needs: package
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview'
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    environment: phoenix66-production
+    steps:
+      - name: Verify existing production gate and accepted original package
+        env:
+          APPROVED_TARGET: ${{ vars.PHOENIX66_APPROVED_TARGET }}
+        run: test "$APPROVED_TARGET" = 'apparition-instruments:production:43845328622'
+  production:
+    needs: production_gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: phoenix66-preview
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: overseer68b-operations-exact
+          path: ${{ runner.temp }}/phoenix68b
+      - name: Prepare the existing pinned Cloudflare uploader
+        run: npm install --prefix "$RUNNER_TEMP/cloudflare-uploader" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false wrangler@4.162.0
+      - name: Verify rollback and publish only the Operations overlay
+        env:
+          OVERSEER68B_OPERATIONS: 'true'
+          WRANGLER_BIN: ${{ runner.temp }}/cloudflare-uploader/node_modules/.bin/wrangler
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
+        run: node scripts/phoenix66/overseer68b-operations.mjs publish unused "$RUNNER_TEMP/phoenix68b" "$CANDIDATE"
