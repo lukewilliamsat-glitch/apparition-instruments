@@ -38,7 +38,8 @@ const repo={
   &&(!p.supplierId||s.purchases.some(o=>o.supplierId===p.supplierId&&o.lines.some(l=>l.component_id===r.component_id)))
   &&(!p.status||({low:r.available>0&&r.available<=r.low,out:r.available===0,incoming:r.incoming>0,reconciliation:r.reconciliation})[p.status]));
   else if(v==='suppliers')rows=s.suppliers.map(x=>({...x,purchase_count:s.purchases.filter(r=>r.supplierId===x.id).length})).filter(r=>!p.q||r.name.toLowerCase().includes(p.q.toLowerCase()));
-  else if(v==='purchases')rows=s.purchases.filter(r=>(!p.supplierId||r.supplierId===p.supplierId)&&(!p.status||r.state===p.status));
+  else if(v==='purchaseChoices')rows=s.items.filter(r=>!p.q||(r.sku+' '+r.name).toLowerCase().includes(p.q.toLowerCase())).map(r=>({...r,part_no:p.supplierId===supplier&&r.component_id===pot?'FIX-500-A':null}));
+  else if(v==='purchases')rows=s.purchases.filter(r=>(!p.supplierId||r.supplierId===p.supplierId)&&(!p.status||r.state===p.status)&&(!p.id||r.id===p.id)&&(!p.q||(r.reference+' '+r.supplier).toLowerCase().includes(p.q.toLowerCase()))).map(r=>({...r,supplier_id:r.supplierId,purchase_date:r.date||'2026-11-16',revision:r.revision||0,ordered_qty:r.lines.reduce((a,l)=>a+l.quantity,0),received_qty:r.lines.reduce((a,l)=>a+l.received,0)}));
   else if(v==='purchaseLines')rows=s.purchases.find(r=>r.id===p.id)?.lines||[];
   else if(v==='batches')rows=s.batches.filter(r=>!p.componentId||r.component_id===p.componentId);
   else if(v==='measurements')rows=s.measurements.filter(r=>(!p.batchId||r.batch_id===p.batchId)&&(!p.componentId||r.component_id===p.componentId));
@@ -58,14 +59,22 @@ const repo={
   try{
    if(v==='supplier'){fail(p.name.trim(),'Enter a supplier name.');out={id:id()};s.suppliers.unshift({...p,id:out.id,active:true});}
    else if(v==='supplierArchive'){const r=s.suppliers.find(x=>x.id===p.id);fail(r,'Supplier unknown.');r.active=false;}
-   else if(v==='purchase'){
+   else if(v==='quickPurchase'){
+    const reference=p.reference.trim()||'QS-'+JSON.stringify({...p,notes:undefined});
+    const draft=await repo.write(k+':draft','purchase',{...p,reference});
+    await repo.write(k+':order','purchaseState',{id:draft.id,state:'ordered'});
+    const lines=s.purchases.find(r=>r.id===draft.id).lines.map(l=>({lineId:l.id,quantity:l.quantity,lot:''}));
+    out=await repo.write(k+':receive','receive',{id:draft.id,reference,lines});out.purchaseId=draft.id;
+   }else if(v==='purchase'||v==='purchaseEdit'){
+    const existing=v==='purchaseEdit'?s.purchases.find(x=>x.id===p.id):null;
+    if(v==='purchaseEdit')fail(existing?.state==='draft'&&(existing.revision||0)===p.revision,'Purchase draft changed; reload before saving.');
     const sup=s.suppliers.find(r=>r.id===p.supplierId&&r.active);fail(sup,'Choose an active supplier.');
-    fail(!s.purchases.some(x=>x.reference===p.reference&&x.supplierId===p.supplierId),'Purchase reference already exists.');
+    fail(!s.purchases.some(x=>x.id!==existing?.id&&x.reference===p.reference&&x.supplierId===p.supplierId),'Purchase reference already exists.');
     fail(p.currency==='GBP'||p.evidence.length>=5,'Foreign conversion evidence required.');
     const extras=Object.entries(p.charges).reduce((n,[k,v])=>n+(k==='credit'?-v:v),0),vals=p.lines.map(r=>p.currency==='GBP'?r.quantity*r.unitMinor:r.gbpMinor);
     const shares=p.method==='manual'?p.lines.map(r=>r.allocationMinor):allocateShared(extras,p.method==='quantity'?p.lines.map(r=>r.quantity):vals);
     fail(shares.reduce((a,b)=>a+b,0)===extras,'Manual allocation does not reconcile.');
-    out={id:id(),state:'draft'};s.purchases.unshift({...p,...out,supplier:sup.name,total_minor:vals.reduce((a,b)=>a+b,extras),lines:p.lines.map((r,i)=>{
+    out={id:existing?.id||id(),state:'draft',revision:existing?(existing.revision||0)+1:0};if(existing)s.purchases=s.purchases.filter(x=>x!==existing);s.purchases.unshift({...p,...out,supplier:sup.name,total_minor:vals.reduce((a,b)=>a+b,extras),lines:p.lines.map((r,i)=>{
      const x=stock(r.componentId);fail(x,'Unknown component.');return {id:id(),component_id:r.componentId,name:x.name,part_no:r.partNo,quantity:r.quantity,received:0,supplier_unit_minor:r.unitMinor,merchandise_minor:vals[i],allocation_minor:shares[i]};
     })});
    }else if(v==='purchaseState'){
@@ -107,10 +116,11 @@ const repo={
     const r=s.stocktakes.find(x=>x.id===p.id);fail(r?.state==='open'&&p.confirmed&&p.reason.length>=5,'Review and confirm all counts.');
     fail(r.lines.every(x=>stock(x.component_id).revision===x.revision),'Stock changed during the count. Open a new stocktake.');
     for(const x of r.lines){movement(x.component_id,p.counts[x.component_id],'stocktake',p.reason,r.id);x.counted=p.counts[x.component_id];}r.state='applied';
-   }else if(v==='recordCost'){fail(p.evidence.length>=8,'Enter specific order-to-batch evidence.');out={id:id(),basis:p.basis};s.costs.push({...p,...out});}
+   }else if(v==='openingEvidence'){const b=s.batches.find(b=>b.id===p.batchId);fail(b?.origin==='opening'&&b.cost_minor==null&&p.date&&p.evidence.length>=8,'Use an unknown opening batch and verified evidence.');b.cost_minor=p.totalMinor;b.evidence=p.evidence;}
+   else if(v==='recordCost'){fail(p.evidence.length>=8,'Enter specific order-to-batch evidence.');out={id:id(),basis:p.basis};s.costs.push({...p,...out});}
    else throw Error('Unsupported fixture operation.');
    s.requests[k]=out;persist();return cl(out);
-  }catch(e){s=prior;throw e;}
+  }catch(e){s=prior;persist();throw e;}
  }
 };
 mountArmoury(root,repo,{fixture:true});

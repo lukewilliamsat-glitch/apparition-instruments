@@ -42,8 +42,9 @@ export function mountArmoury(root,repository,{fixture=false}={}){
   try{
    const result=await repository.write(pendingId.id,op,body);
    if(ended)return;
-   pendingId=null;message(label+(result.replayed?' Existing receipt returned.':''));
+   pendingId=null;
    if(follow)await follow(result);else await refresh(true);
+   if(!ended)message(label+(result.replayed?' Existing receipt returned.':''));
   }catch(e){if(!ended)report(e);}
   finally{mutation=false;for(const b of area.querySelectorAll('button'))b.disabled=false;}
  }
@@ -94,15 +95,26 @@ export function mountArmoury(root,repository,{fixture=false}={}){
     actions(button('Purchase history',()=>go('purchases',{supplierId:r.id})),...(r.active?[button('Archive',()=>write('supplierArchive',{id:r.id},'Supplier archived. Purchase history kept.'))]:[]))])),pager(rows));return [box];
  },
  async purchases(signal,p){
-  const [rows,suppliers,components]=await Promise.all([read('purchases',defaultPage(p),signal),supplierOptions(signal),read('inventory',{limit:100},signal)]);
-  const box=section('Purchase orders','Ordering and cancellation do not change physical stock. Only a recorded receipt puts stock on hand.');
-  const state=field('Purchase state',{value:p.status,options:[['','All states'],['draft','Draft'],['ordered','Ordered'],['partial','Partially received'],['received','Received'],['cancelled','Cancelled']]});
-  box.append(form('Filter purchase orders','',[state],'Apply purchase filter',()=>go('purchases',{...p,status:state.value()||undefined})),
-   table(['Purchase','Supplier','Status','Landed total','Actions'],rows.map(r=>[r.reference,r.supplier,r.state,money(r.total_minor),actions(
-   button('Review purchase',()=>purchaseDetail(box,r)),...(r.state==='draft'?[button('Mark ordered',()=>write('purchaseState',{id:r.id,state:'ordered'},'Purchase marked as ordered.'))]:[]),
-   ...(['draft','ordered'].includes(r.state)?[button('Cancel purchase',()=>write('purchaseState',{id:r.id,state:'cancelled'},'Unreceived purchase cancelled.'))]:[]))])),pager(rows));
-  if(suppliers.length>1)box.append(purchaseForm(suppliers,components));else box.append(el('p','Add an active supplier before creating a purchase.'));
-  return [box];
+  const [rows,suppliers,allSuppliers]=await Promise.all([read('purchases',defaultPage(Object.fromEntries(Object.entries(p).filter(([k])=>!['editor','draftId'].includes(k)))),signal),supplierOptions(signal),read('suppliers',{limit:100},signal)]);
+  const box=section('Purchase orders',p.editor?'Review the cost before saving.':'Keep track of what was ordered, what has arrived and what it cost.');
+  if(p.editor){
+   const draft=p.draftId?rows.find(x=>x.id===p.draftId)||(await read('purchases',{id:p.draftId,limit:1},signal))[0]:null;
+   if(p.draftId&&(!draft||draft.state!=='draft'))throw Error('This purchase is no longer an editable draft.');
+   const [lines,choices]=await Promise.all([draft?read('purchaseLines',{id:draft.id},signal):[],read('purchaseChoices',{limit:25,supplierId:draft?.supplier_id},signal)]);
+   box.append(actions(button('Back to purchases',()=>go('purchases'))),purchaseForm(suppliers,choices,allSuppliers,{draft,lines,quick:p.editor==='quick'}));
+   return [box];
+  }
+  const q=field('Search purchases',{type:'search',value:p.q,inputMode:'search'}),supplier=field('Filter by supplier',{value:p.supplierId,options:[['','All suppliers'],...allSuppliers.map(s=>[s.id,s.name+(s.active?'':' (archived)')])]}),
+    state=field('Purchase status',{value:p.status,options:[['','All statuses'],['draft','Draft'],['ordered','Ordered'],['partial','Partially received'],['received','Received'],['cancelled','Cancelled']]});
+  const toolbar=el('form',null,'purchase-toolbar'),submit=el('button','Filter');submit.type='submit';
+  toolbar.append(q.wrap,supplier.wrap,state.wrap,submit);
+  toolbar.addEventListener('submit',e=>{e.preventDefault();go('purchases',Object.fromEntries(Object.entries({q:q.value(),supplierId:supplier.value(),status:state.value()}).filter(([,v])=>v)));});
+  box.append(actions(button('New purchase order',()=>go('purchases',{editor:'new'}),true),button('Quick stock purchase',()=>go('purchases',{editor:'quick'}))),toolbar);
+  box.append(table(['Purchase reference','Date','Supplier','Status','Ordered / received','Landed total','Actions'],rows.map(r=>[r.reference,r.purchase_date||'Date not recorded',r.supplier,r.state,
+   qtyText(r.ordered_qty)+' / '+qtyText(r.received_qty),money(r.total_minor),actions(
+   r.state==='draft'?button('Edit draft',()=>go('purchases',{editor:'edit',draftId:r.id})):button('Review purchase',()=>purchaseDetail(box,r)),
+   ...(r.state==='draft'?[button('Mark ordered',()=>write('purchaseState',{id:r.id,state:'ordered'},'Purchase marked as ordered.'))]:[]),
+   ...(['draft','ordered'].includes(r.state)?[button('Cancel purchase',()=>{if(confirm('Cancel this unreceived purchase? Physical stock will not change.'))write('purchaseState',{id:r.id,state:'cancelled'},'Unreceived purchase cancelled.');})]:[]))])),pager(rows));return [box];
  },
  async batches(signal,p){
   const rows=await read('batches',defaultPage(p),signal),box=section('Acquisition batches','Opening stock and external increases retain an unknown cost unless separately evidenced. Receipt costs are fixed at acquisition.');
@@ -112,7 +124,8 @@ export function mountArmoury(root,repository,{fixture=false}={}){
    r.id+(r.lot?' · '+r.lot:''),r.component_id+(r.part_no?' · '+r.part_no:''),qtyText(r.quantity)+' / '+qtyText(r.remaining),
    r.cost_minor==null?'Unknown':'£'+(r.cost_minor/r.quantity/100).toFixed(4),
    [r.origin,r.purchase_ref,r.receipt_ref,r.supplier].filter(Boolean).join(' · '),
-   actions(button('Measure this batch',()=>go('measurements',{batchId:r.id,componentId:r.component_id})),button('Print batch label',()=>printLabel(box,[r.component_id,r.id,r.lot||'No manufacturer lot'])))
+   actions(button('Measure this batch',()=>go('measurements',{batchId:r.id,componentId:r.component_id})),button('Print batch label',()=>printLabel(box,[r.component_id,r.id,r.lot||'No manufacturer lot'])),
+    ...(r.origin==='opening'&&r.cost_minor==null?[button('Record opening cost',()=>openingCost(box,r))]:[]))
    ])),pager(rows));return [box];
  },
  async measurements(signal,p){
@@ -201,33 +214,92 @@ export function mountArmoury(root,repository,{fixture=false}={}){
    actions(button('Open stocktake',()=>go('stocktakes',{componentIds:r.component_id}))));
   box.append(s);s.scrollIntoView({block:'nearest'});
  }
- function purchaseForm(suppliers,components){
-  const supplier=field('Supplier',{required:true,options:suppliers}),reference=field('Purchase reference',{required:true}),currency=field('Purchase currency',{value:'GBP',max:3,required:true}),evidence=field('GBP conversion evidence'),method=field('Shared cost allocation',{value:'quantity',options:[['quantity','By quantity'],['value','By GBP line value'],['manual','Explicit allocation']]}),
-   charges=Object.entries({freight:'Freight GBP',duty:'Import duty GBP',nonRecoverableTax:'Non-recoverable tax GBP',extra:'Other acquisition costs GBP',credit:'Supplier credits GBP'}).map(([k,t])=>[k,field(t,{inputMode:'decimal'})]);
-  const staged=[],lineContainer=el('div'),basis=el('p');basis.setAttribute('role','status');
-  function addLine(){
+ function purchaseForm(suppliers,initialChoices,allSuppliers,{draft,lines,quick}){
+  const formatInput=n=>n==null?'':(n/100).toFixed(2),today=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/London',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+  const supplier=field('Supplier',{required:true,options:suppliers,value:draft?.supplier_id||''}),reference=field(quick?'Reference (optional)':'Purchase reference',{required:!quick,value:draft?.reference}),
+   date=field(quick?'Purchase or receipt date':'Purchase date',{type:'date',value:draft?.purchase_date||today,required:true}),currency=field('Purchase currency',{value:draft?.currency||'GBP',max:3,required:true}),
+   evidence=field('Actual GBP conversion evidence',{value:draft?.evidence}),method=field('Shared cost allocation',{value:draft?.method||'quantity',options:[['quantity','By quantity (default)'],['value','By GBP line value'],['manual','Enter amounts manually']]}),
+   notes=field('Purchase notes (optional)',{value:draft?.notes,max:300}),
+   charges=Object.entries({freight:'Supplier postage (GBP)',duty:'Import duty (GBP)',nonRecoverableTax:'Non-recoverable taxes (GBP)',extra:'Other acquisition costs (GBP)',credit:'Supplier credits (GBP)'}).map(([k,t])=>[k,field(t,{inputMode:'decimal',value:formatInput(draft?.charges?.[k])})]);
+  const staged=[],lineContainer=el('div',null,'purchase-lines'),basis=el('p',null,'cost-summary');basis.setAttribute('role','status');
+  const hidden=(f,hide)=>{f.wrap.hidden=hide;f.i.disabled=hide;};
+  const code=()=>currency.value().trim().toUpperCase();
+  const currencyFormat=n=>code()==='GBP'?money(n):String((n/100).toFixed(2))+' '+code();
+  const defaultChoice=({component_id,name,sku})=>[component_id,(sku?sku+' · ':'')+name];
+  function addLine(l={}){
    if(staged.length>=30)return;
-   const cmp=field('Component ID',{required:true}),choice=field('Choose listed component',{options:[['','Enter any exact component ID'],...components.map(r=>[r.component_id,r.sku+' · '+r.name])]}),
-   part=field('Supplier part number'),quantity=field('Purchased quantity',{required:true,value:'1',inputMode:'numeric'}),unit=field('Supplier unit price',{required:true,inputMode:'decimal'}),gbp=field('Actual converted line GBP',{inputMode:'decimal'}),manual=field('Manual shared allocation GBP',{inputMode:'decimal'});
-   choice.i.addEventListener('change',()=>{if(choice.value())cmp.i.value=choice.value();});const row=el('fieldset');row.append(el('legend','Purchase line'),group(choice.wrap,cmp.wrap,part.wrap,quantity.wrap,unit.wrap,gbp.wrap,manual.wrap));const v={cmp,part,quantity,unit,gbp,manual};staged.push(v);
-   row.append(button('Remove line',()=>{if(staged.length>1){staged.splice(staged.indexOf(v),1);row.remove();}}));lineContainer.append(row);
+   const row=el('fieldset'),legend=el('legend','Component'),search=field('Search components',{type:'search',max:100}),choice=field('Purchased component',{required:true,options:[['','Choose a component']]}),
+    part=field('Supplier part number',{value:l.part_no,max:100}),quantity=field(quick?'Received quantity':'Quantity',{required:true,value:String(l.quantity||1),inputMode:'numeric'}),
+    unit=field('Unit price',{required:true,inputMode:'decimal',value:formatInput(l.supplier_unit_minor)}),
+    gbp=field('Actual converted line total (GBP)',{inputMode:'decimal',value:formatInput(l.merchandise_minor)}),
+    manual=field('Manual shared allocation (GBP)',{inputMode:'decimal',value:formatInput(l.allocation_minor)}),lineTotal=el('p',null,'line-total');
+   let optionRows=initialChoices;
+   function setChoices(values,choose=l.component_id){
+    const current=values.find(x=>x.component_id===choose)||optionRows.find(x=>x.component_id===choose)||(choose&&l.name?{component_id:choose,name:l.name}:null);
+    const rows=current&&!values.some(x=>x.component_id===choose)?[current,...values]:values;
+    optionRows=rows;choice.i.replaceChildren();
+    for(const [id,text] of [['','Choose a component'],...rows.map(defaultChoice)]){const o=el('option',text);o.value=id;choice.i.append(o);}
+    if(choose&&rows.some(x=>x.component_id===choose))choice.i.value=choose;
+   }
+   async function searchChoices(){
+    const term=search.value().trim();
+    const next=await read('purchaseChoices',{q:term,limit:25,supplierId:supplier.value()||undefined});
+    setChoices(next,choice.value());if(!choice.value()&&next.length===1){choice.i.value=next[0].component_id;setPart();}
+    if(next.length===0)lineTotal.textContent='No components match that search.';
+   }
+   async function setPart(){
+    const value=choice.value(),supplierId=supplier.value(),chosen=optionRows.find(x=>x.component_id===value);
+    part.i.value=chosen?.part_no||'';paint();
+    if(chosen&&supplierId&&!part.value())try{
+     const choices=await read('purchaseChoices',{q:chosen.sku||chosen.name,limit:10,supplierId});
+     if(choice.value()===value&&supplier.value()===supplierId&&!part.value())part.i.value=choices.find(x=>x.component_id===value)?.part_no||'';
+    }catch(e){if(e.name!=='AbortError')report(e);}
+   }
+   choice.i.addEventListener('change',setPart);
+   search.i.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();searchChoices().catch(report);}});
+   setChoices(initialChoices,l.component_id);
+   const item={choice,part,quantity,unit,gbp,manual,lineTotal};staged.push(item);
+   const info=el('details');info.append(el('summary','Supplier part and line overrides'),group(part.wrap,manual.wrap));
+   row.append(legend,group(search.wrap,choice.wrap,quantity.wrap,unit.wrap,gbp.wrap),actions(button('Find components',()=>searchChoices().catch(report)),button('Remove line',()=>{if(staged.length>1){staged.splice(staged.indexOf(item),1);row.remove();paint();}})),info,lineTotal);
+   lineContainer.append(row);paint();
   }
-  function payload(){
-   const code=currency.value().trim().toUpperCase(),charge=Object.fromEntries(charges.map(([k,f])=>[k,pence(f.value())]));
-   const lines=staged.map(l=>({componentId:l.cmp.value(),partNo:l.part.value(),quantity:int(l.quantity.value(),1,100000),unitMinor:pence(l.unit.value()),
-   ...(code==='GBP'?{}:{gbpMinor:l.gbp.value().trim()?pence(l.gbp.value()):null}),...(method.value()==='manual'?{allocationMinor:pence(l.manual.value(),{signed:true})}:{})}));
-   if(lines.some(l=>l.gbpMinor===null))throw Error('Enter the actual GBP equivalent for each foreign-currency line.');
-   return {supplierId:supplier.value(),reference:reference.value(),currency:code,evidence:evidence.value(),method:method.value(),charges:charge,lines};
+  function values(requireSelected=false){
+   const cur=code(),charge=Object.fromEntries(charges.map(([k,f])=>[k,pence(f.value())])),foreign=cur!=='GBP';
+   if(requireSelected&&(!/^[A-Z]{3}$/.test(cur)||foreign&&evidence.value().trim().length<5))throw Error('Record the actual GBP conversion and evidence for this purchase.');
+   const d=staged.map(l=>({componentId:l.choice.value(),partNo:l.part.value(),quantity:int(l.quantity.value(),1,100000),unitMinor:pence(l.unit.value()),
+    ...(foreign?{gbpMinor:l.gbp.value().trim()?pence(l.gbp.value()):null}:{}),
+    ...(method.value()==='manual'?{allocationMinor:pence(l.manual.value(),{signed:true})}:{})}));
+   if(requireSelected&&d.some(l=>!l.componentId||l.gbpMinor===null))throw Error('Choose each component and enter each converted total.');
+   return {supplierId:supplier.value(),reference:reference.value(),date:date.value(),notes:notes.value(),currency:cur,evidence:foreign?evidence.value():'',method:method.value(),charges:charge,lines:d};
   }
-  const f=form('Create purchase draft','Enter an evidenced actual GBP amount for foreign lines. Recoverable taxes are excluded from acquisition cost.',
-   [supplier,reference,currency,evidence,method,...charges.map(([,x])=>x)],'Save purchase draft',()=>write('purchase',payload(),'Purchase draft created.'));
-  const footer=f.querySelector('.actions');f.insertBefore(lineContainer,footer);footer.prepend(button('Add purchase line',addLine),button('Review landed total',()=>{
-   try{const d=payload(),value=d.lines.map(l=>d.currency==='GBP'?l.quantity*l.unitMinor:l.gbpMinor),extras=Object.entries(d.charges).reduce((n,[k,v])=>n+(k==='credit'?-v:v),0),
-    shares=d.method==='manual'?d.lines.map(l=>l.allocationMinor):allocateShared(extras,d.method==='value'?value:d.lines.map(l=>l.quantity));
-    if(shares.reduce((a,b)=>a+b,0)!==extras)throw Error('Manual allocations must equal shared costs.');
-    basis.textContent='Landed total: '+money(value.reduce((a,b)=>a+b,extras))+' · Shared amounts: '+shares.map(money).join(', ');
-   }catch(e){report(e);}
-  }));f.append(basis);addLine();return f;
+  function paint(){
+   const foreign=code()!=='GBP';hidden(evidence,!foreign);
+   for(const l of staged){hidden(l.gbp,!foreign);hidden(l.manual,method.value()!=='manual');}
+   try{
+    const d=values(),value=d.lines.map(l=>foreign?l.gbpMinor:l.quantity*l.unitMinor);
+    const extras=Object.entries(d.charges).reduce((n,[k,v])=>n+(k==='credit'?-v:v),0);
+    for(const [i,l] of staged.entries())l.lineTotal.textContent='Line total: '+currencyFormat(d.lines[i].quantity*d.lines[i].unitMinor)+(foreign&&value[i]!=null?' · '+money(value[i])+' converted':'');
+    if(value.some(v=>v==null)){basis.textContent='Enter the actual GBP amounts to see the landed total.';return;}
+    const shares=d.method==='manual'?d.lines.map(l=>l.allocationMinor):allocateShared(extras,d.method==='value'?value:d.lines.map(l=>l.quantity));
+    if(shares.reduce((a,b)=>a+b,0)!==extras||shares.some((n,i)=>n+value[i]<0))throw Error('Review the allocation. Shared costs must reconcile and no line can be negative.');
+    basis.textContent='Landed total: '+money(value.reduce((a,b)=>a+b,extras))+(extras?' · Shared costs: '+money(extras):'');
+   }catch(e){basis.textContent=e.message;}
+  }
+  const f=form(draft?'Edit purchase draft':quick?'Quick stock purchase':'New purchase order',
+   quick?'Record stock that has already arrived. This saves the purchase, receipt and stock movement together.':'Create a draft. Saving it does not add stock.',
+   [supplier,reference,date,currency,charges[0][1],evidence],draft?'Save draft changes':quick?'Record purchase and receive stock':'Save purchase draft',()=>{
+    const payload=values(true);
+    return write(draft?'purchaseEdit':quick?'quickPurchase':'purchase',draft?{...payload,id:draft.id,revision:draft.revision}:payload,
+     draft?'Purchase draft updated.':quick?'Purchase recorded and stock received.':'Purchase draft created.',()=>go('purchases'));
+  });
+  const footer=f.querySelector('.actions'),advanced=el('details',null,'purchase-advanced');
+  advanced.append(el('summary','Advanced acquisition costs'),group(...charges.slice(1).map(([,x])=>x.wrap),method.wrap,notes.wrap));
+  if(draft?.method==='manual'||Object.entries(draft?.charges||{}).some(([k,v])=>k!=='freight'&&v))advanced.open=true;
+  f.insertBefore(lineContainer,footer);f.insertBefore(actions(button('Add purchase line',()=>addLine())),footer);f.insertBefore(advanced,footer);f.insertBefore(basis,footer);
+  supplier.i.addEventListener('change',()=>{const entry=allSuppliers.find(x=>x.id===supplier.value());if(entry)currency.i.value=entry.currency;paint();});
+  f.addEventListener('input',paint);f.addEventListener('change',paint);
+  for(const line of lines.length?lines:[{}])addLine(line);
+  return f;
  }
  async function purchaseDetail(box,r){
   try{
@@ -242,6 +314,13 @@ export function mountArmoury(root,repository,{fixture=false}={}){
    }
    box.append(s);s.scrollIntoView({block:'nearest'});
   }catch(e){report(e);}
+ }
+ function openingCost(box,r){
+  box.querySelector('[data-opening-cost]')?.remove();
+  const date=field('Historical acquisition date',{type:'date',required:true}),cost=field('Acquisition total for the original batch (£)',{required:true,inputMode:'decimal'}),evidence=field('Acquisition evidence reference',{required:true});
+  const f=form('Record opening-stock evidence','Use a verified invoice for the original '+r.quantity+' units. Evidence is recorded once and does not restate saved financial records.',
+   [date,cost,evidence],'Save opening cost evidence',()=>write('openingEvidence',{batchId:r.id,date:date.value(),totalMinor:pence(cost.value()),evidence:evidence.value()},'Opening cost evidence recorded.'));
+  f.dataset.openingCost='true';box.append(f);f.scrollIntoView({block:'nearest'});
  }
  function printLabel(box,lines){box.querySelector('.stock-label')?.remove();const label=el('section',null,'stock-label');label.append(el('h3','Apparition internal stock label'),...lines.map(l=>el('p',l)),button('Print label',()=>window.print()));box.append(label);label.scrollIntoView({block:'nearest'});}
  refresh();

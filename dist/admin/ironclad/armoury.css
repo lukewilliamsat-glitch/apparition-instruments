@@ -33,3 +33,10 @@ a{color:var(--gold)}
 @media(max-width:600px){.armoury table{min-width:36rem}.armoury nav button{flex:1 1 auto}.armoury .top{align-items:start}}
 .armoury fieldset{border:1px solid var(--line);min-width:0;margin:.55rem 0;border-radius:.3rem}.armoury legend{color:var(--gold);font-size:.85rem}
 @media print{body{background:white;color:black}.armoury *{visibility:hidden}.armoury .stock-label,.armoury .stock-label *{visibility:visible;color:black}.armoury .stock-label{position:absolute;inset:0 auto auto 0;background:white;border:none}.stock-label button{display:none}}
+.armoury [hidden]{display:none!important}
+.armoury .purchase-toolbar{display:flex;align-items:end;flex-wrap:wrap;gap:.5rem;padding:.55rem;margin:.65rem 0}
+.purchase-toolbar label{flex:1 1 9rem}.purchase-toolbar label:first-child{flex:2 1 14rem}
+.purchase-advanced{margin:.8rem 0;border-top:1px solid var(--line);padding-top:.7rem}.purchase-advanced summary,.purchase-lines details summary{cursor:pointer;color:var(--gold)}
+.purchase-lines fieldset{margin:1rem 0;padding:.7rem;min-inline-size:0}.purchase-lines .line-total{margin:.45rem 0 0}
+.armoury .cost-summary{padding:.55rem .7rem;background:#242018;color:var(--ink);font-weight:650}
+@media(max-width:600px){.armoury .purchase-toolbar label:first-child{flex-basis:100%}}

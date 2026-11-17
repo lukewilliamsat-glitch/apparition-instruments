@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>IRONCLAD | Apparition Instruments</title>
+<link rel="stylesheet" href="/admin/ironclad/armoury.css">
+<script type="module" src="/admin/admin-gate.mjs" data-admin-entry="./estimator.mjs"></script>
+</head>
+<body class="admin-page">
+<a class="skip armoury-skip" href="#armoury">Skip to IRONCLAD</a>
+<main class="admin-main armoury" id="armoury">
+<header class="top"><div><p class="kicker">COMMAND / NOCTURNE</p><h1>IRONCLAD: The Armoury</h1><p>Estimate purchase costs and jump to the existing inventory workspace.</p></div><a href="/admin/">Open live Inventory</a></header>
+<section aria-labelledby="availability"><h2 id="availability">Available in Admin now</h2><p>The calculator works in this tab. Saved purchases, receipts, suppliers, batches, measurements, matched sets, stocktakes and order cost evidence are not active on the live site.</p><p>Use live Inventory to view or manage existing catalogue stock.</p></section>
+<form id="estimate" novalidate>
+<h2>Landed cost calculator</h2>
+<p>Enter actual GBP amounts, including any converted amounts. Allocate shared charges by quantity. This calculation does not save a purchase or adjust stock.</p>
+<div id="estimate-lines" class="purchase-lines"></div>
+<div class="actions"><button id="add-estimate-line" type="button">Add component line</button></div>
+<div class="form-grid">
+<label>Supplier postage (£)<input name="freight" type="text" inputmode="decimal"></label>
+<label>Other acquisition costs (£)<input name="extra" type="text" inputmode="decimal"></label>
+<label>Supplier credits (£)<input name="credit" type="text" inputmode="decimal"></label>
+</div>
+<output class="cost-summary" id="estimate-result" aria-live="polite">Enter a component cost.</output>
+</form>
+</main>
+</body>
+</html>
