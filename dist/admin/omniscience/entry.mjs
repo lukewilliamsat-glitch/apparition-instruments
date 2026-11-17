@@ -8,7 +8,7 @@ export function mountAdminWorkspace({document:d=globalThis.document,auth,reposit
  const state={orders:[],outlays:[],orderNext:null,outlayNext:null,valid:false};
  let reading=null,selected=null,busy=false,retryKey=null;
  const addField=(where,label,opts={})=>{
-  const n=e('label',label), inp=e(opts.options?'select':'input');inp.name=opts.name||'';
+  const n=e('label',label), inp=e(opts.options?'select':'input');inp.name=opts.name||'';inp.setAttribute('aria-label',label);
   if(opts.options)for(const [key,value] of opts.options){const o=e('option',value);o.value=key;inp.append(o);}
   else{inp.type=opts.type||'text';inp.required=opts.required??true;inp.autocomplete='off';if(opts.decimal)inp.inputMode='decimal';inp.maxLength=opts.max||140;}
   if(opts.value!=null)inp.value=opts.value;
