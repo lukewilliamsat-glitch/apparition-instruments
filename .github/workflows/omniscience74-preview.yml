@@ -1,0 +1,89 @@
+name: LEVIATHAN 74 protected Omniscience preview
+on:
+  push:
+    branches: [engineering/phoenix66-preview]
+    paths:
+      - '.github/workflows/omniscience74-preview.yml'
+      - 'scripts/phoenix66/omniscience74-candidate.txt'
+      - 'scripts/phoenix66/omniscience74-preview.mjs'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: phoenix66-pages-publisher
+  cancel-in-progress: false
+jobs:
+  package:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview'
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    outputs:
+      candidate: ${{ steps.pin.outputs.source }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          path: publisher
+      - name: Verify immutable candidate and accepted engineering run
+        id: pin
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          read -r source run < publisher/scripts/phoenix66/omniscience74-candidate.txt
+          [[ "$source" =~ ^[a-f0-9]{40}$ && "$run" =~ ^[0-9]+$ ]]
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run" | jq -e --arg source "$source" '
+            .conclusion == "success" and .head_sha == $source and .head_branch == "engineering/leviathan74-omniscience" and .path == ".github/workflows/leviathan74-omniscience.yml"' > /dev/null
+          printf 'source=%s\n' "$source" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ steps.pin.outputs.source }}
+          persist-credentials: false
+          path: candidate
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Assemble offline owner fixture
+        working-directory: candidate
+        env:
+          SOURCE: ${{ steps.pin.outputs.source }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE"
+          out="$RUNNER_TEMP/omniscience74"
+          mkdir -p "$out"
+          node tests/leviathan74/package-preview.mjs "$out/site" "$out/inventory.json"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: omniscience74-offline-fixture
+          path: ${{ runner.temp }}/omniscience74
+          retention-days: 14
+          include-hidden-files: true
+          if-no-files-found: error
+  preview:
+    needs: package
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    environment: phoenix66-preview
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: omniscience74-offline-fixture
+          path: ${{ runner.temp }}/omniscience74
+      - run: npm install --prefix "$RUNNER_TEMP/cloudflare-uploader" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save wrangler@4.162.0
+      - name: Publish only through the established protected preview project
+        env:
+          SOURCE: ${{ needs.package.outputs.candidate }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
+          PHOENIX66_ACCESS_CLIENT_ID: ${{ secrets.PHOENIX66_ACCESS_CLIENT_ID }}
+          PHOENIX66_ACCESS_CLIENT_SECRET: ${{ secrets.PHOENIX66_ACCESS_CLIENT_SECRET }}
+          WRANGLER_BIN: ${{ runner.temp }}/cloudflare-uploader/node_modules/.bin/wrangler
+        run: node scripts/phoenix66/omniscience74-preview.mjs "$RUNNER_TEMP/omniscience74/site" "$RUNNER_TEMP/omniscience74/inventory.json" "$SOURCE"
