@@ -1,0 +1,94 @@
+name: Overseer 68 protected preview
+on:
+  push:
+    branches: [engineering/phoenix66-preview]
+    paths:
+      - '.github/workflows/overseer68-preview.yml'
+      - 'scripts/phoenix66/overseer68-preview.mjs'
+permissions:
+  contents: read
+concurrency:
+  group: phoenix66-pages-publisher
+  cancel-in-progress: false
+env:
+  CANDIDATE: 0776f1281ed9e718dbe66e9cc4ec78d0a548c5d7
+jobs:
+  isolated_acceptance:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.CANDIDATE }}
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Verify source and targeted contracts
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$CANDIDATE"
+          test "$(git rev-parse HEAD^)" = afbac1358e782b588d222960eebb03f170a026bb
+          npm ci --ignore-scripts --no-audit --no-fund
+          node tests/operations-v1-admin-dom.mjs
+          node tests/operations-v1-public.mjs
+          node --experimental-strip-types tests/operations-v1-checkout.mjs
+          node --experimental-strip-types tests/p07b-checkout.mjs
+          node tests/aftercare-admin.mjs
+          node --experimental-strip-types tests/overseer68/aftercare.mjs
+          node --check dist/checkout/checkout.mjs
+          sha256sum supabase/migrations/*overseer*.sql
+      - name: Render and exercise desktop, tablet and mobile with no external routes
+        run: |
+          set -euo pipefail
+          d="$RUNNER_TEMP/overseer68"
+          mkdir -p "$d" "$RUNNER_TEMP/overseer68-screens"
+          python3 tests/overseer68/package-preview.py "$d/site" > "$d/inventory.json"
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install --prefix "$RUNNER_TEMP/overseer68-browser" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save playwright-core@1.56.1
+          chrome=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium)
+          sudo unshare --net bash -eu -c '
+            ip link set lo up
+            test -z "$(ip route show table main)"
+            test -z "$(ip -6 route show table main)"
+            exec runuser -u "$1" -- env -i PATH=/usr/bin:/bin HOME="$2" CHROME_BIN="$3" PLAYWRIGHT_MODULE="$2/overseer68-browser/node_modules/playwright-core/index.mjs" "$4" "$5" "$6" "$7"
+          ' _ "$(id -un)" "$RUNNER_TEMP" "$chrome" "$(command -v node)" "$PWD/tests/overseer68/browser.mjs" "$d/site" "$RUNNER_TEMP/overseer68-screens"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: overseer68-screenshots
+          path: ${{ runner.temp }}/overseer68-screens
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: overseer68-tested-fixture
+          path: ${{ runner.temp }}/overseer68
+          retention-days: 14
+          if-no-files-found: error
+  protected_preview:
+    needs: isolated_acceptance
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: phoenix66-preview
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: overseer68-tested-fixture
+          path: ${{ runner.temp }}/overseer68
+      - name: Prepare existing pinned Cloudflare uploader
+        run: npm install --prefix "$RUNNER_TEMP/cloudflare-uploader" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false wrangler@4.162.0
+      - name: Publish and verify the isolated Overseer preview
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
+          PHOENIX66_ACCESS_CLIENT_ID: ${{ secrets.PHOENIX66_ACCESS_CLIENT_ID }}
+          PHOENIX66_ACCESS_CLIENT_SECRET: ${{ secrets.PHOENIX66_ACCESS_CLIENT_SECRET }}
+          WRANGLER_BIN: ${{ runner.temp }}/cloudflare-uploader/node_modules/.bin/wrangler
+        run: node scripts/phoenix66/overseer68-preview.mjs "$RUNNER_TEMP/overseer68/site" "$RUNNER_TEMP/overseer68/inventory.json" "$CANDIDATE"
