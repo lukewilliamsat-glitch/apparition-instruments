@@ -1,0 +1,101 @@
+name: Release 69B isolated rehearsal and immutable packages
+on:
+  push:
+    branches: [engineering/release69b-prepare]
+    paths:
+      - '.github/workflows/release69b-prepare.yml'
+      - 'tests/release69b/**'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: release69b-prepare
+  cancel-in-progress: false
+jobs:
+  native-rehearsal:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/release69b-prepare'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17.6
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - '127.0.0.1:55469:5432'
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 4s --health-retries 12
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - run: npm install --prefix "$RUNNER_TEMP/release69b-pg" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save pg@8.16.3
+      - name: Run exact migration rehearsals with loopback PostgreSQL
+        run: |
+          set -euo pipefail
+          export RELEASE69B_NATIVE=true
+          export RELEASE69B_PG_MODULE="$RUNNER_TEMP/release69b-pg/node_modules/pg"
+          node tests/release69b/rehearse.mjs | tee "$RUNNER_TEMP/native-receipt.log"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: release69b-native-receipt
+          path: ${{ runner.temp }}/native-receipt.log
+          if-no-files-found: error
+          retention-days: 30
+  package:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/release69b-prepare'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: cc34aa5ae5326134dbc215af673b5132c45da29c
+          path: release-a-source
+          persist-credentials: false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 783a30a0523c11625f1d07a806dda51e4c66ae48
+          path: release-b-source
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Read and verify the exact live application artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git -C release-a-source rev-parse HEAD)" = cc34aa5ae5326134dbc215af673b5132c45da29c
+          test "$(git -C release-b-source rev-parse HEAD)" = 783a30a0523c11625f1d07a806dda51e4c66ae48
+          root="$RUNNER_TEMP/verified-live"
+          mkdir "$root"
+          api="repos/$GITHUB_REPOSITORY/actions"
+          digest=52f876edfba409ef1442eceae9a283b0024b53f2a195711f43113b0d6dd43cfe
+          gh api "$api/runs/44080682668/artifacts" | jq -e --arg digest "sha256:$digest" '.artifacts | map(select(.id == 14327320952 and .name == "ironclad69a-admin-frontend-exact" and .expired == false and .digest == $digest)) | length == 1' >/dev/null
+          gh api "$api/artifacts/14327320952/zip" > "$RUNNER_TEMP/verified-live.zip"
+          printf '%s  %s\n' "$digest" "$RUNNER_TEMP/verified-live.zip" | sha256sum -c
+          unzip -q "$RUNNER_TEMP/verified-live.zip" -d "$root"
+      - name: Prepare and verify the separate release boundaries
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/69b"
+          node tests/release69b/assemble.mjs "$out"
+          cmp docs/operations/release69b/ironclad69b-production.atomic.sql "$out/ironclad69b-production.atomic.sql"
+          node tests/release69b/compose.mjs "$RUNNER_TEMP/verified-live" release-a-source release-b-source "$out"
+          find "$out/release-a-edges" -type f -name '*.ts' -print0 | xargs -0 -n1 node --check
+          node --experimental-strip-types tests/release69b/aftercare-off.mjs "$out/release-a-edges"
+          (cd "$out" && sha256sum -c SHA256SUMS.txt)
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: release69b-approval-and-candidates
+          path: ${{ runner.temp }}/69b
+          retention-days: 30
+          if-no-files-found: error
+          include-hidden-files: true

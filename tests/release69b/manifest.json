@@ -1,0 +1,14 @@
+{
+  "releaseA": [
+    ["20261117092035_overseer_delivery_v1.sql","669b6d1292f9dd012889c88115ba0b36c4431c9164c672673af213b1016aac5c"],
+    ["20261117092047_overseer_aftercare_direct_v1.sql","12d1ea5a03050aed5fdac0267bd1ee4d44c9f83fa9bc3746e72b97d4a0e99bed"],
+    ["20261117095412_overseer_order_date_correction.sql","d2d1fb5ec06b1b0f4a62932076dc26e7c8eba38cbc544c03c783028a711cb4bd"],
+    ["20261117102331_eclipse_fulfilment_finance_v1.sql","a90c3c2bf240b769c51e6f857ee5d7880f555889ea3ff50be484a8e305c39ce0"]
+  ],
+  "releaseB": [
+    ["20261117111659_ironclad_armoury_v1.sql","fccf758299391b6141a3c00a70192ea60c7d9749dbf21e68d84b27de8471ad48"],
+    ["20261117112951_ironclad69_recovery_evidence.sql","030972fd8d7425a3f6704f25c5c5d4be278429893f8360704e18faf61faa6d0c"],
+    ["20261117115654_ironclad69a_procurement_v2.sql","804b43a8d9baa147d95fc9a6209009fbcd0af420f27d5e8d450126b698ed434f"],
+    ["20261117120217_ironclad69a_scoped_draft_access.sql","18bcee8c849f80049eb06cc74457a744624a572f65916ba5ec36781a3de42e82"]
+  ]
+}
