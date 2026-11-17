@@ -50,12 +50,30 @@ try {
   if(width===1440)await page.screenshot({path:evidence+'/Overseer-Aftercare-Direct.png',fullPage:true});
   await page.getByRole('checkbox',{name:/I reviewed the saved recipient/}).check();
   assert.equal(await confirm.isEnabled(),true,'Acknowledged synthetic recipient did not enable submission');
-  await confirm.click();
-  try { await page.locator('dialog [role=status]').filter({hasText:'Fixture message recorded. No email sent.'}).waitFor({timeout:7000}); }
-  catch (error) {
-   const status=await page.locator('dialog [role=status]').textContent().catch(()=>'(no status)');
-   assert.equal(status,'Fixture message recorded. No email sent.',width+'px: '+error.message);
-  }
+  // Native modal scrolling on hosted Chromium can continue after .check().
+  // Bring the actual focusable button into view, wait for two stable frames,
+  // then use the real pointer. Use the keyboard independently at mobile width.
+  await confirm.focus();
+  await confirm.scrollIntoViewIfNeeded();
+  const target=await confirm.evaluate(async button=>{
+   const record=()=>{const b=button.getBoundingClientRect();return {x:b.x+b.width/2,y:b.y+b.height/2};};
+   const next=()=>new Promise(r=>requestAnimationFrame(r));
+   let previous=record();
+   for(let n=0;n<12;n++){
+    await next();const current=record();
+    if(Math.abs(previous.x-current.x)<.5&&Math.abs(previous.y-current.y)<.5 &&
+       button.contains(document.elementFromPoint(current.x,current.y)))return current;
+    previous=current;
+   }
+   throw Error('Confirm button did not settle as the pointer target.');
+  });
+  if(width===390)await confirm.press('Enter');
+  else await page.mouse.click(target.x,target.y);
+  const receipt=page.locator('dialog [role=status]').filter({hasText:'Fixture message recorded. No email sent.'});
+  await receipt.waitFor({timeout:7000}).catch(async error=>{
+   const actual=await page.locator('dialog [role=status]').textContent();
+   throw Error(width+'px Aftercare receipt missing. Current status: '+actual+' · '+error.message);
+  });
   await page.getByText(/Internal test recorded · No email sent/).waitFor({timeout:7000});
   await page.keyboard.press('Escape');assert(await trigger.evaluate(x=>x===document.activeElement));
   await fit();groups++;assert.deepEqual(errors,[]);assert.deepEqual(outbound,[]);
