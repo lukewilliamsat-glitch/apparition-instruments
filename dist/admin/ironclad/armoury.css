@@ -1,0 +1,35 @@
+:root{color-scheme:dark;--base:#11100e;--panel:#1b1916;--gold:#e8bc78;--ink:#f5ede2;--muted:#bdb3a6;--line:#524434;--alert:#ffba9d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--base);color:var(--ink);font:15px/1.55 system-ui,sans-serif}
+.admin-page:not(.admin-authorized) .armoury{display:none}
+a{color:var(--gold)}
+.armoury{max-width:1300px;padding:1rem clamp(1rem,4vw,3rem) 3.5rem;margin:auto}
+.armoury h1,.armoury h2,.armoury h3{font-weight:650;line-height:1.2;letter-spacing:-.02em;margin:0}
+.armoury h1{font-size:clamp(1.55rem,3vw,1.95rem)}.armoury h2{font-size:1.25rem}.armoury h3{font-size:1rem}
+.armoury p{margin:.35rem 0 .8rem;color:var(--muted)}
+.armoury .kicker{letter-spacing:.14em;font-size:.73rem;text-transform:uppercase;font-weight:700;color:var(--gold)}
+.armoury .top{display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:1rem;padding:1rem 0;border-bottom:1px solid var(--line)}
+.armoury nav{display:flex;gap:.4rem;flex-wrap:wrap;margin:1rem 0}
+.armoury button,.armoury input,.armoury select,.admin-access-gate :is(button,input){font:inherit;padding:.45rem .65rem;min-height:2.55rem;border:1px solid var(--line);border-radius:.4rem;background:#151310;color:var(--ink);max-width:100%}
+.armoury button,.admin-access-gate button{cursor:pointer}
+.armoury button[aria-current="page"],.armoury .primary{color:#221912;background:var(--gold);border-color:var(--gold);font-weight:650}
+.armoury :focus-visible,.admin-access-gate :focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.armoury button:disabled{cursor:wait;opacity:.62}
+.armoury section,.armoury form,.admin-access-panel{background:var(--panel);border:1px solid var(--line);border-radius:.55rem;padding:clamp(.8rem,2vw,1.25rem);margin:.75rem 0;min-width:0}
+.armoury .form-grid,.armoury .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,11rem),1fr));gap:.6rem}
+.armoury .metrics>div{background:#241f1a;border:1px solid var(--line);padding:.6rem .75rem;border-radius:.35rem;display:grid}
+.armoury .metrics b{font-size:1.18rem;color:var(--gold)}
+.armoury label{display:grid;gap:.22rem;color:var(--muted);font-size:.84rem}
+.armoury :is(input,select){width:100%;min-width:0}
+.armoury .actions{display:flex;flex-wrap:wrap;align-items:center;gap:.45rem;margin-top:.65rem}
+.armoury .table-wrap{max-width:100%;overflow:auto;margin:.6rem 0 .8rem}
+.armoury table{width:100%;border-collapse:collapse;text-align:left;font-size:.87rem}
+.armoury :is(th,td){padding:.55rem;vertical-align:top;border-bottom:1px solid var(--line);white-space:normal;overflow-wrap:anywhere}
+.armoury td button{min-height:2rem;font-size:.78rem;padding:.25rem .4rem}
+.armoury .badge{color:var(--gold);font-weight:650}.armoury .error{color:var(--alert)}
+.armoury .distribution{display:flex;gap:.3rem;align-items:flex-end;height:3rem}.armoury .distribution span{width:2.1rem;height:calc(var(--v) * .24rem + .15rem);background:var(--gold)}
+.armoury-skip{position:absolute;left:-200vw}.armoury-skip:focus{left:1rem;top:.3rem}
+.admin-access-gate{max-width:40rem;margin:2rem auto;padding:1rem}.admin-access-gate label{display:grid;margin:.6rem 0}.admin-lock{margin:1rem}
+@media(max-width:600px){.armoury table{min-width:36rem}.armoury nav button{flex:1 1 auto}.armoury .top{align-items:start}}
+.armoury fieldset{border:1px solid var(--line);min-width:0;margin:.55rem 0;border-radius:.3rem}.armoury legend{color:var(--gold);font-size:.85rem}
+@media print{body{background:white;color:black}.armoury *{visibility:hidden}.armoury .stock-label,.armoury .stock-label *{visibility:visible;color:black}.armoury .stock-label{position:absolute;inset:0 auto auto 0;background:white;border:none}.stock-label button{display:none}}

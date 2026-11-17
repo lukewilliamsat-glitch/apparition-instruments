@@ -1,10 +1,11 @@
+import {draftAcquisition} from '../ironclad/model.mjs';
 import {decimal,decimalText} from './economics.mjs';
 import {commercialOrderDay} from './commercial-date.mjs';
 import {applyPreset,financeSummary,safePart,suggestedPreset,updateFee,withSnapshot} from './eclipse-model.mjs';
 const fmt=new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP'});
 const cash=n=>Number.isSafeInteger(n)?fmt.format(n/100):'Unknown';
 function node(d,tag,text,cls){const n=d.createElement(tag);if(text!=null)n.textContent=text;if(cls)n.className=cls;return n;}
-export function mountEclipse({root,order,initialDocument,document:d=globalThis.document,libraryRepository,persistence,advanced=()=>{}}){
+export function mountEclipse({root,order,initialDocument,document:d=globalThis.document,libraryRepository,persistence,historicalCosts,advanced=()=>{}}){
  const make=(...a)=>node(d,...a);let draft=structuredClone(initialDocument),library=null,invalid=new Set(),feeProblems=new Map(),pending=false,disposed=false;
  const panel=make('section',null,'eclipse-finance'),heading=make('header',null,'eclipse-head'),title=make('div'),actions=make('div',null,'eclipse-actions');
  title.append(make('p','BLACK LEDGER / ECLIPSE','eclipse-kicker'),make('h2','Order Financials'),make('p',order.reference+' · '+({WEBSITE:'Website',EBAY:'eBay',DIRECT:'Direct',OTHER:'Other marketplace'}[order.channel]||order.channel)+' · '+commercialOrderDay(order)));
@@ -76,20 +77,37 @@ export function mountEclipse({root,order,initialDocument,document:d=globalThis.d
  const reviewed=make('label'),complete=make('input');complete.type='checkbox';complete.checked=draft.feesComplete;
  complete.addEventListener('change',()=>{draft.feesComplete=complete.checked;recalc();});
  reviewed.append(complete,d.createTextNode(' Reviewed all fees, including evidenced zero costs'));fees.f.append(reviewed);
- const goods=group('Acquisition costs');
+ const goods=group('Acquisition costs'),costInputs=[];const evidenceAbort=new AbortController();
  for(const [i,line] of draft.lines.entries()){
   const fields=make('div',null,'eclipse-field'),label=line.quantity+' × '+line.label;
   fields.append(make('p',label));goods.grid.append(fields);
   const entry=()=>draft.lines[i];
-  input(fields,'Unit acquisition cost for '+line.label,line.unitCostMicro,v=>{const x=entry();if(v!==x.unitCostMicro){x.costState=v==null?'unknown':'estimated';if(v==null)delete x.costProvenance;else x.costProvenance={basis:'current_estimate'};x.costSource='';costState.value=x.costState;costRef.value='';}x.unitCostMicro=v;},{money:true,scale:6});
+  const amount=input(fields,'Unit acquisition cost for '+line.label,line.unitCostMicro,v=>{const x=entry();if(v!==x.unitCostMicro){x.costState=v==null?'unknown':'estimated';if(v==null)delete x.costProvenance;else x.costProvenance={basis:'current_estimate'};x.costSource='';costState.value=x.costState;costRef.value='';}x.unitCostMicro=v;},{money:true,scale:6});
   const costState=select(fields,'Acquisition evidence for '+line.label,[['unknown','Unknown'],...evidence],line.costState,v=>{
    const x=entry();x.costState=v;
    if(v==='confirmed'&&!['historical_snapshot','manual_evidenced'].includes(x.costProvenance?.basis))x.costProvenance={basis:'manual_evidenced'};
    if(v==='estimated'&&x.costProvenance?.basis==='manual_evidenced')x.costProvenance={basis:'current_estimate'};
   });
-  const costRef=input(fields,'Acquisition reference for '+line.label,line.costSource,v=>{entry().costSource=v;});
+  const costRef=input(fields,'Acquisition reference for '+line.label,line.costSource,v=>{entry().costSource=v;});costInputs.push({amount,costState,costRef});
  }
  goods.f.append(make('small','Unknown unit costs stay unknown. Current component references are estimates and can be loaded in Advanced reconciliation.'));
+ if(historicalCosts)button(goods.f,'Review IRONCLAD acquisition evidence',async event=>{
+  const load=event.currentTarget;load.disabled=true;
+  try{
+   const rows=await historicalCosts(evidenceAbort.signal);if(disposed)return;
+   if(!Array.isArray(rows)||rows.length>100)throw Error('Unexpected acquisition projection.');
+   let count=0;
+   for(const row of rows){
+    const i=row.line_index,got=draftAcquisition(draft.lines[i],row);
+    if(!got)continue;
+    draft.lines[i]=got;const c=costInputs[i];c.amount.value=decimalText(got.unitCostMicro,6);c.costState.value=got.costState;c.costRef.value=got.costSource;count++;
+   }
+   feedback.textContent=count?count+' evidence-backed line(s) copied to the unsaved draft. Review before saving.':'No new matching acquisition costs for unknown lines.';
+   recalc();
+  }catch(e){if(!disposed)feedback.textContent=e.message;}
+  finally{if(!disposed)load.disabled=false;}
+ });
+
  const costs=group('Postage and other fulfilment');
  for(const [k,title] of [['shipping','Actual postage expenditure'],['other','Other direct costs']]){
   const col=make('div',null,'eclipse-field');costs.grid.append(col);const get=()=>draft.costs[k];
@@ -161,5 +179,5 @@ export function mountEclipse({root,order,initialDocument,document:d=globalThis.d
   persistence?.update(JSON.parse(JSON.stringify(draft)),invalid.size===0&&feeProblems.size===0&&!!c);
  }
  root.append(panel);recalc();
- return {panel,snapshot:()=>structuredClone(draft),dispose(){disposed=true;panel.remove();}};
+ return {panel,snapshot:()=>structuredClone(draft),dispose(){disposed=true;evidenceAbort.abort();panel.remove();}};
 }

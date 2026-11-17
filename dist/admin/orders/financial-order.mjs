@@ -1,3 +1,4 @@
+import {createArmouryRepository} from '../ironclad/repository.mjs';
 import {financeActivation} from './finance-activation.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4';
 import {financeDraft,mountFinanceWorkbench} from './finance-ui.mjs?v=eclipse68b';
 import {createFinancialRepository,createFinancialSession} from './financial-record.mjs?build=b4d7e3708e1cd0153e922122fa2400f0c46d9ce7';
@@ -50,6 +51,7 @@ export function mountFinancialOrder({root,order,document:d=globalThis.document,a
     w.panel.open=true;view={panel:w.panel,dispose(){w.dispose();back.remove();}};if(focus)back.focus();
    }else{
     view=mountEclipse({root:content,order,document:d,initialDocument,persistence,libraryRepository:createEclipseLibraryRepository(),
+      historicalCosts:signal=>createArmouryRepository().readCosts(order.id,signal),
       advanced(){if(valid)showView(true,session.snapshot().draft,true);}});
     if(focus)view.panel.querySelector('[data-eclipse-advanced]')?.focus();
    }
