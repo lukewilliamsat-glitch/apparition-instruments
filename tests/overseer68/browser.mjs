@@ -21,7 +21,7 @@ try {
  for(const width of [390,768,1440]){
   const page=await browser.newPage({viewport:{width,height:width===390?844:width===768?1024:1080}});
   const outbound=[],errors=[];
-  page.on('pageerror',e=>errors.push(e.message));
+  page.on('pageerror',e=>{errors.push(e.message);console.error('Browser exception: '+e.message);});
   await page.route('**/*',async route=>{const url=route.request().url();if(!url.startsWith(origin+'/')&&!url.startsWith('data:')){outbound.push(url);return route.abort();}return route.continue();});
   page.on('dialog',dialog=>dialog.accept());
   const fit=async()=>assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'document horizontal overflow at '+width);
@@ -49,7 +49,14 @@ try {
   await frame.getByText(/Support for eBay order AI-068001/).waitFor();
   if(width===1440)await page.screenshot({path:evidence+'/Overseer-Aftercare-Direct.png',fullPage:true});
   await page.getByRole('checkbox',{name:/I reviewed the saved recipient/}).check();
-  await confirm.click();await page.getByText('Fixture message recorded. No email sent.').waitFor();
+  assert.equal(await confirm.isEnabled(),true,'Acknowledged synthetic recipient did not enable submission');
+  await confirm.click();
+  try { await page.locator('dialog [role=status]').filter({hasText:'Fixture message recorded. No email sent.'}).waitFor({timeout:7000}); }
+  catch (error) {
+   const status=await page.locator('dialog [role=status]').textContent().catch(()=>'(no status)');
+   assert.equal(status,'Fixture message recorded. No email sent.',width+'px: '+error.message);
+  }
+  await page.getByText(/Internal test recorded · No email sent/).waitFor({timeout:7000});
   await page.keyboard.press('Escape');assert(await trigger.evaluate(x=>x===document.activeElement));
   await fit();groups++;assert.deepEqual(errors,[]);assert.deepEqual(outbound,[]);
   await page.close();
