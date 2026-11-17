@@ -4,7 +4,7 @@
 | --- | --- | --- |
 | I. ASCENSION, Release A | Exact package rehearsed; production pending | ANCHOR owner receipt and unchanged live preflight. Apply the exact 68C files in the [69B manifest](../../../tests/release69b/manifest.json). Existing postage £3.99, free from £50, and Aftercare Direct sending off. |
 | I. ASCENSION, Release B | Exact atomic IRONCLAD package approved by 74; production pending | Same ANCHOR gate, plus preflight on the deployed A or verified independent baseline and new immediate application rollback target. No additional exact approval needed for unchanged bytes. |
-| II. OMNISCIENCE | Independent candidate | Read-only reporting over BLACK LEDGER, period/channel and product evidence, pricing calculator, private expense and director-purchase register, audited partial reimbursements, and loaded-row CSVs. |
+| II. OMNISCIENCE | Staging verified; protected preview published | Read-only reporting over BLACK LEDGER, period/channel and product evidence, pricing calculator, private expense and director-purchase register, audited partial reimbursements, and loaded-row CSVs. |
 | III. MARKETPLACE | UK provider boundary researched | Seller OAuth and connection unverified. No live or fixture integration is represented as done. |
 | IV. IRONCLAD UNITY | Not started in this checkpoint | Canonical physical stock/allocation, extended stocktakes and attribution remain future candidates. |
 | V. QUARTERMASTER | Not started in this checkpoint | Accepted ECLIPSE Fulfilment Cost Library remains in Release A; no postal purchasing or packaging stock changes. |
@@ -13,6 +13,15 @@
 | VIII. SIGNAL FORGE EVOLUTION | Existing tools unchanged | Circuit expansion and grounded active pickup specifications outstanding. |
 | IX. COMMERCE CORONATION | Deferred | Unity, controlled commercial activation and genuine provider acceptance remain separate. Stripe Sandbox not provisioned. |
 | X. GRAND ASCENSION | Independent checkpoint only | No production publication without the relevant gate. Recompose against the then-current canonical production application. |
+
+## Recorded verification
+
+- Engineering source: `a1d9e41fd4443f92f050c013c7bb1b70fa67568c`. [Acceptance 44128814513](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/44128814513) passed on native PostgreSQL 17.6 both independently and after the exact A/B stack. Two concurrent reimbursements competing for one remaining balance produced one committed entry. Chrome passed at 1366, 820 and 375 pixels and denied the non-Admin browser fixture.
+- Managed synthetic staging `prwmowexhonguvtiywsy`, PostgreSQL 17.12, recorded migration `20261117164151 / omniscience74_v1`. Admin-context SQL rehearsed report, outlay replay and reimbursement safeguards against the deployed RPCs; transaction rolled back with zero fixture rows retained. This is not a hosted production login or readback.
+- [Protected OMNISCIENCE preview](https://omniscience.apparition-phoenix-preview.pages.dev/) deployment `60f12490-db5f-46fa-8c9b-9f8877da684a`, [publication 44129204077](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/44129204077). All served files matched the offline inventory behind Cloudflare Access. Changes remain in memory for one browser tab. No backend or provider request can be made by the fixture.
+- Production still serves Cloudflare `41fab337-e7df-499f-9292-fef300e46fe7`; the public homepage and the existing Admin landed-cost calculator route responded successfully. No production migration or deployment was made. Current immediate application rollback for Release A is the canonical deployment; the older successful application fallback remains `2433ee1f-5623-4c3c-8327-a90a968c545c`.
+
+To review the preview: select Load report, compare the verified and incomplete orders, then try the calculator, enter a fictional director purchase and record a partial reimbursement. Reloading resets the examples.
 
 ## OMNISCIENCE package and checks
 
