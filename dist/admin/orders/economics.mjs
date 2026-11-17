@@ -1,3 +1,4 @@
+import {commercialOrderDay} from './commercial-date.mjs';
 // Private Admin calculation model. Integer minor units; micro-units retain unit-cost precision.
 // Nothing here reads a service, persists a draft, issues a refund or moves inventory.
 export const FINANCE_POLICY='marketplace-contribution-v1';
@@ -99,7 +100,7 @@ export function allocateMinor(total,weights){need(Array.isArray(weights)&&weight
 export function profitabilityReport(records,{from='',to='',channel=''}={}){
  need(Array.isArray(records)&&records.length<=5000,'Reporting is limited to 5,000 already loaded orders. Narrow the source before reporting.');
  const groups=new Map(),products=new Map();let count=0,complete=0,estimated=0;
- for(const record of records){if(record.channel==='WEBSITE'||!['paid','partially_refunded','refunded'].includes(record.paymentStatus)||channel&&record.channel!==channel)continue;const date=String(record.orderDate||record.createdAt||'').slice(0,10);if(from&&date<from||to&&date>to)continue;count++;
+ for(const record of records){if(record.channel==='WEBSITE'||!['paid','partially_refunded','refunded'].includes(record.paymentStatus)||channel&&record.channel!==channel)continue;const date=commercialOrderDay(record);if(from&&date<from||to&&date>to)continue;count++;
   const calc=record.finance?calculateEconomics(record.finance):null,currency=calc?.currency||'GBP';let group=groups.get(currency);if(!group){group={currency,orders:0,covered:0,revenueMinor:0n,feesMinor:0n,advertisingMinor:0n,cogsMinor:0n,shippingMinor:0n,packagingMinor:0n,contributionMinor:0n};groups.set(currency,group);}group.orders++;
   // Original recorded revenue is labelled separately; no historic costs or fees are invented.
   group.revenueMinor+=calc?BigInt(calc.netRevenueMinor):whole(record.pricing?.total,'Recorded order total')-whole(record.refundedPence??0,'Recorded refund');

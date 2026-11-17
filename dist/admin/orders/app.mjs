@@ -1,10 +1,12 @@
+import {commercialOrderDay,selectOrdersByDay} from './commercial-date.mjs';
+import {mountOrderDateCorrection} from './order-date-correction.mjs';
 import {renderAftercareQueue,mountAftercarePanel} from './customer-aftercare.mjs';
 import {mountFulfilmentCorrections} from './fulfilment-corrections.mjs';
 import {mountFirstDispatchPreview,reviewDispatchEmail} from './email-review.mjs';
 import {mountExternalEditing,confirmDispatchEmail,requestExternalDispatch,externalRecipientAllowed} from './external-edit.mjs';
 import {presentOrderDetail} from './detail-presentation.mjs';
 import {statusBadge} from '../application.mjs';
-import {currentAdminOrderRepository} from '../../backend/order-data.mjs?v=external-v1';
+import {currentAdminOrderRepository} from '../../backend/order-data.mjs?v=overseer68a';
 import {fulfilmentLabels,paymentLabels,isPaidOrder,isCheckoutAttempt,nextFulfilment} from './lifecycle.mjs';
 import {el,money,date,showOrder} from './view.mjs?v=external-v1';
 import {mountExternalOrderForm} from './external-order.mjs';
@@ -68,6 +70,7 @@ function render(){
     catch(error){$('#order-message').textContent=error.message;await refresh();}
    });$('#detail-content').prepend(button);
   }
+  mountOrderDateCorrection(order,{root:$('#detail-content'),repository:currentAdminOrderRepository(),refresh,message:$('#order-message')});
   appendEmailStatus(order);if(aftercareUnavailable){const notice=el('section',undefined,'order-aftercare');notice.append(el('h3','Customer Aftercare'),el('p','Customer Aftercare is unavailable. Refresh before taking a follow-up action.','storage-note'));$('#detail-content').append(notice);}else mountAftercarePanel(order,aftercare.find(r=>r.orderId===order.id),{root:$('#detail-content'),repository:currentAdminOrderRepository(),refresh,message:$('#order-message')});appendDispatchEditor(order);mountFulfilmentCorrections(order,{repository:currentAdminOrderRepository(),refresh,message:$('#order-message')});presentOrderDetail(document,order);
   const next=nextFulfilment(order),form=$('#order-status-form');form.hidden=!next;
   const select=$('#detail-status');select.replaceChildren();if(next){const choice=el('option',fulfilmentLabels[next]);choice.value=next;select.append(choice);}
@@ -91,12 +94,15 @@ function render(){
   return;}
  if(aftercareView){if(aftercareUnavailable)$('#aftercare-queue').replaceChildren(el('h2','Customer Aftercare'),el('p','Customer Aftercare is unavailable. Refresh before taking a follow-up action.','storage-note'));else renderAftercareQueue(aftercare,{root:$('#aftercare-queue')});return;}
  const q=$('#order-search').value.toLowerCase().trim(),filter=$('#order-filter').value;
- const rows=records.filter(item=>(attempts?isCheckoutAttempt(item):isPaidOrder(item))&&(!filter||item.fulfilmentStatus===filter)&&[item.reference,item.externalReference,channels[item.channel],item.customer.name,item.customer.email].join(' ').toLowerCase().includes(q));
- $('#order-rows').replaceChildren();$('#orders-empty').hidden=!!rows.length;
- for(const order of rows){const row=el('tr'),cell=el('td'),link=el('a',order.reference);link.href=deploymentPath('/admin/orders/?id='+encodeURIComponent(order.id));cell.append(link);if(order.externalReference)cell.append(el('small',' · '+order.externalReference));row.append(cell,el('td',channels[order.channel]||order.channel),...[order.orderDate||date(order.createdAt),order.customer.name||'Not supplied',money(order.pricing.total),paymentLabels[order.paymentStatus]||order.paymentStatus,isPaidOrder(order)?fulfilmentLabels[order.fulfilmentStatus]||order.fulfilmentStatus:'Checkout attempt'].map((value,index)=>{const cell=el('td',index===3||index===4?undefined:value,index===3||index===4?'order-state':'');if(index===3||index===4)cell.append(statusBadge(document,value,index===3&&['unpaid','partially_refunded'].includes(order.paymentStatus)||index===4&&['pending','ready_to_dispatch'].includes(order.fulfilmentStatus)?'warning':'neutral'));if(index===4&&order.paymentStatus==='partially_refunded'&&!order.partialRefundAcknowledged)cell.append(statusBadge(document,'Refund review required','warning'));return cell;}));$('#order-rows').append(row);}
+ const matched=records.filter(item=>(attempts?isCheckoutAttempt(item):isPaidOrder(item))&&(!filter||item.fulfilmentStatus===filter)&&[item.reference,item.externalReference,channels[item.channel],item.customer.name,item.customer.email].join(' ').toLowerCase().includes(q));
+ let rows=[],dateError='';
+ try{rows=selectOrdersByDay(matched,{from:$('#order-from').value,to:$('#order-to').value,sort:$('#order-sort').value});}catch(error){dateError=error.message;}
+ $('#orders-date-feedback').textContent=dateError;
+ $('#order-rows').replaceChildren();$('#orders-empty').hidden=!!rows.length||!!dateError;
+ for(const order of rows){const row=el('tr'),cell=el('td'),link=el('a',order.reference);link.href=deploymentPath('/admin/orders/?id='+encodeURIComponent(order.id));cell.append(link);if(order.externalReference)cell.append(el('small',' · '+order.externalReference));row.append(cell,el('td',channels[order.channel]||order.channel),...[commercialOrderDay(order)||'Not recorded',order.customer.name||'Not supplied',money(order.pricing.total),paymentLabels[order.paymentStatus]||order.paymentStatus,isPaidOrder(order)?fulfilmentLabels[order.fulfilmentStatus]||order.fulfilmentStatus:'Checkout attempt'].map((value,index)=>{const cell=el('td',index===3||index===4?undefined:value,index===3||index===4?'order-state':'');if(index===3||index===4)cell.append(statusBadge(document,value,index===3&&['unpaid','partially_refunded'].includes(order.paymentStatus)||index===4&&['pending','ready_to_dispatch'].includes(order.fulfilmentStatus)?'warning':'neutral'));if(index===4&&order.paymentStatus==='partially_refunded'&&!order.partialRefundAcknowledged)cell.append(statusBadge(document,'Refund review required','warning'));return cell;}));$('#order-rows').append(row);}
 }
-async function refresh(){if(document.querySelector('.external-order-edit,.external-dispatch-dialog'))return;try{const repository=currentAdminOrderRepository();aftercareUnavailable=false;[records,aftercare]=await Promise.all([repository.list(),repository.aftercare?repository.aftercare().catch(()=>{aftercareUnavailable=true;return [];}):[]]);$('#order-message').textContent='';render();if(!creating&&!aftercareView&&!attempts){financeReport||=mountFinanceReport({root:$('#order-list')});financeReport.update(records);}}catch(error){$('#order-message').textContent=error.message;financeReport?.unavailable();}}
-$('#order-search').addEventListener('input',render);$('#order-filter').addEventListener('change',render);
+async function refresh(){if(document.querySelector('.external-order-edit,.external-dispatch-dialog[open]'))return;try{const repository=currentAdminOrderRepository();aftercareUnavailable=false;[records,aftercare]=await Promise.all([repository.list(),repository.aftercare?repository.aftercare().catch(()=>{aftercareUnavailable=true;return [];}):[]]);$('#order-message').textContent='';render();if(!creating&&!aftercareView&&!attempts){financeReport||=mountFinanceReport({root:$('#order-list')});financeReport.update(records);}}catch(error){$('#order-message').textContent=error.message;financeReport?.unavailable();}}
+$('#order-search').addEventListener('input',render);for(const id of ['order-filter','order-from','order-to','order-sort'])$('#'+id).addEventListener('change',render);
 $('#order-status-form').addEventListener('submit',async event=>{event.preventDefault();const id=new URLSearchParams(location.search).get('id'),order=records.find(item=>item.id===id),next=nextFulfilment(order);
  if(!order||!next||$('#detail-status').value!==next)return;
  if(next==='dispatched'&&document.querySelector('.dispatch-details')?.dataset.dirty==='true'){$('#order-message').textContent='Save your dispatch details before marking this Order Dispatched.';document.querySelector('.dispatch-details button')?.focus();return;}

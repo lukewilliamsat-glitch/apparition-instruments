@@ -1,4 +1,5 @@
-import {FINANCE_POLICY_V2 as FINANCE_POLICY,calculateEconomicsV2 as calculateEconomics,profitabilityReportV2 as profitabilityReport} from './economics-v2.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4';
+import {commercialOrderDay} from './commercial-date.mjs';
+import {FINANCE_POLICY_V2 as FINANCE_POLICY,calculateEconomicsV2 as calculateEconomics,profitabilityReportV2 as profitabilityReport} from './economics-v2.mjs?v=overseer68a';
 import {decimal,decimalText,landedAcquisition,weightedPool,assemblyMaterialCost,roundRatio} from './economics.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4';
 import {createCostReferenceReader} from './cost-reference.mjs?build=84079ed8ddb6abc6ed134bc4bc3a163da155cde4';
 import {financeActivation} from './finance-activation.mjs?build=dd9986842ed12e28c61283a1f32fe092dea6d05d';
@@ -36,7 +37,7 @@ export function mountFinanceWorkbench({root,order,document:d=globalThis.document
  const statusOptions=[['unknown','Unknown'],['estimated','Estimate / current reference'],['confirmed','Confirmed from evidence']];
  const binding=(parent,title,row,{micro=false,key=title}={})=>{const controls=group(parent);const amount=input(controls,title,row.minor??null,value=>{row.minor=value;if(value===null)row.state='unknown';else if(row.state==='unknown')row.state='estimated';status.value=row.state;},{optional:true,key,scale:micro?6:2,hint:'Blank means unknown. Enter zero only when evidenced.'});const status=select(controls,'Cost status',row.state,statusOptions,value=>{row.state=value;});input(controls,'Source / evidence',row.source||'',v=>{row.source=v;},{plain:true,key:key+' source'});return {amount,status};};
  const sale=section('Sale details','Original order values remain intact. Customer postage is income; carrier expenditure is a separate cost.'),saleGrid=group(sale);
- sale.append(node('p',order.reference+' · '+(order.externalReference||'New external sale')+' · '+(order.orderDate||String(order.createdAt||'').slice(0,10)),'finance-help'));
+ sale.append(node('p',order.reference+' · '+(order.externalReference||'New external sale')+' · '+commercialOrderDay(order),'finance-help'));
  // Recorded external orders are GBP. Other currencies are supported by the pure engine,
  // not relabelled over existing GBP Orders or converted using a current rate.
  sale.append(node('p','Currency: GBP. Existing external Orders are recorded in GBP; no currency conversion is inferred.','finance-help'));

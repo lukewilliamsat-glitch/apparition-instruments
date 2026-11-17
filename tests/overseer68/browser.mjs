@@ -59,6 +59,27 @@ try {
   await page.getByText(/Internal test recorded · No email sent/).waitFor({timeout:7000});
   await page.keyboard.press('Escape');assert(await trigger.evaluate(x=>x===document.activeElement));
   await fit();groups++;assert.deepEqual(errors,[]);assert.deepEqual(outbound,[]);
+  await page.goto(origin+'/admin/orders/date-correction/');
+  const correction=page.getByRole('button',{name:'Correct order date'});
+  await correction.click();
+  const dateBox=page.getByRole('dialog',{name:'Correct order date'});
+  const saveDate=dateBox.getByRole('button',{name:'Save correction'});
+  assert(await saveDate.isDisabled());
+  await dateBox.getByLabel('Corrected commercial order date (UK)').fill('2026-10-31');
+  await dateBox.getByLabel('Reason for correction (5–300 characters)').fill('Correcting a transposed entry date.');
+  await dateBox.getByRole('checkbox',{name:/different reporting period/}).check();
+  await dateBox.getByText(/Reporting month changes from 2026-11 to 2026-10/).waitFor();
+  if(width===1440)await page.screenshot({path:evidence+'/Overseer-Order-Date-Correction.png',fullPage:true});
+  await saveDate.click();
+  await page.getByText(/Commercial order date corrected to 2026-10-31/).waitFor();
+  await page.getByText('No synthetic sales in this month.').waitFor();
+  await page.getByLabel('Reporting month').selectOption('2026-10');
+  await page.getByText('1 synthetic sale · £12.00 recorded revenue').waitFor();
+  await page.reload();
+  await page.getByText('Commercial order date: 2026-10-31',{exact:true}).waitFor();
+  await page.getByText('Order date correction history',{exact:true}).click();
+  await page.getByText('2026-11-02 → 2026-10-31',{exact:true}).waitFor();
+  await fit();groups++;assert.deepEqual(errors,[]);assert.deepEqual(outbound,[]);
   await page.close();
  }
  console.log(groups+' Chrome workspace/viewport groups passed; no outbound requests; screenshots from desktop fixtures');

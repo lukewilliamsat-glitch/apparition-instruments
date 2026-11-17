@@ -37,3 +37,42 @@ if(path.startsWith('/admin/aftercare-direct/')){
  }});
  document.querySelector('#open-aftercare').addEventListener('click',activate);
 }
+
+if(path.startsWith('/admin/orders/date-correction/')){
+ const {mountOrderDateCorrection}=await import('/admin/orders/order-date-correction.mjs');
+ const {selectOrdersByDay,londonDay}=await import('/admin/orders/commercial-date.mjs');
+ const fixtureKey='apparition.overseer68a.order-date.fixture';
+ const base={id:'68a00000-0000-4000-8000-000000000101',reference:'AI-068101',externalReference:'FICTIONAL-EBAY-101',channel:'EBAY',
+  createdAt:'2026-11-02T09:30:00Z',paidAt:'2026-11-02T09:30:00Z',fulfilledAt:'2026-11-02T09:30:00Z',updatedAt:'2026-11-02T09:30:00Z',orderDate:'2026-11-02'};
+ const empty=()=>({order:{...base},history:[]});
+ let state=empty();
+ try{const saved=JSON.parse(localStorage.getItem(fixtureKey)||'null');if(saved?.order?.id===base.id&&Array.isArray(saved.history))state=saved;}catch{}
+ const root=d.querySelector('#example-order'),note=d.querySelector('#date-order-message'),period=d.querySelector('#example-report-period');
+ const store=()=>localStorage.setItem(fixtureKey,JSON.stringify(state));
+ function report(){
+  const [year,month]=period.value.split('-').map(Number),last=new Date(Date.UTC(year,month,0)).getUTCDate();
+  const n=selectOrdersByDay([state.order],{from:period.value+'-01',to:period.value+'-'+last}).length;
+  d.querySelector('#example-report-total').textContent=n?'1 synthetic sale · £12.00 recorded revenue':'No synthetic sales in this month.';
+ }
+ function render(){
+  root.replaceChildren();
+  const fixed=d.createElement('p');fixed.textContent='Original recorded date: '+londonDay(state.order.createdAt)+' · Payment recorded: '+londonDay(state.order.paidAt);root.append(fixed);
+  mountOrderDateCorrection(state.order,{document:d,root,repository,refresh:async()=>render(),message:note});report();
+ }
+ const repository={
+  orderDateHistory:async()=>structuredClone(state.history),
+  correctOrderDate:async(id,{expectedUpdatedAt,newDate,reason,requestId})=>{
+   const order=state.order,previous=state.history.find(row=>row.requestId===requestId);
+   if(id!==order.id)throw Error('Synthetic order not found.');
+   if(previous)return {orderId:id,orderDate:order.orderDate,updatedAt:order.updatedAt,duplicate:true};
+   if(expectedUpdatedAt!==order.updatedAt)throw Error('The synthetic order changed. Reload and review.');
+   const correctedAt=now();
+   state.history.unshift({requestId,previousDate:order.orderDate,correctedDate:newDate,reason,actor:'Fictional operator',correctedAt});
+   Object.assign(order,{orderDate:newDate,updatedAt:correctedAt});store();
+   return {orderId:id,orderDate:newDate,updatedAt:correctedAt,duplicate:false};
+  }
+ };
+ period.addEventListener('change',report);
+ d.querySelector('#example-order-reset').addEventListener('click',()=>{state=empty();store();render();note.textContent='Fictional order reset. No database changes.';});
+ render();
+}
