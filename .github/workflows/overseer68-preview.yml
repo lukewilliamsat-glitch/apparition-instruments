@@ -5,32 +5,54 @@ on:
     paths:
       - '.github/workflows/overseer68-preview.yml'
       - 'scripts/phoenix66/overseer68-preview.mjs'
+      - 'scripts/phoenix66/overseer68-candidate.txt'
 permissions:
   contents: read
 concurrency:
   group: phoenix66-pages-publisher
   cancel-in-progress: false
-env:
-  CANDIDATE: 6a608610c323f789e1ee22cfcf4f8caac4567d0e
 jobs:
   isolated_acceptance:
     if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview'
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    outputs:
+      source: ${{ steps.verify.outputs.source }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: ${{ env.CANDIDATE }}
-          fetch-depth: 4
+          ref: ${{ github.sha }}
+          path: publisher-pin
+          persist-credentials: false
+      - name: Read the immutable publisher candidate pin
+        id: pin
+        run: |
+          set -euo pipefail
+          file=publisher-pin/scripts/phoenix66/overseer68-candidate.txt
+          test "$(wc -l < "$file")" -eq 1
+          candidate=$(cat "$file")
+          [[ $candidate =~ ^[a-f0-9]{40}$ ]]
+          remote_head=$(git -C publisher-pin ls-remote origin refs/heads/engineering/overseer68 | cut -f1)
+          test "$candidate" = "$remote_head"
+          printf 'sha=%s\n' "$candidate" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ steps.pin.outputs.sha }}
+          fetch-depth: 12
           persist-credentials: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '22.20.0'
       - name: Verify source and targeted contracts
+        id: verify
+        env:
+          CANDIDATE: ${{ steps.pin.outputs.sha }}
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$CANDIDATE"
-          test "$(git rev-parse HEAD~3)" = afbac1358e782b588d222960eebb03f170a026bb
+          git merge-base --is-ancestor afbac1358e782b588d222960eebb03f170a026bb HEAD
+          git merge-base --is-ancestor d2deac006b3b02bf1fc61fc01ff8db309863202c HEAD
+          printf 'source=%s\n' "$CANDIDATE" >> "$GITHUB_OUTPUT"
           npm ci --ignore-scripts --no-audit --no-fund
           node tests/operations-v1-admin-dom.mjs
           node tests/operations-v1-public.mjs
@@ -88,6 +110,7 @@ jobs:
         run: npm install --prefix "$RUNNER_TEMP/cloudflare-uploader" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false wrangler@4.162.0
       - name: Publish and verify the isolated Overseer preview
         env:
+          CANDIDATE: ${{ needs.isolated_acceptance.outputs.source }}
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
