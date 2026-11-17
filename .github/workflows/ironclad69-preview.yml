@@ -1,0 +1,113 @@
+name: IRONCLAD Armoury protected preview
+on:
+  push:
+    branches: [engineering/phoenix66-preview]
+    paths:
+      - '.github/workflows/ironclad69-preview.yml'
+      - 'scripts/phoenix66/ironclad69-preview.mjs'
+      - 'scripts/phoenix66/ironclad69-candidate.txt'
+permissions:
+  contents: read
+concurrency:
+  group: phoenix66-pages-publisher
+  cancel-in-progress: false
+jobs:
+  isolated_acceptance:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      source: ${{ steps.verify.outputs.source }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: publisher-pin
+          persist-credentials: false
+      - name: Read the immutable publisher candidate pin
+        id: pin
+        run: |
+          set -euo pipefail
+          file=publisher-pin/scripts/phoenix66/ironclad69-candidate.txt
+          test "$(wc -l < "$file")" -eq 1
+          candidate=$(cat "$file")
+          [[ $candidate =~ ^[a-f0-9]{40}$ ]]
+          remote_head=$(git -C publisher-pin ls-remote origin refs/heads/engineering/ironclad69-armoury | cut -f1)
+          test "$candidate" = "$remote_head"
+          printf 'sha=%s\n' "$candidate" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ steps.pin.outputs.sha }}
+          fetch-depth: 12
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Verify source and targeted contracts
+        id: verify
+        env:
+          CANDIDATE: ${{ steps.pin.outputs.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$CANDIDATE"
+          git merge-base --is-ancestor cc34aa5ae5326134dbc215af673b5132c45da29c HEAD
+          printf 'source=%s\n' "$CANDIDATE" >> "$GITHUB_OUTPUT"
+          node tests/ironclad69/model.mjs
+          node --check dist/admin/ironclad/app.mjs
+          node --check dist/admin/ironclad/repository.mjs
+          node --check dist/admin/orders/eclipse-ui.mjs
+          sha256sum supabase/migrations/*ironclad*sql
+      - name: Render and exercise desktop, tablet and mobile with no external routes
+        run: |
+          set -euo pipefail
+          d="$RUNNER_TEMP/ironclad69"
+          mkdir -p "$d" "$RUNNER_TEMP/ironclad69-screens"
+          python3 tests/ironclad69/package.py "$d/site" > "$d/inventory.json"
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install --prefix "$RUNNER_TEMP/ironclad69-browser" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save playwright-core@1.56.1
+          chrome=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium)
+          sudo unshare --net bash -eu -c '
+            ip link set lo up
+            test -z "$(ip route show table main)"
+            test -z "$(ip -6 route show table main)"
+            exec runuser -u "$1" -- env -i PATH=/usr/bin:/bin HOME="$2" CHROME_BIN="$3" PLAYWRIGHT_MODULE="$2/ironclad69-browser/node_modules/playwright-core/index.mjs" "$4" "$5" "$6" "$7"
+          ' _ "$(id -un)" "$RUNNER_TEMP" "$chrome" "$(command -v node)" "$PWD/tests/ironclad69/browser.mjs" "$d/site" "$RUNNER_TEMP/ironclad69-screens"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ironclad69-screenshots
+          path: ${{ runner.temp }}/ironclad69-screens
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ironclad69-tested-fixture
+          path: ${{ runner.temp }}/ironclad69
+          retention-days: 14
+          if-no-files-found: error
+  protected_preview:
+    needs: isolated_acceptance
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: phoenix66-preview
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: ironclad69-tested-fixture
+          path: ${{ runner.temp }}/ironclad69
+      - name: Prepare existing pinned Cloudflare uploader
+        run: npm install --prefix "$RUNNER_TEMP/cloudflare-uploader" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false wrangler@4.162.0
+      - name: Publish and verify the isolated IRONCLAD preview
+        env:
+          CANDIDATE: ${{ needs.isolated_acceptance.outputs.source }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
+          PHOENIX66_ACCESS_CLIENT_ID: ${{ secrets.PHOENIX66_ACCESS_CLIENT_ID }}
+          PHOENIX66_ACCESS_CLIENT_SECRET: ${{ secrets.PHOENIX66_ACCESS_CLIENT_SECRET }}
+          WRANGLER_BIN: ${{ runner.temp }}/cloudflare-uploader/node_modules/.bin/wrangler
+        run: node scripts/phoenix66/ironclad69-preview.mjs "$RUNNER_TEMP/ironclad69/site" "$RUNNER_TEMP/ironclad69/inventory.json" "$CANDIDATE"
