@@ -1,0 +1,73 @@
+name: LEVIATHAN 74 Omniscience isolated acceptance
+on:
+  push:
+    branches: [engineering/leviathan74-omniscience]
+    paths:
+      - 'dist/admin/omniscience/**'
+      - 'supabase/migrations/*omniscience74*'
+      - 'tests/leviathan74/**'
+      - '.github/workflows/leviathan74-omniscience.yml'
+permissions:
+  contents: read
+concurrency:
+  group: leviathan74-omniscience
+  cancel-in-progress: false
+jobs:
+  native:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/leviathan74-omniscience'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      matrix:
+        prior_stack: ['false', 'true']
+    services:
+      postgres:
+        image: postgres:17.6
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports: ['127.0.0.1:55474:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 4s --health-retries 12
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - run: npm install --prefix "$RUNNER_TEMP/leviathan74-pg" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save pg@8.16.3
+      - name: Check reporting against the rehearsal contract
+        env:
+          LEVIATHAN74_NATIVE: 'true'
+          LEVIATHAN74_STACK: ${{ matrix.prior_stack }}
+          LEVIATHAN74_PG_MODULE: ${{ runner.temp }}/leviathan74-pg/node_modules/pg
+        run: |
+          set -euo pipefail
+          node tests/leviathan74/model.mjs
+          node tests/leviathan74/db.mjs
+          sha256sum supabase/migrations/*omniscience74*
+  browser:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/leviathan74-omniscience'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Verify fixture journeys with external routes removed
+        run: |
+          set -euo pipefail
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install --prefix "$RUNNER_TEMP/leviathan74-browser" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save playwright-core@1.56.1
+          chrome=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium)
+          "$chrome" --version
+          sudo unshare --net bash -eu -c '
+            ip link set lo up
+            test -z "$(ip route show table main)"
+            test -z "$(ip -6 route show table main)"
+            exec runuser -u "$1" -- env -i PATH=/usr/bin:/bin HOME="$2" LEVIATHAN74_CHROME="$3" LEVIATHAN74_PLAYWRIGHT="$2/leviathan74-browser/node_modules/playwright-core/index.mjs" "$4" "$5"
+          ' _ "$(id -un)" "$RUNNER_TEMP" "$chrome" "$(command -v node)" "$PWD/tests/leviathan74/browser.mjs"
