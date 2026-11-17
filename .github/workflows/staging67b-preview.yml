@@ -1,0 +1,62 @@
+name: Commerce 67B protected provider staging
+on:
+  push:
+    branches: [engineering/phoenix66-preview]
+    paths:
+      - '.github/workflows/staging67b-preview.yml'
+      - 'scripts/phoenix66/staging67b-preview.mjs'
+permissions:
+  contents: read
+concurrency:
+  group: phoenix66-pages-publisher
+  cancel-in-progress: false
+env:
+  CANDIDATE: 190ac82e9eeba9a35aca4dd6113c66fe43fe1f10
+jobs:
+  protected_staging:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: phoenix66-preview
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: publisher
+          persist-credentials: false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.CANDIDATE }}
+          path: staging-source
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Verify exact source and build bounded static inventory
+        run: |
+          set -euo pipefail
+          test "$(git -C staging-source rev-parse HEAD)" = "$CANDIDATE"
+          mkdir "$RUNNER_TEMP/staging-site"
+          git -C staging-source archive "$CANDIDATE" scripts/staging67b/site | tar -x --strip-components=3 -C "$RUNNER_TEMP/staging-site"
+          node --check "$RUNNER_TEMP/staging-site/app.mjs"
+          python3 - "$RUNNER_TEMP/staging-site" "$RUNNER_TEMP/staging-inventory.json" <<'PYTHON'
+          import hashlib, json, pathlib, sys
+          root = pathlib.Path(sys.argv[1])
+          data = []
+          for p in sorted(root.iterdir()):
+            assert p.is_file() and not p.is_symlink()
+            b = p.read_bytes()
+            assert len(b) <= 65536
+            data.append(dict(path=p.name, bytes=len(b), sha256=hashlib.sha256(b).hexdigest()))
+          pathlib.Path(sys.argv[2]).write_text(json.dumps(data, indent=2))
+          PYTHON
+      - name: Prepare existing pinned Cloudflare uploader
+        run: npm install --prefix "$RUNNER_TEMP/cloudflare-uploader" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false wrangler@4.162.0
+      - name: Verify hosted services and publish protected staging only
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
+          PHOENIX66_ACCESS_CLIENT_ID: ${{ secrets.PHOENIX66_ACCESS_CLIENT_ID }}
+          PHOENIX66_ACCESS_CLIENT_SECRET: ${{ secrets.PHOENIX66_ACCESS_CLIENT_SECRET }}
+          WRANGLER_BIN: ${{ runner.temp }}/cloudflare-uploader/node_modules/.bin/wrangler
+        run: node publisher/scripts/phoenix66/staging67b-preview.mjs "$RUNNER_TEMP/staging-site" "$RUNNER_TEMP/staging-inventory.json" "$CANDIDATE"
