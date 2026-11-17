@@ -11,7 +11,7 @@ concurrency:
   group: phoenix66-pages-publisher
   cancel-in-progress: false
 env:
-  CANDIDATE: 0776f1281ed9e718dbe66e9cc4ec78d0a548c5d7
+  CANDIDATE: 6a608610c323f789e1ee22cfcf4f8caac4567d0e
 jobs:
   isolated_acceptance:
     if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview'
@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: ${{ env.CANDIDATE }}
-          fetch-depth: 2
+          fetch-depth: 4
           persist-credentials: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
@@ -30,13 +30,15 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$CANDIDATE"
-          test "$(git rev-parse HEAD^)" = afbac1358e782b588d222960eebb03f170a026bb
+          test "$(git rev-parse HEAD~3)" = afbac1358e782b588d222960eebb03f170a026bb
           npm ci --ignore-scripts --no-audit --no-fund
           node tests/operations-v1-admin-dom.mjs
           node tests/operations-v1-public.mjs
           node --experimental-strip-types tests/operations-v1-checkout.mjs
           node --experimental-strip-types tests/p07b-checkout.mjs
           node tests/aftercare-admin.mjs
+          node tests/overseer68/order-date.mjs
+          node tests/p07b5-order-lifecycle.mjs
           node --experimental-strip-types tests/overseer68/aftercare.mjs
           node --check dist/checkout/checkout.mjs
           sha256sum supabase/migrations/*overseer*.sql

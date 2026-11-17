@@ -57,7 +57,7 @@ const origin=new URL(row.url).origin;
 const access=createPreviewAccess(origin,project,{clientId,clientSecret});
 await access.assertProtected();
 await accessGate(alias);
-for(const path of ['index.html','admin/delivery/index.html','admin/site-operations/index.html','admin/aftercare-direct/index.html','overseer-fixture.mjs']){
+for(const path of ['index.html','admin/delivery/index.html','admin/site-operations/index.html','admin/aftercare-direct/index.html','admin/orders/date-correction/index.html','overseer-fixture.mjs']){
  const r=await access.get('/'+path.replace(/index[.]html$/,'')),e=inventory.find(row=>row.path===path),b=Buffer.from(await r.arrayBuffer());
  assert.equal(hash(b),e.sha256,'Served bytes differed: '+path);
  if(path==='index.html'){
