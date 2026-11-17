@@ -89,7 +89,9 @@ jobs:
           node tests/release69b/assemble.mjs "$out"
           cmp docs/operations/release69b/ironclad69b-production.atomic.sql "$out/ironclad69b-production.atomic.sql"
           node tests/release69b/compose.mjs "$RUNNER_TEMP/verified-live" release-a-source release-b-source "$out"
-          find "$out/release-a-edges" -type f -name '*.ts' -print0 | xargs -0 -n1 node --check
+          while IFS= read -r -d '' file; do
+            node -e 'const fs=require("node:fs"),{stripTypeScriptTypes}=require("node:module");process.stdout.write(stripTypeScriptTypes(fs.readFileSync(process.argv[1],"utf8")))' "$file" | node --input-type=module --check
+          done < <(find "$out/release-a-edges" -type f -name '*.ts' -print0)
           node --experimental-strip-types tests/release69b/aftercare-off.mjs "$out/release-a-edges"
           (cd "$out" && sha256sum -c SHA256SUMS.txt)
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

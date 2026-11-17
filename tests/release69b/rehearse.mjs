@@ -112,7 +112,7 @@ async function concurrentReceiving(db){
  const before=await stock(db,component);
  await claims(db,'authenticated',admin);
  const write=(k,d)=>call(db,"select public.ironclad69_write($1,$2,$3)",[crypto.randomUUID(),k,d]);
- const supplier=await write('supplier',{name:'Synthetic concurrent supplier'});
+ const supplier=await write('supplier',{name:'Synthetic concurrent supplier',currency:'GBP'});
  const order=await write('purchase',{supplierId:supplier.id,reference:'SYNTHETIC-69B-CONCURRENT',method:'quantity',currency:'GBP',lines:[{componentId:component,quantity:1,unitMinor:400}]});
  await write('purchaseState',{id:order.id,state:'ordered'});
  const [line]=await call(db,"select public.ironclad69_read('purchaseLines',$1)",[{id:order.id}]);
