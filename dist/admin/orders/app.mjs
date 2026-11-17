@@ -14,8 +14,12 @@ import {channels} from './model.mjs';
 import {deploymentPath} from '../../deployment.mjs';
 import {createAdminAuth} from '../admin-auth.mjs';
 import {publicBackendConfig} from '../../backend/public-config.mjs';
-import {mountFinanceReport} from './finance-ui.mjs';
-import {mountFinancialOrder as mountFinanceWorkbench} from './financial-order.mjs';
+import {mountFinanceReport} from './finance-ui.mjs?v=eclipse68b';
+import {createFinancialRepository} from './financial-record.mjs';
+import {createEclipseLibraryRepository} from './eclipse-repository.mjs';
+import {mountEclipseSettings} from './eclipse-settings.mjs';
+import {financeSummary} from './eclipse-model.mjs';
+import {mountFinancialOrder as mountFinanceWorkbench} from './financial-order.mjs?v=eclipse68b';
 const $=selector=>document.querySelector(selector);
 let records=[],aftercare=[],aftercareUnavailable=false,financeReport=null;
 const aftercareView=new URLSearchParams(location.search).get('view')==='aftercare';
@@ -25,6 +29,32 @@ const creating=new URLSearchParams(location.search).get('new')==='external';
 if(creating)mountExternalOrderForm({repository:currentAdminOrderRepository()});
 const attempts=new URLSearchParams(location.search).get('view')==='attempts';
 for(const [key,label] of Object.entries(fulfilmentLabels)){const option=el('option',label);option.value=key;$('#order-filter').append(option);}
+const orderFinancials=new Map();
+let financialRows=[],financeRequest=null,financeEpoch=0,librarySettings=null;
+let financeFilter=null,financeLoad=null,financeMessage=null;
+function mountFinancialControls(){
+ const section=el('div',undefined,'eclipse-finance'),actions=el('div',undefined,'eclipse-actions'),filterWrap=el('label','Financial status ');
+ financeFilter=el('select');for(const state of ['All orders','Complete','Estimated','Needs review','Not recorded','Not checked']){const o=el('option',state);o.value=state;financeFilter.append(o);}
+ filterWrap.append(financeFilter);financeLoad=el('button','Load summaries for first 20 matching orders','button');financeLoad.type='button';
+ financeMessage=el('p','Financial summaries are private and load on request.');financeMessage.setAttribute('role','status');actions.append(filterWrap,financeLoad);section.append(actions,financeMessage);
+ $('#order-rows').closest('.table-wrap, .table-scroll, table').before(section);
+ financeFilter.addEventListener('change',render);
+ financeLoad.addEventListener('click',async()=>{
+  if(financeRequest||!financialRows.length)return;
+  const ids=financialRows.slice(0,20).map(o=>o.id),epoch=++financeEpoch;
+  financeRequest=createFinancialRepository();financeLoad.disabled=true;financeMessage.textContent='Loading current financial summaries…';
+  try{
+   const result=await financeRequest.batch(ids);if(epoch!==financeEpoch)return;
+   const scoped=new Map(result.records.map(x=>[x.orderId,financeSummary(x.document,x.orderBasisMatches)]));
+   orderFinancials.clear();for(const id of ids)orderFinancials.set(id,scoped.get(id)||{status:result.complete?'Not recorded':'Needs review'});
+   financeMessage.textContent=(result.complete?'Checked ':'Partially checked ')+ids.length+' matching orders. Narrow the Orders filters to check another group.';
+   render();
+  }catch(e){if(epoch===financeEpoch)financeMessage.textContent=e.message;}
+  finally{if(epoch===financeEpoch){financeRequest.dispose();financeRequest=null;financeLoad.disabled=!financialRows.length;}}
+ });
+ document.addEventListener('admin:conceal',()=>{financeEpoch++;financeRequest?.dispose();financeRequest=null;orderFinancials.clear();librarySettings?.dispose();financeMessage.textContent='Sign in again to check private financial summaries.';for(const cell of document.querySelectorAll('td.eclipse-order-financials'))cell.textContent='Not checked';});
+ librarySettings=mountEclipseSettings({root:$('#order-list'),repository:createEclipseLibraryRepository()});
+}
 const deliveryLabels={in_production:'In Production',ready_to_dispatch:'Ready to Dispatch',dispatched:'Dispatched',full_refund:'Refund Processed'};
 function appendEmailStatus(order){
  mountFinanceWorkbench({root:$('#detail-content'),order});
@@ -98,8 +128,19 @@ function render(){
  let rows=[],dateError='';
  try{rows=selectOrdersByDay(matched,{from:$('#order-from').value,to:$('#order-to').value,sort:$('#order-sort').value});}catch(error){dateError=error.message;}
  $('#orders-date-feedback').textContent=dateError;
+ if(!attempts){
+  if(!financeFilter)mountFinancialControls();
+  financialRows=rows;
+  financeLoad.disabled=!!financeRequest||!financialRows.length;
+  if(financeFilter.value!=='All orders')rows=rows.filter(o=>(orderFinancials.get(o.id)?.status||'Not checked')===financeFilter.value);
+ }
  $('#order-rows').replaceChildren();$('#orders-empty').hidden=!!rows.length||!!dateError;
- for(const order of rows){const row=el('tr'),cell=el('td'),link=el('a',order.reference);link.href=deploymentPath('/admin/orders/?id='+encodeURIComponent(order.id));cell.append(link);if(order.externalReference)cell.append(el('small',' · '+order.externalReference));row.append(cell,el('td',channels[order.channel]||order.channel),...[commercialOrderDay(order)||'Not recorded',order.customer.name||'Not supplied',money(order.pricing.total),paymentLabels[order.paymentStatus]||order.paymentStatus,isPaidOrder(order)?fulfilmentLabels[order.fulfilmentStatus]||order.fulfilmentStatus:'Checkout attempt'].map((value,index)=>{const cell=el('td',index===3||index===4?undefined:value,index===3||index===4?'order-state':'');if(index===3||index===4)cell.append(statusBadge(document,value,index===3&&['unpaid','partially_refunded'].includes(order.paymentStatus)||index===4&&['pending','ready_to_dispatch'].includes(order.fulfilmentStatus)?'warning':'neutral'));if(index===4&&order.paymentStatus==='partially_refunded'&&!order.partialRefundAcknowledged)cell.append(statusBadge(document,'Refund review required','warning'));return cell;}));$('#order-rows').append(row);}
+ for(const order of rows){const row=el('tr'),cell=el('td'),link=el('a',order.reference);link.href=deploymentPath('/admin/orders/?id='+encodeURIComponent(order.id));cell.append(link);if(order.externalReference)cell.append(el('small',' · '+order.externalReference));row.append(cell,el('td',channels[order.channel]||order.channel),...[commercialOrderDay(order)||'Not recorded',order.customer.name||'Not supplied',money(order.pricing.total),paymentLabels[order.paymentStatus]||order.paymentStatus,isPaidOrder(order)?fulfilmentLabels[order.fulfilmentStatus]||order.fulfilmentStatus:'Checkout attempt'].map((value,index)=>{const cell=el('td',index===3||index===4?undefined:value,index===3||index===4?'order-state':'');if(index===3||index===4)cell.append(statusBadge(document,value,index===3&&['unpaid','partially_refunded'].includes(order.paymentStatus)||index===4&&['pending','ready_to_dispatch'].includes(order.fulfilmentStatus)?'warning':'neutral'));if(index===4&&order.paymentStatus==='partially_refunded'&&!order.partialRefundAcknowledged)cell.append(statusBadge(document,'Refund review required','warning'));return cell;}));
+ const summaryCell=el('td',undefined,'eclipse-order-financials');
+ const summary=orderFinancials.get(order.id);
+ summaryCell.append(el('span',attempts?'Not applicable':summary?.status||'Not checked'));
+ if(summary?.contribution!=null)summaryCell.append(el('small',money(summary.contribution)+' contribution'+(summary.margin!=null?' · '+summary.margin+'% margin':'')));
+ row.insertBefore(summaryCell,row.children[5]);$('#order-rows').append(row);}
 }
 async function refresh(){if(document.querySelector('.external-order-edit,.external-dispatch-dialog[open]'))return;try{const repository=currentAdminOrderRepository();aftercareUnavailable=false;[records,aftercare]=await Promise.all([repository.list(),repository.aftercare?repository.aftercare().catch(()=>{aftercareUnavailable=true;return [];}):[]]);$('#order-message').textContent='';render();if(!creating&&!aftercareView&&!attempts){financeReport||=mountFinanceReport({root:$('#order-list')});financeReport.update(records);}}catch(error){$('#order-message').textContent=error.message;financeReport?.unavailable();}}
 $('#order-search').addEventListener('input',render);for(const id of ['order-filter','order-from','order-to','order-sort'])$('#'+id).addEventListener('change',render);
