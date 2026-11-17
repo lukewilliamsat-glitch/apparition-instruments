@@ -11,6 +11,7 @@ export function mountEclipseSettings({root,repository,document:d=globalThis.docu
  const button=(parent,label,act)=>{const n=make('button',label,'button');n.type='button';n.addEventListener('click',act);parent.append(n);return n;};
  function field(container,label,v,cb,type='text',options=[]){
   const l=make('label',label,'eclipse-field'),n=make(type==='select'?'select':'input');
+  n.setAttribute('aria-label',label);
   if(type==='select'){for(const [value,text] of options){const o=make('option',text);o.value=value;n.append(o);}n.value=v;}
   else {n.type=type;if(type==='checkbox')n.checked=v;else{n.value=v??'';n.maxLength=60;if(type==='number'){n.min='1';n.max='99';n.step='1';}}}
   n.addEventListener(type==='select'||type==='checkbox'?'change':'input',()=>cb(type==='checkbox'?n.checked:n.value));

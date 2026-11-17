@@ -37,7 +37,7 @@ function mountFinancialControls(){
  financeFilter=el('select');for(const state of ['All orders','Complete','Estimated','Needs review','Not recorded','Not checked']){const o=el('option',state);o.value=state;financeFilter.append(o);}
  filterWrap.append(financeFilter);financeLoad=el('button','Load summaries for first 20 matching orders','button');financeLoad.type='button';
  financeMessage=el('p','Financial summaries are private and load on request.');financeMessage.setAttribute('role','status');actions.append(filterWrap,financeLoad);section.append(actions,financeMessage);
- $('#order-rows').closest('.table-wrap, .table-scroll, table').before(section);
+ $('#order-rows').closest('.admin-table-scroll').before(section);
  financeFilter.addEventListener('change',render);
  financeLoad.addEventListener('click',async()=>{
   if(financeRequest||!financialRows.length)return;

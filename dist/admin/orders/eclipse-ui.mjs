@@ -22,7 +22,7 @@ export function mountEclipse({root,order,initialDocument,document:d=globalThis.d
   const wrap=make('label',label,'eclipse-field'),i=make('input');i.type=integer?'number':'text';
   if(integer){i.min='1';i.max='99';i.step='1';}
   if(money)i.inputMode='decimal';
-  i.maxLength=maxLength;i.value=value==null?'':money?decimalText(value,scale):String(value);
+  i.setAttribute('aria-label',label);i.maxLength=maxLength;i.value=value==null?'':money?decimalText(value,scale):String(value);
   i.addEventListener('input',()=>{
    try{
     let v=i.value.trim();
@@ -37,7 +37,7 @@ export function mountEclipse({root,order,initialDocument,document:d=globalThis.d
  function select(parent,label,choices,value,cb){
   const l=make('label',label,'eclipse-field'),s=make('select');
   for(const [key,name] of choices){const o=make('option',name);o.value=key;s.append(o);}
-  s.value=value;s.addEventListener('change',()=>{try{cb(s.value);invalid.delete(s);feedback.textContent='';}catch(e){invalid.add(s);feedback.textContent=e.message;}recalc();});l.append(s);parent.append(l);return s;
+  s.setAttribute('aria-label',label);s.value=value;s.addEventListener('change',()=>{try{cb(s.value);invalid.delete(s);feedback.textContent='';}catch(e){invalid.add(s);feedback.textContent=e.message;}recalc();});l.append(s);parent.append(l);return s;
  }
  function button(parent,label,cb){
   const b=make('button',label,'button');b.type='button';b.addEventListener('click',cb);parent.append(b);return b;
