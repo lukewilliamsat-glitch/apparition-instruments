@@ -1,0 +1,113 @@
+name: Eclipse Order Financials protected preview
+on:
+  push:
+    branches: [engineering/phoenix66-preview]
+    paths:
+      - '.github/workflows/eclipse68b-preview.yml'
+      - 'scripts/phoenix66/eclipse68b-preview.mjs'
+      - 'scripts/phoenix66/eclipse68b-candidate.txt'
+permissions:
+  contents: read
+concurrency:
+  group: phoenix66-pages-publisher
+  cancel-in-progress: false
+jobs:
+  isolated_acceptance:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      source: ${{ steps.verify.outputs.source }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: publisher-pin
+          persist-credentials: false
+      - name: Read the immutable publisher candidate pin
+        id: pin
+        run: |
+          set -euo pipefail
+          file=publisher-pin/scripts/phoenix66/eclipse68b-candidate.txt
+          test "$(wc -l < "$file")" -eq 1
+          candidate=$(cat "$file")
+          [[ $candidate =~ ^[a-f0-9]{40}$ ]]
+          remote_head=$(git -C publisher-pin ls-remote origin refs/heads/engineering/eclipse68b | cut -f1)
+          test "$candidate" = "$remote_head"
+          printf 'sha=%s\n' "$candidate" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ steps.pin.outputs.sha }}
+          fetch-depth: 12
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Verify source and targeted contracts
+        id: verify
+        env:
+          CANDIDATE: ${{ steps.pin.outputs.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$CANDIDATE"
+          git merge-base --is-ancestor afbac1358e782b588d222960eebb03f170a026bb HEAD
+          git merge-base --is-ancestor f277e1ec0f5ab4fb8630ad48ebf1efa81a7d8877 HEAD
+          printf 'source=%s\n' "$CANDIDATE" >> "$GITHUB_OUTPUT"
+          node tests/eclipse68b/model.mjs
+          node --check dist/admin/orders/app.mjs
+          node --check dist/admin/orders/financial-order.mjs
+          sha256sum supabase/migrations/20261117102331_eclipse_fulfilment_finance_v1.sql
+      - name: Render and exercise desktop, tablet and mobile with no external routes
+        run: |
+          set -euo pipefail
+          d="$RUNNER_TEMP/eclipse68b"
+          mkdir -p "$d" "$RUNNER_TEMP/eclipse68b-screens"
+          python3 tests/overseer68/package-preview.py "$d/site" --eclipse > "$d/inventory.json"
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install --prefix "$RUNNER_TEMP/eclipse68b-browser" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save playwright-core@1.56.1
+          chrome=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium)
+          sudo unshare --net bash -eu -c '
+            ip link set lo up
+            test -z "$(ip route show table main)"
+            test -z "$(ip -6 route show table main)"
+            exec runuser -u "$1" -- env -i PATH=/usr/bin:/bin HOME="$2" CHROME_BIN="$3" PLAYWRIGHT_MODULE="$2/eclipse68b-browser/node_modules/playwright-core/index.mjs" "$4" "$5" "$6" "$7"
+          ' _ "$(id -un)" "$RUNNER_TEMP" "$chrome" "$(command -v node)" "$PWD/tests/eclipse68b/browser.mjs" "$d/site" "$RUNNER_TEMP/eclipse68b-screens"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: eclipse68b-screenshots
+          path: ${{ runner.temp }}/eclipse68b-screens
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: eclipse68b-tested-fixture
+          path: ${{ runner.temp }}/eclipse68b
+          retention-days: 14
+          if-no-files-found: error
+  protected_preview:
+    needs: isolated_acceptance
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: phoenix66-preview
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: eclipse68b-tested-fixture
+          path: ${{ runner.temp }}/eclipse68b
+      - name: Prepare existing pinned Cloudflare uploader
+        run: npm install --prefix "$RUNNER_TEMP/cloudflare-uploader" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false wrangler@4.162.0
+      - name: Publish and verify the isolated Eclipse preview
+        env:
+          CANDIDATE: ${{ needs.isolated_acceptance.outputs.source }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
+          PHOENIX66_ACCESS_CLIENT_ID: ${{ secrets.PHOENIX66_ACCESS_CLIENT_ID }}
+          PHOENIX66_ACCESS_CLIENT_SECRET: ${{ secrets.PHOENIX66_ACCESS_CLIENT_SECRET }}
+          WRANGLER_BIN: ${{ runner.temp }}/cloudflare-uploader/node_modules/.bin/wrangler
+        run: node scripts/phoenix66/eclipse68b-preview.mjs "$RUNNER_TEMP/eclipse68b/site" "$RUNNER_TEMP/eclipse68b/inventory.json" "$CANDIDATE"
