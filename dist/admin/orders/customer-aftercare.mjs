@@ -1,4 +1,5 @@
 import {reviewDispatchEmail} from './email-review.mjs';
+import {openAftercareDirect} from './aftercare-direct.mjs';
 import {deploymentPath} from '../../deployment.mjs';
 const labels={due:'Due',upcoming:'Upcoming',sent:'Completed via Apparition email · Provider accepted',handled:'Handled externally',skipped:'Skipped',failed:'Failed · Review required',unknown:'Outcome uncertain · Review required',claimed:'Claimed · Review required',blocked:'Unavailable · Review required'};
 export const ukDay=value=>new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/London',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(value));
@@ -28,6 +29,8 @@ export function mountAftercarePanel(order,row,{document=globalThis.document,root
  if(row.notice)section.append(el('p',row.notice,'storage-note'));
  const actions=el('div',undefined,'dialog-actions');let busy=false;
  function button(text,fn){const b=el('button',text,'button');b.type='button';b.addEventListener('click',async()=>{if(busy)return;busy=true;for(const n of actions.querySelectorAll('button'))n.disabled=true;try{await fn();}catch(e){message.textContent=e.message;}finally{busy=false;for(const n of actions.querySelectorAll('button'))n.disabled=false;}});actions.append(b);}
+ if(row.channel==='EBAY'&&row.eligible&&!row.suppressed&&['due','claimed','sent','failed','unknown'].includes(row.state))
+  button('Aftercare Direct',async()=>{const notice=await openAftercareDirect(order,{document,history:()=>repository.aftercareDirectHistory(order.id)});if(notice){await refresh();message.textContent=notice;}});
  if(row.eligible&&row.state==='due'&&!row.suppressed)button('Preview Thank-You',async()=>{const notice=await review(order,{document,kind:'aftercare'});await refresh();if(notice)message.textContent=notice;});
  if(row.eligible&&['due','upcoming','failed','unknown'].includes(row.state)){
   for(const [action,title] of [...(['due','upcoming'].includes(row.state)?[['reschedule','Reschedule']]:[]),['handled','Mark as Handled'],['skip','Skip'],...(['WEBSITE','DIRECT'].includes(row.channel)&&!row.suppressed?[['suppress','No Aftercare Email']]:[])])button(title,async()=>{const input=await actionDialog(row,action,{document});if(!input)return;await repository.updateAftercare(row.orderId,row,action,input);await refresh();message.textContent='Aftercare updated. No message was sent.';});

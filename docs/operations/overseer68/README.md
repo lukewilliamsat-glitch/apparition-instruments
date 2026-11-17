@@ -1,0 +1,27 @@
+# Operation The Overseer
+
+The candidate is based on NIGHTFALL at afbac1358e782b588d222960eebb03f170a026bb. It does not activate Commerce, change production, or request Stripe Sandbox provisioning.
+
+## Staging release and review
+
+- Supabase: Free London project apparition-staging (prwmowexhonguvtiywsy). The existing transactional mail flag remains off. The new Aftercare endpoint is deployed in sink mode only; it cannot call SMTP on this project.
+- Protected visual preview: overseer.apparition-phoenix-preview.pages.dev. It exercises the candidate Admin modules with fictional, in-memory data and no backend access. SQL persistence and ACL checks are separate in tests/overseer68/staging-acceptance.sql. That file inserts synthetic staging-only fixtures and is never a production script.
+- Review Delivery Command: calculate £25 and £50 examples, edit method details, save a draft, and review activation. In staging the persisted draft is revision 3; legacy postage is effective following the rollback test. Verified £4.25 on a new unpaid order versus £3.99 on the older order.
+- Review Aftercare Direct: open the eBay order, pick a template, render the email, confirm the synthetic recipient, record the fixture attempt, and review history. The genuine staging SQL sink recorded one claim and rejected a duplicate; no email left staging. The browser preview does not sign into Supabase.
+- Review Operations Ascendant: inspect effective state, review/edit the staged schedule, open the draft notice, and filter the audit timeline. Staging persisted a future scheduled change, then an immediate synthetic pause; the authoritative checkout guard blocked new ordering and later reopened. The persisted historical row is retained and not restored into an expired draft.
+- The legacy wiring-kit split for Commerce-specific baskets remains intact. Existing order, inventory, checkout, News and fulfilment handlers are not replaced.
+
+## Reviewed migration identities
+
+| Filename | SHA-256 |
+| --- | --- |
+| 20261117092035_overseer_delivery_v1.sql | 669b6d1292f9dd012889c88115ba0b36c4431c9164c672673af213b1016aac5c |
+| 20261117092047_overseer_aftercare_direct_v1.sql | 12d1ea5a03050aed5fdac0267bd1ee4d44c9f83fa9bc3746e72b97d4a0e99bed |
+
+## Exact release gates and rollback
+
+1. Operations can ship separately as a frontend release after confirming the current production Admin shell, the public state RPC and the audit projections and permissions. No migration is needed for the redesign. Capture the current complete Cloudflare rollback and verify the served Admin and effective store state without writing a live schedule. File rollback restores the previous Admin interface; it does not change the saved operating state or audit.
+2. For Delivery, get separate approval for the exact migration and checkout Edge function deployment. Confirm the currently deployed legacy RPC matches the exact source marker, existing GB rate/threshold, and archived Order/Stripe compatibility. Apply with the active record unset so legacy rates still apply, validate ordinary, mixed and kit baskets plus stale reviewed amounts; only then publish the checkout frontend and verify it before the owner deliberately activates a saved rate. The checkout server calculates from validated order lines, persists the price and passes that amount to Stripe. The browser's expected postage is a comparison only. Revert new calculated orders to legacy pricing via the Admin action; preserve order amounts and audit history, then roll back files if necessary.
+3. Postage precedence: eligible methods use merchandise value and top-level quantities. A verified promo or free threshold waives the first method's base charge only; overrides apply as one largest qualifying product-specific minimum across repeated product/kit IDs, against every method. Configured kits use their assembly ID. Legacy does not introduce promotions. Future Commerce should pass discounted merchandise and the already validated order lines (resolved bundle components and matched-set parts when product floors are intended for them) through overseer_delivery.resolve after quote materialisation and before saving its order snapshot. This requires an explicit Commerce forward-port with quote/settlement acceptance; the accepted Sentinel code remains unchanged and its existing scalar delivery function does not yet read Overseer.
+4. Aftercare requires separate approval for its migration, Edge deployment and enabling both transport gates. Verify the configured authenticated SMTP account may send with exact From luke@apparitioninstruments.co.uk and that this sender is eligible to use the intended eBay seller relay. Use an owner-approved internal delivery test, then a permitted controlled relay test under separate authority if needed. Live buyer sending stays off until verified. The eBay order alias must be saved against an eligible paid, dispatched eBay order. Arbitrary external recipients, bulk sends, web links and contact details in message text are rejected. Existing manual-copy and eBay conversation fallback remains. SMTP acceptance does not prove eBay forwarding or inbox delivery. No retry after a claim; a failed or uncertain outcome requires manual audit review. Turn both mail gates off to rollback, retaining the claim history.
+5. No production mutation, send, activation or public publication is authorised by this operation. Check that NIGHTFALL remains the canonical production deployment and that the opened preview aliases are restricted by Cloudflare Access.

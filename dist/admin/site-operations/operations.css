@@ -1,1 +1,36 @@
 .admin-main #operations-status{min-height:1.7em}.operations-local-nav,.operations-actions{display:flex;flex-wrap:wrap;gap:12px;margin:18px 0}.operations-local-nav a,.operations-actions button,#new-post,#news-list button{min-height:44px;padding:12px 16px}.admin-main>section{border-top:1px solid #555044;padding:24px 0;scroll-margin-top:30px}.operations-fields{display:grid;gap:16px;max-width:900px}.operations-fields label{display:grid;gap:6px;min-width:0}.operations-fields input,.operations-fields textarea,.operations-fields select{width:100%;min-width:0;max-width:100%;box-sizing:border-box;font:inherit;padding:12px;min-height:44px;background:#191b16;color:#eee8db;border:1px solid #797362}.operations-fields .operations-check{display:flex;align-items:center}.operations-check input{width:22px;min-height:22px}.operations-news-layout{display:grid;grid-template-columns:minmax(180px,1fr) minmax(0,3fr);gap:32px}#news-list{display:grid;gap:10px;margin-top:18px}#news-list button{text-align:left;overflow-wrap:anywhere}#news-preview{border:1px solid #797362;padding:20px;margin-top:20px}.admin-main :focus-visible{outline:3px solid #c2a56a;outline-offset:4px}.admin-main p,.admin-main li{overflow-wrap:anywhere}#operations-audit li{padding:8px 0;line-height:1.6}@media(max-width:768px){.operations-news-layout{grid-template-columns:minmax(0,1fr)}.operations-actions button{flex:1 1 170px}.admin-main{min-width:0}}
+
+/* NOCTURNE Operations Ascendant; scoped to the Site Operations route. */
+.ops-workbench{--ops-gold:#e0ba7c;--ops-line:#504639;--ops-panel:#1b1916;--ops-muted:#c5bcab;max-width:none}
+.ops-hero,.ops-panel,.ops-capabilities>div{background:var(--ops-panel);border:1px solid var(--ops-line);border-radius:.65rem}
+.ops-hero{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;padding:clamp(1rem,3vw,1.85rem);border-inline-start:3px solid var(--ops-gold)}
+.ops-hero h2,.ops-panel h3{font:600 clamp(1.35rem,2.5vw,1.9rem)/1.15 system-ui,sans-serif;margin:.2rem 0 .75rem}
+.ops-kicker{font:700 .75rem/1.4 system-ui,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--ops-gold);margin:0}
+#store-current{font-size:1rem;margin:.25rem 0;color:#f2e8d8}
+#store-current[data-state="paused"]{color:#f1b0a3}
+#store-current[data-state="scheduled"]{color:#f0c98e}
+#ops-historical,.ops-preview>p:last-child,#ops-dirty{color:var(--ops-muted);font-size:.88rem}
+.ops-capabilities{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,8.5rem),1fr));gap:.65rem;margin:1rem 0}
+.ops-capabilities>div{padding:.7rem .8rem;min-width:0}
+.ops-capabilities dt{font-size:.78rem;color:var(--ops-muted)}
+.ops-capabilities dd{margin:.15rem 0 0;font-weight:650;font-size:.94rem}
+.ops-grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:1rem}
+.ops-panel{padding:clamp(.9rem,2vw,1.35rem);min-width:0}
+.ops-actions{display:flex;flex-wrap:wrap;gap:.55rem;margin:.7rem 0}
+.ops-workbench button,#ops-audit-more{min-height:44px;padding:.5rem .75rem}
+.ops-actions button[aria-pressed="true"]{border-color:var(--ops-gold);color:var(--ops-gold);background:#2a2318}
+.ops-mode{display:block;margin-block:.5rem 1rem}
+.ops-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}
+.ops-wide{grid-column:1/-1}
+.ops-notice{border:1px solid #7f6544;border-inline-start:3px solid var(--ops-gold);background:#282117;padding:.9rem}
+.ops-notice small,.ops-notice strong{display:block}
+.ops-notice strong{font-size:1.05rem}
+.ops-notice p{margin:.5rem 0;white-space:pre-wrap}
+.ops-audit-toolbar{display:flex;gap:.55rem;flex-wrap:wrap;align-items:end}
+#operations-audit{padding:0;list-style:none}
+#operations-audit li{border-block-end:1px solid #504639;padding:.68rem 0}
+#operations-audit li span,#operations-audit li time{color:#d4c7b1;font-size:.85rem}
+#operations-audit details pre{white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%}
+.ops-workbench [hidden],#ops-audit-more[hidden]{display:none}
+@media(max-width:800px){.ops-grid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:520px){.ops-hero{flex-direction:column}.ops-fields{grid-template-columns:minmax(0,1fr)}.ops-actions button{flex:1 0 8rem}}

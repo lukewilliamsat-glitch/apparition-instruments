@@ -25,18 +25,20 @@ export async function startCheckout(req:Request,env:Environment=Deno.env,request
  if(!supabaseUrl||!publicKey||!serviceKey)return err('Checkout database connection is unavailable.',503);
  let input:any;try{const raw=await req.text();if(raw.length>250000)return err('Basket is too large.');input=JSON.parse(raw);}catch{return err('Basket could not be read.');}
  if(!input||typeof input!=='object'||!Array.isArray(input.items)||input.items.length<1||input.items.length>10||typeof input.requestId!=='string'||!/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(input.requestId))return err('Invalid basket request.');
+ if(input.deliveryMethod!==undefined&&(typeof input.deliveryMethod!=='string'||!/^[a-z][a-z0-9-]{1,20}$/.test(input.deliveryMethod)||!Number.isSafeInteger(input.expectedDeliveryPence)||input.expectedDeliveryPence<0))return err('Choose a current UK delivery method.');
  const hasAuthorization=req.headers.has('Authorization');
  const owner=hasAuthorization?await verifiedCustomer(req,env,request):null;
  if(hasAuthorization&&!owner)return err('Your account session has expired. Sign in again or continue as a guest.',401);
  const storeError=await availability(supabaseUrl,serviceKey,request);if(storeError)return storeError;
  // This privileged RPC remains independently validating. Browser callers have no EXECUTE permission.
- const rpc=await request(supabaseUrl+'/rest/v1/rpc/create_guest_kit_order',{method:'POST',headers:{apikey:serviceKey,Authorization:'Bearer '+serviceKey,'Content-Type':'application/json'},body:JSON.stringify({p_request:{requestId:input.requestId,items:input.items,checkoutMode:'stripe',...(owner?{ownerUserId:owner.id}:{})}})});
+ const rpc=await request(supabaseUrl+'/rest/v1/rpc/create_guest_kit_order',{method:'POST',headers:{apikey:serviceKey,Authorization:'Bearer '+serviceKey,'Content-Type':'application/json'},body:JSON.stringify({p_request:{requestId:input.requestId,items:input.items,checkoutMode:'stripe',...(input.deliveryMethod===undefined?{}:{deliveryMethod:input.deliveryMethod}),...(owner?{ownerUserId:owner.id}:{})}})});
  if(!rpc.ok){const details=await rpc.json().catch(()=>({}));if(details?.message==='Orders are temporarily paused')return json({code:'STORE_PAUSED',message:'Orders are temporarily paused. '+String(details.details||'Your basket remains saved.').slice(0,1000)},409);const stale=/price|total|unavailable/i.test(details?.message||'');return err(stale?'The basket price or configuration has changed. Review your basket before checkout.':'Your basket could not be verified. Review your selections before checkout.',400);}
  const receipt=await rpc.json();if(!/^[0-9a-f-]{36}$/i.test(receipt?.id||'')||!/^AI-\d+$/.test(receipt?.reference||''))return err('Order validation response was incomplete.',502);
  const orderResponse=await request(supabaseUrl+'/rest/v1/orders?id=eq.'+encodeURIComponent(receipt.id)+'&select=id,reference,subtotal_pence,delivery_pence,total_pence,payment_status,status,stripe_checkout_session_id,owner_user_id,items',{headers:{apikey:serviceKey,Authorization:'Bearer '+serviceKey}});
  if(!orderResponse.ok)return err('Order could not be verified for checkout.',502);
  const order=(await orderResponse.json())?.[0];
  if(!order||order.reference!==receipt.reference||order.total_pence!==receipt.totalPence||order.status!=='pending'||order.payment_status!=='unpaid'||!Array.isArray(order.items)||!Number.isSafeInteger(order.subtotal_pence)||!Number.isSafeInteger(order.delivery_pence)||order.total_pence!==order.subtotal_pence+order.delivery_pence)return err('Order amount could not be verified.',502);
+ if(input.deliveryMethod!==undefined&&order.delivery_pence!==input.expectedDeliveryPence)return err('The delivery charge changed. Refresh your checkout before payment.',409);
  if((order.owner_user_id??null)!==(owner?.id??null))return err('This checkout request belongs to a different account. Start again with a fresh basket.',409);
  if(order.stripe_checkout_session_id)return err('This order already has a secure checkout. Refresh your basket before retrying.',409);
  const amount=order.items.reduce((sum:number,item:any)=>sum+item.unitPrice*item.quantity,0);
