@@ -1,0 +1,23 @@
+# Proving Grounds: reusable Commerce staging
+
+Accepted application: `2a70ebe09856044e2d19e7d6a28577698ac71122`. The dedicated Free Supabase project is `apparition-staging` (`prwmowexhonguvtiywsy`, London). Never run the staging scripts against any other project. The only supported frontend publishing target is the `staging` branch of the existing Access-protected `apparition-phoenix-preview` Pages project. The `commerce67` alias remains the independent fictional owner preview.
+
+## Reproduce and operate
+
+1. Replay the relevant catalogue, legacy orders, refunds, Operations and delivery-contract migrations from the accepted source on isolated Supabase. Omit the live canary and global mail activation, and omit pg_cron scheduling from the contact audit replay. Use only synthetic catalogue fixtures. Apply the unchanged Commerce Ascendant and Sentinel migrations and the accepted BLACK LEDGER financial migration from `b4d7e3708e1cd0153e922122fa2400f0c46d9ce7`. Apply the two staging SQL files here to enforce synthetic Auth identities, add two products, and accept only Sandbox Checkout session IDs.
+2. From this worktree run `node scripts/staging67b/build-edge.mjs "$PWD" /tmp/proving-edge` in a fresh output directory, then `node scripts/staging67b/test-guard.mjs /tmp/proving-edge`. Deploy the four generated entry points and their imports to the exact staging ref only. The original handlers and production migrations are unchanged. The generated webhook omits email transport. The HTTP wrapper forbids production hosts, live Stripe keys and session IDs, and redirects during server requests.
+3. In Stripe create a clean `Apparition Staging` Sandbox in the owner account. Configure its signed webhook to `https://prwmowexhonguvtiywsy.supabase.co/functions/v1/stripe-webhook` for `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.expired`, `refund.created`, `refund.updated`, and `refund.failed`. Store `STAGING_STRIPE_SECRET_KEY` and `STAGING_STRIPE_WEBHOOK_SECRET` directly in Supabase staging Edge Function secrets. Use a restricted test key with Checkout Sessions read/write and Refunds read. Keep refund, event replay and test-failure operations in the Sandbox operator account. Never use live keys or customer email addresses.
+4. Store the separately generated service secret `STAGING_COMMERCE_RECONCILE_SECRET` and the hostname-scoped widget secret `STAGING_TURNSTILE_SECRET` in the same store. Use staging Auth users ending in `@example.invalid` and designate only one test user in staging `admin_members` (test ordinary permissions with a separate non-Admin). Keep the provider flag `STAGING_PAYMENTS_ENABLED` and the staging `commerce67.control.enabled` state off while provisioning. Enable them in staging only after confirming the webhook identity, provider key mode and test account. Keep normal production keys out of all staging systems.
+5. Use the protected staging page for real catalogue reads, synthetic sign-in, Admin review, quotes and the authenticated Sandbox checkout. The Access-protected Commerce fixture remains the interface for fictional offer and measured-set walkthroughs. For hosted guest, legacy wiring kit, offer authoring and webhook/reconciliation scenarios, use the verified staging RPCs and a restricted provider test operator; the minimal staging page does not implement all of the fixture preview's authoring features. Record each genuine result separately from simulations.
+
+Migration SHA-256:
+
+| Migration | SHA-256 |
+| --- | --- |
+| `20261116213239_commerce_ascendant.sql` | `f42eefd7f0ae3bee36e06423bbf0ec5abc1779f784a1a87925fdf9fb5d72474f` |
+| `20261116221000_commerce_sentinel.sql` | `5222fc0f5bbb0a20ca597007730ebc4459b476d0747ae0196401de1230499743` |
+| `20261027140000_black_ledger_financial_v1.sql` | `a6025c33e9a2936ce61f35af4cf514e49585a2ccdcf1b3e57966e8ed5f63c996` |
+
+## Acceptance and future releases
+
+Before recommending production, run the full genuine provider matrix in [SENTINEL.md](SENTINEL.md), including signed duplicate/delayed events, paid/failed/expired/refunded sessions, dispatch recovery, Turnstile, reservation limits, single stock deduction, and Admin/BLACK LEDGER compatibility. Preserve the configured-kit mixed-basket restriction. The eventual delivery resolver remains `commerce67.delivery_pence`. Future delivery, Aftercare, Site Operations and inventory rehearsals should use this same isolated project with synthetic data; customer transport must stay off or point to a controlled test sink. Production activation and rollback remain separately authorised as described in SENTINEL.

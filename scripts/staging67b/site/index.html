@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Apparition Instruments · Staging</title>
+<link rel="stylesheet" href="/style.css">
+<script type="module" src="/app.mjs"></script>
+</head>
+<body>
+<main>
+<p class="badge">Protected staging · synthetic data only</p>
+<h1>Apparition Proving Grounds</h1>
+<p>Staging Supabase and Stripe Sandbox only. Do not enter real customer information.</p>
+<p id="status" role="status" aria-live="polite">Checking staged catalogue…</p>
+<section aria-labelledby="catalogue-heading">
+<h2 id="catalogue-heading">Staging catalogue</h2>
+<ul id="catalogue"></ul>
+</section>
+<section aria-labelledby="auth-heading">
+<h2 id="auth-heading">Staging Admin</h2>
+<form id="auth">
+<label>Synthetic email <input type="email" required name="email" placeholder="qa@example.invalid" autocomplete="username"></label>
+<label>Password <input type="password" required name="password" autocomplete="current-password"></label>
+<button>Sign in</button>
+</form>
+<button type="button" id="logout" hidden>Sign out</button>
+<div id="admin" hidden>
+<button type="button" id="inventory">Read inventory</button>
+<button type="button" id="orders">Read recent orders</button>
+<label>External order UUID <input id="finance-id" maxlength="36"></label>
+<button type="button" id="finance">Read Marketplace Economics</button>
+<label>Commerce administration <button type="button" id="commerce">Read offers and measurements</button></label>
+<pre id="admin-result" tabindex="0"></pre>
+</div>
+</section>
+<section aria-labelledby="stripe-heading">
+<h2 id="stripe-heading">Stripe Sandbox checkout</h2>
+<p>Checkout remains disabled until Sandbox credentials and webhook are installed and verified.</p>
+<form id="checkout">
+<label>Item kind <select name="kind"><option value="component">Component</option><option value="bundle">Bundle</option><option value="set">Matched set</option></select></label>
+<label>Staging component ID or offer UUID <input name="id" required maxlength="120" value="fixture-staging-cap"></label>
+<label>Quantity <input name="quantity" required type="number" min="1" max="60" value="1"></label>
+<label>Optional promotion code <input name="code" maxlength="32"></label>
+<label>Optional compatible add-on UUID <input name="addon" maxlength="36"></label>
+<button id="quote">Request quote</button>
+<button type="button" id="pay" disabled>Continue to Stripe Sandbox</button>
+</form>
+<pre id="quote-result" tabindex="0"></pre>
+</section>
+</main>
+</body>
+</html>
