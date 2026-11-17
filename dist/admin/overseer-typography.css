@@ -1,0 +1,53 @@
+/* Scoped to Overseer. Do not apply these sizes to storefront or other Admin pages. */
+:where(.overseer-preview,.overseer-delivery,.overseer-operations) {
+  font-size:.9375rem;
+  line-height:1.55;
+}
+:where(.overseer-preview,.overseer-delivery,.overseer-operations) h1,
+:where(.overseer-delivery,.overseer-operations) .admin-page-header h1 {
+  font-size:clamp(1.625rem,1.44rem + .45vw,1.875rem);
+  line-height:1.17;
+  letter-spacing:-.018em;
+}
+:where(.overseer-preview,.overseer-delivery,.overseer-operations) .ops-hero h2,
+:where(.overseer-preview,.overseer-delivery,.overseer-operations) .ops-panel>h2,
+:where(.overseer-preview,.overseer-delivery,.overseer-operations) .ops-panel>h3,
+.overseer-operations .admin-main>section>h2,
+.admin-page .aftercare-direct-dialog h2,
+.admin-page .order-date-dialog h2 {
+  font-size:clamp(1.125rem,1.06rem + .24vw,1.3125rem);
+  line-height:1.27;
+  letter-spacing:-.01em;
+}
+.overseer-preview .preview-card-grid strong,
+.overseer-operations .admin-main h3:not(.ops-panel>h3),
+.admin-page .order-date-correction h3,
+.admin-page .aftercare-direct-dialog h3 {
+  font-size:1rem;
+  line-height:1.35;
+}
+:where(.overseer-preview,.overseer-delivery,.overseer-operations) .ops-kicker,
+:where(.overseer-preview,.overseer-delivery,.overseer-operations) .ops-capabilities dt,
+:where(.overseer-preview,.overseer-delivery,.overseer-operations) .storage-note {
+  font-size:.8125rem;
+}
+:where(.overseer-preview,.overseer-delivery,.overseer-operations) .ops-capabilities dd,
+.overseer-operations #store-current {
+  font-size:.9375rem;
+  font-variant-numeric:tabular-nums;
+  overflow-wrap:anywhere;
+}
+.admin-page .aftercare-direct-dialog,
+.admin-page .order-date-dialog,
+.admin-page .order-date-correction {
+  font-size:.9375rem;
+  line-height:1.55;
+}
+:where(.overseer-preview,.overseer-delivery,.overseer-operations) .ops-hero,
+:where(.overseer-preview,.overseer-delivery,.overseer-operations) .ops-panel {
+  padding:clamp(.875rem,.75rem + .55vw,1.375rem);
+}
+@media(max-width:40rem){
+  :where(.overseer-preview,.overseer-delivery,.overseer-operations) .ops-hero h1,
+  :where(.overseer-delivery,.overseer-operations) .admin-page-header h1{margin-block-end:.45rem}
+}
