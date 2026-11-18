@@ -1,0 +1,31 @@
+name: CLOUD ANCHOR create reviewed tag only
+on:
+  push:
+    branches: [engineering/cloud-anchor74-tag-registration]
+    paths: ['.github/workflows/cloud-anchor74-tag-once.yml']
+permissions: {}
+concurrency:
+  group: cloud-anchor74-approved-tag-create
+  cancel-in-progress: false
+jobs:
+  create:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/cloud-anchor74-tag-registration' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    permissions:
+      contents: write
+    steps:
+      - name: Create the exact approved tag if it does not exist; never update it
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET: 'edb6f888b567e4fd63975d2eb59388b0d5d57e3f'
+          BLOB: '50824673c0adba135d6eea590120f1813db476d8'
+        run: |
+          set -euo pipefail
+          api="repos/$GITHUB_REPOSITORY"
+          path=".github/workflows/cloud-anchor74-production.yml"
+          tag="cloud-anchor74-approved"
+          gh api "$api/contents/$path?ref=$TARGET" | jq -e --arg blob "$BLOB" '.sha == $blob' >/dev/null
+          gh api --method POST "$api/git/refs" -f "ref=refs/tags/$tag" -f "sha=$TARGET" > "$RUNNER_TEMP/anchor-tag-created.json"
+          jq -e --arg sha "$TARGET" --arg ref "refs/tags/$tag" '.ref == $ref and .object.type == "commit" and .object.sha == $sha' "$RUNNER_TEMP/anchor-tag-created.json" >/dev/null
+          gh api "$api/git/ref/tags/$tag" | jq -e --arg sha "$TARGET" --arg ref "refs/tags/$tag" '.ref == $ref and .object.type == "commit" and .object.sha == $sha'
