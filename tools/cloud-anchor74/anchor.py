@@ -21,6 +21,11 @@ PROJECT = 'acdxpxvksvdwfajntzfx'
 LIMIT = 256 * 1024**2
 RECIPIENT = re.compile(r'age1[0-9a-z]{58}')
 SNAPSHOT = re.compile(r'[A-Fa-f0-9-]{8,80}')
+PROOF_GROUPS = ('schemas', 'relations', 'columns', 'counts', 'constraints', 'indexes',
+                'policies', 'triggers', 'functions', 'sequences', 'joins', 'role_memberships',
+                'admin_acl', 'core_extensions')
+COLUMN_KEYS = ('ns', 'rel', 'attname')
+COLUMN_FIELDS = ('type', 'attnotnull', 'attidentity', 'attgenerated', 'acl', 'default_expr')
 
 
 class Refusal(Exception):
@@ -183,6 +188,55 @@ def extract(work, sealed):
     return manifest
 
 
+def proof_mismatches(expected, actual):
+    require(all(isinstance(p, dict) and set(p) == set(PROOF_GROUPS) for p in (expected, actual)),
+            'unexpected recovery proof groups')
+    return [group for group in PROOF_GROUPS if actual[group] != expected[group]]
+
+
+def column_difference(expected, actual):
+    def index(rows):
+        require(isinstance(rows, list), 'invalid column proof')
+        out = {}
+        for row in rows:
+            require(isinstance(row, dict) and set(row) == set(COLUMN_KEYS + COLUMN_FIELDS)
+                    and all(isinstance(row[k], str) for k in COLUMN_KEYS), 'invalid column proof')
+            key = tuple(row[k] for k in COLUMN_KEYS)
+            require(key not in out, 'duplicate column proof identity')
+            out[key] = row
+        return out
+
+    before, after = index(expected), index(actual)
+    shared = before.keys() & after.keys()
+    counts = {'missing': len(before.keys() - after.keys()), 'added': len(after.keys() - before.keys())}
+    for field in COLUMN_FIELDS:
+        counts[field] = sum(before[key][field] != after[key][field] for key in shared)
+    if not any(counts.values()):
+        return 'ordering or representation differs'
+    return ', '.join(f'{field}={min(n, 9999)}' + ('+' if n > 9999 else '')
+                     for field, n in counts.items() if n)
+
+
+def verify_proof(expected, actual, env, proof_sql):
+    failures = proof_mismatches(expected, actual)
+    if not failures:
+        return
+    detail = ''
+    if 'columns' in failures:
+        detail = '; columns (' + column_difference(expected['columns'], actual['columns']) + ')'
+        # Probe a common managed search path to distinguish deparser visibility
+        # from persistence. A match here is diagnostic only, never acceptance.
+        try:
+            with_path = json.loads(psql('SET search_path TO pg_catalog, public, extensions;\n' + proof_sql,
+                                        env, 'isolated comparison probe failed'))
+            matched = [group for group in failures if group not in proof_mismatches(expected, with_path)]
+            if matched:
+                detail += '; alternate search-path match (diagnostic only): ' + ', '.join(matched)
+        except (Refusal, ValueError):
+            pass
+    raise Refusal('restore comparisons failed: ' + ', '.join(failures) + detail)
+
+
 def restore(work, mode, key, expected, source_run):
     offline()
     archive = EXCHANGE/'backup.age'
@@ -196,6 +250,8 @@ def restore(work, mode, key, expected, source_run):
     manifest = extract(work, work/'seal.tar')
     require(manifest['mode']==mode and manifest['capture_run']==source_run and manifest['project']==(PROJECT if mode=='production' else 'fixture-only'), 'archive belongs to a different capture or environment')
     expected_proof = json.loads((work/'proof.json').read_text())
+    require(isinstance(expected_proof, dict) and set(expected_proof) == set(PROOF_GROUPS),
+            'unexpected recovery proof groups')
     require(set(expected_proof['core_extensions']) == {'pgcrypto', 'uuid-ossp'}, 'restore extension scope not approved')
     roles = (work/'roles.sql').read_text()
     require(not re.search(r"(?im)^\s*(alter|create)\s+role\b[^\n]*\bpassword\s+(?:E)?'", roles), 'role archive contains a password value')
@@ -216,9 +272,9 @@ def restore(work, mode, key, expected, source_run):
         if re.search(rb'(?m)^CREATE SCHEMA public;', ddl):
             psql('drop schema public;', env, 'isolated public schema preparation failed')
         run(['pg_restore','--no-password','--exit-on-error','--single-transaction','--dbname=postgres',str(work/'scope.dump')], env=env, step='isolated scope restore failed')
-        actual = json.loads(psql((HOME/'proof.sql').read_text(), env, 'restored scope proof failed'))
-        for key in expected_proof:
-            require(actual.get(key) == expected_proof[key], 'restore comparison failed: ' + key)
+        proof_sql = (HOME/'proof.sql').read_text()
+        actual = json.loads(psql(proof_sql, env, 'restored scope proof failed'))
+        verify_proof(expected_proof, actual, env, proof_sql)
         if mode == 'synthetic':
             require(psql("select count(*) from auth.users where email='anchor-fictional-row-canary@example.invalid'",env,'fixture row check failed') == b'1', 'fixture row was not recovered')
         out = {'status':'passed', 'mode': mode, 'project': manifest['project'], 'capture_run': source_run, 'restore_run': git_run(),

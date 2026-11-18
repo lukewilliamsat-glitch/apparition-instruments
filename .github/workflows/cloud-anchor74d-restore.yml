@@ -1,0 +1,72 @@
+name: CLOUD ANCHOR 74D restore-only
+on:
+  workflow_dispatch:
+    inputs:
+      approved:
+        description: "I reviewed the exact restore source and the retained archive binding"
+        type: boolean
+        required: true
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: cloud-anchor74-production
+  cancel-in-progress: false
+jobs:
+  restore:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.event_name == 'workflow_dispatch' && github.ref == 'refs/tags/cloud-anchor74d-restore-approved' && github.run_attempt == 1 && inputs.approved
+    runs-on: ubuntu-24.04
+    environment: cloud-anchor74d-restore
+    timeout-minutes: 18
+    env:
+      CAPTURE_RUN: '44308479728'
+      RETAINED_RELEASE: ${{ vars.ANCHOR74D_RELEASE_ID }}
+      RETAINED_ASSET: ${{ vars.ANCHOR74D_ASSET_ID }}
+      RETAINED_BYTES: ${{ vars.ANCHOR74D_BYTES }}
+      EXPECTED_SHA256: ${{ vars.ANCHOR74D_ARCHIVE_SHA256 }}
+    steps:
+      - name: Check the exact approved source and retained archive binding
+        env:
+          APPROVED_SHA: ${{ vars.ANCHOR74D_APPROVED_SHA }}
+        run: |
+          set -euo pipefail
+          test -n "$APPROVED_SHA" && test "$GITHUB_SHA" = "$APPROVED_SHA"
+          binding=$(printf '%s\n' "$CAPTURE_RUN" "$RETAINED_RELEASE" "$RETAINED_ASSET" "$RETAINED_BYTES" "$EXPECTED_SHA256" | sha256sum)
+          test "${binding%% *}" = 'c32e8d2269fbba3e3d71389d067150cafb2875cac80783fb30e5e7f976d7d046'
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Prepare restore engine without secrets
+        run: |
+          set -euo pipefail
+          echo "ANCHOR_DIR=$(mktemp -d "$RUNNER_TEMP/anchor-production-XXXXXX")" >> "$GITHUB_ENV"
+          docker build --pull --build-arg ANCHOR_UID="$(id -u)" --tag anchor74:verified tools/cloud-anchor74
+      - name: Retrieve and authenticate the original retained ciphertext
+        env:
+          GH_TOKEN: ${{ secrets.ANCHOR74_VAULT_READ_TOKEN }}
+        run: bash tools/cloud-anchor74/vault.sh get "$ANCHOR_DIR" "$RETAINED_ASSET" "$RETAINED_RELEASE" "$EXPECTED_SHA256" "$CAPTURE_RUN" "$RETAINED_BYTES"
+      - name: Restore offline with the one-use verifier identity
+        env:
+          ANCHOR_RUN: ${{ github.run_id }}
+          ANCHOR_VERIFY_KEY: ${{ secrets.ANCHOR74_ONE_USE_VERIFY_AGE_IDENTITY }}
+        run: |
+          set -euo pipefail
+          printf '%s\n' "$ANCHOR_VERIFY_KEY" | bash tools/cloud-anchor74/host-run.sh "$ANCHOR_DIR" none production-restore "$EXPECTED_SHA256" "$CAPTURE_RUN"
+      - name: Record verified metadata, pending recovery suitability review
+        run: |
+          set -euo pipefail
+          jq -e --arg sha "$EXPECTED_SHA256" --arg capture "$CAPTURE_RUN" --arg run "$GITHUB_RUN_ID" \
+            '.status=="passed" and .mode=="production" and .project=="acdxpxvksvdwfajntzfx" and .archive_sha256==$sha and .capture_run==$capture and .restore_run==$run and (.checks|length)==14' "$ANCHOR_DIR/restore.json" >/dev/null
+          {
+            echo '### CLOUD ANCHOR candidate restore receipt'
+            echo 'Confirm archive retention, custody, exclusions and intervening transactions before approving for release.'
+            echo '```json'
+            cat "$ANCHOR_DIR/restore.json"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Remove local ciphertext and metadata
+        if: always()
+        run: |
+          set -euo pipefail
+          if [[ "${ANCHOR_DIR:-}" == "$RUNNER_TEMP"/anchor-production-* ]]; then rm -rf -- "$ANCHOR_DIR"; fi
