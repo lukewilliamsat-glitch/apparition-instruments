@@ -74,7 +74,8 @@ def native_mutations(env):
     first, second = map(json.loads, qualification.splitlines())
     differences = anchor.proof_mismatches(first, second)
     assert set(differences) == {'relations', 'columns', 'constraints', 'functions'}, differences
-    assert anchor.column_difference(first['columns'], second['columns']) == 'type=1'
+    changed = anchor.column_difference(first['columns'], second['columns'])
+    assert 'type=1' in changed and 'default_expr=1' in changed, changed
     print('PASS native: identical catalogs render different views, types, foreign keys and function signatures under different paths.')
     anchor.psql("""
       CREATE TABLE public.regression_test (id integer, value integer DEFAULT 1,
