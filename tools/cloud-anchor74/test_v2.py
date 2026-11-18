@@ -17,6 +17,7 @@ with tempfile.TemporaryDirectory(dir='/work') as folder:
             return json.loads(anchor.psql(sql, env, 'V2 regression observation failed'))
 
         anchor.psql('GRANT SELECT ON public.v2_view TO PUBLIC, authenticated, anon;', env, 'V2 ACL fixture setup failed')
+        anchor.psql('ALTER TABLE public.v2_item ADD COLUMN type_probe integer;', env, 'V2 type fixture setup failed')
         expected = observe()
         assert set(expected) == set(anchor.PROOF_GROUPS)
         assert expected == observe('SET search_path TO auth, public; SET TimeZone TO \'Pacific/Auckland\'; SET quote_all_identifiers TO on;')
@@ -27,7 +28,7 @@ with tempfile.TemporaryDirectory(dir='/work') as folder:
         assert any(c['type_schema']=='extensions' and c['type_name']=='citext' for c in expected['columns'])
         assert any(r['relpersistence']=='u' for r in expected['relations'])
         cases = [
-            ('columns', 'ALTER TABLE public.v2_item ALTER value TYPE bigint;'),
+            ('columns', 'ALTER TABLE public.v2_item ALTER type_probe TYPE bigint;'),
             ('columns', "ALTER TABLE public.v2_item ALTER code SET DEFAULT 'different';"),
             ('constraints','ALTER TABLE public.v2_item DROP CONSTRAINT v2_positive; ALTER TABLE public.v2_item ADD CONSTRAINT v2_positive CHECK (value >= 0) NOT VALID;'),
             ('indexes','DROP INDEX public.v2_idx; CREATE INDEX v2_idx ON public.v2_item(code DESC) WHERE value > 0;'),
@@ -41,8 +42,11 @@ with tempfile.TemporaryDirectory(dir='/work') as folder:
             ('relations','ALTER TABLE public.v2_item SET LOGGED;'),
             ('columns','REVOKE GRANT OPTION FOR SELECT (value) ON public.v2_item FROM authenticated;'),
         ]
-        for group, ddl in cases:
-            changed = observe(statements=[ddl])
+        for number, (group, ddl) in enumerate(cases, 1):
+            try:
+                changed = observe(statements=[ddl])
+            except anchor.Refusal as err:
+                raise AssertionError(f"synthetic DDL case {number} ({group}) failed") from err
             assert group in anchor.proof_mismatches(expected, changed), group
         print('PASS V2: changed display settings and ACL order compare equal; all 13 real mutations refused.')
     finally:
