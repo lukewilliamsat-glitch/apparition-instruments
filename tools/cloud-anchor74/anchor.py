@@ -35,6 +35,17 @@ DIAGNOSTIC_FIELDS = {
     'functions': (('nspname', 'proname', 'signature'), ('owner', 'acl', 'definition')),
 }
 ACL_GROUPS = ('relations', 'columns', 'functions')
+V2_PATH = 'pg_catalog'
+REQUIRED_EXTENSIONS = {'pgcrypto', 'uuid-ossp'}
+
+
+def extension_scope(proof, version):
+    names = set(proof['core_extensions'])
+    return REQUIRED_EXTENSIONS <= names <= (REQUIRED_EXTENSIONS | ({'citext'} if version == 2 else set()))
+
+
+def v2_read(body):
+    return 'BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY;\n' + body + '\nCOMMIT;'
 
 
 class Refusal(Exception):
@@ -113,7 +124,8 @@ def prime_production(work, config):
     ca = work / 'root.crt'
     ca.write_text(config['ca'] + '\n')
     return db_env(PGHOST=config['host'], PGUSER=config['user'], PGPASSWORD=config['password'], PGDATABASE='postgres', PGPORT='5432',
-                  PGSSLMODE='verify-full', PGSSLROOTCERT=str(ca), PGOPTIONS='-c default_transaction_read_only=on -c lock_timeout=15000 -c statement_timeout=180000')
+                  PGSSLMODE='verify-full', PGGSSENCMODE='disable', PGSSLROOTCERT=str(ca),
+                  PGOPTIONS='-c search_path=pg_catalog -c default_transaction_read_only=on -c lock_timeout=15000 -c statement_timeout=180000')
 
 
 def production_preflight(env, token):
@@ -129,7 +141,10 @@ def production_preflight(env, token):
     require(found == dict(readOnly='on', ssl=True, objects=0, vectorBuckets=0, vectorIndexes=0, externalTables=0), 'backup scope changed or read-only TLS could not be verified')
 
 
-def capture(work, env, recipients, mode):
+def capture(work, env, recipients, mode, version=2):
+    require(version == 2 or (version == 1 and mode == 'synthetic'), 'legacy capture is fixture-only')
+    proof_file = HOME / ('proof-v2.sql' if version == 2 else 'proof.sql')
+    proof_sql = proof_file.read_text()
     begin = now()
     server = psql("select current_setting('server_version')", env, 'source version query failed').decode()
     require(re.fullmatch(r'17\.6(?: [a-zA-Z0-9 .()+_-]{1,75})?', server), 'source is not the reviewed PostgreSQL 17.6')
@@ -143,14 +158,18 @@ def capture(work, env, recipients, mode):
             require(SNAPSHOT.fullmatch(token), 'could not acquire a consistent source snapshot')
             if mode == 'production':
                 production_preflight(env, token)
-            proof = json.loads(psql(snapshot_sql(token, (HOME / 'proof.sql').read_text()), env, 'source scope proof failed'))
-            require(proof['schemas'] == sorted(SCOPES) and set(proof['core_extensions']) == {'pgcrypto', 'uuid-ossp'}, 'required recovery schemas or extensions missing')
+            proof = json.loads(psql(snapshot_sql(token, proof_sql), env, 'source scope proof failed'))
+            require(proof['schemas'] == sorted(SCOPES) and extension_scope(proof, version), 'required recovery schemas or extensions missing')
             for c in proof['relations']:
                 require(c['relkind'] != 'f', 'foreign table requires a different recovery boundary')
             dump_args = ['pg_dump', '--no-password', '--format=custom', '--compress=gzip:3', '--snapshot=' + token,
                          '--exclude-table=storage.buckets_vectors', '--exclude-table=storage.vector_indexes',
                          '--exclude-extension=*', '--no-tablespaces', '--file=' + str(work/'scope.dump')]
             run(dump_args + ['--schema=' + scope for scope in SCOPES], env=env, step='scope export failed; no archive retained')
+            if version == 2:
+                # Sequences are not MVCC state. Refuse observed drift surrounding the dump.
+                after = json.loads(psql(snapshot_sql(token, proof_sql), env, 'source proof recheck failed'))
+                require(not proof_mismatches(proof, after), 'source proof drifted during dump; no archive retained')
             if mode == 'production':
                 production_preflight(env, token)
             keeper.stdin.write("rollback;\n\\q\n")
@@ -163,10 +182,12 @@ def capture(work, env, recipients, mode):
         run(['pg_dumpall', '--roles-only', '--no-role-passwords', '--no-password'], env=env, output=f, step='password-free role export failed')
     (work/'proof.json').write_text(json.dumps(proof, sort_keys=True, separators=(',', ':')))
     manifest = {
-        'version': 1, 'project': PROJECT if mode == 'production' else 'fixture-only', 'mode': mode, 'capture_run': git_run(),
+        'version': version, 'project': PROJECT if mode == 'production' else 'fixture-only', 'mode': mode, 'capture_run': git_run(),
         'started_utc': begin, 'finished_utc': now(), 'database': server, 'bootstrap_role': bootstrap, 'pg_dump': run(['pg_dump','--version'], step='PG tool unavailable').decode().strip(),
         'scopes': list(SCOPES), 'hashes': {name: sha(work/name) for name in MEMBERS[:-1]}
     }
+    if version == 2:
+        manifest.update(proof_search_path=V2_PATH, proof_sha256=sha(proof_file))
     (work/'manifest.json').write_text(json.dumps(manifest, sort_keys=True))
     require(sum((work/name).stat().st_size for name in MEMBERS) < LIMIT, 'backup beyond the reviewed 256 MiB bound')
     with tarfile.open(work/'seal.tar', 'w', format=tarfile.USTAR_FORMAT) as tf:
@@ -192,7 +213,8 @@ def extract(work, sealed):
             with tf.extractfile(f) as source, (work/f.name).open('xb') as dest:
                 shutil.copyfileobj(source, dest)
     manifest = json.loads((work/'manifest.json').read_text())
-    require(manifest['version'] == 1 and set(manifest['hashes']) == set(MEMBERS[:-1]), 'invalid backup manifest')
+    require(type(manifest['version']) is int and manifest['version'] in (1, 2)
+            and set(manifest['hashes']) == set(MEMBERS[:-1]), 'invalid backup manifest')
     require(all(sha(work/name)==expected for name,expected in manifest['hashes'].items()), 'member digest mismatch')
     return manifest
 
@@ -310,7 +332,7 @@ def verify_proof(expected, actual, env, proof_sql):
     raise Refusal('restore comparisons failed: ' + ', '.join(failures) + detail)
 
 
-def restore(work, mode, key, expected, source_run):
+def restore(work, mode, key, expected, source_run, required_version=None):
     offline()
     archive = EXCHANGE/'backup.age'
     require(re.fullmatch(r'[a-f0-9]{64}', expected) and 0 < archive.stat().st_size <= LIMIT and sha(archive)==expected, 'retained archive integrity mismatch')
@@ -322,10 +344,16 @@ def restore(work, mode, key, expected, source_run):
     require((work/'seal.tar').stat().st_size<=LIMIT, 'decrypted archive beyond safety bound')
     manifest = extract(work, work/'seal.tar')
     require(manifest['mode']==mode and manifest['capture_run']==source_run and manifest['project']==(PROJECT if mode=='production' else 'fixture-only'), 'archive belongs to a different capture or environment')
+    version = manifest['version']
+    require(required_version is None or version == required_version, 'unexpected archive proof version')
+    proof_file = HOME / ('proof-v2.sql' if version == 2 else 'proof.sql')
+    if version == 2:
+        require(manifest.get('proof_search_path') == V2_PATH and manifest.get('proof_sha256') == sha(proof_file)
+                and manifest.get('scopes') == list(SCOPES), 'invalid V2 proof profile')
     expected_proof = json.loads((work/'proof.json').read_text())
     require(isinstance(expected_proof, dict) and set(expected_proof) == set(PROOF_GROUPS),
             'unexpected recovery proof groups')
-    require(set(expected_proof['core_extensions']) == {'pgcrypto', 'uuid-ossp'}, 'restore extension scope not approved')
+    require(extension_scope(expected_proof, version), 'restore extension scope not approved')
     roles = (work/'roles.sql').read_text()
     require(not re.search(r"(?im)^\s*(alter|create)\s+role\b[^\n]*\bpassword\s+(?:E)?'", roles), 'role archive contains a password value')
     # PostgreSQL 17 grants explicitly reference grantors. Initialise with the source bootstrap
@@ -345,15 +373,24 @@ def restore(work, mode, key, expected, source_run):
         if re.search(rb'(?m)^CREATE SCHEMA public;', ddl):
             psql('drop schema public;', env, 'isolated public schema preparation failed')
         run(['pg_restore','--no-password','--exit-on-error','--single-transaction','--dbname=postgres',str(work/'scope.dump')], env=env, step='isolated scope restore failed')
-        proof_sql = (HOME/'proof.sql').read_text()
-        actual = json.loads(psql(proof_sql, env, 'restored scope proof failed'))
-        acl_matches = verify_proof(expected_proof, actual, env, proof_sql)
+        proof_sql = proof_file.read_text()
+        if version == 2:
+            actual = json.loads(psql(v2_read(proof_sql), env, 'restored V2 scope proof failed'))
+            mismatches = proof_mismatches(expected_proof, actual)
+            require(not mismatches, 'V2 recovery comparison failed: ' + ', '.join(mismatches))
+            acl_matches = []
+        else:
+            actual = json.loads(psql(proof_sql, env, 'restored V1 scope proof failed'))
+            acl_matches = verify_proof(expected_proof, actual, env, proof_sql)
         if mode == 'synthetic':
             require(psql("select count(*) from auth.users where email='anchor-fictional-row-canary@example.invalid'",env,'fixture row check failed') == b'1', 'fixture row was not recovered')
         out = {'status':'passed', 'mode': mode, 'project': manifest['project'], 'capture_run': source_run, 'restore_run': git_run(),
                'restored_utc': now(), 'archive_sha256': expected, 'restore_server': psql("select current_setting('server_version')",env,'restore server not verified').decode(),
                'checks': sorted(expected_proof), 'acl_order_equivalent': acl_matches,
                'network': 'loopback only, no provider credentials'}
+        out.update(proof_version=version)
+        if version == 2:
+            out.update(proof_search_path=V2_PATH, proof_sha256=manifest['proof_sha256'])
         (EXCHANGE/'restore.json').write_text(json.dumps(out, sort_keys=True))
         print('Retained ciphertext restored and all aggregate checks passed.')
     finally:
@@ -370,6 +407,7 @@ def main():
             db, env = start_local(work, 'anchor_fixture_source')
             try:
                 psql((HOME/'fixture.sql').read_text(), env, 'synthetic setup failed')
+                psql((HOME/'fixture-v2.sql').read_text(), env, 'synthetic V2 metadata setup failed')
                 capture(work, env, [os.environ['ANCHOR_PUBLIC_FIXTURE']], 'synthetic')
             finally:
                 stop_local(db)
@@ -378,8 +416,9 @@ def main():
             recipients = conf.pop('recipients')
             require(len(recipients) == 2, 'owner and verifier recipients required')
             capture(work, prime_production(work, conf), recipients, 'production')
-        elif mode in ('fixture-restore', 'production-restore'):
-            restore(work, 'synthetic' if mode.startswith('fixture-') else 'production', sys.stdin.read(160), sys.argv[2], sys.argv[3])
+        elif mode in ('fixture-restore', 'production-restore', 'production-restore-v2'):
+            restore(work, 'synthetic' if mode.startswith('fixture-') else 'production',
+                    sys.stdin.read(160), sys.argv[2], sys.argv[3], 2 if mode == 'production-restore-v2' else None)
         else:
             raise Refusal('unknown operation')
 

@@ -146,7 +146,7 @@ def native():
                     if managed_path:
                         anchor.psql('ALTER DATABASE postgres SET search_path TO public, extensions;',
                                     env, 'fixture source search_path setup failed')
-                    anchor.capture(source, env, [recipient], 'synthetic')
+                    anchor.capture(source, env, [recipient], 'synthetic', version=1)
                 finally:
                     anchor.stop_local(db)
                 digest = anchor.sha(exchange / 'backup.age')
