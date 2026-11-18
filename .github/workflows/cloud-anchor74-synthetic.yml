@@ -39,9 +39,7 @@ jobs:
           ANCHOR_PUBLIC_FIXTURE=$(docker run --rm -i --network none --entrypoint age-keygen anchor74:verified -y < "$out/fixture-key")
           export ANCHOR_PUBLIC_FIXTURE
           mkdir -m 700 "$out/upload"
-          docker run --rm --user "$(id -u):$(id -g)" --network none \
-            --tmpfs /work:rw,noswap,size=1536m,mode=1777 -v "$src:/anchor:ro" -v "$out/upload:/exchange:rw" \
-            -e ANCHOR_RUN -e ANCHOR_PUBLIC_FIXTURE anchor74:verified fixture-capture
+          bash "$src/host-run.sh" "$out/upload" none fixture-capture
           test "$(find "$out/upload" -mindepth 1 -maxdepth 1 -type f -printf '%f\n' | sort | paste -sd, -)" = 'backup.age,capture.json'
           python3 - "$out/upload" "$GITHUB_ENV" <<'PY'
           import hashlib,json,pathlib,sys
@@ -82,21 +80,19 @@ jobs:
           src="$PWD/tools/cloud-anchor74"
           exchange="$ANCHOR_FIXTURE_DIR/retrieved"
           verify() {
-            docker run --rm -i --user "$(id -u):$(id -g)" "$1" \
-              --tmpfs /work:rw,noswap,size=1536m,mode=1777 -v "$src:/anchor:ro" -v "$exchange:/exchange:rw" \
-              -e ANCHOR_RUN anchor74:verified fixture-restore "$2" "$3" < "$4"
+            bash "$src/host-run.sh" "$exchange" "$1" fixture-restore "$2" "$3" < "$4"
           }
           wrong="$ANCHOR_FIXTURE_DIR/wrong-key"
           docker run --rm --network none --entrypoint age-keygen anchor74:verified 2>/dev/null | sed -n '/^AGE-SECRET-KEY-1/p' > "$wrong"
-          if verify --network=none "$ANCHOR_FIXTURE_SHA" "$ANCHOR_RUN" "$wrong"; then exit 1; fi
-          if verify --network=bridge "$ANCHOR_FIXTURE_SHA" "$ANCHOR_RUN" "$ANCHOR_FIXTURE_DIR/fixture-key"; then exit 1; fi
+          if verify none "$ANCHOR_FIXTURE_SHA" "$ANCHOR_RUN" "$wrong"; then exit 1; fi
+          if verify bridge "$ANCHOR_FIXTURE_SHA" "$ANCHOR_RUN" "$ANCHOR_FIXTURE_DIR/fixture-key"; then exit 1; fi
           cp "$exchange/backup.age" "$ANCHOR_FIXTURE_DIR/good.age"
           printf 'tampered' >> "$exchange/backup.age"
-          if verify --network=none "$ANCHOR_FIXTURE_SHA" "$ANCHOR_RUN" "$ANCHOR_FIXTURE_DIR/fixture-key"; then exit 1; fi
+          if verify none "$ANCHOR_FIXTURE_SHA" "$ANCHOR_RUN" "$ANCHOR_FIXTURE_DIR/fixture-key"; then exit 1; fi
           mv "$ANCHOR_FIXTURE_DIR/good.age" "$exchange/backup.age"
-          if verify --network=none "$ANCHOR_FIXTURE_SHA" 999999 "$ANCHOR_FIXTURE_DIR/fixture-key"; then exit 1; fi
+          if verify none "$ANCHOR_FIXTURE_SHA" 999999 "$ANCHOR_FIXTURE_DIR/fixture-key"; then exit 1; fi
           test ! -e "$exchange/restore.json"
-          verify --network=none "$ANCHOR_FIXTURE_SHA" "$ANCHOR_RUN" "$ANCHOR_FIXTURE_DIR/fixture-key"
+          verify none "$ANCHOR_FIXTURE_SHA" "$ANCHOR_RUN" "$ANCHOR_FIXTURE_DIR/fixture-key"
           mkdir -m 700 "$ANCHOR_FIXTURE_DIR/receipt"
           mv "$exchange/restore.json" "$ANCHOR_FIXTURE_DIR/receipt/restore.json"
           jq -e '.status=="passed" and .project=="fixture-only" and (.checks|length)>=10' "$ANCHOR_FIXTURE_DIR/receipt/restore.json" >/dev/null

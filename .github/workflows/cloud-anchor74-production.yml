@@ -1,0 +1,132 @@
+name: ANCHOR Production Backup and Recovery
+on:
+  workflow_dispatch:
+    inputs:
+      approved:
+        description: "Only after the named private vault, key custody, source SHA and owner confirmation have been verified"
+        required: true
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: cloud-anchor74-production
+  cancel-in-progress: false
+jobs:
+  capture:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.event_name == 'workflow_dispatch' && github.ref == 'refs/tags/cloud-anchor74-approved' && github.run_attempt == 1 && inputs.approved
+    runs-on: ubuntu-24.04
+    environment: cloud-anchor74-capture
+    timeout-minutes: 18
+    outputs:
+      asset: ${{ steps.retain.outputs.asset }}
+      release: ${{ steps.retain.outputs.release }}
+      sha256: ${{ steps.retain.outputs.sha256 }}
+      bytes: ${{ steps.retain.outputs.bytes }}
+      minimum_retain_until: ${{ steps.retain.outputs.minimum_retain_until }}
+      capture_start: ${{ steps.retain.outputs.capture_start }}
+      capture_finish: ${{ steps.retain.outputs.capture_finish }}
+      pg_dump: ${{ steps.retain.outputs.pg_dump }}
+    steps:
+      - name: Reject a missing or different owner-approved commit
+        env:
+          APPROVED_SHA: ${{ vars.ANCHOR74_APPROVED_SHA }}
+        run: test -n "$APPROVED_SHA" && test "$GITHUB_SHA" = "$APPROVED_SHA"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Prepare tools without secrets
+        run: |
+          set -euo pipefail
+          echo "ANCHOR_DIR=$(mktemp -d "$RUNNER_TEMP/anchor-production-XXXXXX")" >> "$GITHUB_ENV"
+          docker build --pull --build-arg ANCHOR_UID="$(id -u)" --tag anchor74:verified tools/cloud-anchor74
+      - name: Confirm private recovery destination before reading production
+        env:
+          GH_TOKEN: ${{ secrets.ANCHOR74_VAULT_WRITE_TOKEN }}
+        run: bash tools/cloud-anchor74/vault.sh check "$ANCHOR_DIR"
+      - name: Capture scoped, read-only PostgreSQL snapshot and seal in non-swap memory
+        env:
+          ANCHOR_RUN: ${{ github.run_id }}
+          ANCHOR_HOST: ${{ vars.ANCHOR74_DB_POOLER_HOST }}
+          ANCHOR_USER: ${{ vars.ANCHOR74_DB_POOLER_USER }}
+          ANCHOR_OWNER: ${{ vars.ANCHOR74_OWNER_AGE_RECIPIENT }}
+          ANCHOR_VERIFY: ${{ vars.ANCHOR74_VERIFY_AGE_RECIPIENT }}
+          ANCHOR_PASSWORD: ${{ secrets.ANCHOR74_DB_PASSWORD }}
+          ANCHOR_CA: ${{ secrets.ANCHOR74_DB_CA_PEM }}
+        run: |
+          set -euo pipefail
+          src="$PWD/tools/cloud-anchor74"
+          python3 -c 'import json,os,sys; json.dump(dict(host=os.environ["ANCHOR_HOST"],user=os.environ["ANCHOR_USER"],password=os.environ["ANCHOR_PASSWORD"],ca=os.environ["ANCHOR_CA"],recipients=[os.environ["ANCHOR_OWNER"],os.environ["ANCHOR_VERIFY"]]),sys.stdout)' |
+            bash "$src/host-run.sh" "$ANCHOR_DIR" bridge production-capture
+      - name: Retain ciphertext in the separate private vault
+        id: retain
+        env:
+          GH_TOKEN: ${{ secrets.ANCHOR74_VAULT_WRITE_TOKEN }}
+        run: bash tools/cloud-anchor74/vault.sh put "$ANCHOR_DIR" "$GITHUB_RUN_ID"
+      - name: Remove local ciphertext and metadata
+        if: always()
+        run: |
+          if [[ "${ANCHOR_DIR:-}" == "$RUNNER_TEMP"/anchor-production-* ]]; then rm -rf -- "$ANCHOR_DIR"; fi
+  restore:
+    needs: capture
+    if: github.ref == 'refs/tags/cloud-anchor74-approved' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    environment: cloud-anchor74-restore
+    env:
+      EXPECTED_SHA256: ${{ needs.capture.outputs.sha256 }}
+      RETAINED_ASSET: ${{ needs.capture.outputs.asset }}
+      RETAINED_RELEASE: ${{ needs.capture.outputs.release }}
+      RETAINED_BYTES: ${{ needs.capture.outputs.bytes }}
+      RETAIN_THROUGH: ${{ needs.capture.outputs.minimum_retain_until }}
+      CAPTURE_START: ${{ needs.capture.outputs.capture_start }}
+      CAPTURE_FINISH: ${{ needs.capture.outputs.capture_finish }}
+      PG_VERSION_USED: ${{ needs.capture.outputs.pg_dump }}
+    steps:
+      - name: Reject a missing or different owner-approved commit
+        env:
+          APPROVED_SHA: ${{ vars.ANCHOR74_APPROVED_SHA }}
+        run: test -n "$APPROVED_SHA" && test "$GITHUB_SHA" = "$APPROVED_SHA"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Prepare restore engine without secrets
+        run: |
+          set -euo pipefail
+          echo "ANCHOR_DIR=$(mktemp -d "$RUNNER_TEMP/anchor-production-XXXXXX")" >> "$GITHUB_ENV"
+          docker build --pull --build-arg ANCHOR_UID="$(id -u)" --tag anchor74:verified tools/cloud-anchor74
+      - name: Retrieve and verify the retained ciphertext, not a runner copy
+        env:
+          GH_TOKEN: ${{ secrets.ANCHOR74_VAULT_READ_TOKEN }}
+        run: bash tools/cloud-anchor74/vault.sh get "$ANCHOR_DIR" "$RETAINED_ASSET" "$RETAINED_RELEASE" "$EXPECTED_SHA256" "$GITHUB_RUN_ID" "$RETAINED_BYTES"
+      - name: Restore offline with the one-use verifier identity
+        env:
+          ANCHOR_RUN: ${{ github.run_id }}
+          ANCHOR_VERIFY_KEY: ${{ secrets.ANCHOR74_ONE_USE_VERIFY_AGE_IDENTITY }}
+        run: |
+          set -euo pipefail
+          src="$PWD/tools/cloud-anchor74"
+          printf '%s\n' "$ANCHOR_VERIFY_KEY" | bash "$src/host-run.sh" "$ANCHOR_DIR" none production-restore "$EXPECTED_SHA256" "$GITHUB_RUN_ID"
+      - name: Record metadata, pending review and independent custody sign-off
+        run: |
+          set -euo pipefail
+          jq -e --arg sha "$EXPECTED_SHA256" '.status=="passed" and .project=="acdxpxvksvdwfajntzfx" and .archive_sha256==$sha' "$ANCHOR_DIR/restore.json" > /dev/null
+          {
+            echo '### CLOUD ANCHOR candidate recovery receipt'
+            echo 'A restore passed. Confirm custody, exclusions and intervening transactions before approving this for release.'
+            printf '\nCapture UTC: %s to %s. Dumper: %s.\n\n' "$CAPTURE_START" "$CAPTURE_FINISH" "$PG_VERSION_USED"
+            printf 'Private release identity: %s. Archive identity: %s. Stored bytes: %s.\n\n' "$RETAINED_RELEASE" "$RETAINED_ASSET" "$RETAINED_BYTES"
+            printf 'No automatic expiry; keep until at least %s. Age X25519 with ChaCha20-Poly1305.\n\n' "$RETAIN_THROUGH"
+            printf 'Scope: public, forge_private, auth, storage metadata, supabase_migrations and roles without passwords.\n\n'
+            printf 'Excluded: Storage object bytes, Vault/Cron/Net/Realtime service state and external configuration.\n\n'
+            printf 'Owner custody and overall recovery suitability: pending review. Export uses PostgreSQL tools; no Supabase CLI execution.\n\n'
+            echo '```json'
+            cat "$ANCHOR_DIR/restore.json"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Remove local ciphertext and metadata
+        if: always()
+        run: |
+          if [[ "${ANCHOR_DIR:-}" == "$RUNNER_TEMP"/anchor-production-* ]]; then rm -rf -- "$ANCHOR_DIR"; fi
