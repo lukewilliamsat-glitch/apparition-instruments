@@ -26,6 +26,15 @@ PROOF_GROUPS = ('schemas', 'relations', 'columns', 'counts', 'constraints', 'ind
                 'admin_acl', 'core_extensions')
 COLUMN_KEYS = ('ns', 'rel', 'attname')
 COLUMN_FIELDS = ('type', 'attnotnull', 'attidentity', 'attgenerated', 'acl', 'default_expr')
+DIAGNOSTIC_FIELDS = {
+    'relations': (('ns', 'rel'), ('relkind', 'relrowsecurity', 'relforcerowsecurity', 'owner', 'acl', 'view_definition')),
+    'columns': (COLUMN_KEYS, COLUMN_FIELDS),
+    'constraints': (('ns', 'rel', 'conname'), ('rule', 'convalidated')),
+    'indexes': (('ns', 'rel', 'name'), ('definition', 'indisvalid')),
+    'policies': (('schemaname', 'tablename', 'policyname'), ('permissive', 'roles', 'cmd', 'qual', 'with_check')),
+    'functions': (('nspname', 'proname', 'signature'), ('owner', 'acl', 'definition')),
+}
+ACL_GROUPS = ('relations', 'columns', 'functions')
 
 
 class Refusal(Exception):
@@ -194,22 +203,24 @@ def proof_mismatches(expected, actual):
     return [group for group in PROOF_GROUPS if actual[group] != expected[group]]
 
 
-def column_difference(expected, actual):
+def field_difference(expected, actual, keys, fields):
     def index(rows):
-        require(isinstance(rows, list), 'invalid column proof')
+        if rows is None:  # jsonb_agg returns NULL for an empty group.
+            return {}
+        require(isinstance(rows, list), 'invalid metadata proof')
         out = {}
         for row in rows:
-            require(isinstance(row, dict) and set(row) == set(COLUMN_KEYS + COLUMN_FIELDS)
-                    and all(isinstance(row[k], str) for k in COLUMN_KEYS), 'invalid column proof')
-            key = tuple(row[k] for k in COLUMN_KEYS)
-            require(key not in out, 'duplicate column proof identity')
+            require(isinstance(row, dict) and set(row) == set(keys + fields)
+                    and all(isinstance(row[k], str) for k in keys), 'invalid metadata proof')
+            key = tuple(row[k] for k in keys)
+            require(key not in out, 'duplicate metadata proof identity')
             out[key] = row
         return out
 
     before, after = index(expected), index(actual)
     shared = before.keys() & after.keys()
     counts = {'missing': len(before.keys() - after.keys()), 'added': len(after.keys() - before.keys())}
-    for field in COLUMN_FIELDS:
+    for field in fields:
         counts[field] = sum(before[key][field] != after[key][field] for key in shared)
     if not any(counts.values()):
         return 'ordering or representation differs'
@@ -217,23 +228,85 @@ def column_difference(expected, actual):
                      for field, n in counts.items() if n)
 
 
+def column_difference(expected, actual):
+    return field_difference(expected, actual, COLUMN_KEYS, COLUMN_FIELDS)
+
+
+def compare_acl_order(expected, actual, env, groups):
+    acl_groups = tuple(group for group in ACL_GROUPS if group in groups)
+    values = set()
+    for proof in (expected, actual):
+        for group in acl_groups:
+            for row in proof[group] or []:
+                value = row['acl']
+                require(value is None or isinstance(value, str), 'invalid ACL evidence')
+                if value is not None:
+                    values.add(value)
+    if not values:
+        return expected, actual
+    ordered = sorted(values)
+    # Parse with PostgreSQL, not textual ACL splitting. Encode data before
+    # interpolation; only lowercase hex can enter the SQL string literal.
+    payload = json.dumps(ordered, ensure_ascii=True).encode().hex()
+    sql = f"""BEGIN READ ONLY;
+SET LOCAL search_path = pg_catalog;
+WITH inputs AS (
+  SELECT value, ord FROM jsonb_array_elements_text(
+    convert_from(decode('{payload}', 'hex'), 'UTF8')::jsonb) WITH ORDINALITY AS i(value, ord)
+), expanded AS (
+  SELECT i.ord, COALESCE((
+    SELECT jsonb_agg(jsonb_build_array(g.rolname, e.grantee = 0, r.rolname, e.privilege_type, e.is_grantable))
+    FROM aclexplode(i.value::aclitem[]) e
+    LEFT JOIN pg_roles g ON g.oid = e.grantor
+    LEFT JOIN pg_roles r ON r.oid = e.grantee
+  ), '[]'::jsonb) AS grants
+  FROM inputs i
+)
+SELECT jsonb_agg(grants ORDER BY ord) FROM expanded;
+COMMIT;"""
+    parsed = json.loads(psql(sql, env, 'offline ACL interpretation failed'))
+    require(isinstance(parsed, list) and len(parsed) == len(ordered), 'incomplete ACL evidence')
+    normal = {}
+    for value, grants in zip(ordered, parsed):
+        require(isinstance(grants, list) and all(
+            isinstance(g, list) and len(g) == 5 and isinstance(g[0], str) and type(g[1]) is bool
+            and (g[2] is None if g[1] else isinstance(g[2], str))
+            and isinstance(g[3], str) and type(g[4]) is bool for g in grants), 'unresolved ACL identity')
+        # Preserve grant multiplicity, grantor, grantee, PUBLIC and grant option.
+        normal[value] = sorted(tuple(g) for g in grants)
+
+    def project(proof):
+        return proof | {
+            group: [row | {'acl': None if row['acl'] is None else normal[row['acl']]}
+                    for row in proof[group]] if proof[group] is not None else None
+            for group in acl_groups
+        }
+    return project(expected), project(actual)
+
+
 def verify_proof(expected, actual, env, proof_sql):
-    failures = proof_mismatches(expected, actual)
+    raw_failures = proof_mismatches(expected, actual)
+    before, after = compare_acl_order(expected, actual, env, raw_failures)
+    failures = proof_mismatches(before, after)
+    acl_matches = [group for group in raw_failures if group not in failures]
     if not failures:
-        return
-    detail = ''
-    if 'columns' in failures:
-        detail = '; columns (' + column_difference(expected['columns'], actual['columns']) + ')'
-        # Probe a common managed search path to distinguish deparser visibility
-        # from persistence. A match here is diagnostic only, never acceptance.
-        try:
-            with_path = json.loads(psql('SET search_path TO pg_catalog, public, extensions;\n' + proof_sql,
-                                        env, 'isolated comparison probe failed'))
-            matched = [group for group in failures if group not in proof_mismatches(expected, with_path)]
-            if matched:
-                detail += '; alternate search-path match (diagnostic only): ' + ', '.join(matched)
-        except (Refusal, ValueError):
-            pass
+        return acl_matches
+    detail = ''.join('; ' + group + ' (' + field_difference(
+        before[group], after[group], *DIAGNOSTIC_FIELDS[group]) + ')'
+        for group in failures if group in DIAGNOSTIC_FIELDS)
+    if acl_matches:
+        detail += '; equivalent ACL ordering: ' + ', '.join(acl_matches)
+    # V1 did not seal its effective search_path. This is only diagnostic:
+    # two objects can have the same unqualified spelling under different paths.
+    try:
+        with_path = json.loads(psql('SET search_path TO pg_catalog, public, extensions;\n' + proof_sql,
+                                    env, 'isolated comparison probe failed'))
+        alt_before, alt_after = compare_acl_order(expected, with_path, env, failures)
+        matched = [group for group in failures if group not in proof_mismatches(alt_before, alt_after)]
+        if matched:
+            detail += '; alternate search-path match (diagnostic only): ' + ', '.join(matched)
+    except (Refusal, ValueError):
+        pass
     raise Refusal('restore comparisons failed: ' + ', '.join(failures) + detail)
 
 
@@ -274,12 +347,13 @@ def restore(work, mode, key, expected, source_run):
         run(['pg_restore','--no-password','--exit-on-error','--single-transaction','--dbname=postgres',str(work/'scope.dump')], env=env, step='isolated scope restore failed')
         proof_sql = (HOME/'proof.sql').read_text()
         actual = json.loads(psql(proof_sql, env, 'restored scope proof failed'))
-        verify_proof(expected_proof, actual, env, proof_sql)
+        acl_matches = verify_proof(expected_proof, actual, env, proof_sql)
         if mode == 'synthetic':
             require(psql("select count(*) from auth.users where email='anchor-fictional-row-canary@example.invalid'",env,'fixture row check failed') == b'1', 'fixture row was not recovered')
         out = {'status':'passed', 'mode': mode, 'project': manifest['project'], 'capture_run': source_run, 'restore_run': git_run(),
                'restored_utc': now(), 'archive_sha256': expected, 'restore_server': psql("select current_setting('server_version')",env,'restore server not verified').decode(),
-               'checks': sorted(expected_proof), 'network': 'loopback only, no provider credentials'}
+               'checks': sorted(expected_proof), 'acl_order_equivalent': acl_matches,
+               'network': 'loopback only, no provider credentials'}
         (EXCHANGE/'restore.json').write_text(json.dumps(out, sort_keys=True))
         print('Retained ciphertext restored and all aggregate checks passed.')
     finally:

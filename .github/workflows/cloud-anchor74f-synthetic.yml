@@ -1,0 +1,25 @@
+name: CLOUD ANCHOR 74F native restore verification
+on:
+  push:
+    branches: [engineering/cloud-anchor74f-restore]
+permissions:
+  contents: read
+jobs:
+  synthetic:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/cloud-anchor74f-restore'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Run diagnostic tests and offline native PostgreSQL fixture
+        run: |
+          set -euo pipefail
+          src="$PWD/tools/cloud-anchor74"
+          docker build --pull --build-arg ANCHOR_UID="$(id -u)" --tag anchor74:verified "$src"
+          docker run --rm --network none --user "$(id -u):$(id -g)" --cap-drop ALL \
+            --security-opt no-new-privileges --pids-limit 100 --memory=2700m --memory-swap=2700m \
+            --tmpfs "/work:rw,mode=0700,uid=$(id -u),gid=$(id -g),size=1536m" \
+            -v "$src:/anchor:ro" -e ANCHOR_RUN="$GITHUB_RUN_ID" \
+            --entrypoint python3 anchor74:verified /anchor/test_restore74d.py --native
