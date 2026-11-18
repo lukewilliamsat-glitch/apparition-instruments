@@ -143,12 +143,14 @@ def capture(work, env, recipients, mode):
             keeper.stdin.flush()
         finally:
             keeper.terminate()
+    bootstrap = psql("select rolname from pg_roles where oid=10 and rolsuper", env, 'source bootstrap role not verified').decode()
+    require(re.fullmatch(r'[a-z][a-z0-9_]{1,62}', bootstrap), 'unsupported bootstrap role')
     with (work/'roles.sql').open('wb') as f:
         run(['pg_dumpall', '--roles-only', '--no-role-passwords', '--no-password'], env=env, output=f, step='password-free role export failed')
     (work/'proof.json').write_text(json.dumps(proof, sort_keys=True, separators=(',', ':')))
     manifest = {
         'version': 1, 'project': PROJECT if mode == 'production' else 'fixture-only', 'mode': mode, 'capture_run': git_run(),
-        'started_utc': begin, 'finished_utc': now(), 'database': server, 'pg_dump': run(['pg_dump','--version'], step='PG tool unavailable').decode().strip(),
+        'started_utc': begin, 'finished_utc': now(), 'database': server, 'bootstrap_role': bootstrap, 'pg_dump': run(['pg_dump','--version'], step='PG tool unavailable').decode().strip(),
         'scopes': list(SCOPES), 'hashes': {name: sha(work/name) for name in MEMBERS[:-1]}
     }
     (work/'manifest.json').write_text(json.dumps(manifest, sort_keys=True))
@@ -197,7 +199,13 @@ def restore(work, mode, key, expected, source_run):
     require(set(expected_proof['core_extensions']) == {'pgcrypto', 'uuid-ossp'}, 'restore extension scope not approved')
     roles = (work/'roles.sql').read_text()
     require(not re.search(r"(?im)^\s*(alter|create)\s+role\b[^\n]*\bpassword\s+(?:E)?'", roles), 'role archive contains a password value')
-    db, env = start_local(work, 'anchor_local_verifier')
+    # PostgreSQL 17 grants explicitly reference grantors. Initialise with the source bootstrap
+    # name so GRANTED BY still refers to the cluster's privileged bootstrap identity (OID 10).
+    bootstrap = manifest['bootstrap_role']
+    require(re.fullmatch(r'[a-z][a-z0-9_]{1,62}', bootstrap), 'unsupported bootstrap role')
+    roles, dedup = re.subn(r'(?m)^CREATE ROLE (?:"'+bootstrap+r'"|'+bootstrap+r');$', '', roles)
+    require(dedup == 1, 'role export did not contain exactly one bootstrap CREATE ROLE')
+    db, env = start_local(work, bootstrap)
     try:
         psql(roles, env, 'isolated password-free role import failed')
         for name, cfg in expected_proof['core_extensions'].items():

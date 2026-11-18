@@ -64,6 +64,9 @@ select jsonb_build_object(
    'stock_catalogue',(select count(*) from public.inventory i join public.components c on c.id=i.component_id),
    'financial_orders',(select count(*) from public.order_financial_records f join public.orders o on o.id=f.order_id),
    'financial_revisions',(select count(*) from public.order_financial_revisions f join public.order_financial_records x on x.order_id=f.order_id)),
+ 'role_memberships',(select jsonb_agg(jsonb_build_object('role',r.rolname,'member',m.rolname,'grantor',g.rolname,
+        'admin',j.admin_option,'inherit',j.inherit_option,'set',j.set_option) order by r.rolname,m.rolname,g.rolname)
+        from pg_auth_members j join pg_roles r on r.oid=j.roleid join pg_roles m on m.oid=j.member join pg_roles g on g.oid=j.grantor),
  'admin_acl',jsonb_build_object(
    'public_private_grant',has_schema_privilege('anon','forge_private','USAGE'),
    'member_table_access',has_table_privilege('authenticated','public.admin_members','SELECT'),

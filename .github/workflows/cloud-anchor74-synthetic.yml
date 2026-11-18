@@ -93,6 +93,7 @@ jobs:
           if verify none "$ANCHOR_FIXTURE_SHA" 999999 "$ANCHOR_FIXTURE_DIR/fixture-key"; then exit 1; fi
           test ! -e "$exchange/restore.json"
           verify none "$ANCHOR_FIXTURE_SHA" "$ANCHOR_RUN" "$ANCHOR_FIXTURE_DIR/fixture-key"
+          bash "$src/test-vault.sh" "$exchange"
           mkdir -m 700 "$ANCHOR_FIXTURE_DIR/receipt"
           mv "$exchange/restore.json" "$ANCHOR_FIXTURE_DIR/receipt/restore.json"
           jq -e '.status=="passed" and .project=="fixture-only" and (.checks|length)>=10' "$ANCHOR_FIXTURE_DIR/receipt/restore.json" >/dev/null
