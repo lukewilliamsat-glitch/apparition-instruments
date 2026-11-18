@@ -103,6 +103,8 @@ def prime_production(work, config):
 
 
 def production_preflight(env, token):
+    # libpq verify-full authenticates the client-facing pooler. pg_stat_ssl
+    # describes the separate connection received by the PostgreSQL backend.
     body = """select jsonb_build_object(
       'readOnly',current_setting('transaction_read_only'),
       'ssl',(select ssl from pg_stat_ssl where pid=pg_backend_pid()),
@@ -111,8 +113,28 @@ def production_preflight(env, token):
       'vectorIndexes',(select count(*) from storage.vector_indexes),
       'externalTables',(select count(*) from pg_class c join pg_namespace n on n.oid=c.relnamespace
         where c.relkind='f' and n.nspname in ('public','forge_private','auth','storage','supabase_migrations')));"""
-    found = json.loads(psql(snapshot_sql(token, body), env, 'source project preflight failed'))
-    require(found == dict(readOnly='on', ssl=True, objects=0, vectorBuckets=0, vectorIndexes=0, externalTables=0), 'backup scope changed or read-only TLS could not be verified')
+    raw = psql(snapshot_sql(token, body), env, 'source project preflight failed')
+    try:
+        found = json.loads(raw)
+    except (ValueError, UnicodeError):
+        raise Refusal('unexpected production preflight response') from None
+    expected = dict(readOnly='on', ssl=True, objects=0, vectorBuckets=0, vectorIndexes=0, externalTables=0)
+    require(isinstance(found, dict) and found.keys() == expected.keys(), 'unexpected production preflight response')
+    problems = []
+    for field, want in expected.items():
+        got = found[field]
+        if type(got) is type(want) and got == want:
+            continue
+        # Only emit fixed metadata labels, never native error text or query results.
+        if field == 'ssl':
+            problems.append('backend TLS (pg_stat_ssl): false' if got is False
+                            else 'backend TLS (pg_stat_ssl): unavailable or invalid')
+        elif field == 'readOnly':
+            problems.append('read-only transaction: off' if got == 'off'
+                            else 'read-only transaction: unavailable or invalid')
+        else:
+            problems.append(field + (': nonzero' if type(got) is int and got > 0 else ': unavailable or invalid'))
+    require(not problems, 'production preflight mismatch: ' + '; '.join(problems))
 
 
 def capture(work, env, recipients, mode):
