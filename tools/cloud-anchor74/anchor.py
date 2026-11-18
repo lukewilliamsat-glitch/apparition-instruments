@@ -35,6 +35,12 @@ DIAGNOSTIC_FIELDS = {
     'functions': (('nspname', 'proname', 'signature'), ('owner', 'acl', 'definition')),
 }
 ACL_GROUPS = ('relations', 'columns', 'functions')
+FINAL_REL_KEYS = ('ns', 'rel')
+FINAL_REL_FIELDS = ('relkind', 'relpersistence', 'relrowsecurity', 'relforcerowsecurity',
+                    'owner', 'acl', 'view_definition')
+FINAL_CON_KEYS = ('ns', 'rel', 'conname')
+FINAL_CON_FIELDS = ('rule', 'convalidated')
+FINAL_RESTORE_PROFILE = 'v2-final-two-1'
 V2_PATH = 'pg_catalog'
 REQUIRED_EXTENSIONS = {'pgcrypto', 'uuid-ossp'}
 
@@ -225,21 +231,22 @@ def proof_mismatches(expected, actual):
     return [group for group in PROOF_GROUPS if actual[group] != expected[group]]
 
 
-def field_difference(expected, actual, keys, fields):
-    def index(rows):
-        if rows is None:  # jsonb_agg returns NULL for an empty group.
-            return {}
-        require(isinstance(rows, list), 'invalid metadata proof')
-        out = {}
-        for row in rows:
-            require(isinstance(row, dict) and set(row) == set(keys + fields)
-                    and all(isinstance(row[k], str) for k in keys), 'invalid metadata proof')
-            key = tuple(row[k] for k in keys)
-            require(key not in out, 'duplicate metadata proof identity')
-            out[key] = row
-        return out
+def metadata_index(rows, keys, fields):
+    if rows is None:  # jsonb_agg returns NULL for an empty group.
+        return {}
+    require(isinstance(rows, list), 'invalid metadata proof')
+    out = {}
+    for row in rows:
+        require(isinstance(row, dict) and set(row) == set(keys + fields)
+                and all(isinstance(row[k], str) for k in keys), 'invalid metadata proof')
+        key = tuple(row[k] for k in keys)
+        require(key not in out, 'duplicate metadata proof identity')
+        out[key] = row
+    return out
 
-    before, after = index(expected), index(actual)
+
+def field_difference(expected, actual, keys, fields):
+    before, after = (metadata_index(rows, keys, fields) for rows in (expected, actual))
     shared = before.keys() & after.keys()
     counts = {'missing': len(before.keys() - after.keys()), 'added': len(after.keys() - before.keys())}
     for field in fields:
@@ -332,7 +339,117 @@ def verify_proof(expected, actual, env, proof_sql):
     raise Refusal('restore comparisons failed: ' + ', '.join(failures) + detail)
 
 
-def restore(work, mode, key, expected, source_run, required_version=None):
+def relation_default_grants(env, pairs):
+    # A SQL NULL relacl is the hard-wired ACL, not ALTER DEFAULT PRIVILEGES
+    # or an empty ACL. PostgreSQL itself computes this for each owner/kind.
+    ordered = sorted(pairs)
+    payload = json.dumps(ordered, ensure_ascii=True).encode().hex()
+    sql = f"""SET LOCAL search_path TO pg_catalog;
+WITH pairs AS (
+  SELECT value->>0 AS owner, value->>1 AS kind, ord
+  FROM jsonb_array_elements(convert_from(decode('{payload}', 'hex'), 'UTF8')::jsonb)
+       WITH ORDINALITY AS p(value, ord)
+)
+SELECT jsonb_agg((SELECT jsonb_agg(
+    jsonb_build_array(grantor, is_public, grantee, privilege_type, is_grantable)
+    ORDER BY grantor COLLATE "C", is_public, grantee COLLATE "C", privilege_type COLLATE "C", is_grantable)
+  FROM (SELECT pg_get_userbyid(e.grantor) AS grantor, e.grantee = 0 AS is_public,
+          CASE WHEN e.grantee <> 0 THEN pg_get_userbyid(e.grantee) END AS grantee,
+          e.privilege_type, e.is_grantable
+        FROM aclexplode(acldefault(p.kind::"char", r.oid)) e) grants
+  ) ORDER BY p.ord)
+FROM pairs p JOIN pg_roles r ON r.rolname = p.owner;"""
+    rows = json.loads(psql(v2_read(sql), env, 'native default ACL lookup failed'))
+    require(isinstance(rows, list) and len(rows) == len(ordered) and all(rows),
+            'native default ACL owner or privileges unresolved')
+    return dict(zip(ordered, rows))
+
+
+def final_relation_default_equivalence(expected, actual, env):
+    before, after = (metadata_index(v, FINAL_REL_KEYS, FINAL_REL_FIELDS) for v in (expected, actual))
+    def default_pair(row):
+        return row['owner'], 's' if row['relkind'] == 'S' else 'r'
+    pairs = {}
+    for key in before.keys() & after.keys():
+        a, b = before[key], after[key]
+        if (a['owner'] == b['owner'] and a['relkind'] == b['relkind']
+                and a['relkind'] in ('r', 'p', 'v', 'm', 'S', 'f')
+                and (a['acl'] is None) != (b['acl'] is None)):
+            pairs[key] = default_pair(a)
+    if not pairs:
+        return expected, actual, 0
+    defaults = relation_default_grants(env, set(pairs.values()))
+    equivalent = set()
+    for key, pair in pairs.items():
+        a, b = before[key], after[key]
+        explicit = a['acl'] if b['acl'] is None else b['acl']
+        if explicit == defaults[pair]:
+            equivalent.add(key)
+
+    def canonical(rows):
+        return [r | {'acl': defaults[pairs[(r['ns'], r['rel'])]]}
+                if (r['ns'], r['rel']) in equivalent else r for r in rows]
+    return canonical(expected), canonical(actual), len(equivalent)
+
+
+def final_restore_context(env, dump, before, after, failures):
+    # Never expose TOC names or SQL. Source proof does not include the graph.
+    toc = run(['pg_restore', '--list', str(dump)], step='bounded TOC inspection failed')
+    attach_entries = len(re.findall(rb'^\d+;\s+\d+\s+\d+\s+TABLE ATTACH\s', toc, re.M))
+    sql = """SET LOCAL search_path TO pg_catalog;
+SELECT coalesce(jsonb_agg(jsonb_build_array(n.nspname,r.relname,c.conname,
+    r.relispartition,c.conparentid<>0,NOT c.conislocal,c.coninhcount>0,
+    coalesce(f.relkind='p',false))), '[]'::jsonb)
+FROM pg_constraint c JOIN pg_class r ON r.oid=c.conrelid
+JOIN pg_namespace n ON n.oid=r.relnamespace LEFT JOIN pg_class f ON f.oid=c.confrelid
+WHERE n.nspname IN ('public','forge_private','auth','storage','supabase_migrations');"""
+    rows = json.loads(psql(v2_read(sql), env, 'bounded constraint context query failed'))
+    hints = f'toc_table_attach={bound_count(attach_entries)}'
+    if 'constraints' not in failures:
+        return hints
+    a, b = (metadata_index(p['constraints'], FINAL_CON_KEYS, FINAL_CON_FIELDS) for p in (before, after))
+    changes = {key for key in b if a.get(key) != b[key]}
+    flags = ('target_partition', 'target_parent_constraint', 'target_not_local',
+             'target_inherited', 'target_references_partitioned')
+    counts = dict.fromkeys(flags, 0)
+    for ns, rel, con, *values in rows:
+        if (ns, rel, con) in changes:
+            for flag, value in zip(flags, values):
+                counts[flag] += int(value is True)
+    return hints + ', ' + ', '.join(f'{name}={bound_count(n)}' for name, n in counts.items())
+
+
+def bound_count(n):
+    return str(min(9999, n)) + ('+' if n > 9999 else '')
+
+
+def verify_v2_final(expected, actual, env, dump):
+    failures = proof_mismatches(expected, actual)
+    equivalents = 0
+    if 'relations' in failures:
+        a, b, equivalents = final_relation_default_equivalence(expected['relations'], actual['relations'], env)
+        expected, actual = expected | {'relations': a}, actual | {'relations': b}
+        failures = proof_mismatches(expected, actual)
+    if not failures:
+        return bound_count(equivalents)
+    labels = []
+    if 'relations' in failures:
+        labels.append('relations (' + field_difference(expected['relations'], actual['relations'],
+                                                       FINAL_REL_KEYS, FINAL_REL_FIELDS) + ')')
+    if 'constraints' in failures:
+        labels.append('constraints (' + field_difference(expected['constraints'], actual['constraints'],
+                                                         FINAL_CON_KEYS, FINAL_CON_FIELDS) + ')')
+    if labels:
+        try:
+            labels.append('restore context only (' + final_restore_context(
+                env, dump, expected, actual, failures) + ')')
+        except (Refusal, ValueError):
+            labels.append('restore context unavailable')
+    labels.append('proven default ACL equivalences=' + bound_count(equivalents))
+    raise Refusal('V2 recovery comparison failed: ' + ', '.join(failures) + '; ' + '; '.join(labels))
+
+
+def restore(work, mode, key, expected, source_run, required_version=None, final=False):
     offline()
     archive = EXCHANGE/'backup.age'
     require(re.fullmatch(r'[a-f0-9]{64}', expected) and 0 < archive.stat().st_size <= LIMIT and sha(archive)==expected, 'retained archive integrity mismatch')
@@ -346,6 +463,7 @@ def restore(work, mode, key, expected, source_run, required_version=None):
     require(manifest['mode']==mode and manifest['capture_run']==source_run and manifest['project']==(PROJECT if mode=='production' else 'fixture-only'), 'archive belongs to a different capture or environment')
     version = manifest['version']
     require(required_version is None or version == required_version, 'unexpected archive proof version')
+    require(not final or version == 2, 'final-two restore requires V2 proof')
     proof_file = HOME / ('proof-v2.sql' if version == 2 else 'proof.sql')
     if version == 2:
         require(manifest.get('proof_search_path') == V2_PATH and manifest.get('proof_sha256') == sha(proof_file)
@@ -376,8 +494,11 @@ def restore(work, mode, key, expected, source_run, required_version=None):
         proof_sql = proof_file.read_text()
         if version == 2:
             actual = json.loads(psql(v2_read(proof_sql), env, 'restored V2 scope proof failed'))
-            mismatches = proof_mismatches(expected_proof, actual)
-            require(not mismatches, 'V2 recovery comparison failed: ' + ', '.join(mismatches))
+            if final:
+                relation_defaults = verify_v2_final(expected_proof, actual, env, work/'scope.dump')
+            else:
+                mismatches = proof_mismatches(expected_proof, actual)
+                require(not mismatches, 'V2 recovery comparison failed: ' + ', '.join(mismatches))
             acl_matches = []
         else:
             actual = json.loads(psql(proof_sql, env, 'restored V1 scope proof failed'))
@@ -391,6 +512,8 @@ def restore(work, mode, key, expected, source_run, required_version=None):
         out.update(proof_version=version)
         if version == 2:
             out.update(proof_search_path=V2_PATH, proof_sha256=manifest['proof_sha256'])
+        if final:
+            out.update(restore_profile=FINAL_RESTORE_PROFILE, equivalent_relation_default_acls=relation_defaults)
         (EXCHANGE/'restore.json').write_text(json.dumps(out, sort_keys=True))
         print('Retained ciphertext restored and all aggregate checks passed.')
     finally:
@@ -402,12 +525,14 @@ def main():
     mode = sys.argv[1]
     with tempfile.TemporaryDirectory(prefix='anchor-', dir=SCRATCH) as tmp:
         work = pathlib.Path(tmp)
-        if mode == 'fixture-capture':
+        if mode in ('fixture-capture', 'fixture-capture-v2-final'):
             offline()
             db, env = start_local(work, 'anchor_fixture_source')
             try:
                 psql((HOME/'fixture.sql').read_text(), env, 'synthetic setup failed')
                 psql((HOME/'fixture-v2.sql').read_text(), env, 'synthetic V2 metadata setup failed')
+                if mode.endswith('-final'):
+                    psql((HOME/'fixture-final-two.sql').read_text(), env, 'synthetic final-two fixture setup failed')
                 capture(work, env, [os.environ['ANCHOR_PUBLIC_FIXTURE']], 'synthetic')
             finally:
                 stop_local(db)
@@ -416,9 +541,11 @@ def main():
             recipients = conf.pop('recipients')
             require(len(recipients) == 2, 'owner and verifier recipients required')
             capture(work, prime_production(work, conf), recipients, 'production')
-        elif mode in ('fixture-restore', 'production-restore', 'production-restore-v2'):
+        elif mode in ('fixture-restore', 'production-restore', 'production-restore-v2',
+                      'fixture-restore-v2-final', 'production-restore-v2-final'):
             restore(work, 'synthetic' if mode.startswith('fixture-') else 'production',
-                    sys.stdin.read(160), sys.argv[2], sys.argv[3], 2 if mode == 'production-restore-v2' else None)
+                    sys.stdin.read(160), sys.argv[2], sys.argv[3],
+                    2 if '-v2' in mode else None, final=mode.endswith('-final'))
         else:
             raise Refusal('unknown operation')
 

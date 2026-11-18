@@ -7,7 +7,7 @@ dir=$(realpath "$1"); shift
 net=$1; shift
 [[ "$dir" == "$RUNNER_TEMP"/anchor-* && -d "$dir" && ! -L "$dir" ]] || exit 1
 case "$net:$1" in
- none:fixture-capture|none:fixture-restore|bridge:fixture-restore|bridge:production-capture|none:production-restore|none:production-restore-v2) ;;
+ none:fixture-capture|none:fixture-restore|bridge:fixture-restore|bridge:production-capture|none:production-restore|none:production-restore-v2|none:fixture-capture-v2-final|none:fixture-restore-v2-final|none:production-restore-v2-final) ;;
  *) exit 1 ;;
 esac
 mem=$(mktemp -d "$RUNNER_TEMP/anchor-ram-XXXXXX")
