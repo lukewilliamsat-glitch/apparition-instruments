@@ -366,9 +366,9 @@ def restore(work, mode, key, expected, source_run, required_version=None):
     try:
         psql(roles, env, 'isolated password-free role import failed')
         for name, cfg in expected_proof['core_extensions'].items():
-            ns, version = cfg['schema'], cfg['version']
-            require(re.fullmatch(r'[a-z_][a-z0-9_]{0,32}', ns) and re.fullmatch(r'[0-9.]{1,16}', version) and ns not in SCOPES, 'unsupported extension namespace or version')
-            psql(f'create schema if not exists "{ns}"; create extension "{name}" with schema "{ns}" version \'{version}\';', env, 'required extension unavailable')
+            ns, extension_version = cfg['schema'], cfg['version']
+            require(re.fullmatch(r'[a-z_][a-z0-9_]{0,32}', ns) and re.fullmatch(r'[0-9.]{1,16}', extension_version) and ns not in SCOPES, 'unsupported extension namespace or version')
+            psql(f'create schema if not exists "{ns}"; create extension "{name}" with schema "{ns}" version \'{extension_version}\';', env, 'required extension unavailable')
         ddl = run(['pg_restore','--schema-only','--file=-',str(work/'scope.dump')], step='isolated archive schema inspection failed')
         if re.search(rb'(?m)^CREATE SCHEMA public;', ddl):
             psql('drop schema public;', env, 'isolated public schema preparation failed')
