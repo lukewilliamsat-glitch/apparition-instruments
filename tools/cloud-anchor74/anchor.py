@@ -134,7 +134,8 @@ def capture(work, env, recipients, mode):
             for c in proof['relations']:
                 require(c['relkind'] != 'f', 'foreign table requires a different recovery boundary')
             dump_args = ['pg_dump', '--no-password', '--format=custom', '--compress=gzip:3', '--snapshot=' + token,
-                         '--exclude-table=storage.buckets_vectors', '--exclude-table=storage.vector_indexes', '--file=' + str(work/'scope.dump')]
+                         '--exclude-table=storage.buckets_vectors', '--exclude-table=storage.vector_indexes',
+                         '--exclude-extension=*', '--no-tablespaces', '--file=' + str(work/'scope.dump')]
             run(dump_args + ['--schema=' + scope for scope in SCOPES], env=env, step='scope export failed; no archive retained')
             if mode == 'production':
                 production_preflight(env, token)
@@ -203,7 +204,9 @@ def restore(work, mode, key, expected, source_run):
             ns, version = cfg['schema'], cfg['version']
             require(re.fullmatch(r'[a-z_][a-z0-9_]{0,32}', ns) and re.fullmatch(r'[0-9.]{1,16}', version) and ns not in SCOPES, 'unsupported extension namespace or version')
             psql(f'create schema if not exists "{ns}"; create extension "{name}" with schema "{ns}" version \'{version}\';', env, 'required extension unavailable')
-        psql('drop schema public;', env, 'isolated public schema preparation failed')
+        ddl = run(['pg_restore','--schema-only','--file=-',str(work/'scope.dump')], step='isolated archive schema inspection failed')
+        if re.search(rb'(?m)^CREATE SCHEMA public;', ddl):
+            psql('drop schema public;', env, 'isolated public schema preparation failed')
         run(['pg_restore','--no-password','--exit-on-error','--single-transaction','--dbname=postgres',str(work/'scope.dump')], env=env, step='isolated scope restore failed')
         actual = json.loads(psql((HOME/'proof.sql').read_text(), env, 'restored scope proof failed'))
         for key in expected_proof:

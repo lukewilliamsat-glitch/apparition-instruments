@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
-      - name: Prepare Supabase PostgreSQL 17.6 and tools without credentials
+      - name: Prepare PostgreSQL 17.6 and scoped extensions without credentials
         run: |
           set -euo pipefail
           src="$PWD/tools/cloud-anchor74"

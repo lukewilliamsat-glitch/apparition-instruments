@@ -3,7 +3,8 @@ with
  scope as (select oid,nspname from pg_namespace where nspname in ('public','forge_private','auth','storage','supabase_migrations')),
  rel as (
   select n.nspname as ns,c.relname as rel,c.oid,c.relkind,c.relrowsecurity,c.relforcerowsecurity,
-    pg_get_userbyid(c.relowner) as owner,c.relacl::text as acl
+    pg_get_userbyid(c.relowner) as owner,c.relacl::text as acl,
+    case when c.relkind in ('v','m') then pg_get_viewdef(c.oid) end as view_definition
   from pg_class c join scope n on n.oid=c.relnamespace
   where c.relkind in ('r','p','v','m','S','f')
     and (n.nspname,c.relname) not in (('storage','vector_indexes'),('storage','buckets_vectors'))
