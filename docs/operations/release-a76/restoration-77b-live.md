@@ -1,0 +1,226 @@
+# SENTINEL 77B production static receipt
+
+**19 November 2026 GMT. Static restoration live and independently verified. Signed-in production acceptance is outstanding.**
+
+Cloudflare Pages project `apparition-instruments` reports canonical deployment `578cbbef-d8d7-4701-85d3-eb68bae4585c`, production and successful, published from exact source `a50dfb712ddd6420d648f6388bd6702f4566713c`. The customer origin is https://apparitioninstruments.co.uk/. Artifact `14552190395`: 476 files, outer ZIP SHA-256 `2471ba75da48ee4084932f3ab7963dd9e851ada73e65803d6199377cf8db5e11`, release ZIP SHA-256 `4c092c6e51d30e180c244c245cc25878fa5d29ae006e589bdcb3456890ea3810`, composition `b07789ba58f28eef5492a16a4b3aa9f43e470728cfc57f25e3e92ccd62fd3bab`, inventory `2856d9ab919d1c0ed0a10981d4d3a237abfc297e7eb09c03b98046b5fa3b8eb8`.
+
+[Actions run 44569272559](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/44569272559) completed its target gate, archive verification and Pages upload and switched canonical deployment. Its final status is failure because the first public read of `/admin/` disagreed at byte 313. Byte 313 is the first difference between the former live rollback and the new Admin package. The initial response was not retained by the runner, so stale rollout is consistent with the evidence, but not definitively established. Direct public readback subsequently matched at the plain URL, the workflow's exact query URL and an independent query URL. No second publication, rollback or cache setting change was performed.
+
+**Independent public verification:** all 204 sampled real production URLs returned 200 and matched the accepted hashes after rechecking transport timeouts. This included 23 page and asset entries, 181 reachable local module URLs and 154 exact versioned URLs using the deep-watch build identity. Affected Admin entries and dependencies included Orders/Aftercare/ECLIPSE/Fulfilment Cost Library, Site Operations and its repository, Catalogue Settings, Email Template Studio, Delivery, CONJURE, and Armoury. Public responses included the storefront and catalogue, a product and its photograph, wiring kit fronts and both wiring tools, basket, checkout and the Operations snapshot. This is actual network/file verification, not a live payment test or authenticated Admin acceptance. The isolated functional evidence remains [run 44564484251](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/44564484251).
+
+Post-publish read-only checks returned OPEN, 399p at 4999p and free at 5000p, new delivery rates inactive and Direct Aftercare off. Checkout v16, Stripe webhook v15 and transactional email v15 remained active. The four installed Release A migrations, contract fingerprints and reviewed private-table controls matched the [preflight checkpoint](restoration-77b.md). This workflow could change only the static deployment; it made no database/Edge/credential changes, transaction or customer communication.
+
+Former canonical deployment `41fab337-e7df-499f-9292-fef300e46fe7` was independently read back as a successful production rollback target; its verified 465-file rollback and both acceptance wrappers were retained. The rollback still contains the known Admin limitations. Only consider it for a material regression.
+
+Remaining owner acceptance: Dashboard; Orders and an existing order's Commercial date history, ECLIPSE and financial revisions; Fulfilment Cost Library; Customer Aftercare with Direct off; Catalogue Settings; Email Template Studio; Site Operations/Commercial; Delivery's existing tariff; CONJURE and navigation. Sign out and sign back in once, then confirm Orders reloads protected data. Read only. If a failure persists, report the first route, local time and displayed error. Keep GRAND ASCENSION, Releases B and C, and DOMINION paused.
+
+## Independent URL evidence
+
+Each entry below was read as HTTP 200 and matched the sealed SHA-256 for that production response. Query parameters are kept where part of the module URL.
+
+```text
+0c848ca22264595c90b696ea7bdc689e4d1a883b1c245814748f96febcc4f1de  /admin/
+05382c78b79c63b3bdf53048645d675d167822e5bd73bd2335c58097e44e0567  /admin/orders/
+22179bc9d2607275c3d3b3a84d8ff362d244c6cd95c33333f6c6f621e2651630  /admin/site-operations/
+d78222b0a82392b67115018553e57af249cd9d8fe53d07ba67e67d4fbcd06002  /admin/delivery/
+9930fe0ebb376ebed807010c04ca784b0090e019dd1268648910b92d203d2aef  /admin/catalogue-settings/
+43fc21be88071c20a47050e2485131f12b8b87adf2556105f8bb09bfe643d23e  /admin/email-templates/
+26d0aebf6ff7947b5291efc599c2403b506f656c25c411b66d2fb3018663491c  /admin/conjure/
+1c32d7b6d7717f75f320479082f9f34de4585714a7644f219e4acc75d0bf4c90  /admin/ironclad/
+ca9e8cd2420b19080b5efb2e42904eb3edc87a2161f806a61e38e7312d120378  /admin/email-preview/
+d014305ae6f0ccb5db642acf6085ed708e4c7b0cf9e86f6328500b899d26bc65  /admin/command/
+48eba7593d390a109dcb15e62eead0a605db390d894284718f53a45fb632c930  /
+881a8151416ca1b1c06d04d9322a00af23eb33e5713899cfdc1786aa069f0ceb  /components/
+4c4f8788d5691aa17d97c3107b70d6596e226aba6b5f4d167318e60e7e58a8b4  /products/bleed-cap/
+70e19fa835d6da870e73a85a209dc20ead47f9687c26fafe277ecab366a1278e  /products/bleed-cap/image.png
+33bb0a407683e3083efd77b6f05663da466add9a9b5d791f10b19869150b910d  /wiring-kits/
+10764551144f5e6f80e20bee425efa6eb2a02e6014604a806a0556276a448a40  /wiring-kits/build/
+2f65e3c7db8f4e3f8ff53ac8695c56c6bcfc1cc7b4929652f098e6696d80ecfe  /les-paul-kits/
+818f6fdf8733e3f0c81ef95a08be319c568367413d3d1102e0c5294f7c31a2ca  /wiring-generator/
+79c48d24665072d6fe3ab2b55abd625efd275cb59b34172eac1a851735518053  /treble-bleed-designer/
+5ee85da35aa1e0ed6673ca827fddbf2ddf700b09e6e65b4c197e8ecc77145df8  /circuit-forge/
+6a912dac5880864e336c5566f13e49fc7f90db055331e5696046c472d2342d11  /basket/
+82f19b5c42c6464dc5295e32fdd32982f8d7048306b3e8dedbb733c8c1cab235  /checkout/
+fd5709af3c61bc8dfc945558ad805559845dacb9380f8451ce2cb8887d1d90b2  /operations/snapshot.json
+2fc965ea65678329dfa33224765428a8579f1cf5d4cd1804197c0a4472382329  /admin/admin-gate.mjs?build=sentinel77a-c1
+b394d5bd4af97f4bd64234b77145946027f1d4976490fc3822101e090a8b80b8  /admin/catalogue-settings/settings.mjs?build=sentinel77a-c1
+d37841651982901d98897489866ddbd7c45fbfd7bf05bc6def2be784d049afb6  /backend/email-templates.mjs?build=sentinel77a-c1
+4cfe2f9137b6fc200cb32aa462fc54e27f0f6baa82fa5c8e1f7a94a1e3e732fc  /admin/application.mjs?build=sentinel77a-c1
+9854e1630708d1125e9de888aed4594b18b2636873d19bb2fc2174cdcf267c3e  /admin/conjure/navigation.mjs?build=sentinel77a-c1
+cbb5b0307e8e0edf12ebd41da98fc044d45a35034513e6f7199281e7e3a11af9  /admin/admin-auth.mjs?build=sentinel77a-c1
+09c9b61f24e556f20d896b2477c73c9fa5e7141ef4404b123ceac1c68500cf4e  /admin/component-repository.mjs?build=sentinel77a-c1
+8d1f8fc26a5d6502b2c0b8b58f6a3781052361f0a7eea3e48eb1c09eccf1fb13  /backend/component-data.mjs?build=sentinel77a-c1
+886b8e01d143e5a596d6abdeec8dc75174ed9180191c3b0778bfc53448ba50b0  /backend/catalogue-options.mjs?build=sentinel77a-c1
+cfd292f4dd9bd9e8e70265547f3c18550038591cb37d3bead5ec20ac098eb076  /admin/assembly-repository.mjs?build=sentinel77a-c1
+b1c214a6fa2fa12bd7f68dd16771400ab561a93c4c9b39c255a385e3e955a8a9  /backend/assembly-data.mjs?build=sentinel77a-c1
+86613dd5c0cb692e2a04c6bb479328bf5f97b6d37b1be9ec77ceed79f5cd0c26  /backend/providers.mjs?build=sentinel77a-c1
+b51b0031cd833f4e1ffa5b0901d8f8bc2516d947959b40cec58376388146f84c  /backend/order-data.mjs?build=sentinel77a-c1
+d640e10ebfc3293811b3cbe2a6faaed971728a2e7b03977dbd841c0cf9ddd301  /backend/operations-admin.mjs?build=sentinel77a-c1
+f9b4fb6d5e909289127216ae32f27f758be7d2561c1d5bc992c2957543a9f89e  /admin/actions.mjs?build=sentinel77a-c1
+7cce2e980cc421abb53469ae9f703714c1fd9da5261beaebf99e466421bf2076  /admin/interaction.mjs?build=sentinel77a-c1
+62a867b02c9e095af024d8b0bfde1221391568edd12a54daa5311b8b8dc40ee5  /admin/catalogue-options.mjs?build=sentinel77a-c1
+296d2cc26b209239d84cd56161e9222a08c46faf674caa81ce9d59c7beed0442  /admin/electrical-specs.mjs?build=sentinel77a-c1
+caff5c5ab795055a74e17466a95c9ff3863cc558db84fa6e53f07b332bd2ef2c  /admin/pot-specs.mjs?build=sentinel77a-c1
+f2665868bb5a1790ef3b657c8b0eed185bb62b6f2cad94c9a727a9b5192d0726  /deployment.mjs?build=sentinel77a-c1
+de09f24e61c50ec59384309bd70acf93ee87b16fb9a25190be46be2ef49e6e2c  /admin/catalogue-presentation.mjs?build=sentinel77a-c1
+e3a29bb52b92abbe7a1aab2cb76264b4782adc1f5069736b583a6340f4b70b47  /admin/sales-content-presentation.mjs?build=sentinel77a-c1
+725ad31203309532397adef75cf67abe182420cefb0de99bc8a45aa4277bb019  /backend/public-config.mjs?build=sentinel77a-c1
+b222f629be1fb294d2a3869ccda86b1c8b47238fc90461ed86ac777a9428dbca  /admin/command/bounded-json.mjs?build=sentinel77a-c1
+772f2e5661ef880d84aa6412bdf2587a75643a90f4d39b5f0d1abe474e0d76d2  /admin/data.mjs?build=sentinel77a-c1
+b66938b2318f750f1079621111947e33ef09d4d5a3af10253655ae088d0d785a  /backend/catalogue-image-delivery.mjs?build=sentinel77a-c1
+6c25f198e6282360ba7cae00cfdfb457e4c2a2ee298eb7f196e06f1a76232cd9  /backend/public-read.mjs?build=sentinel77a-c1
+3143907301df698cfd77c4d95f89dd1ce938c9708307e943a4c1a69b2e61b7b2  /admin/assemblies.mjs?build=sentinel77a-c1
+883bcd86e849e5aa43566430277f76b6ec89112aea738c5bc1f19f6e34ec522f  /admin/orders/lifecycle.mjs?build=sentinel77a-c1
+2973e718609b1c0b15a945766867b4fa4c4ddc77fc63d2787afa3813696da9e4  /admin/product-content.mjs?build=sentinel77a-c1
+b5618c7b0b30b09abf87021d6b7d7557a3a760796a7cef5dc0e39c10c2b39872  /admin/kit-bindings.mjs?build=sentinel77a-c1
+469dcb44c6bc9e863f74b22655fcff9d66b31e374acb689eea953818e3e7073f  /admin/images.mjs?build=sentinel77a-c1
+0c9435ea0f5f909eccd58f7897ed3ab722382e8fc353e549425b968671b58d04  /components/catalogue-seed.mjs?build=sentinel77a-c1
+362d38ce51a48112bdede93b6fd9f0be14f0d9f77db3aafb55eaf7058ad19246  /wiring-kits/kit-seed.mjs?build=sentinel77a-c1
+9d9e7e17b91d171e399b2e901b53210dc0232c514655c45bffd97a2a6624a358  /backend/image-delivery-config.mjs?build=sentinel77a-c1
+5f71c9dd3670428abfe2a8b858c4c6c4d5564fe26d9ebb2a5b19e6cdf305b270  /backend/static-image-contract.mjs?build=sentinel77a-c1
+c1f221d2c81ba11147e59aab67f241451806d546c5247ec8fdfa6204383b07f5  /backend/verified-image-pool.mjs?build=sentinel77a-c1
+6ebbdffe2d9a2ed682bddfbba654ad762e7f0bf06ed6cf1dca402897a443d8c0  /wiring-kits/builder-options.mjs?build=sentinel77a-c1
+81d072edb739b194f5b7f226be32df9aa595267eda56ea9ffe0430e9d17fd130  /wiring-kits/kit-requirements.mjs?build=sentinel77a-c1
+d2bafaeb319bbc79bb76d2575fb3e93196da11580836771f04d971964c53af11  /admin/physical-specs.mjs?build=sentinel77a-c1
+91b903ff21d812d0ed9beab1036dfe60dc40da518fb8edde101bb7e7f083475a  /admin/command-redirect.mjs?build=sentinel77a-c1
+10b4e9704305c1ce9c285c94e152ad820e97e46693c3ab2e2ac0df14518521ff  /admin/conjure/app.mjs?build=sentinel77a-c1
+b9ea2fc9471bc1e6d9b666ddd03603af9e85763d75653fa8885c9dd510273ea9  /admin/conjure/protected-document.mjs?build=sentinel77a-c1
+de04b907c547b35523a1c814e397a968f985cff03b8716716decf418e40d420c  /admin/conjure/website-navigation.mjs?build=sentinel77a-c1
+667a73151bb766a0fa10de3448589fce62cd94ab2a32d36369f4b4e64cf26982  /admin/conjure/page-mappings.mjs?build=sentinel77a-c1
+e0e31afb954be59df7c451cf614e0912b054a64e4f65ca93e98a60716c8ed7db  /admin/conjure/document-repository.mjs?build=sentinel77a-c1
+02889b55e3163d04b163832cd6f71f50526cf5dc17df3151648aa6f039899454  /admin/conjure/page-adapter.mjs?build=sentinel77a-c1
+10f9a29c80059e7bdcd572b63339bf78f5db08b0fc3abae9d3be5682817a222c  /admin/conjure/document-registry.mjs?build=sentinel77a-c1
+a476b7fd591941c1a08e201dd5611eb7292999d3af781d864de0453b5b7e0582  /admin/conjure/article-adapter.mjs?build=sentinel77a-c1
+f3abea3ec18bccff946d3a4a5129aacf794855e36890ca0974f59a1b12557f06  /admin/hub-cms/repository.mjs?build=sentinel77a-c1
+aed84cce93f58bef155f8b0dbcbfe96b21fa7389c56d51aa02e3f3b5cb01056d  /admin/conjure/pages.mjs?build=sentinel77a-c1
+ad74a23173aaa1c9bad97f51ffb4918c0d1c8e68fcb15f436f3f6e21aecda9ba  /authoring/editor/kernel.mjs?build=sentinel77a-c1
+2d5356173686f9eee018964057759a70ce559e5eb582fb1d38cef8e9ed418923  /admin/conjure/document-session.mjs?build=sentinel77a-c1
+b82c847c58996a39d3d9ae6ed1d3e6af2fd1005aac30848823667a32663c6708  /admin/conjure/page-document.mjs?build=sentinel77a-c1
+2d1eb2695d8f27d7bed8c4275abf6e8713411813414485239db73d66658f5c1c  /admin/hub-cms/manifest-adapter.mjs?build=sentinel77a-c1
+dfe91bb4c34004b837d644f0f8bb5dc9c6d8c4c92c51be2ce7d188793160fe64  /hub-cms/body.mjs?build=sentinel77a-c1
+e2a0f9ab88753ebdc18d9fd7415d4345cac605b7fc15e6a900faef41e03e5b82  /admin/conjure/native-surface.mjs?build=sentinel77a-c1
+041f8187c1a9ed40079563c6c7983507a58e2dc58fa72903d0d78cb7fcc57480  /admin/hub-media/repository.mjs?build=sentinel77a-c1
+f74b8e485a1bc073de01ec7b3025332db77cb9e01fdf87d8b83ad0302b678b5d  /hub-cms/render.mjs?build=sentinel77a-c1
+f030409bf3eb4db967933fb0da6d38c099555a0dfda093656cefaae99e2e4748  /admin/conjure/context.mjs?build=sentinel77a-c1
+99d5898f3809170a24d5ae914f25f650f8705c41743f96cea6ad4d4074866624  /admin/conjure/sections.mjs?build=sentinel77a-c1
+fd0fda0e2560434eb8664bee852caadd33768391e332564fd3ef910dce036aed  /admin/conjure/insertion.mjs?build=sentinel77a-c1
+f23ca13f335a460342c5ba8d0bd8816084490d6600e9ce5f7c97ba17bbe63642  /admin/hub-cms/editor-vendor.mjs?build=sentinel77a-c1
+0b710b0aba4b231d156e0d296f602d8ced4d1a20c673cfbda335ee9f32ecca82  /authoring/editor/coordinator.mjs?build=sentinel77a-c1
+7d9182e4e0448599c00670bd21d600953e18a78c95d9b4d82c83f97f4a21cdfd  /authoring/editor/canvas.mjs?build=sentinel77a-c1
+f9e1a4d14ad2ec7661c52f128e2b948708bbdd3d693918c14f62b78ebc8a0d32  /authoring/editor/layout.mjs?build=sentinel77a-c1
+b7e983622eff56faa4300d8cf1aea9f6f3df2758a0418b105aeb97745cdbb7f3  /authoring/document.mjs?build=sentinel77a-c1
+2359aba53f0f411be7b7d2ee8052b61c009738383c719fdf9012e36e7c582c67  /authoring/media.mjs?build=sentinel77a-c1
+114d04be6d8b4d815f68b40f307c7946e8fb0ca86607dba2eb6b573431eb35b0  /hub-cms/config.mjs?build=sentinel77a-c1
+9ae492c24f88e57a9135b54f6457ae68612a86979772b8b0e451fc8e1e06d49e  /knowledge/forge-journey.mjs?build=sentinel77a-c1
+be1ce128c972a7a98cb860e89eaae50e4f244e556b19484e216c77e3dc8f62d1  /knowledge/registry.mjs?build=sentinel77a-c1
+8dc5531cc28c682e606b655d905917c7233048f09796d9a092e9c81a74fdbf12  /electronics/state/circuit-state.mjs?build=sentinel77a-c1
+652c211a346f2640305e049086bc05a9a10efe5f45d6c2ff1dfe656e7cce931d  /wiring-generator/model.mjs?build=sentinel77a-c1
+8d335e677cd8ee3aec37c69b230d2bf2d175d5024064d7f2a81db35505d6bc92  /electronics/instrument/circuit.mjs?build=sentinel77a-c1
+83181614a86d4a01b3e71f31c3e6bdb1b0637ab60e2e74a44486a895ae7d14c0  /electronics/instrument/configuration.mjs?build=sentinel77a-c1
+a3db2d800f3785b95106cb3013d2f548831c6e59b8efdb56ac9311900c916a0c  /electronics/response/assumptions.mjs?build=sentinel77a-c1
+e6556e0d79a6d48b2e2f4eb193a1a4d1ad75c45e4f7e89bcf10d243203bf3156  /electronics/response/circuits.mjs?build=sentinel77a-c1
+1c83bcca1afccbcfd1b227d814a282a62adaf1557aa1e0eacddc48b0ebac6e23  /electronics/response/circuit.mjs?build=sentinel77a-c1
+ae376a43b853ffefb4f170650902e1613f2141a2b1e6d24ca20ea46f0af572a7  /electronics/response/analysis.mjs?build=sentinel77a-c1
+83fc016d3676d86e7d96b5359accf578e6c658a94e48f9178a37ab842e481937  /les-paul-kits/config.mjs?build=sentinel77a-c1
+201a6e357de449471166d22a981414cdbe65724c3027abea2811b89c447bc06b  /wiring-generator/session.mjs?build=sentinel77a-c1
+1ffaf8b4ff0e0096055bfde56e9961ba8fb13822f04a5552269e886578a73f99  /electronics/networks/treble-bleed.mjs?build=sentinel77a-c1
+1b0f380fec75d0b8b164418d38b0f35420eccf9ccf6941b43ab99eed7b9847ae  /electronics/switching/devices.mjs?build=sentinel77a-c1
+0a6926ccaffd0d9b18d71091c67ce0fb8a79899f8d808497d7e0996f8e69eb6b  /electronics/switching/modifiers.mjs?build=sentinel77a-c1
+cb0e64991a972703d00356b356eeaec7896f94487e2e531a194b76820ba1a18a  /electronics/circuit-connectivity.mjs?build=sentinel77a-c1
+ae7bade3cd91e34e0d8eebe09fb0650e9679bc6c78ce0d5a4a9861c77a75902a  /wiring-generator/layouts.mjs?build=sentinel77a-c1
+4764f1a49596b25dcf4651c5f447b9eb970a0777bf1235585922fc77dce39c33  /wiring-generator/colours.mjs?build=sentinel77a-c1
+3cf312f2a5d22489dbeaa85e5b67f91d8a58276848be0cd216a8ec904c3f1090  /electronics/instrument/control-assignments.mjs?build=sentinel77a-c1
+19fa4a2b7dba4732a3d662a55a3656484dad752d61c4529a314e97d0930dda57  /electronics/switching/coils.mjs?build=sentinel77a-c1
+204711b03aed9eeaa25f9039b6e43685ff6b324af211b390366afcf25b7100d1  /electronics/response/engine.mjs?build=sentinel77a-c1
+e523ef7fd3b86c86ed5b02be6e76ffba62f526f9eaf3f04115ed8cf48ab72a3e  /wiring-kits/kit-data.mjs?build=sentinel77a-c1
+929199d9cf7e593d840d277ca73c8fbf159b8149f5c8d43adb2ce2f200187418  /wiring-generator/presentation.mjs?build=sentinel77a-c1
+281e46ba01ab645b07cdbb3af560d465e5247f4f08d9c5b4553732350bf74f8f  /wiring-kits/kit-component-discovery.mjs?build=sentinel77a-c1
+9d923f0d93e819bc7f60ae572127c0489a07f6fc5cbf8b8583369378024cb93e  /admin/delivery/delivery.mjs?build=sentinel77a-c1
+0eeb085316bab001cfb75b83b949171784d8306a4cc197c09ff52b005d1207c5  /operations/model.mjs?build=sentinel77a-c1
+62164591c884cfabcfbbaa333c31372e9e6ba19775fafaec137ebbe067c75f00  /site.mjs?build=sentinel77a-c1
+c14d81f35746d5597633664e0cb3ddc78c53f482b7bf3a7c9f49150de64ccfa1  /admin/email-preview/app.mjs?build=sentinel77a-c1
+f187c6dd8fa115a8646864fe5dc801cf41624165e9f8d8b5697ea23c5dd896eb  /basket-count.mjs?build=sentinel77a-c1
+02f0658c441a691f13aac2ecd257e5792bf9ae81b01dcfe4eea2b3bf5227fb09  /operations/public.mjs?build=sentinel77a-c1
+e69c773c0df155723fec60fc6bdd7fa0cd30289c44fe1e75116c4cbcec46b620  /basket-storage.mjs?build=sentinel77a-c1
+ce214c53034f972e4d2f867adb3ad46cf39de36a02dc3363a177032e5aff1407  /commerce.mjs?build=sentinel77a-c1
+753fe51f014a92af3e164757cad80de91253666cf06db9a3be7bc41b83f1b76f  /commercial/destinations.mjs?build=sentinel77a-c1
+c570f90d6e8c5c5fb8b5768fca161a5607fde98e5666e0822e5ca1004d16b17f  /commercial/handoff.mjs?build=sentinel77a-c1
+549d3bdb731068d50eb5090da677f751d654a2caf5e80739d54a84f3d128d0fc  /backend/site-operations.mjs?build=sentinel77a-c1
+d390f591ee59f216bee7d4956e6fa69b90001bef4c581003be0c4ac69d888fbb  /operations/news-render.mjs?build=sentinel77a-c1
+607cc3f47922a0c73ee73fe86cd69e008f5530a9d7327aa7e0276bf60ba91570  /les-paul-kits/snapshot.mjs?build=sentinel77a-c1
+0aebbf704464c372eabac6f014597a89f12d00913af4ac44ca1c2cb0d048b323  /components/catalogue.mjs?build=sentinel77a-c1
+a3e8ad52273e283672f30f9cda0bd16b55a34ba3e05d76d05c70d38871debe11  /les-paul-kits/diagram.mjs?build=sentinel77a-c1
+fc377349e818d1196705ac9cd57bba924b2ae7e9832f3257c79878fb6218bd6c  /wiring-generator/render.mjs?build=sentinel77a-c1
+eaacf477f22ee101c4543d8ab1feb5df6131b40fe52d5190bb061f566bd71517  /wiring-generator/composition.mjs?build=sentinel77a-c1
+8a8a61a6caa4944ecab044e5f31a04c55ecd436803a44f7e424b75de745f76e6  /wiring-generator/components.mjs?build=sentinel77a-c1
+a8896e7ec990e54377ea2caf092866ad0bde907702e4d7146b594605195d09d5  /electronics/presentation/component-artwork.mjs?build=sentinel77a-c1
+7a62d062d93096cd86c8de70d5ea5f7ee2a59d7a289e5e36edac20c82b95776b  /wiring-generator/routing.mjs?build=sentinel77a-c1
+ced64ce778a74a6b5b4df2a5da236543811aa9656eeb58f801a6335e3f3101c2  /wiring-generator/diagram-semantics.mjs?build=sentinel77a-c1
+a150556d385b43eadb2295e5c5272b11a157a6c38e39d16c5b5d590e32505de7  /wiring-generator/physical.mjs?build=sentinel77a-c1
+902f61a84475cbe1ec90f4d9094d0b640af2cc1da5275f73b57fde5b4bf92b48  /admin/email-templates/studio.mjs?build=sentinel77a-c1
+e5c0aa121a213cb56e19b35e8d08ba1af45995a679c74a51e1d170c5d09c6f33  /admin/orders/email-review.mjs?build=sentinel77a-c1
+fe430ad6d0af3e5a54c975f4748116e47412c5d92e52012952de30add96fc2c8  /admin/admin.mjs?build=sentinel77a-c1
+5661368734062e7879919bb809463798cdafcd62c330adc388f5605062b419b1  /admin/assembly-ui.mjs?build=sentinel77a-c1
+033353a3d90f0dd09fab1cdc25bd550ab15079da62178de7a861a4119e6d647b  /admin/component-export.mjs?build=sentinel77a-c1
+2c0ac0ff0d9ef14bf6a68542ebc1f551451ab279cc0c82d5a7de9a33290b7d21  /admin/assembly-export.mjs?build=sentinel77a-c1
+22591539beac47f883b94117e8dda133b7575062165cf6d8afcb9dde456eb108  /admin/ironclad/estimator.mjs?build=sentinel77a-c1
+9df72e15c9c3a84a7e60f9cd74ee2df9044e189a7e7fb8370b4c82bd148e5383  /admin/ironclad/model.mjs?build=sentinel77a-c1
+455c0087e558fe7054211bc33e438d25c84a6271d5a89cdbe477bfa31739306e  /admin/orders/app.mjs?build=sentinel77a-c1
+39bd913992674ce12316bf7e55c2e84220c2d14aa67ca20401404484e7e7b66c  /admin/orders/commercial-date.mjs?build=sentinel77a-c1
+4b62d7084266ec44f35036814ada8943fa96dc0f5bf60effa1ba1103f2358b38  /admin/orders/order-date-correction.mjs?build=sentinel77a-c1
+c6a73e4c92b981e52fe78007c804d0a98ebd6d637cb180b77ef2bd7d8b158042  /admin/orders/customer-aftercare.mjs?build=sentinel77a-c1
+27cb33b0af49b48ee67d1c5e01cf9d2a3e4dab7291c8add73e9c2fcd4eaad4f6  /admin/orders/fulfilment-corrections.mjs?build=sentinel77a-c1
+3fbcdc420d774ebcd048469d6fec3b4d4769eb9ada150d9b6468b2fb1fd18f68  /admin/orders/external-edit.mjs?build=sentinel77a-c1
+79734e211e80c5fa55d63d0680c501fc54cc3de723c9120915e99d80f8de906d  /admin/orders/detail-presentation.mjs?build=sentinel77a-c1
+42394f2a7b19c23a0127424b96b9e781cd69892a9da457bcd53bdf89b9d6bdde  /admin/orders/view.mjs?build=sentinel77a-c1
+8917c561f0f5d7c1ce8ad8b4d982db7755f0ff3f442c7ef8100cb8d8364ec2bc  /admin/orders/external-order.mjs?build=sentinel77a-c1
+f6230dabb1f0d3f0c848f589ed767181a9297120ef342aa62c82868508cc13d9  /admin/orders/model.mjs?build=sentinel77a-c1
+2de4be4cbffa82d04bd4930b14dd95b113c0320683171cc3d633abc6865cf99f  /admin/orders/finance-ui.mjs?build=sentinel77a-c1
+f637221ea98b8ec906e48db98724e212aab0b9a5771a5a6d8031d18a7526c182  /admin/orders/financial-record.mjs?build=sentinel77a-c1
+b664ab3226f40474b432d7f41cc59d7819ddfdd8f391c932de50f3885399614e  /admin/orders/eclipse-repository.mjs?build=sentinel77a-c1
+6f47dbd166af7ff053859bea3e1edb6d9c683e0ffcdef8eff96c1d56bafde662  /admin/orders/eclipse-settings.mjs?build=sentinel77a-c1
+2dfd6bb90771dd7646761c781ba14aa9c185fe823fc022710e95fa8ad22f7d07  /admin/orders/eclipse-model.mjs?build=sentinel77a-c1
+85049fffc6a227e5e288967a0e2018e0c7fcc8ff1e7c6029f2a098a5cfa1f82b  /admin/orders/financial-order.mjs?build=sentinel77a-c1
+52d3d8ad011330ce5ac9ee1cbbb6f93682389b5e0cc888a1068c36ac7c7873e4  /admin/orders/economics-v2.mjs?build=sentinel77a-c1
+26d4ee5b8ea931b582c59c0ff5e7a9b271663b018f09dd559ff9d1c9eb9c48af  /admin/orders/economics.mjs?build=sentinel77a-c1
+49927ecfc03a5846cfb46a3395cfd511f329b97d3e6f19d8114c6b2726da488c  /admin/orders/cost-reference.mjs?build=sentinel77a-c1
+9af57c229884ee3cb0186085700bab2a804f8f43fb58d8894c2d0f94a5d6775a  /admin/orders/finance-activation.mjs?build=sentinel77a-c1
+9de5f0de035d766044322ac4e058cd9c635b295553ec40bfb2875964437c546b  /admin/orders/eclipse-ui.mjs?build=sentinel77a-c1
+9c1766375d9172b7d73fbab68caf5368815811d106bff37e5012a6eb8a37d57e  /admin/site-operations/operations.mjs?build=sentinel77a-c1
+983edc5ffaebd461548c6e3445bf346020922ca38aadcbf9a808b6506b9aa214  /commercial/admin.mjs?build=sentinel77a-c1
+46640d4525f0928713e062eba1490ccc428eeb4d6d3d65d23d0f9bae83371583  /commercial/offers-admin.mjs?build=sentinel77a-c1
+863b52a7d184129728d7a29468dd2c80cf2eadb3cc4bfa8a57f32051bd245b9b  /operations/presets.mjs?build=sentinel77a-c1
+78b62782acf82caedc84c0e8c50ce1a19583d6018df4da6ea94ce8201568beed  /commercial/offers.mjs?build=sentinel77a-c1
+5537db7cfb984cef7bb8792bc8dce251db389fc2cb7e318c9f0bc92329dfbdd7  /commercial/offer-reference.mjs?build=sentinel77a-c1
+c6b6d2969895a827f5a783babb7d5ed23b17bb54f7d230f01b4771600ead6e7c  /commercial/offer-activation.mjs?build=sentinel77a-c1
+f3ffc9479224ce0cc88b8460264850d65e3094930ab7dda62a12983a8c518ec5  /wiring-kits/builder-entry.mjs?v=p10hi&build=sentinel77a-c1
+62164591c884cfabcfbbaa333c31372e9e6ba19775fafaec137ebbe067c75f00  /site.mjs?build=afbac1358e782b588d222960eebb03f170a026bb
+e6f10f3cd8251a63876737cff8ed0b28ab0e1c54bd785590eae66ff06fff42f3  /wiring-kits/builder-shell.mjs?build=sentinel77a-c1
+dcf1c7c85872f93a615b1ba425c5d4aa282c10c66c2e56dc7d862a9a690bd924  /wiring-kits/family-repository.mjs?build=sentinel77a-c1
+f2665868bb5a1790ef3b657c8b0eed185bb62b6f2cad94c9a727a9b5192d0726  /deployment.mjs?build=afbac1358e782b588d222960eebb03f170a026bb
+83fc016d3676d86e7d96b5359accf578e6c658a94e48f9178a37ab842e481937  /les-paul-kits/config.mjs?build=afbac1358e782b588d222960eebb03f170a026bb
+c74be8a6c8b4f9e79ebd87a3128b77cca884ebf0cb9591b9d7bfd027a494f921  /les-paul-kits/kits.mjs?build=afbac1358e782b588d222960eebb03f170a026bb
+476d00e9675feb322f2ab9ab9e662f07bcbf1199f782cd2ec3580b555f3075ed  /electronics/state/project.mjs?build=afbac1358e782b588d222960eebb03f170a026bb
+6a23ab873cd10485022e9d00054d6627a29725582c3ce7ee1bf91467d4cd65a5  /knowledge/kit-project.mjs?build=afbac1358e782b588d222960eebb03f170a026bb
+201a6e357de449471166d22a981414cdbe65724c3027abea2811b89c447bc06b  /wiring-generator/session.mjs?build=afbac1358e782b588d222960eebb03f170a026bb
+0f2d21c503687ec911cd956eeec1f9572301b87166b2535f450466cdeb2b1d05  /les-paul-kits/fields.mjs?build=afbac1358e782b588d222960eebb03f170a026bb
+32e547b49977c803c96a0e618917982091e6ecbb4fe2f563de245778891ff6ef  /les-paul-kits/choice-details.mjs?build=afbac1358e782b588d222960eebb03f170a026bb
+a3e8ad52273e283672f30f9cda0bd16b55a34ba3e05d76d05c70d38871debe11  /les-paul-kits/diagram.mjs?build=afbac1358e782b588d222960eebb03f170a026bb
+ce214c53034f972e4d2f867adb3ad46cf39de36a02dc3363a177032e5aff1407  /commerce.mjs?build=afbac1358e782b588d222960eebb03f170a026bb
+52bf11413f617a979bd35b0333ffd39bac91d093aa2e7bab7464909e8d847a83  /operations/purchase-controls.mjs?build=afbac1358e782b588d222960eebb03f170a026bb
+0aebbf704464c372eabac6f014597a89f12d00913af4ac44ca1c2cb0d048b323  /components/catalogue.mjs?build=afbac1358e782b588d222960eebb03f170a026bb
+886b8e01d143e5a596d6abdeec8dc75174ed9180191c3b0778bfc53448ba50b0  /backend/catalogue-options.mjs?build=afbac1358e782b588d222960eebb03f170a026bb
+83181614a86d4a01b3e71f31c3e6bdb1b0637ab60e2e74a44486a895ae7d14c0  /electronics/instrument/configuration.mjs?build=afbac1358e782b588d222960eebb03f170a026bb
+8dc5531cc28c682e606b655d905917c7233048f09796d9a092e9c81a74fdbf12  /electronics/state/circuit-state.mjs?build=afbac1358e782b588d222960eebb03f170a026bb
+6d173ff7fb1548e9c63c02aaccdcdf24d79978616103a21f8216f71c3a12159e  /products/model.mjs?v=p11ef&build=afbac1358e782b588d222960eebb03f170a026bb
+469dcb44c6bc9e863f74b22655fcff9d66b31e374acb689eea953818e3e7073f  /admin/images.mjs?build=afbac1358e782b588d222960eebb03f170a026bb
+be1ce128c972a7a98cb860e89eaae50e4f244e556b19484e216c77e3dc8f62d1  /knowledge/registry.mjs?build=afbac1358e782b588d222960eebb03f170a026bb
+772f2e5661ef880d84aa6412bdf2587a75643a90f4d39b5f0d1abe474e0d76d2  /admin/data.mjs?build=afbac1358e782b588d222960eebb03f170a026bb
+caff5c5ab795055a74e17466a95c9ff3863cc558db84fa6e53f07b332bd2ef2c  /admin/pot-specs.mjs?build=afbac1358e782b588d222960eebb03f170a026bb
+296d2cc26b209239d84cd56161e9222a08c46faf674caa81ce9d59c7beed0442  /admin/electrical-specs.mjs?build=afbac1358e782b588d222960eebb03f170a026bb
+62a867b02c9e095af024d8b0bfde1221391568edd12a54daa5311b8b8dc40ee5  /admin/catalogue-options.mjs?build=afbac1358e782b588d222960eebb03f170a026bb
+d2bafaeb319bbc79bb76d2575fb3e93196da11580836771f04d971964c53af11  /admin/physical-specs.mjs?build=afbac1358e782b588d222960eebb03f170a026bb
+f3ffc9479224ce0cc88b8460264850d65e3094930ab7dda62a12983a8c518ec5  /wiring-kits/builder-entry.mjs?build=sentinel77a-c1
+02f7e597525886726d349e3cab8439d5c049ba742af2889126502aadf817333a  /wiring-kits/landing.mjs?v=p10f&build=sentinel77a-c1
+87c194fb561263d14777eac6a78e0f79cde995980a9c02ea8df0b8e78b351088  /wiring-kits/fitment.mjs?build=afbac1358e782b588d222960eebb03f170a026bb
+```
