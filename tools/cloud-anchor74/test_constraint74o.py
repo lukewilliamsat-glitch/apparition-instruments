@@ -85,6 +85,10 @@ def native(env,proof):
         else: raise AssertionError(want)
     with patch.object(c.subprocess,'run',side_effect=subprocess.TimeoutExpired('synthetic',12)):
         assert classified(env,proof,name,original['rule'])=='probe_process_timeout'
+    with patch.object(c.subprocess,'run',return_value=subprocess.CompletedProcess([],1,SECRET.encode())):
+        assert classified(env,proof,name,original['rule'])=='probe_process_refused'
+    assert c.state(b'42501')=='sql_privilege' and c.state(b'0A000')=='sql_unsupported'
+    assert c.state(b'53100')=='sql_resource' and c.state(b'99999')=='sql_refusal'
     db=c.Connection(env)
     try:
         db.query('BEGIN')

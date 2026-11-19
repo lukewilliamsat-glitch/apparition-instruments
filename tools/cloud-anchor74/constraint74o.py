@@ -15,7 +15,7 @@ source_unsupported_syntax target_unsupported_syntax source_quoting_restriction
 target_quoting_restriction expression_size_limit expression_depth_limit unsafe_input
 eligibility_restriction boundary_restriction engine_version result_shape
 sql_syntax sql_resolution sql_type sql_privilege sql_unsupported sql_data
-sql_statement_timeout sql_lock_timeout sql_resource sql_refusal probe_process_timeout
+sql_statement_timeout sql_lock_timeout sql_resource sql_refusal probe_process_timeout probe_process_refused
 native_decode native_unsupported_node native_structure_mismatch dependency_mismatch
 constrained_column_mismatch inheritance_mismatch validation_mismatch native_equivalent
 """.split())
@@ -240,8 +240,8 @@ def worker(key, source, target, env):
     if set(os.listdir('/sys/class/net')) != {'lo'}:
         raise Refused('boundary_restriction')
     host=Path(env.get('PGHOST',''))
-    if (host.parent.parent != Path('/work') and not host.is_relative_to('/work')
-            or not host.is_absolute() or '..' in host.parts or host.resolve()!=host
+    if (not host.is_absolute() or not host.is_relative_to('/work')
+            or '..' in host.parts or host.resolve()!=host
             or host.name!='socket' or not re.fullmatch(r'[a-z][a-z0-9_]{1,62}',env.get('PGUSER',''))):
         raise Refused('boundary_restriction')
     if not isinstance(key,(tuple,list)) or len(key)!=3 or not all(
@@ -284,11 +284,15 @@ def native_check(key, source, target, env):
             return 'expression_size_limit'
         result=subprocess.run([sys.executable,'-I',str(Path(__file__).resolve())],input=request,
                               stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,env=private_env,timeout=12)
+        if result.returncode != 0:
+            return 'probe_process_refused'
         value=result.stdout.decode('ascii').strip()
-        return value if result.returncode==0 and value in FIXED else 'result_shape'
+        return value if value in FIXED else 'result_shape'
     except subprocess.TimeoutExpired:
         return 'probe_process_timeout'
-    except (OSError, UnicodeError, TypeError, ValueError):
+    except OSError:
+        return 'probe_process_refused'
+    except (UnicodeError, TypeError, ValueError):
         return 'result_shape'
 
 

@@ -144,9 +144,9 @@ jobs:
           recipient=$(docker run --rm -i --network none --entrypoint age-keygen anchor74:verified -y < "$out/fixture-key")
           python3 "$ctl" fallback "$out/synthetic-failure.log" "$out/synthetic-failure-plan.json" |
             docker run --rm -i --network none --read-only --cap-drop ALL --entrypoint age anchor74:verified -r "$recipient" > "$out/synthetic-failure.age"
-          if docker run --rm -i --network none --read-only --cap-drop ALL -v "$out/wrong-key:/fixture-key:ro" \
+          if docker run --rm -i --network none --read-only --cap-drop ALL --user "$(id -u):$(id -g)" -v "$out/wrong-key:/fixture-key:ro" \
               --entrypoint age anchor74:verified -d -i /fixture-key < "$out/synthetic-failure.age" >/dev/null 2>&1; then exit 1; fi
-          docker run --rm -i --network none --read-only --cap-drop ALL -v "$out/fixture-key:/fixture-key:ro" \
+          docker run --rm -i --network none --read-only --cap-drop ALL --user "$(id -u):$(id -g)" -v "$out/fixture-key:/fixture-key:ro" \
             --entrypoint age anchor74:verified -d -i /fixture-key < "$out/synthetic-failure.age" |
             jq -e '.diagnostics["constraint outcomes"].source_quoting_restriction==1 and (tostring|contains("discarded_private_fictional_name")|not)' >/dev/null
           test "$(wc -c < "$out/synthetic-failure.age")" -le 8192

@@ -169,7 +169,8 @@ def verify_receipt(receipt, doc, metadata, proof_hash, *, fixture=False):
         must(isinstance(receipt.get(name),str) and re.fullmatch(r'(?:0|[1-9][0-9]{0,3})',receipt[name]),
              'invalid equivalence count')
     return {k:receipt[k] for k in ('status','capture_run','restore_run','proof_version',
-            'restore_profile','checks','equivalent_relation_default_acls','equivalent_native_check_rules','restored_utc')}
+            'restore_profile','checks','equivalent_relation_default_acls','equivalent_native_check_rules','restored_utc',
+            'archive_sha256','proof_sha256')}
 
 
 def diagnostics(log):
@@ -220,7 +221,7 @@ def main():
                            hashlib.sha256(Path(__file__).with_name('proof-v2.sql').read_bytes()).hexdigest())
         print(f'Approved plan SHA-256: {hashlib.sha256(canonical(doc)).hexdigest()}')
         print('V2 does not independently seal the original partition and inheritance graph.')
-        print(json.dumps(out,sort_keys=True))
+        print(json.dumps(out | {k:doc[k] for k in ('controller_sha','candidate_sha','archive_commitment')},sort_keys=True))
     elif mode in ('diagnostics','fallback'):
         with open(sys.argv[2],'rb') as file:
             result=diagnostics(file.read(MAX_LOG+1))
