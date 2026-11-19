@@ -1,0 +1,119 @@
+name: SENTINEL 77B static restoration
+on:
+  workflow_dispatch:
+    inputs:
+      execution_confirmed:
+        description: Owner authorised the exact SENTINEL 77B static correction
+        required: true
+        type: boolean
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: phoenix66-pages-publisher
+  cancel-in-progress: false
+jobs:
+  production_gate:
+    if: github.event_name == 'workflow_dispatch' && github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview' && github.run_attempt == 1 && inputs.execution_confirmed
+    environment: phoenix66-production
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Keep the established approved production target
+        env:
+          APPROVED_TARGET: ${{ vars.PHOENIX66_APPROVED_TARGET }}
+        run: test "$APPROVED_TARGET" = 'apparition-instruments:production:43845328622'
+  publish:
+    needs: production_gate
+    environment: phoenix66-preview
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Verify and stage only the pinned SENTINEL candidate, acceptance manifest and rollback
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          umask 077
+          work="$RUNNER_TEMP/sentinel77b"
+          mkdir "$work"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14552190395/zip" > "$work/candidate.zip"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14552030893/zip" > "$work/evidence.zip"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14327320952/zip" > "$work/rollback.zip"
+          python3 - "$work" <<'PYVERIFY'
+          import hashlib, io, json, pathlib, stat, sys, zipfile
+          w=pathlib.Path(sys.argv[1])
+          pins={
+           'candidate.zip':'2471ba75da48ee4084932f3ab7963dd9e851ada73e65803d6199377cf8db5e11',
+           'evidence.zip':'edc00d83feea0fad1e4f15563dcf80bfc22d682c38cf3d7b9c4ba86b07f2a51d',
+           'rollback.zip':'52f876edfba409ef1442eceae9a283b0024b53f2a195711f43113b0d6dd43cfe',
+          }
+          def sha(b): return hashlib.sha256(b).hexdigest()
+          def need(condition, label):
+           if not condition: raise ValueError(label)
+          def inventory_hash(m):
+           return sha(json.dumps(m,sort_keys=True,separators=(',',':')).encode())
+          for n,h in pins.items():
+           with (w/n).open('rb') as f: need(hashlib.file_digest(f,'sha256').hexdigest()==h,n)
+          with zipfile.ZipFile(w/'evidence.zip') as a:
+           raw=a.read('deep-inventory.json')
+           need(sha(raw)=='b07789ba58f28eef5492a16a4b3aa9f43e470728cfc57f25e3e92ccd62fd3bab','composition')
+           manifest=json.loads(raw)
+          with zipfile.ZipFile(w/'candidate.zip') as a:
+           need(a.namelist()==['release-a77a-candidate.zip'],'outer package shape')
+           payload=a.read('release-a77a-candidate.zip')
+          need(sha(payload)==manifest['candidate_zip_sha256']=='4c092c6e51d30e180c244c245cc25878fa5d29ae006e589bdcb3456890ea3810','inner ZIP')
+          with zipfile.ZipFile(w/'rollback.zip') as b:
+           prefix='candidate/'
+           names=[i.filename for i in b.infolist() if not i.is_dir() and i.filename.startswith(prefix)]
+           need(len(names)==465 and len(set(names))==465,'rollback count')
+           baseline={n[len(prefix):]:sha(b.read(n)) for n in names}
+           need(baseline==json.loads(b.read('ironclad69a-receipt.json'))['release'],'rollback receipt')
+           need(inventory_hash(baseline)=='9cb89a3d9b5db7b0bfc5fe5698980b2d2bb7549b635907663595a14741a793c7','rollback inventory')
+          with zipfile.ZipFile(io.BytesIO(payload)) as c:
+           names=[]
+           for i in c.infolist():
+            n=i.filename
+            need(n and not n.startswith('/') and all(x not in {'','.','..'} for x in n.split('/')) and '\\' not in n and not i.is_dir() and stat.S_IFMT(i.external_attr>>16)==stat.S_IFREG,'unsafe package member')
+            names.append(n)
+           need(len(names)==476 and len(set(names))==476,'candidate count')
+           actual={n:sha(c.read(n)) for n in names}
+           need(actual==manifest['files'] and inventory_hash(actual)=='2856d9ab919d1c0ed0a10981d4d3a237abfc297e7eb09c03b98046b5fa3b8eb8','candidate inventory')
+           need(all(actual[n]==baseline[n] for n in ('index.html','operations/snapshot.json')),'preservation anchors')
+           out=w/'static'
+           out.mkdir(mode=0o700)
+           for n in sorted(actual):
+            p=out/n;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(c.read(n))
+          print(json.dumps({'candidate_files':len(actual),'rollback_files':len(baseline),'composition':sha(raw),'inventory':inventory_hash(actual)}))
+          PYVERIFY
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Prepare the previously used pinned Pages uploader
+        run: npm install --prefix "$RUNNER_TEMP/cloudflare-uploader" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false wrangler@4.162.0
+      - name: Require exact live rollback and publish the verified tree
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/sentinel77b"
+          endpoint="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/apparition-instruments"
+          prior='41fab337-e7df-499f-9292-fef300e46fe7'
+          source='a50dfb712ddd6420d648f6388bd6702f4566713c'
+          project() { curl -fsS --max-time 12 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$endpoint"; }
+          project | jq -e --arg id "$prior" '.success and (.result.domains|index("apparitioninstruments.co.uk")!=null) and .result.production_branch=="production" and .result.canonical_deployment.id==$id and .result.canonical_deployment.environment=="production" and .result.canonical_deployment.latest_stage.status=="success" and .result.canonical_deployment.deployment_trigger.metadata.commit_hash=="783a30a0523c11625f1d07a806dda51e4c66ae48"' >/dev/null
+          cd "$work"
+          "$RUNNER_TEMP/cloudflare-uploader/node_modules/.bin/wrangler" pages deploy "$work/static"             --project-name=apparition-instruments --branch=production --commit-hash="$source"             --commit-dirty=true --commit-message="SENTINEL 77B verified artifact 14552190395"
+          project | jq -e --arg old "$prior" --arg source "$source"             'select(.success) | .result.canonical_deployment | select(.id!=$old and .environment=="production" and .latest_stage.status=="success" and .deployment_trigger.metadata.commit_hash==$source) | {id,url,environment,source:.deployment_trigger.metadata.commit_hash}' | tee "$work/deployment.json" >> "$GITHUB_STEP_SUMMARY"
+          for path in / /components/ /products/bleed-cap/ /products/bleed-cap/image.png /wiring-kits/ /wiring-kits/build/ /wiring-generator/ /basket/ /checkout/ /operations/snapshot.json /admin/ /admin/orders/ /admin/site-operations/ /admin/delivery/ /admin/catalogue-settings/ /admin/email-templates/ /admin/conjure/ /admin/ironclad/; do
+            expected="${path#/}"
+            [[ "$path" != */ ]] || expected="${expected}index.html"
+            curl -fsS --max-time 14 --max-filesize 3000000 "https://apparitioninstruments.co.uk${path}?sentinel77b=${GITHUB_RUN_ID}" -o "$work/readback"
+            cmp "$work/static/$expected" "$work/readback"
+          done
+          for path in /admin/admin-gate.mjs /admin/orders/customer-aftercare.mjs /backend/operations-admin.mjs /backend/order-data.mjs /backend/catalogue-options.mjs /backend/email-templates.mjs /admin/assembly-repository.mjs; do
+            curl -fsS --max-time 14 --max-filesize 1500000 "https://apparitioninstruments.co.uk${path}?build=sentinel77a-c1" -o "$work/readback"
+            cmp "$work/static${path}" "$work/readback"
+          done
+          printf 'Verified 25 public and Admin static responses. Authenticated owner acceptance is separate.\n' >> "$GITHUB_STEP_SUMMARY"
