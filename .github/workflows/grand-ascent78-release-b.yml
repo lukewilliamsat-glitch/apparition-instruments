@@ -1,0 +1,112 @@
+name: Final Ascent Release B static publication
+on:
+  workflow_dispatch:
+    inputs:
+      execution_confirmed:
+        description: Release B exact artifact and database gate confirmed under 78A
+        required: true
+        type: boolean
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: phoenix66-pages-publisher
+  cancel-in-progress: false
+jobs:
+  production_gate:
+    if: github.event_name == 'workflow_dispatch' && github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview' && github.run_attempt == 1 && inputs.execution_confirmed
+    environment: phoenix66-production
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Keep the established approved production target
+        env:
+          APPROVED_TARGET: ${{ vars.PHOENIX66_APPROVED_TARGET }}
+        run: test "$APPROVED_TARGET" = 'apparition-instruments:production:43845328622'
+  publish:
+    needs: production_gate
+    environment: phoenix66-preview
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Verify and stage only the pinned cumulative static candidate and rollback
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          umask 077
+          work="$RUNNER_TEMP/ascent78b"
+          mkdir "$work"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14554414841/zip" > "$work/candidate.zip"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14552190395/zip" > "$work/rollback.zip"
+          python3 - "$work" <<'VERIFY'
+          import hashlib,io,json,pathlib,stat,sys,zipfile
+          w=pathlib.Path(sys.argv[1]); sha=lambda b:hashlib.sha256(b).hexdigest()
+          def verify(outer,outer_hash,member,inner_hash,count):
+           raw=outer.read_bytes()
+           if sha(raw)!=outer_hash:raise ValueError('Artifact wrapper hash mismatch')
+           with zipfile.ZipFile(io.BytesIO(raw)) as z:
+            if z.namelist()!=[member]:raise ValueError('Unexpected artifact members')
+            data=z.read(member)
+           if sha(data)!=inner_hash:raise ValueError('Release ZIP hash mismatch')
+           result={}
+           with zipfile.ZipFile(io.BytesIO(data)) as z:
+            for i in z.infolist():
+             n=i.filename
+             if n in result or not n or n.startswith('/') or not all(x not in {'', '.', '..'} for x in n.split('/')) or chr(92) in n or stat.S_IFMT(i.external_attr >> 16)!=stat.S_IFREG:
+              raise ValueError('Unsafe file inventory')
+             result[n]=z.read(n)
+           if len(result)!=count:raise ValueError('File count mismatch')
+           return result
+          before=verify(w/'rollback.zip','2471ba75da48ee4084932f3ab7963dd9e851ada73e65803d6199377cf8db5e11','release-a77a-candidate.zip','4c092c6e51d30e180c244c245cc25878fa5d29ae006e589bdcb3456890ea3810',476)
+          after=verify(w/'candidate.zip','8c107f07b24815d81f1b4029d2644af2bb0932172f392b795d43324d862d22ea','release-b.zip','612e4b57e1fc72d8c2d2adeb871400a3b59cb36a604ebed2b39764dc7fa3d2ea',480)
+          actual=sha(json.dumps({k:sha(v) for k,v in after.items()},sort_keys=True,separators=(',',':')).encode())
+          if actual!='aed4da918de7cdfdbe920d44f1eefece7b12f377188a1d65b4d6a71daae31679':raise ValueError('File inventory hash mismatch')
+          if any(not k.startswith('admin/') for k in set(before)|set(after) if before.get(k)!=after.get(k)):raise ValueError('Public delta')
+          out=w/'static'
+          out.mkdir(mode=0o700)
+          for n,data in after.items():
+           f=out/n; f.parent.mkdir(exist_ok=True,parents=True); f.write_bytes(data)
+          print('Exact package and immediate rollback verified')
+          VERIFY
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Prepare the previously used pinned Pages uploader
+        run: npm install --prefix "$RUNNER_TEMP/cloudflare-uploader" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false wrangler@4.162.0
+      - name: Require exact live rollback and publish the verified tree
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/ascent78b"
+          endpoint="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/apparition-instruments"
+          prior='578cbbef-d8d7-4701-85d3-eb68bae4585c'
+          source='3c68e6c4dfbe4bae20260d2e58351e5bcc32da24'
+          project() { curl -fsS --max-time 12 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$endpoint"; }
+          project | jq -e --arg id "$prior" '.success and (.result.domains|index("apparitioninstruments.co.uk")!=null) and .result.production_branch=="production" and .result.canonical_deployment.id==$id and .result.canonical_deployment.environment=="production" and .result.canonical_deployment.latest_stage.status=="success" and .result.canonical_deployment.deployment_trigger.metadata.commit_hash=="a50dfb712ddd6420d648f6388bd6702f4566713c"' >/dev/null
+          cd "$work"
+          "$RUNNER_TEMP/cloudflare-uploader/node_modules/.bin/wrangler" pages deploy "$work/static"             --project-name=apparition-instruments --branch=production --commit-hash="$source"             --commit-dirty=true --commit-message="Authorisation 78A Release B verified artifact 14554414841"
+          project | jq -e --arg old "$prior" --arg source "$source"             'select(.success) | .result.canonical_deployment | select(.id!=$old and .environment=="production" and .latest_stage.status=="success" and .deployment_trigger.metadata.commit_hash==$source) | {id,url,environment,source:.deployment_trigger.metadata.commit_hash}' | tee "$work/deployment.json" >> "$GITHUB_STEP_SUMMARY"
+          readback() {
+            local path="$1" expected="$2" attempt
+            for attempt in 1 2 3; do
+              if curl -fsS --max-time 14 --max-filesize 3000000 "https://apparitioninstruments.co.uk${path}" -o "$work/readback" && cmp -s "$expected" "$work/readback"; then return 0; fi
+              if [[ "$attempt" != 3 ]]; then sleep 4; fi
+            done
+            printf 'Served byte difference: %s\n' "$path" >&2
+            return 1
+          }
+          for path in / /components/ /products/bleed-cap/ /products/bleed-cap/image.png /wiring-kits/ /wiring-kits/build/ /wiring-generator/ /basket/ /checkout/ /operations/snapshot.json /admin/ /admin/orders/ /admin/site-operations/ /admin/delivery/ /admin/catalogue-settings/ /admin/email-templates/ /admin/conjure/ /admin/ironclad/ /admin/ironclad/calculator/; do
+            expected="${path#/}"
+            [[ "$path" != */ ]] || expected="${expected}index.html"
+            readback "${path}?ascent78=${GITHUB_RUN_ID}" "$work/static/$expected"
+          done
+          for path in /admin/admin-gate.mjs /admin/orders/customer-aftercare.mjs /backend/operations-admin.mjs /backend/order-data.mjs /backend/catalogue-options.mjs /backend/email-templates.mjs /admin/assembly-repository.mjs; do
+            readback "${path}?build=sentinel77a-c1" "$work/static${path}"
+          done
+          for path in /admin/ironclad/app.mjs /admin/ironclad/entry.mjs /admin/ironclad/repository.mjs /admin/orders/app.mjs /admin/orders/financial-order.mjs; do
+            readback "${path}?build=ascent78b-v1" "$work/static${path}"
+          done
+          printf 'Verified public and Admin static responses. Authenticated owner acceptance is separate.\n' >> "$GITHUB_STEP_SUMMARY"
