@@ -111,6 +111,15 @@ def native_cases(env, dump):
         except (anchor.Refusal, AssertionError) as exc:
             raise AssertionError(f'native structural mutation case {n} failed: {exc}') from None
 
+    assert 'referential_actions' in constraint74m.difference_hints(
+        'FOREIGN KEY (a) REFERENCES other(a) ON DELETE CASCADE',
+        'FOREIGN KEY (a) REFERENCES other(a) ON DELETE SET NULL')
+    assert 'deferral_tokens' in constraint74m.difference_hints(
+        'FOREIGN KEY (a) REFERENCES other(a) DEFERRABLE INITIALLY DEFERRED',
+        'FOREIGN KEY (a) REFERENCES other(a)')
+    assert 'uniqueness_tokens' in constraint74m.difference_hints(
+        'UNIQUE NULLS NOT DISTINCT (a)', 'UNIQUE (a)')
+
     # A CHECK must not be reinterpreted in a catalog whose other proof groups
     # already failed, even if the changed function has the same name/OID.
     changed = read('BEGIN; CREATE OR REPLACE FUNCTION public.anchor_m_first(int) RETURNS int LANGUAGE sql IMMUTABLE RETURN $1 + 2;')

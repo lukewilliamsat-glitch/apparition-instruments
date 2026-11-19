@@ -36,6 +36,8 @@ jobs:
           if bash "$tool" 999999 "$commitment" <<<"$binding" >/dev/null; then exit 1; fi
           if bash "$tool" "$run" "$commitment" <<<"$binding"$'\n'"$binding" >/dev/null; then exit 1; fi
           echo 'PASS exact binding and rejection of changed fields, wrong origin and multiple inputs.'
+      - name: Verify metadata-only operator plan and review digest checks
+        run: python3 tools/cloud-anchor74/test_restore_plan.py
       - name: Prepare PostgreSQL 17.6 and scoped extensions without credentials
         run: |
           set -euo pipefail

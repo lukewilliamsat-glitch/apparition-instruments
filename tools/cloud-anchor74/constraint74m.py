@@ -222,11 +222,26 @@ def difference_hints(left, right):
     if not all(isinstance(x, str) and len(x.encode()) <= RULE_LIMIT for x in (left, right)):
         return ('bounded_input',)
     a, b = LEX.findall(left), LEX.findall(right)
+    rule_kind = kind(left)
+
     def tags(seq):
         at = lambda i: seq[i] if 0 <= i < len(seq) else ''
         result = collections.defaultdict(list)
-        has_cast = any(x.upper() == 'CAST' for x in seq)
+        keywords = [x.upper() for x in seq]
+        has_cast = 'CAST' in keywords
         for i, t in enumerate(seq):
+            word = keywords[i]
+            if rule_kind == 'foreign_key' and word == 'ON' and at(i+1).upper() in ('UPDATE', 'DELETE'):
+                # All tokens stay private; compare only the named action window.
+                tail = keywords[i+2:i+4] if at(i+2).upper() in ('NO', 'SET') else keywords[i+2:i+3]
+                result['referential_actions'].append((at(i+1).upper(), *tail))
+            if rule_kind in ('foreign_key', 'unique', 'primary_key', 'exclude') and word in ('DEFERRABLE','INITIALLY'):
+                result['deferral_tokens'].append((word, at(i-1).upper() == 'NOT',
+                                                 at(i+1).upper() if word == 'INITIALLY' else ''))
+            if rule_kind == 'unique' and word in ('NULLS','DISTINCT'):
+                result['uniqueness_tokens'].append(word)
+            if rule_kind == 'check' and word == 'INHERIT':
+                result['inheritance_tokens'].append(word)
             if t == '::' or t.upper() == 'CAST':
                 result['cast_notation'].append(t.upper())
                 result['type_tokens'].append(at(i+1) if t == '::' else at(i+2))
