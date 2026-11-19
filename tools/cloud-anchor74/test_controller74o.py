@@ -2,10 +2,12 @@
 import copy
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
 import tempfile
+from unittest.mock import patch
 
 import controller74o as c
 from restore_plan import binding_commitment
@@ -20,7 +22,7 @@ def rejected(fn):
     raise AssertionError('unapproved or malformed recovery accepted')
 
 
-def fake_records(root):
+def fake_records(root, run=RUN):
     def git(*args):
         return subprocess.check_output(['git','-C',str(root),*args],stderr=subprocess.DEVNULL)
     def write(path,text):
@@ -44,11 +46,11 @@ def fake_records(root):
     p=root/c.CANDIDATE_PATH; p.unlink(); p.symlink_to('anchor.py')
     symlink=commit('candidate symlink refused')
     history=[]
-    run_info=dict(id=int(RUN),head_sha=trusted,run_attempt=1,event='workflow_dispatch',path=c.WORKFLOW)
+    run_info=dict(id=int(run),head_sha=trusted,run_attempt=1,event='workflow_dispatch',path=c.WORKFLOW)
     def api(endpoint):
-        if endpoint==f'actions/runs/{RUN}':
+        if endpoint==f'actions/runs/{run}':
             return run_info
-        if endpoint==f'actions/runs/{RUN}/approvals':
+        if endpoint==f'actions/runs/{run}/approvals':
             return history
         _,kind,sha=endpoint.split('/')
         if kind=='commits':
@@ -66,7 +68,7 @@ def fake_records(root):
             raw=git('cat-file','blob',sha)
             return dict(sha=sha,encoding='base64',content=base64.b64encode(raw).decode(),size=len(raw))
         raise AssertionError('controller used an unexpected endpoint')
-    env=dict(GITHUB_SHA=trusted,GITHUB_RUN_ID=RUN,GITHUB_REF=c.TAG,GITHUB_EVENT_NAME='workflow_dispatch',
+    env=dict(GITHUB_SHA=trusted,GITHUB_RUN_ID=run,GITHUB_REF=c.TAG,GITHUB_EVENT_NAME='workflow_dispatch',
              GITHUB_REPOSITORY=c.REPO,GITHUB_RUN_ATTEMPT='1',ANCHOR_CANDIDATE=first,
              GITHUB_WORKFLOW_REF=f'{c.REPO}/{c.WORKFLOW}@{c.TAG}',ANCHOR_CONTROLLER_APPROVED_SHA=trusted)
     return env,api,first,second,malicious,symlink,history,run_info
@@ -133,26 +135,43 @@ def core(root):
     print('PASS controller: two real Git candidates on same environment, exact owner review, replays, mutable inputs, symlinks, untrusted code and malicious diagnostics refused.')
 
 
-def accept_native(receipt_path,capture_path):
-    receipt=json.loads(Path(receipt_path).read_text())
-    capture=json.loads(Path(capture_path).read_text())
-    metadata=dict(capture_run=receipt['capture_run'],release='100001',asset='100002',
-                  sha256=capture['sha256'],bytes=str(capture['bytes']))
-    doc=dict(repository=c.REPO,controller_sha='1'*40,candidate_sha='2'*40,workflow_blob='3'*40,
-             archive_commitment=binding_commitment(metadata),capture_run=metadata['capture_run'],
-             review_environment=c.ENVIRONMENT,restore_profile=c.PROFILE,run_id=receipt['restore_run'])
-    proof_hash=hashlib.sha256(Path(__file__).with_name('proof-v2.sql').read_bytes()).hexdigest()
-    assert c.verify_receipt(receipt,doc,metadata,proof_hash,fixture=True)['status']=='passed'
-    for field,val in [('checks',list(c.GROUPS)[:-1]+['impostor']),('restore_run','101000'),
-                      ('archive_sha256','0'*64),('proof_sha256','0'*64),('extra',OPAQUE)]:
-        rejected(lambda:c.verify_receipt(receipt|{field:val},doc,metadata,proof_hash,fixture=True))
-    rejected(lambda:c.verify_receipt(receipt,doc,metadata|{'asset':'100003'},proof_hash,fixture=True))
-    print('PASS controller: independently verified native 14-group receipt and rejected receipt, identity and archive-binding mutations.')
+def restore_native(exchange_path,key_path):
+    exchange=Path(exchange_path).resolve()
+    captured=json.loads((exchange/'capture.json').read_text())
+    run=os.environ['ANCHOR_RUN']
+    assert captured['mode']=='synthetic' and captured['project']=='fixture-only' and captured['capture_run']==run
+    archive=exchange/'backup.age'
+    metadata=dict(capture_run=run,release='100001',asset='100002',
+                  sha256=captured['sha256'],bytes=str(captured['bytes']))
+    assert archive.stat().st_size==captured['bytes']
+    assert hashlib.sha256(archive.read_bytes()).hexdigest()==captured['sha256']
+    with tempfile.TemporaryDirectory() as root:
+        env,api,_,_,_,_,history,_=fake_records(Path(root),run)
+        with patch.multiple(c,CAPTURE=run,BINDING=binding_commitment(metadata)):
+            pending=c.plan(env,api)
+            rejected(lambda:c.authorize(env,api,sha(pending)))
+            history.append(approval(pending))
+            approved=c.authorize(env,api,sha(pending))
+        # Link the exact synthetic approval to execution, not merely a
+        # separately generated receipt. Pass only the fictional verifier by stdin.
+        runner_env={k:os.environ[k] for k in ('PATH','RUNNER_TEMP','ANCHOR_RUN','HOME') if k in os.environ}
+        with open(key_path,'rb') as identity:
+            subprocess.run(['bash',str(Path(__file__).with_name('host-run.sh')),
+                            str(exchange),'none','fixture-restore-v2-classified',captured['sha256'],run],
+                           stdin=identity,env=runner_env,check=True,timeout=150)
+        receipt=json.loads((exchange/'restore.json').read_text())
+        proof_hash=hashlib.sha256(Path(__file__).with_name('proof-v2.sql').read_bytes()).hexdigest()
+        assert c.verify_receipt(receipt,approved,metadata,proof_hash,fixture=True)['status']=='passed'
+        for field,val in [('checks',list(c.GROUPS)[:-1]+['impostor']),('restore_run','101000'),
+                          ('archive_sha256','0'*64),('proof_sha256','0'*64),('extra',OPAQUE)]:
+            rejected(lambda:c.verify_receipt(receipt|{field:val},approved,metadata,proof_hash,fixture=True))
+        rejected(lambda:c.verify_receipt(receipt,approved,metadata|{'asset':'100003'},proof_hash,fixture=True))
+        print('PASS controller: exact synthetic approval to independently retrieved native 14-group receipt; receipt, identity and binding mutations refused.')
 
 
 if __name__=='__main__':
     if len(sys.argv)==3:
-        accept_native(*sys.argv[1:])
+        restore_native(*sys.argv[1:])
     else:
         with tempfile.TemporaryDirectory() as tmp:
             core(Path(tmp))
