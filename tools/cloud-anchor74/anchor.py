@@ -13,6 +13,9 @@ import tarfile
 import tempfile
 
 HOME = pathlib.Path('/anchor')
+# The pinned container runs Python in isolated mode; use only its read-only source mount.
+sys.path.insert(0, str(HOME))
+import constraint74m
 SCRATCH = pathlib.Path('/work')
 EXCHANGE = pathlib.Path('/exchange')
 SCOPES = ('public', 'forge_private', 'auth', 'storage', 'supabase_migrations')
@@ -41,6 +44,7 @@ FINAL_REL_FIELDS = ('relkind', 'relpersistence', 'relrowsecurity', 'relforcerows
 FINAL_CON_KEYS = ('ns', 'rel', 'conname')
 FINAL_CON_FIELDS = ('rule', 'convalidated')
 FINAL_RESTORE_PROFILE = 'v2-final-two-1'
+SEMANTIC_RESTORE_PROFILE = 'v2-constraint-native-1'
 V2_PATH = 'pg_catalog'
 REQUIRED_EXTENSIONS = {'pgcrypto', 'uuid-ossp'}
 
@@ -423,16 +427,71 @@ def bound_count(n):
     return str(min(9999, n)) + ('+' if n > 9999 else '')
 
 
-def verify_v2_final(expected, actual, env, dump):
+def constraint_rule_equivalence(expected, actual, env, allow_replay):
+    before, after = (metadata_index(p, FINAL_CON_KEYS, FINAL_CON_FIELDS) for p in (expected, actual))
+    proven, outcomes, hints, kinds = set(), {}, {}, {}
+    attempts = 0
+
+    def count(group, label):
+        group[label] = group.get(label, 0) + 1
+
+    for key in sorted(before.keys() | after.keys()):
+        source, target = before.get(key), after.get(key)
+        if source == target:
+            continue
+        if source is None or target is None:
+            count(outcomes, 'extra_target' if source is None else 'missing_target')
+            count(kinds, constraint74m.kind((source or target)['rule']))
+            continue
+        source_kind, target_kind = (constraint74m.kind(r['rule']) for r in (source, target))
+        count(kinds, source_kind if source_kind == target_kind else 'different_kind')
+        if source['convalidated'] != target['convalidated']:
+            count(outcomes, 'validation_difference')
+        if source['rule'] == target['rule']:
+            continue
+        for hint in constraint74m.difference_hints(source['rule'], target['rule']):
+            count(hints, hint)
+        outcome = 'unsupported'
+        if source_kind == target_kind == 'check' and source['convalidated'] == target['convalidated']:
+            if not allow_replay:
+                outcome = 'other_group_unresolved'
+            elif attempts == constraint74m.PROBE_LIMIT:
+                outcome = 'probe_budget'
+            else:
+                attempts += 1
+                try:
+                    outcome = constraint74m.native_check(key, source, target, env, psql, offline)
+                except (Refusal, ValueError, TypeError, subprocess.TimeoutExpired):
+                    outcome = 'unresolved'
+        count(outcomes, outcome)
+        if outcome == 'native_equivalent':
+            proven.add(key)
+    details = '; '.join(label + ' (' + ', '.join(
+        f'{name}={bound_count(n)}' for name, n in sorted(values.items())) + ')'
+        for label, values in [('constraint kinds', kinds), ('rule hints only', hints),
+                              ('constraint outcomes', outcomes)] if values)
+    normalized = [r | {'rule': before[tuple(r[k] for k in FINAL_CON_KEYS)]['rule']}
+                  if tuple(r[k] for k in FINAL_CON_KEYS) in proven else r for r in actual]
+    return normalized, len(proven), details
+
+
+def verify_v2_final(expected, actual, env, dump, *, semantic=False):
     failures = proof_mismatches(expected, actual)
     equivalents = 0
     if 'relations' in failures:
         a, b, equivalents = final_relation_default_equivalence(expected['relations'], actual['relations'], env)
         expected, actual = expected | {'relations': a}, actual | {'relations': b}
         failures = proof_mismatches(expected, actual)
+    native_equivalents, diagnostic = 0, ''
+    if semantic and 'constraints' in failures:
+        normalized, native_equivalents, diagnostic = constraint_rule_equivalence(
+            expected['constraints'], actual['constraints'], env, failures == ['constraints'])
+        actual = actual | {'constraints': normalized}
+        failures = proof_mismatches(expected, actual)
     if not failures:
-        return bound_count(equivalents)
-    labels = []
+        return ((bound_count(equivalents), bound_count(native_equivalents))
+                if semantic else bound_count(equivalents))
+    labels = [diagnostic] if diagnostic else []
     if 'relations' in failures:
         labels.append('relations (' + field_difference(expected['relations'], actual['relations'],
                                                        FINAL_REL_KEYS, FINAL_REL_FIELDS) + ')')
@@ -449,7 +508,7 @@ def verify_v2_final(expected, actual, env, dump):
     raise Refusal('V2 recovery comparison failed: ' + ', '.join(failures) + '; ' + '; '.join(labels))
 
 
-def restore(work, mode, key, expected, source_run, required_version=None, final=False):
+def restore(work, mode, key, expected, source_run, required_version=None, final=False, semantic=False):
     offline()
     archive = EXCHANGE/'backup.age'
     require(re.fullmatch(r'[a-f0-9]{64}', expected) and 0 < archive.stat().st_size <= LIMIT and sha(archive)==expected, 'retained archive integrity mismatch')
@@ -463,7 +522,7 @@ def restore(work, mode, key, expected, source_run, required_version=None, final=
     require(manifest['mode']==mode and manifest['capture_run']==source_run and manifest['project']==(PROJECT if mode=='production' else 'fixture-only'), 'archive belongs to a different capture or environment')
     version = manifest['version']
     require(required_version is None or version == required_version, 'unexpected archive proof version')
-    require(not final or version == 2, 'final-two restore requires V2 proof')
+    require(not (final or semantic) or version == 2, 'final-two restore requires V2 proof')
     proof_file = HOME / ('proof-v2.sql' if version == 2 else 'proof.sql')
     if version == 2:
         require(manifest.get('proof_search_path') == V2_PATH and manifest.get('proof_sha256') == sha(proof_file)
@@ -494,7 +553,10 @@ def restore(work, mode, key, expected, source_run, required_version=None, final=
         proof_sql = proof_file.read_text()
         if version == 2:
             actual = json.loads(psql(v2_read(proof_sql), env, 'restored V2 scope proof failed'))
-            if final:
+            if semantic:
+                relation_defaults, constraint_equivs = verify_v2_final(
+                    expected_proof, actual, env, work/'scope.dump', semantic=True)
+            elif final:
                 relation_defaults = verify_v2_final(expected_proof, actual, env, work/'scope.dump')
             else:
                 mismatches = proof_mismatches(expected_proof, actual)
@@ -512,7 +574,10 @@ def restore(work, mode, key, expected, source_run, required_version=None, final=
         out.update(proof_version=version)
         if version == 2:
             out.update(proof_search_path=V2_PATH, proof_sha256=manifest['proof_sha256'])
-        if final:
+        if semantic:
+            out.update(restore_profile=SEMANTIC_RESTORE_PROFILE, equivalent_relation_default_acls=relation_defaults,
+                       equivalent_native_check_rules=constraint_equivs)
+        elif final:
             out.update(restore_profile=FINAL_RESTORE_PROFILE, equivalent_relation_default_acls=relation_defaults)
         (EXCHANGE/'restore.json').write_text(json.dumps(out, sort_keys=True))
         print('Retained ciphertext restored and all aggregate checks passed.')
@@ -525,14 +590,16 @@ def main():
     mode = sys.argv[1]
     with tempfile.TemporaryDirectory(prefix='anchor-', dir=SCRATCH) as tmp:
         work = pathlib.Path(tmp)
-        if mode in ('fixture-capture', 'fixture-capture-v2-final'):
+        if mode in ('fixture-capture', 'fixture-capture-v2-final', 'fixture-capture-v2-semantic'):
             offline()
             db, env = start_local(work, 'anchor_fixture_source')
             try:
                 psql((HOME/'fixture.sql').read_text(), env, 'synthetic setup failed')
                 psql((HOME/'fixture-v2.sql').read_text(), env, 'synthetic V2 metadata setup failed')
-                if mode.endswith('-final'):
+                if mode.endswith(('-final', '-semantic')):
                     psql((HOME/'fixture-final-two.sql').read_text(), env, 'synthetic final-two fixture setup failed')
+                if mode.endswith('-semantic'):
+                    psql((HOME/'fixture-constraint74m.sql').read_text(), env, 'synthetic semantic fixture setup failed')
                 capture(work, env, [os.environ['ANCHOR_PUBLIC_FIXTURE']], 'synthetic')
             finally:
                 stop_local(db)
@@ -542,10 +609,11 @@ def main():
             require(len(recipients) == 2, 'owner and verifier recipients required')
             capture(work, prime_production(work, conf), recipients, 'production')
         elif mode in ('fixture-restore', 'production-restore', 'production-restore-v2',
-                      'fixture-restore-v2-final', 'production-restore-v2-final'):
+                      'fixture-restore-v2-final', 'production-restore-v2-final',
+                      'fixture-restore-v2-semantic', 'production-restore-v2-semantic'):
             restore(work, 'synthetic' if mode.startswith('fixture-') else 'production',
                     sys.stdin.read(160), sys.argv[2], sys.argv[3],
-                    2 if '-v2' in mode else None, final=mode.endswith('-final'))
+                    2 if '-v2' in mode else None, final=mode.endswith('-final'), semantic=mode.endswith('-semantic'))
         else:
             raise Refusal('unknown operation')
 

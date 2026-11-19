@@ -1,0 +1,142 @@
+name: CLOUD ANCHOR 74M native constraint acceptance
+on:
+  push:
+    branches: [engineering/cloud-anchor74m-restore]
+    paths:
+      - '.github/workflows/cloud-anchor74m-synthetic.yml'
+      - 'tools/cloud-anchor74/**'
+permissions:
+  contents: read
+concurrency:
+  group: cloud-anchor74-synthetic
+  cancel-in-progress: false
+jobs:
+  fixture:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/cloud-anchor74m-restore'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Check origin and archive binding fail closed without real metadata
+        run: |
+          set -euo pipefail
+          tool=tools/cloud-anchor74/binding74k.sh
+          run=100000
+          hash=$(printf '0%.0s' {1..64})
+          binding=$(jq -nc --arg h "$hash" '{release:"100001",asset:"100002",bytes:"123",sha256:$h}')
+          commitment=$(printf '%s\n' "$run" 100001 100002 123 "$hash" | sha256sum)
+          commitment=${commitment%% *}
+          test "$(bash "$tool" "$run" "$commitment" <<<"$binding")" = "$(jq -c . <<<"$binding")"
+          for f in release asset bytes sha256; do
+            bad=$(jq -c --arg field "$f" '.[$field]="200001"' <<<"$binding")
+            if bash "$tool" "$run" "$commitment" <<<"$bad" >/dev/null; then exit 1; fi
+          done
+          if bash "$tool" 999999 "$commitment" <<<"$binding" >/dev/null; then exit 1; fi
+          if bash "$tool" "$run" "$commitment" <<<"$binding"$'\n'"$binding" >/dev/null; then exit 1; fi
+          echo 'PASS exact binding and rejection of changed fields, wrong origin and multiple inputs.'
+      - name: Prepare PostgreSQL 17.6 and scoped extensions without credentials
+        run: |
+          set -euo pipefail
+          src="$PWD/tools/cloud-anchor74"
+          docker build --pull --build-arg ANCHOR_UID="$(id -u)" --file "$src/Dockerfile" --tag anchor74:verified "$src"
+          docker run --rm --network none --entrypoint pg_dump anchor74:verified --version
+          docker run --rm --network none --entrypoint age anchor74:verified --version
+      - name: Verify V2 semantic mutations and V1 compatibility on native PostgreSQL
+        env:
+          ANCHOR_RUN: ${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          for test in test_constraint74m.py test_final_two.py test_v2.py test_restore74d.py; do
+            docker run --rm --network none --user "$(id -u):$(id -g)" --cap-drop ALL \
+              --security-opt no-new-privileges --pids-limit 100 --memory=2700m --memory-swap=2700m \
+              --tmpfs "/work:rw,mode=0700,uid=$(id -u),gid=$(id -g),size=1536m" \
+              -v "$PWD/tools/cloud-anchor74:/anchor:ro" -e ANCHOR_RUN \
+              --entrypoint python3 anchor74:verified "/anchor/$test" --native
+          done
+      - name: Generate a fresh fixture key and capture only fictional orders
+        env:
+          ANCHOR_RUN: ${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          umask 077
+          out=$(mktemp -d "$RUNNER_TEMP/anchor-fixture-XXXXXX")
+          src="$PWD/tools/cloud-anchor74"
+          printf 'ANCHOR_FIXTURE_DIR=%s\n' "$out" >> "$GITHUB_ENV"
+          docker run --rm --network none --entrypoint age-keygen anchor74:verified 2>/dev/null | sed -n '/^AGE-SECRET-KEY-1/p' > "$out/fixture-key"
+          ANCHOR_PUBLIC_FIXTURE=$(docker run --rm -i --network none --entrypoint age-keygen anchor74:verified -y < "$out/fixture-key")
+          export ANCHOR_PUBLIC_FIXTURE
+          mkdir -m 700 "$out/upload"
+          bash "$src/host-run.sh" "$out/upload" none fixture-capture-v2-semantic
+          test "$(find "$out/upload" -mindepth 1 -maxdepth 1 -type f -printf '%f\n' | sort | paste -sd, -)" = 'backup.age,capture.json'
+          python3 - "$out/upload" "$GITHUB_ENV" <<'PY'
+          import hashlib,json,pathlib,sys
+          p=pathlib.Path(sys.argv[1]); seal=(p/'backup.age').read_bytes()
+          assert seal.startswith(b'age-encryption.org/v1\n')
+          assert b'anchor-fictional-row-canary' not in seal
+          assert b'AGE-SECRET-KEY' not in seal
+          receipt=json.loads((p/'capture.json').read_text())
+          assert receipt['mode']=='synthetic' and receipt['project']=='fixture-only'
+          assert hashlib.sha256(seal).hexdigest()==receipt['sha256']
+          with open(sys.argv[2],'a') as f: f.write('ANCHOR_FIXTURE_SHA='+receipt['sha256']+'\n')
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        id: retained
+        with:
+          name: cloud-anchor74m-fictional-ciphertext
+          path: |
+            ${{ env.ANCHOR_FIXTURE_DIR }}/upload/backup.age
+            ${{ env.ANCHOR_FIXTURE_DIR }}/upload/capture.json
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Remove the original before independent artifact retrieval
+        run: |
+          set -euo pipefail
+          rm -- "$ANCHOR_FIXTURE_DIR/upload/backup.age" "$ANCHOR_FIXTURE_DIR/upload/capture.json"
+          rmdir -- "$ANCHOR_FIXTURE_DIR/upload"
+          mkdir -m 700 "$ANCHOR_FIXTURE_DIR/retrieved"
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: cloud-anchor74m-fictional-ciphertext
+          path: ${{ env.ANCHOR_FIXTURE_DIR }}/retrieved
+      - name: Restore the retrieved ciphertext with no network; test fail-closed cases
+        env:
+          ANCHOR_RUN: ${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          src="$PWD/tools/cloud-anchor74"
+          exchange="$ANCHOR_FIXTURE_DIR/retrieved"
+          verify() {
+            bash "$src/host-run.sh" "$exchange" "$1" fixture-restore-v2-semantic "$2" "$3" < "$4"
+          }
+          wrong="$ANCHOR_FIXTURE_DIR/wrong-key"
+          docker run --rm --network none --entrypoint age-keygen anchor74:verified 2>/dev/null | sed -n '/^AGE-SECRET-KEY-1/p' > "$wrong"
+          if verify none "$ANCHOR_FIXTURE_SHA" "$ANCHOR_RUN" "$wrong"; then exit 1; fi
+          if verify bridge "$ANCHOR_FIXTURE_SHA" "$ANCHOR_RUN" "$ANCHOR_FIXTURE_DIR/fixture-key"; then exit 1; fi
+          cp "$exchange/backup.age" "$ANCHOR_FIXTURE_DIR/good.age"
+          printf 'tampered' >> "$exchange/backup.age"
+          if verify none "$ANCHOR_FIXTURE_SHA" "$ANCHOR_RUN" "$ANCHOR_FIXTURE_DIR/fixture-key"; then exit 1; fi
+          mv "$ANCHOR_FIXTURE_DIR/good.age" "$exchange/backup.age"
+          if verify none "$ANCHOR_FIXTURE_SHA" 999999 "$ANCHOR_FIXTURE_DIR/fixture-key"; then exit 1; fi
+          test ! -e "$exchange/restore.json"
+          verify none "$ANCHOR_FIXTURE_SHA" "$ANCHOR_RUN" "$ANCHOR_FIXTURE_DIR/fixture-key"
+          bash "$src/test-vault.sh" "$exchange"
+          mkdir -m 700 "$ANCHOR_FIXTURE_DIR/receipt"
+          mv "$exchange/restore.json" "$ANCHOR_FIXTURE_DIR/receipt/restore.json"
+          jq -e '.status=="passed" and .project=="fixture-only" and .proof_version==2 and .restore_profile=="v2-constraint-native-1" and .equivalent_relation_default_acls=="4" and .equivalent_native_check_rules=="0" and (.checks|length)==14' "$ANCHOR_FIXTURE_DIR/receipt/restore.json" >/dev/null
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cloud-anchor74m-fictional-restore-receipt
+          path: ${{ env.ANCHOR_FIXTURE_DIR }}/receipt/restore.json
+          if-no-files-found: error
+          retention-days: 30
+      - name: Remove test keys and material
+        if: always()
+        run: |
+          set -euo pipefail
+          if [[ "${ANCHOR_FIXTURE_DIR:-}" == "$RUNNER_TEMP"/anchor-fixture-* ]]; then
+            rm -rf -- "$ANCHOR_FIXTURE_DIR"
+            test ! -e "$ANCHOR_FIXTURE_DIR"
+          fi
