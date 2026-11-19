@@ -1,0 +1,71 @@
+# Review template only. Do not register or dispatch under Authorisation 75.
+name: Exact Release A static publication
+on:
+  workflow_dispatch:
+    inputs:
+      execution_confirmed:
+        description: Owner authorised this exact release and verified SQL, checkout Edge and reconciliation
+        required: true
+        type: boolean
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: phoenix66-pages-publisher
+  cancel-in-progress: false
+jobs:
+  production_gate:
+    if: github.event_name == 'workflow_dispatch' && github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview' && github.run_attempt == 1 && inputs.execution_confirmed
+    environment: phoenix66-production
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Keep the established approved production target
+        env:
+          APPROVED_TARGET: ${{ vars.PHOENIX66_APPROVED_TARGET }}
+        run: test "$APPROVED_TARGET" = 'apparition-instruments:production:43845328622'
+  publish:
+    needs: production_gate
+    environment: phoenix66-preview
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Verify and stage only the pinned Release A static package
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          umask 077
+          work="$RUNNER_TEMP/release-a75"
+          mkdir "$work"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14329886408/zip" > "$work/candidate.zip"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14327320952/zip" > "$work/rollback.zip"
+          gh api "repos/$GITHUB_REPOSITORY/git/blobs/b74420b7111b8ca4ebe7f93bb0505a117452c457" | jq -er 'select(.encoding=="base64") | .content' | base64 -d > "$work/verify-release-a.py"
+          echo 'f9664ed0ec55ad5a01dbd58a87fbfbe385af4c0b7e27506841029d78dad87eac  '"$work/verify-release-a.py" | sha256sum -c
+          python3 "$work/verify-release-a.py" "$work/candidate.zip" "$work/rollback.zip" "$work/static"
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Prepare the previously used pinned Pages uploader
+        run: npm install --prefix "$RUNNER_TEMP/cloudflare-uploader" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false wrangler@4.162.0
+      - name: Require exact live rollback and publish the verified tree
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/release-a75"
+          endpoint="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/apparition-instruments"
+          prior='41fab337-e7df-499f-9292-fef300e46fe7'
+          source='cc34aa5ae5326134dbc215af673b5132c45da29c'
+          project() { curl -fsS --max-time 12 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$endpoint"; }
+          project | jq -e --arg id "$prior" '.success and (.result.domains|index("apparitioninstruments.co.uk")!=null) and .result.production_branch=="production" and .result.canonical_deployment.id==$id and .result.canonical_deployment.environment=="production" and .result.canonical_deployment.latest_stage.status=="success"' >/dev/null
+          cd "$work"
+          "$RUNNER_TEMP/cloudflare-uploader/node_modules/.bin/wrangler" pages deploy "$work/static"             --project-name=apparition-instruments --branch=production --commit-hash="$source"             --commit-dirty=true --commit-message="Release A verified 69B artifact 14329886408"
+          project | jq -e --arg old "$prior" --arg source "$source"             'select(.success) | .result.canonical_deployment | select(.id!=$old and .environment=="production" and .latest_stage.status=="success" and .deployment_trigger.metadata.commit_hash==$source) | {id,url,environment,source:.deployment_trigger.metadata.commit_hash}' | tee "$work/deployment.json" >> "$GITHUB_STEP_SUMMARY"
+          for path in / /admin/ /admin/delivery/ /admin/orders/ /checkout/ /operations/snapshot.json; do
+            expected="${path#/}"
+            [[ "$path" != */ ]] || expected="${expected}index.html"
+            curl -fsS --max-time 14 "https://apparitioninstruments.co.uk${path}?releaseA75=${GITHUB_RUN_ID}" -o "$work/readback"
+            cmp "$work/static/$expected" "$work/readback"
+          done
