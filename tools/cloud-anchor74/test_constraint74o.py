@@ -45,6 +45,20 @@ def native(env,proof):
     for i,(name,rule) in enumerate(positives,1):
         result=classified(env,proof,name,rule)
         assert result=='native_equivalent',(i,result)
+    # Exercise previously supported classes through the new engine, not just
+    # through the preserved 74M binary path.
+    from test_constraint74m import wrap
+    compatibility = ('anchor m; check','anchor_m_function','anchor_m_cast','anchor_m_collate',
+                     'anchor_m_enum','anchor_m_extension','anchor_m_domain','anchor_m_no_validation')
+    for i,name in enumerate(compatibility,1):
+        entry=row(proof,name)
+        key=tuple(entry[f] for f in ('ns','rel','conname'))
+        result=c.native_check(key,entry|{'rule':wrap(entry['rule'])},entry,env)
+        assert result=='native_equivalent',('74M compatibility',i,result)
+    for name in ('final_partition_check','final_inh_check'):
+        entry=row(proof,name)
+        key=tuple(entry[f] for f in ('ns','rel','conname'))
+        assert c.native_check(key,entry|{'rule':wrap(entry['rule'])},entry,env)=='eligibility_restriction'
     negatives=(
         ('anchor_o_regex',r"CHECK (rule_text ~ '^demo\w+$')",'native_structure_mismatch'),
         ('anchor_o_literal',r"CHECK (rule_text <> E'synthetic\\\\anchor')",'native_structure_mismatch'),
@@ -108,7 +122,7 @@ def native(env,proof):
         else: raise AssertionError('stacked SQL accepted')
         assert db.query("SELECT count(*) FROM pg_constraint WHERE conname LIKE '_anchor74m_comparison_only'")=='0'
     finally: db.close()
-    print(f'PASS 74O: {len(positives)} native equivalents; {len(negatives)} input/native rejections; distinct lock, statement, decoding and boundary failures.')
+    print(f'PASS 74O: {len(positives)+len(compatibility)} native equivalents; {len(negatives)} input/native rejections; distinct lock, statement, decoding and boundary failures.')
 
 
 def main():
