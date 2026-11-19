@@ -218,7 +218,33 @@ def relation_identifier(name):
     return '"' + name.replace('"','""') + '"'
 
 
-def classify(result):
+TREE_FIELDS = {
+    ':constvalue':'constant', ':consttype':'type', ':consttypmod':'type', ':constisnull':'constant',
+    ':funcretset':'function', ':funcid':'function', ':opno':'operator', ':opfuncid':'operator',
+    ':opcollid':'collation', ':inputcollid':'collation', ':constcollid':'collation',
+    ':varcollid':'collation', ':funccollid':'collation', ':collOid':'collation',
+    ':varattno':'column', ':varno':'column', ':vartype':'type', ':vartypmod':'type',
+    ':resulttype':'type', ':resulttypmod':'type', ':coercionformat':'coercion',
+    ':useOr':'array_quantifier',
+}
+TREE_CLASSES = frozenset(TREE_FIELDS.values()) | {'node_shape','other_bound_field'}
+
+def typed_difference(old,new):
+    # Report the location *class* of the first difference, never node tags,
+    # payload values, OIDs, field contents, positions or hashes.
+    field = ''
+    for a,b in zip(old,new):
+        if a!=b:
+            if a.startswith(':') or b.startswith(':') or a in ('{','}','(',')') or b in ('{','}','(',')'):
+                return 'node_shape'
+            return TREE_FIELDS.get(field,'other_bound_field')
+        if a.startswith(':'):
+            field=a
+        elif a in ('{','}','(',')'):
+            field=''
+    return 'node_shape'
+
+def classify(result, *, details=False):
     try:
         value=json.loads(result)
         if not isinstance(value,list) or len(value)!=5 or any(type(f) is not bool for f in value[:3]):
@@ -226,17 +252,17 @@ def classify(result):
     except (ValueError, TypeError):
         raise Refused('result_shape') from None
     cols, inherit, deps, original, probe = value
-    trees_equal = expression(original)==expression(probe)
-    if not inherit:
-        return 'inheritance_mismatch'
-    if not cols:
-        return 'constrained_column_mismatch'
-    if not deps:
-        return 'dependency_mismatch'
-    return 'native_equivalent' if trees_equal else 'native_structure_mismatch'
+    a,b=expression(original),expression(probe)
+    trees_equal = a==b
+    outcome = ('inheritance_mismatch' if not inherit else 'constrained_column_mismatch' if not cols else
+               'dependency_mismatch' if not deps else 'native_equivalent' if trees_equal else 'native_structure_mismatch')
+    if not details:
+        return outcome
+    return {'outcome':outcome, 'columns_same':cols, 'inheritance_same':inherit, 'dependencies_same':deps,
+            'typed_first_difference': None if trees_equal else typed_difference(a,b)}
 
 
-def worker(key, source, target, env):
+def worker(key, source, target, env, *, details=False):
     if set(os.listdir('/sys/class/net')) != {'lo'}:
         raise Refused('boundary_restriction')
     host=Path(env.get('PGHOST',''))
@@ -267,12 +293,12 @@ def worker(key, source, target, env):
         name='.'.join(map(relation_identifier,key[:2]))
         db.query('ALTER TABLE ONLY '+name+' ADD CONSTRAINT '+relation_identifier(PROBE_NAME)+
                  ' CHECK ('+old[0]+')'+(' NO INHERIT' if old[1] else '')+' NOT VALID')
-        return classify(db.query(COMPARE,*key,PROBE_NAME))
+        return classify(db.query(COMPARE,*key,PROBE_NAME),details=details)
     finally:
         db.close()
 
 
-def native_check(key, source, target, env):
+def native_check(key, source, target, env, *, details=False):
     if (env.get('PGPORT')!='5432' or env.get('PGDATABASE')!='postgres' or env.get('PGSSLMODE')!='disable'
         or {'PGHOSTADDR','PGSERVICE','PGPASSWORD','PGPASSFILE','PGOPTIONS'} & env.keys()):
         return 'boundary_restriction'
@@ -282,12 +308,20 @@ def native_check(key, source, target, env):
         request=json.dumps([key,source,target],ensure_ascii=True).encode()
         if len(request)>RULE_LIMIT*16:
             return 'expression_size_limit'
-        result=subprocess.run([sys.executable,'-I',str(Path(__file__).resolve())],input=request,
+        result=subprocess.run([sys.executable,'-I',str(Path(__file__).resolve())]+(['--bounded-evidence'] if details else []),input=request,
                               stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,env=private_env,timeout=12)
         if result.returncode != 0:
             return 'probe_process_refused'
         value=result.stdout.decode('ascii').strip()
-        return value if value in FIXED else 'result_shape'
+        if value in FIXED:
+            return value
+        if details and len(value) <= 512:
+            data=json.loads(value)
+            if (isinstance(data,dict) and set(data)=={'outcome','columns_same','inheritance_same','dependencies_same','typed_first_difference'}
+                and data['outcome'] in FIXED and all(type(data[k]) is bool for k in ('columns_same','inheritance_same','dependencies_same'))
+                and (data['typed_first_difference'] is None or data['typed_first_difference'] in TREE_CLASSES)):
+                return data
+        return 'result_shape'
     except subprocess.TimeoutExpired:
         return 'probe_process_timeout'
     except OSError:
@@ -298,11 +332,11 @@ def native_check(key, source, target, env):
 
 if __name__=='__main__':
     try:
-        out=worker(*json.loads(sys.stdin.buffer.read(RULE_LIMIT*16+1)),os.environ)
+        out=worker(*json.loads(sys.stdin.buffer.read(RULE_LIMIT*16+1)),os.environ,details=sys.argv[1:]==['--bounded-evidence'])
     except Refused as err:
         out=str(err)
     except (ValueError, TypeError, KeyError, UnicodeError):
         out='result_shape'
     except OSError:
         out='boundary_restriction'
-    print(out if out in FIXED else 'result_shape')
+    print(json.dumps(out,sort_keys=True) if isinstance(out,dict) else out if out in FIXED else 'result_shape')

@@ -17,6 +17,7 @@ HOME = pathlib.Path('/anchor')
 sys.path.insert(0, str(HOME))
 import constraint74m
 import constraint74o
+import evidence74p
 SCRATCH = pathlib.Path('/work')
 EXCHANGE = pathlib.Path('/exchange')
 SCOPES = ('public', 'forge_private', 'auth', 'storage', 'supabase_migrations')
@@ -478,7 +479,7 @@ def constraint_rule_equivalence(expected, actual, env, allow_replay, *, classifi
     return normalized, len(proven), details
 
 
-def verify_v2_final(expected, actual, env, dump, *, semantic=False, classified=False):
+def verify_v2_final(expected, actual, env, dump, *, semantic=False, classified=False, witness=None):
     failures = proof_mismatches(expected, actual)
     equivalents = 0
     if 'relations' in failures:
@@ -494,6 +495,10 @@ def verify_v2_final(expected, actual, env, dump, *, semantic=False, classified=F
     if not failures:
         return ((bound_count(equivalents), bound_count(native_equivalents))
                 if semantic else bound_count(equivalents))
+    if witness is not None and failures == ['constraints']:
+        pair = evidence74p.select_pair(expected['constraints'],actual['constraints'],FINAL_CON_KEYS)
+        if pair is not None:
+            witness(pair)
     labels = [diagnostic] if diagnostic else []
     if 'relations' in failures:
         labels.append('relations (' + field_difference(expected['relations'], actual['relations'],
@@ -511,7 +516,43 @@ def verify_v2_final(expected, actual, env, dump, *, semantic=False, classified=F
     raise Refusal('V2 recovery comparison failed: ' + ', '.join(failures) + '; ' + '; '.join(labels))
 
 
-def restore(work, mode, key, expected, source_run, required_version=None, final=False, semantic=False, classified=False):
+def restore_schema(work, env, roles, expected_proof, *, archive=None, schema_only=False):
+    psql(roles, env, 'isolated password-free role import failed')
+    for name, cfg in expected_proof['core_extensions'].items():
+        ns, extension_version = cfg['schema'], cfg['version']
+        require(re.fullmatch(r'[a-z_][a-z0-9_]{0,32}', ns)
+                and re.fullmatch(r'[0-9.]{1,16}', extension_version)
+                and ns not in SCOPES, 'unsupported extension namespace or version')
+        psql(f"create schema if not exists \"{ns}\"; create extension \"{name}\" with schema \"{ns}\" version '{extension_version}';",
+             env, 'required extension unavailable')
+    dump = archive or work/'scope.dump'
+    ddl = run(['pg_restore','--schema-only','--file=-',str(dump)], step='isolated archive schema inspection failed')
+    if re.search(rb'(?m)^CREATE SCHEMA public;', ddl):
+        psql('drop schema public;', env, 'isolated public schema preparation failed')
+    args = ['pg_restore','--no-password','--exit-on-error','--single-transaction','--dbname=postgres']
+    if schema_only:
+        args.append('--schema-only')
+    run(args+[str(dump)], env=env, step='isolated scope restore failed')
+
+
+def record_residual(pair, work, env, roles, proof, bootstrap):
+    # This is a second interpretation of the exact sealed dump's DDL, not
+    # a source-server capture and not an independent backup.
+    try:
+        with tempfile.TemporaryDirectory(prefix='ddl-probe-',dir=work) as td:
+            other=pathlib.Path(td)
+            db,schema_env=start_local(other,bootstrap)
+            try:
+                restore_schema(other,schema_env,roles,proof,archive=work/'scope.dump',schema_only=True)
+                report=evidence74p.examine(pair,env,schema_env,psql,v2_read)
+            finally:
+                stop_local(db)
+    except (Refusal, ValueError, TypeError, OSError, subprocess.TimeoutExpired):
+        report=evidence74p.examine(pair,env,None,psql,v2_read)
+    print('CLOUD ANCHOR bounded residual: '+json.dumps(report,sort_keys=True))
+
+
+def restore(work, mode, key, expected, source_run, required_version=None, final=False, semantic=False, classified=False, evidence=False):
     offline()
     archive = EXCHANGE/'backup.age'
     require(re.fullmatch(r'[a-f0-9]{64}', expected) and 0 < archive.stat().st_size <= LIMIT and sha(archive)==expected, 'retained archive integrity mismatch')
@@ -544,21 +585,16 @@ def restore(work, mode, key, expected, source_run, required_version=None, final=
     require(dedup == 1, 'role export did not contain exactly one bootstrap CREATE ROLE')
     db, env = start_local(work, bootstrap)
     try:
-        psql(roles, env, 'isolated password-free role import failed')
-        for name, cfg in expected_proof['core_extensions'].items():
-            ns, extension_version = cfg['schema'], cfg['version']
-            require(re.fullmatch(r'[a-z_][a-z0-9_]{0,32}', ns) and re.fullmatch(r'[0-9.]{1,16}', extension_version) and ns not in SCOPES, 'unsupported extension namespace or version')
-            psql(f'create schema if not exists "{ns}"; create extension "{name}" with schema "{ns}" version \'{extension_version}\';', env, 'required extension unavailable')
-        ddl = run(['pg_restore','--schema-only','--file=-',str(work/'scope.dump')], step='isolated archive schema inspection failed')
-        if re.search(rb'(?m)^CREATE SCHEMA public;', ddl):
-            psql('drop schema public;', env, 'isolated public schema preparation failed')
-        run(['pg_restore','--no-password','--exit-on-error','--single-transaction','--dbname=postgres',str(work/'scope.dump')], env=env, step='isolated scope restore failed')
+        restore_schema(work,env,roles,expected_proof)
         proof_sql = proof_file.read_text()
         if version == 2:
             actual = json.loads(psql(v2_read(proof_sql), env, 'restored V2 scope proof failed'))
             if semantic:
+                options = {'classified':True} if classified else {}
+                if evidence:
+                    options['witness'] = lambda pair: record_residual(pair,work,env,roles,expected_proof,bootstrap)
                 relation_defaults, constraint_equivs = verify_v2_final(
-                    expected_proof, actual, env, work/'scope.dump', semantic=True, **({'classified':True} if classified else {}))
+                    expected_proof, actual, env, work/'scope.dump', semantic=True, **options)
             elif final:
                 relation_defaults = verify_v2_final(expected_proof, actual, env, work/'scope.dump')
             else:
@@ -616,10 +652,12 @@ def main():
         elif mode in ('fixture-restore', 'production-restore', 'production-restore-v2',
                       'fixture-restore-v2-final', 'production-restore-v2-final',
                       'fixture-restore-v2-semantic', 'production-restore-v2-semantic',
-                      'fixture-restore-v2-classified', 'production-restore-v2-classified'):
+                      'fixture-restore-v2-classified', 'production-restore-v2-classified',
+                      'fixture-restore-v2-evidence', 'production-restore-v2-evidence'):
             restore(work, 'synthetic' if mode.startswith('fixture-') else 'production',
                     sys.stdin.read(160), sys.argv[2], sys.argv[3],
-                    2 if '-v2' in mode else None, final=mode.endswith('-final'), semantic=mode.endswith(('-semantic', '-classified')), classified=mode.endswith('-classified'))
+                    2 if '-v2' in mode else None, final=mode.endswith('-final'), semantic=mode.endswith(('-semantic', '-classified', '-evidence')),
+                    classified=mode.endswith(('-classified','-evidence')), evidence=mode.endswith('-evidence'))
         else:
             raise Refusal('unknown operation')
 

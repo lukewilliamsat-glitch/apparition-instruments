@@ -1,0 +1,80 @@
+name: CLOUD ANCHOR 74P V2 restore and bounded residual evidence
+on:
+  workflow_dispatch:
+    inputs:
+      approved:
+        description: "I reviewed the exact source and authorise one offline restore and bounded CHECK analysis of the retained V2 archive"
+        type: boolean
+        required: true
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: cloud-anchor74-production
+  cancel-in-progress: false
+jobs:
+  restore:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.event_name == 'workflow_dispatch' && github.ref == 'refs/tags/cloud-anchor74p-evidence-approved' && github.run_attempt == 1 && inputs.approved
+    runs-on: ubuntu-24.04
+    environment: cloud-anchor74-restore
+    timeout-minutes: 18
+    env:
+      CAPTURE_RUN: '44349292200'
+      BINDING_COMMITMENT: '6dc1942de3e008a86a24bf272ad4cd83a9a4cd05b22faa51494bf745a3f3b34d'
+    steps:
+      - name: Require the exact independently approved restoration source
+        env:
+          APPROVED_SHA: ${{ vars.ANCHOR74_APPROVED_SHA }}
+        run: test -n "$APPROVED_SHA" && test "$GITHUB_SHA" = "$APPROVED_SHA"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Prepare isolated engine before exposing either credential
+        run: |
+          set -euo pipefail
+          umask 077
+          echo "ANCHOR_DIR=$(mktemp -d "$RUNNER_TEMP/anchor-production-XXXXXX")" >> "$GITHUB_ENV"
+          docker build --pull --build-arg ANCHOR_UID="$(id -u)" --tag anchor74:verified tools/cloud-anchor74
+      - name: Bind and independently retrieve the exact retained V2 ciphertext
+        env:
+          GH_TOKEN: ${{ secrets.ANCHOR74_VAULT_READ_TOKEN }}
+          ANCHOR_BINDING: ${{ secrets.ANCHOR74K_ARCHIVE_BINDING }}
+        run: |
+          set -euo pipefail
+          umask 077
+          printf '%s\n' "$ANCHOR_BINDING" |
+            bash tools/cloud-anchor74/binding74k.sh "$CAPTURE_RUN" "$BINDING_COMMITMENT" > "$ANCHOR_DIR/binding.json"
+          readarray -t parts < <(jq -er '.asset,.release,.sha256,.bytes' "$ANCHOR_DIR/binding.json")
+          test "${#parts[@]}" = 4
+          bash tools/cloud-anchor74/vault.sh get "$ANCHOR_DIR" "${parts[0]}" "${parts[1]}" "${parts[2]}" "$CAPTURE_RUN" "${parts[3]}"
+      - name: Restore offline with the archive-bound V2 verifier and compare all groups
+        env:
+          ANCHOR_RUN: ${{ github.run_id }}
+          ANCHOR_VERIFY_KEY: ${{ secrets.ANCHOR74_ONE_USE_VERIFY_AGE_IDENTITY }}
+        run: |
+          set -euo pipefail
+          digest=$(jq -er '.sha256' "$ANCHOR_DIR/binding.json")
+          printf '%s\n' "$ANCHOR_VERIFY_KEY" |
+            bash tools/cloud-anchor74/host-run.sh "$ANCHOR_DIR" none production-restore-v2-evidence "$digest" "$CAPTURE_RUN"
+      - name: Record bounded receipt only after all 14 comparisons pass
+        run: |
+          set -euo pipefail
+          digest=$(jq -er '.sha256' "$ANCHOR_DIR/binding.json")
+          jq -e --arg sha "$digest" --arg capture "$CAPTURE_RUN" --arg run "$GITHUB_RUN_ID" \
+            '.status=="passed" and .restore_profile=="v2-constraint-native-2" and .proof_version==2 and
+             .mode=="production" and .project=="acdxpxvksvdwfajntzfx" and
+             .archive_sha256==$sha and .capture_run==$capture and .restore_run==$run and (.checks|length)==14' "$ANCHOR_DIR/restore.json" >/dev/null
+          {
+            echo '### CLOUD ANCHOR V2 candidate recovery receipt'
+            echo 'All 14 V2 proof groups passed. The V2 proof does not independently establish the original partition/inheritance graph. Owner suitability, intervening transactions and scope exclusions still require review.'
+            jq '{status, capture_run, restore_run, proof_version, restore_profile, checks, equivalent_relation_default_acls, equivalent_native_check_rules, restored_utc}' "$ANCHOR_DIR/restore.json"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Remove runner ciphertext and metadata
+        if: always()
+        run: |
+          set -euo pipefail
+          if [[ "${ANCHOR_DIR:-}" == "$RUNNER_TEMP"/anchor-production-* ]]; then
+            rm -rf -- "$ANCHOR_DIR"
+            test ! -e "$ANCHOR_DIR"
+          fi
