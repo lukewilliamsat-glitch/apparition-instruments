@@ -35,7 +35,7 @@ rep(b,'admin/ironclad/index.html','/admin/admin-gate.mjs"','/admin/admin-gate.mj
 rep(b,'admin/ironclad/index.html','./entry.mjs"','./entry.mjs?build=ascent78b-v1"')
 for f,targets in {'entry.mjs':['./app.mjs','./repository.mjs'],'app.mjs':['./model.mjs']}.items():
  for t in targets:stamp(b,'admin/ironclad/'+f,t)
-for x in ['../admin-auth.mjs','../../backend/public-config.mjs']:
+for x in ['../admin-auth.mjs','../../backend/public-config.mjs','../command/bounded-json.mjs']:
  stamp(b,'admin/ironclad/repository.mjs',x,'sentinel77a-c1')
 stamp(b,'admin/orders/eclipse-ui.mjs','../ironclad/model.mjs')
 stamp(b,'admin/orders/financial-order.mjs','../ironclad/repository.mjs')
@@ -54,6 +54,9 @@ for n in ('entry.mjs','index.html','model.mjs','repository.mjs','workspace.css')
 for x in ('/admin/admin-gate.mjs','../orders/commercial-date.mjs','../admin-auth.mjs','../../backend/public-config.mjs'):
  p='admin/omniscience/'+('index.html' if x.startswith('/') else 'entry.mjs' if 'commercial-date' in x else 'repository.mjs')
  stamp(c,p,x,'sentinel77a-c1')
+for x in ['../orders/commercial-date.mjs','../orders/economics.mjs','../orders/economics-v2.mjs']:
+ stamp(c,'admin/omniscience/model.mjs',x,'sentinel77a-c1')
+stamp(c,'admin/omniscience/repository.mjs','../command/bounded-json.mjs','sentinel77a-c1')
 rep(c,'admin/index.html','<main id="main" class="admin-main">','<main id="main" class="admin-main"><p class="storage-note"><a href="/admin/omniscience/">BLACK LEDGER: Business financials</a> · OMNISCIENCE</p>')
 def write(n,previous,current):
  out=w/n;out.mkdir()

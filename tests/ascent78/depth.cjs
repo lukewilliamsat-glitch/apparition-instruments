@@ -83,7 +83,7 @@ async function assess(page,raw,role,result,name) {
    await task('empty-orders',()=>shown(page,'#orders-empty'));
   }else if(q.get('id')){
    await task('order-detail-initialisation',()=>text(page,'#detail-title',/AI-099901/));
-   if(['fixed','deep'].includes(name))await task('existing-financial-revisions',async()=>{
+   if(['fixed','deep','release-b','release-c'].includes(name))await task('existing-financial-revisions',async()=>{
     await shown(page,'[data-financial-record]');
     await click(page,'[data-financial-record] summary');
     await untilText(page,'[data-financial-record] ol','Revision 1');
@@ -148,6 +148,11 @@ async function assess(page,raw,role,result,name) {
    const edit=page.locator('[data-edit]');await edit.uncheck({timeout:3000});assert(!(await edit.isChecked()));
  });
  if(p==='/admin/wiring-kit-master/')await task('wiring-cost-stock-projection',async()=>{await shown(page,'#costing-values');assert(await page.locator('#costing-values dt').count()>1);assert(await page.locator('#stock-body tr').count()>0||await page.locator('#stock-empty').isVisible());});
+ if(p==='/admin/orders/'&&q.has('id'))await task('eclipse-acquisition-evidence-read',async()=>{
+   await page.getByRole('button',{name:'Review IRONCLAD acquisition evidence',exact:true}).click({timeout:3500});
+   await page.getByText('No new matching acquisition costs for unknown lines.',{exact:true}).waitFor({timeout:3500});
+   assert(result.requests.some(x=>x.path.endsWith('/ironclad69_cost_read')&&x.authenticated));
+ });
  if(p==='/admin/ironclad/')await task('armoury-load-and-procurement-access',async()=>{
    await page.getByText('Synthetic tone capacitor · CAP-SYNTHETIC', {exact:false}).waitFor({timeout:3500});
    const nav=page.getByRole('navigation',{name:'Armoury workspaces'});
@@ -162,6 +167,7 @@ async function assess(page,raw,role,result,name) {
  });
  if(p==='/admin/omniscience/')await task('omniscience-load-and-read-registers',async()=>{
    await page.getByRole('heading',{name:'Business financials',exact:true}).waitFor({timeout:3500});
+   await page.getByRole('button',{name:'Load report',exact:true}).click();
    await page.getByRole('heading',{name:'Expense and director purchase register',exact:true}).waitFor({timeout:3500});
    await page.getByText('Pricing and break-even calculator',{exact:true}).click();
    assert(result.requests.some(x=>x.path.endsWith('/omniscience74_orders')&&x.authenticated));

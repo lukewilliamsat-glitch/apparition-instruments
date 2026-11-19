@@ -146,7 +146,7 @@ async function exercise(b,origin,pathname,role,debug,name,kitTables,legacyOrders
   await page.waitForFunction(()=>document.body.classList.contains('admin-authorized')||!!document.querySelector('.admin-access-panel [role=alert]')?.textContent?.trim()||!!document.querySelector('.admin-access-panel form')||document.querySelector('.admin-access-note')?.textContent?.includes('not authorised'),{},{timeout:pathname.startsWith('/admin/')?2800:180}).catch(()=>{});
   await page.waitForLoadState('networkidle',{timeout:2800}).catch(()=>{});
   result.depth=await assess(page,pathname,role,result,name);
- if(['fixed','deep'].includes(name)&&role==='authorized'&&Object.values(result.depth).includes('passed')){
+ if(['fixed','deep','release-b','release-c'].includes(name)&&role==='authorized'&&Object.values(result.depth).includes('passed')){
    const readMode=pathname==='/admin/orders/';
    if(pathname==='/admin/'){
     result.features.navigation=await page.locator('a[data-workspace=orders][href="/admin/orders/"]').count()===1&&await page.locator('a[data-workspace=delivery][href="/admin/delivery/"]').count()===1;

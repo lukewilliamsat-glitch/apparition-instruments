@@ -11,6 +11,8 @@ concurrency:
   cancel-in-progress: false
 jobs:
   database:
+    # Reuse successful native 17.6 jobs from 44571910976 for these unchanged SQL bytes.
+    if: github.event.before == 'a50dfb712ddd6420d648f6388bd6702f4566713c'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     strategy:
