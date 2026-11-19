@@ -53,7 +53,7 @@ def native(env,proof):
         ('anchor_o_any','CHECK (qty >= ALL(ARRAY[11,22]))','native_structure_mismatch'),
         ('anchor_o_regex',r"CHECK (second_text ~ '^demo\d+$')",'constrained_column_mismatch'),
         ('anchor_o_regex',r"CHECK (lower(rule_text) ~ '^demo\d+$')",'native_structure_mismatch'),
-        ('anchor_o_regex',r"""CHECK ((rule_text COLLATE "C") ~ '^demo\d+$')""",'dependency_mismatch'),
+        ('anchor_o_regex',r"""CHECK ((rule_text COLLATE public.anchor_o_collation) ~ '^demo\d+$')""",'dependency_mismatch'),
         ('anchor_o_any','CHECK (qty::numeric = ANY(ARRAY[11,22]::numeric[]))','native_structure_mismatch'),
         ('anchor_o_any','CHECK (qty + )','sql_syntax'),
         ('anchor_o_any',f'CHECK ({SECRET}(qty))','sql_resolution'),

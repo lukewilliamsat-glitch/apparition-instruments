@@ -1,0 +1,143 @@
+name: CLOUD ANCHOR retained V2 recovery controller
+on:
+  workflow_dispatch:
+    inputs:
+      candidate:
+        description: Full reviewed commit SHA containing the strict restore-candidate.json plan
+        type: string
+        required: true
+permissions:
+  actions: read
+  contents: read
+concurrency:
+  group: cloud-anchor74-production
+  cancel-in-progress: false
+env:
+  ANCHOR_CANDIDATE: ${{ inputs.candidate }}
+  ANCHOR_CAPTURE_RUN: '44349292200'
+  ANCHOR_BINDING_COMMITMENT: '6dc1942de3e008a86a24bf272ad4cd83a9a4cd05b22faa51494bf745a3f3b34d'
+jobs:
+  preflight:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.event_name == 'workflow_dispatch' && github.ref == 'refs/tags/cloud-anchor-v2-controller' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      digest: ${{ steps.plan.outputs.digest }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Publish exact plan without vault or recovery credentials
+        id: plan
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          umask 077
+          doc=$(mktemp "$RUNNER_TEMP/anchor-plan-XXXXXX")
+          trap 'rm -f -- "$doc"' EXIT
+          digest=$(python3 tools/cloud-anchor74/controller74o.py plan "$doc")
+          [[ "$digest" =~ ^[a-f0-9]{64}$ ]]
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
+          {
+            echo '### CLOUD ANCHOR exact retained-archive plan'
+            echo 'If independently satisfied with this candidate and plan, use Review deployments on this run.'
+            echo "Use this exact reviewer comment: <code>approve-anchor74 $digest</code>"
+            echo ''
+            echo '```json'
+            jq . "$doc"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+  restore:
+    needs: preflight
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/tags/cloud-anchor-v2-controller' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    environment: cloud-anchor74-restore
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Require exact controller and candidate plan approved by the owner on this run
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ANCHOR_CONTROLLER_APPROVED_SHA: ${{ vars.ANCHOR74_APPROVED_SHA }}
+          ANCHOR_PREFLIGHT_DIGEST: ${{ needs.preflight.outputs.digest }}
+        run: |
+          set -euo pipefail
+          umask 077
+          dir=$(mktemp -d "$RUNNER_TEMP/anchor-controller-XXXXXX")
+          echo "ANCHOR_DIR=$dir" >> "$GITHUB_ENV"
+          python3 tools/cloud-anchor74/controller74o.py authorize "$dir/plan.json"
+          docker build --pull --build-arg ANCHOR_UID="$(id -u)" --tag anchor74:verified tools/cloud-anchor74
+      - name: Retrieve the exact ciphertext independently through the trusted read-only client
+        env:
+          GH_TOKEN: ${{ secrets.ANCHOR74_VAULT_READ_TOKEN }}
+          ANCHOR_BINDING: ${{ secrets.ANCHOR74K_ARCHIVE_BINDING }}
+        run: |
+          set -euo pipefail
+          umask 077
+          test "$(jq -er .archive_commitment "$ANCHOR_DIR/plan.json")" = "$ANCHOR_BINDING_COMMITMENT"
+          test "$(jq -er .capture_run "$ANCHOR_DIR/plan.json")" = "$ANCHOR_CAPTURE_RUN"
+          printf '%s\n' "$ANCHOR_BINDING" |
+            bash tools/cloud-anchor74/binding74k.sh "$ANCHOR_CAPTURE_RUN" "$ANCHOR_BINDING_COMMITMENT" > "$ANCHOR_DIR/binding.json"
+          readarray -t binding < <(jq -er '.asset,.release,.sha256,.bytes' "$ANCHOR_DIR/binding.json")
+          test "${#binding[@]}" = 4
+          bash tools/cloud-anchor74/vault.sh get "$ANCHOR_DIR" "${binding[0]}" "${binding[1]}" "${binding[2]}" "$ANCHOR_CAPTURE_RUN" "${binding[3]}"
+      - name: Execute the trusted native engine offline and require its complete proof
+        id: recover
+        continue-on-error: true
+        env:
+          ANCHOR_RUN: ${{ github.run_id }}
+          ANCHOR_VERIFY_KEY: ${{ secrets.ANCHOR74_ONE_USE_VERIFY_AGE_IDENTITY }}
+        run: |
+          set -euo pipefail
+          umask 077
+          digest=$(jq -er .sha256 "$ANCHOR_DIR/binding.json")
+          test "$(jq -er .restore_profile "$ANCHOR_DIR/plan.json")" = v2-constraint-native-2
+          # Only an allowlisted derivative is sent to the workflow summary.
+          printf '%s\n' "$ANCHOR_VERIFY_KEY" |
+            bash tools/cloud-anchor74/host-run.sh "$ANCHOR_DIR" none production-restore-v2-classified "$digest" "$ANCHOR_CAPTURE_RUN"               > "$ANCHOR_DIR/restore.log" 2>&1
+      - name: Verify the trusted receipt or report strictly bounded diagnostics
+        id: evidence
+        env:
+          RECOVERY_RESULT: ${{ steps.recover.outcome }}
+        run: |
+          set -euo pipefail
+          umask 077
+          ctl=tools/cloud-anchor74/controller74o.py
+          if [[ "$RECOVERY_RESULT" == success ]]; then
+            python3 "$ctl" receipt "$ANCHOR_DIR/plan.json" "$ANCHOR_DIR/binding.json" "$ANCHOR_DIR/restore.json" >> "$GITHUB_STEP_SUMMARY"
+          else
+            python3 "$ctl" diagnostics "$ANCHOR_DIR/restore.log" >> "$GITHUB_STEP_SUMMARY"
+            if [[ "$(jq -er .fallback "$ANCHOR_DIR/plan.json")" == owner-encrypted-aggregate ]]; then
+              recipient=$(python3 "$ctl" owner-recipient)
+              mkdir -m 700 "$ANCHOR_DIR/owner-evidence"
+              python3 "$ctl" fallback "$ANCHOR_DIR/restore.log" "$ANCHOR_DIR/plan.json" |
+                docker run --rm -i --network none --cap-drop ALL --security-opt no-new-privileges                   --read-only --entrypoint age anchor74:verified -r "$recipient" > "$ANCHOR_DIR/owner-evidence/mismatch.age"
+              test "$(wc -c < "$ANCHOR_DIR/owner-evidence/mismatch.age")" -le 8192
+              printf 'Owner-encrypted aggregate SHA-256: %s\n' "$(sha256sum "$ANCHOR_DIR/owner-evidence/mismatch.age" | cut -d' ' -f1)" >> "$GITHUB_STEP_SUMMARY"
+              echo 'sealed=true' >> "$GITHUB_OUTPUT"
+            fi
+          fi
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: steps.evidence.outputs.sealed == 'true'
+        with:
+          name: anchor74-owner-encrypted-aggregate
+          path: ${{ env.ANCHOR_DIR }}/owner-evidence/mismatch.age
+          retention-days: 7
+          if-no-files-found: error
+          compression-level: 0
+      - name: Fail closed when no trusted receipt was established
+        if: steps.recover.outcome == 'failure'
+        run: exit 1
+      - name: Remove the protected runner exchange
+        if: always()
+        run: |
+          set -euo pipefail
+          if [[ "${ANCHOR_DIR:-}" == "$RUNNER_TEMP"/anchor-controller-* ]]; then
+            rm -rf -- "$ANCHOR_DIR"
+            test ! -e "$ANCHOR_DIR"
+          fi

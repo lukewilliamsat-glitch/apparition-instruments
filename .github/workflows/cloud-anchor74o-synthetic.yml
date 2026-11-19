@@ -38,6 +38,8 @@ jobs:
           echo 'PASS exact binding and rejection of changed fields, wrong origin and multiple inputs.'
       - name: Verify metadata-only operator plan and review digest checks
         run: python3 tools/cloud-anchor74/test_restore_plan.py
+      - name: Rehearse exact owner approvals and adversarial controller inputs
+        run: python3 tools/cloud-anchor74/test_controller74o.py
       - name: Prepare PostgreSQL 17.6 and scoped extensions without credentials
         run: |
           set -euo pipefail
@@ -124,10 +126,31 @@ jobs:
           if verify none "$ANCHOR_FIXTURE_SHA" 999999 "$ANCHOR_FIXTURE_DIR/fixture-key"; then exit 1; fi
           test ! -e "$exchange/restore.json"
           verify none "$ANCHOR_FIXTURE_SHA" "$ANCHOR_RUN" "$ANCHOR_FIXTURE_DIR/fixture-key"
+          python3 "$src/test_controller74o.py" "$exchange/restore.json" "$exchange/capture.json"
           bash "$src/test-vault.sh" "$exchange"
           mkdir -m 700 "$ANCHOR_FIXTURE_DIR/receipt"
           mv "$exchange/restore.json" "$ANCHOR_FIXTURE_DIR/receipt/restore.json"
           jq -e '.status=="passed" and .project=="fixture-only" and .proof_version==2 and .restore_profile=="v2-constraint-native-2" and .equivalent_relation_default_acls=="4" and .equivalent_native_check_rules=="0" and (.checks|length)==14' "$ANCHOR_FIXTURE_DIR/receipt/restore.json" >/dev/null
+      - name: Rehearse owner-only sealing without exposing fallback plaintext
+        run: |
+          set -euo pipefail
+          out="$ANCHOR_FIXTURE_DIR"
+          cat > "$out/synthetic-failure.log" <<'LOG'
+          discarded_private_fictional_name
+          CLOUD ANCHOR refused: V2 recovery comparison failed: constraints; constraint kinds (check=1); constraint outcomes (source_quoting_restriction=1)
+          LOG
+          echo '{"fallback":"owner-encrypted-aggregate","capture_run":"100000","run_id":"100001"}' > "$out/synthetic-failure-plan.json"
+          ctl=tools/cloud-anchor74/controller74o.py
+          recipient=$(docker run --rm -i --network none --entrypoint age-keygen anchor74:verified -y < "$out/fixture-key")
+          python3 "$ctl" fallback "$out/synthetic-failure.log" "$out/synthetic-failure-plan.json" |
+            docker run --rm -i --network none --read-only --cap-drop ALL --entrypoint age anchor74:verified -r "$recipient" > "$out/synthetic-failure.age"
+          if docker run --rm -i --network none --read-only --cap-drop ALL -v "$out/wrong-key:/fixture-key:ro" \
+              --entrypoint age anchor74:verified -d -i /fixture-key < "$out/synthetic-failure.age" >/dev/null 2>&1; then exit 1; fi
+          docker run --rm -i --network none --read-only --cap-drop ALL -v "$out/fixture-key:/fixture-key:ro" \
+            --entrypoint age anchor74:verified -d -i /fixture-key < "$out/synthetic-failure.age" |
+            jq -e '.diagnostics["constraint outcomes"].source_quoting_restriction==1 and (tostring|contains("discarded_private_fictional_name")|not)' >/dev/null
+          test "$(wc -c < "$out/synthetic-failure.age")" -le 8192
+          echo 'PASS controller: bounded fallback is owner-recipient only, wrong identity refused, raw diagnostic never retained.'
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: cloud-anchor74o-fictional-restore-receipt
