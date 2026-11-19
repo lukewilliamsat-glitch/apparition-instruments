@@ -1,0 +1,66 @@
+name: Release A77 isolated browser regression
+on:
+  push:
+    branches:
+      - engineering/release-a77-sentinel
+    paths:
+      - .github/workflows/release-a77-isolated.yml
+      - tests/release-a77/**
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: release-a77-isolated
+  cancel-in-progress: true
+jobs:
+  isolated:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Materialize only sealed public site artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -m 700 "$RUNNER_TEMP/sentinel77"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14329886408/zip" > "$RUNNER_TEMP/sentinel77/release.zip"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14327320952/zip" > "$RUNNER_TEMP/sentinel77/prior.zip"
+          python3 tests/release-a77/compose.py "$RUNNER_TEMP/sentinel77"
+      - name: Install pinned browser driver
+        run: |
+          npm install --prefix "$RUNNER_TEMP/sentinel77" --no-save --no-package-lock --ignore-scripts playwright@1.62.1
+          if ! command -v google-chrome >/dev/null; then
+            "$RUNNER_TEMP/sentinel77/node_modules/.bin/playwright" install --with-deps chromium
+          fi
+      - name: Exercise the exact packages with intercepted synthetic sessions
+        run: |
+          set -euo pipefail
+          export SENTINEL_ROOT="$RUNNER_TEMP/sentinel77"
+          export NODE_PATH="$SENTINEL_ROOT/node_modules"
+          export SENTINEL_BROWSER="$(command -v google-chrome || true)"
+          node tests/release-a77/browser.cjs new,old '/admin/orders/,/admin/site-operations/,/admin/,/admin/catalogue-settings/,/admin/email-templates/'
+          node tests/release-a77/browser.cjs new all authorized quiet
+          node tests/release-a77/browser.cjs fixed all
+          node tests/release-a77/browser.cjs fixed '/admin/,/admin/orders/,/admin/site-operations/,/admin/email-templates/,/admin/delivery/,/admin/ironclad/' denied
+          node tests/release-a77/browser.cjs fixed '/admin/,/admin/orders/,/admin/site-operations/,/admin/email-templates/,/admin/delivery/,/admin/ironclad/' anonymous
+          python3 tests/release-a77/accept.py "$SENTINEL_ROOT"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: release-a77-isolated-evidence
+          path: |
+            ${{ runner.temp }}/sentinel77/fixed-inventory.json
+            ${{ runner.temp }}/sentinel77/*-smoke.json
+            ${{ runner.temp }}/sentinel77/*-all.json
+          retention-days: 14
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: release-a77-reviewed-candidate
+          path: ${{ runner.temp }}/sentinel77/release-a77-candidate.zip
+          retention-days: 14
