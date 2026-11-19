@@ -32,6 +32,15 @@ assert 'Open for business' in fixed['/admin/site-operations/'].get('text','')
 assert exists('/admin/email-templates/','/rest/v1/rpc/get_admin_email_templates')
 assert exists('/admin/catalogue-settings/','/rest/v1/catalogue_options')
 assert exists('/admin/delivery/','/rest/v1/rpc/overseer_delivery_admin_read')
+assert fixed['/admin/']['features'].get('navigation')
+assert fixed['/admin/conjure/']['features'].get('conjureFrame')
+assert fixed['/admin/email-preview/']['features'].get('emailPreview')
+assert fixed['/admin/email-templates/']['features'].get('emailTemplateCount')==4
+for path,price in [('/checkout/','£3.99'),('/checkout/?fixture=free-delivery','Free')]:
+ assert fixed[path]['features'].get('quote')=='UK Delivery · '+price,(path,fixed[path]['features'])
+ assert any(r['path']=='/rest/v1/rpc/overseer_delivery_options' for r in fixed[path]['requests'])
+ assert not any(r['path'].endswith('/create-checkout') for r in fixed[path]['requests'])
+
 detail=next(r for p,r in fixed.items() if p.startswith('/admin/orders/?id='))
 assert detail['features']=={'dateHistory':True,'aftercareOff':True,'eclipse':True},detail['features']
 assert any(x['path']=='/rest/v1/rpc/overseer_order_date_history' and x['authenticated'] for x in detail['requests'])

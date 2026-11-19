@@ -7,18 +7,19 @@ const workspaces=['/admin/','/admin/?view=inventory','/admin/?view=assemblies','
 const now='2026-11-19T13:00:00.000Z';
 const orderId='4588857f-340e-4bca-92b1-62268b470631';
 const reference='AI-099901';
-const sampleOrder={id:orderId,reference,sales_channel:'EBAY',external_reference:'SENTINEL-FIXTURE-ONLY',created_at:now,updated_at:now,order_date:'2026-11-18',paid_at:now,subtotal_pence:749,delivery_pence:399,total_pence:1148,status:'dispatched',payment_status:'paid',customer:{name:'Fictional workshop'},delivery:{},items:[{type:'component',name:'Synthetic tone capacitor',productId:'synthetic-capacitor',quantity:1,unitPrice:749,lineTotal:749}],status_history:[]};
+const sampleOrder={id:orderId,reference,sales_channel:'EBAY',external_reference:'SENTINEL-FIXTURE-ONLY',created_at:now,updated_at:now,order_date:'2026-11-18',paid_at:now,subtotal_pence:749,delivery_pence:399,total_pence:1148,status:'dispatched',payment_status:'paid',customer:{name:'Fictional workshop'},delivery:{},items:[{type:'component',name:'Synthetic tone capacitor',productId:'synthetic-capacitor',quantity:1,unitPrice:749,lineTotal:749,snapshot:{manufacturer:'Fixture',productSpecifications:[{label:'Capacitance',value:'1 nF'}],description:'Fictional component'}}],status_history:[]};
 const followup={orderId,reference,customerName:'Fictional workshop',channel:'EBAY',dispatchAt:now,defaultDue:'2026-11-19',dueDate:'2026-11-19',eligible:true,state:'due',suppressed:false,history:[]};
 const readPosts=new Set(['public_news','public_commercial_destinations','get_site_operations','get_customer_aftercare','get_admin_email_templates','overseer_delivery_admin_read','overseer_delivery_admin_preview','overseer_delivery_options','overseer_order_date_history','overseer_aftercare_history','eclipse_fulfilment_library','command63_financial_read','command63_financial_status','command63_financial_batch']);
 workspaces[workspaces.indexOf('/admin/orders/invoice/')]+='?id='+orderId;
 workspaces[workspaces.indexOf('/admin/orders/build-sheet/')]+='?order='+orderId;
-workspaces.push('/admin/orders/?id='+orderId);
+workspaces.push('/admin/orders/?id='+orderId,'/checkout/?fixture=free-delivery');
 
 const ship={methods:[{id:'standard',name:'UK Delivery',price:399,minOrder:0,minUnits:0}],freeEnabled:true,freeThreshold:5000,overrides:[],promo:null};
 const ops={server_time:now,store:{state:'OPEN',desired_state:'OPEN',pause_from:null,resume_at:null,revision:1,updated_at:now,customer_title:'',customer_message:'',internal_reason:''},announcement:null,announcements:[],news:[],revision:1};
-const mock=(u,role,kitTables)=>{
+const mock=(u,role,kitTables,data)=>{
  let r=u.pathname.replace('/rest/v1/',''), v;
  if(u.pathname==='/auth/v1/user')return {id:stableId};
+ if(u.pathname==='/functions/v1/transactional-email/preview')return {html:'<p>Fictional preview</p>',text:'Fictional preview',subject:'Fictional preview',label:'PREVIEW — NOT A REAL ORDER'};
  if(u.pathname==='/functions/v1/transactional-email/template-preview')return {html:'<p>Fictional preview</p>',text:'Fictional preview',subject:'Fictional preview',label:'SAMPLE ONLY',key:'aftercare:WEBSITE',orderReference:reference};
  if(r==='admin_members')return role==='authorized'?[{user_id:stableId}]:[];
  switch(r){
@@ -30,7 +31,7 @@ const mock=(u,role,kitTables)=>{
  case 'rpc/overseer_order_date_history':return [];
  case 'commerce_shipping':return [{country:'GB',standard_delivery_pence:399,free_delivery_threshold_pence:5000}];
  case 'rpc/overseer_delivery_admin_read':return {revision:0,active:null,draft:null,legacy:ship,history:[]};
- case 'rpc/overseer_delivery_options':return [{id:'standard',name:'UK Delivery',price:399}];
+ case 'rpc/overseer_delivery_options':return [{id:'standard',name:'UK Delivery',description:'Standard UK delivery',price:data.p_subtotal>=5000?0:399}];
  case 'rpc/eclipse_fulfilment_library':return {revision:0,items:[],presets:[]};
  case 'rpc/get_admin_email_templates':return ['aftercare:WEBSITE','aftercare:EBAY','dispatched:WEBSITE','dispatched:EBAY'].map(template_key=>({template_key,revision:0,draft:null,history:[],published:{version:1,content:{subject:'Fictional preview',heading:'Synthetic template',body:'Test copy'}}}));
  case 'rpc/command63_financial_status':return {enabled:true};
@@ -44,7 +45,8 @@ async function server(root){
  const def=k.kitDefinition;
  const assembly={id:k.id,sku:k.sku,name:k.name,category:k.category,kind:'wiring-kit',active:true};
  const defRow={assembly_id:k.id,family:def.family,base_price:def.basePrice,show_on_wiring_kits:def.showOnWiringKits,builder_enabled:def.builderEnabled,defaults:def.defaults,builder_options:def.builderOptions,component_resolvers:def.componentResolvers};
- const kitTables={catalogue_wiring_kits:[{...defRow,...assembly,slug:def.family}],assemblies:[assembly],assembly_bom:k.bom.map((r,position)=>({assembly_id:k.id,position,component_id:r.componentId,quantity:r.quantity})),kit_definitions:[defRow],kit_definition_internal:[{assembly_id:k.id,metadata:def.metadata}],kit_permitted_components:def.permittedComponentIds.map(component_id=>({assembly_id:k.id,component_id}))};
+ const cap={id:'synthetic-capacitor',sku:'synthetic-capacitor',name:'Synthetic tone capacitor',category:'capacitors',manufacturer:'Fixture',description:'Only present in the offline fixture',specs:{Capacitance:'1 nF'},individual:true,individually:true,active:true,in_kits:false,sale_price:749,kit_price:500,stock:100,image:null,product_content:{}};
+ const kitTables={catalogue_components:[cap],components:[cap],inventory:[{component_id:cap.id,quantity:100,stock_unit:'item'}],catalogue_wiring_kits:[{...defRow,...assembly,slug:def.family}],assemblies:[assembly],assembly_bom:k.bom.map((r,position)=>({assembly_id:k.id,position,component_id:r.componentId,quantity:r.quantity})),kit_definitions:[defRow],kit_definition_internal:[{assembly_id:k.id,metadata:def.metadata}],kit_permitted_components:def.permittedComponentIds.map(component_id=>({assembly_id:k.id,component_id}))};
  const {createKitSnapshot}=await imp('les-paul-kits/snapshot.mjs'),{lesPaul}=await imp('les-paul-kits/config.mjs');
  for(const options of [lesPaul.capacitors,lesPaul.bleed,lesPaul.jack,lesPaul.selector])for(const option of Object.values(options))if(option.component)option.component.stock=100;
  const snap=createKitSnapshot({wiring:'modern',matching:'precision'});
@@ -70,6 +72,10 @@ async function exercise(b,origin,pathname,role,debug,name,kitTables,legacyOrders
      if(window.top!==window)return;
      localStorage.setItem('apparition.admin.supabase-session.v1',JSON.stringify({access_token:'synthetic-only',refresh_token:'synthetic-only',expires_at:Math.floor(Date.now()/1000)+7200}));
      localStorage.setItem('apparition.admin.orders.v1',legacyOrders);
+     if(location.pathname==='/checkout/'){
+      const quantity=new URLSearchParams(location.search).has('fixture')?7:1;
+      localStorage.setItem('apparition.basket.v1',JSON.stringify({version:1,items:[{id:'fixture-basket-only',product:'component',sku:'synthetic-capacitor',quantity}]}));
+     }
    },{legacyOrders});
  await ctx.route('**/*',async x=>{
   const u=new URL(x.request().url());
@@ -81,7 +87,7 @@ async function exercise(b,origin,pathname,role,debug,name,kitTables,legacyOrders
     result.blockedWrites.push(method+' '+u.pathname);
     return x.fulfill({status:403,json:{message:'fixture only: unexpected mutation'},headers:{'access-control-allow-origin':origin}});
    }
-   return x.fulfill({json:mock(u,role,kitTables),headers:{'access-control-allow-origin':origin}});
+   return x.fulfill({json:mock(u,role,kitTables,data),headers:{'access-control-allow-origin':origin}});
   }
   result.external.push(u.hostname+u.pathname);
   return x.abort();
@@ -108,6 +114,19 @@ async function exercise(b,origin,pathname,role,debug,name,kitTables,legacyOrders
   await page.waitForLoadState('networkidle',{timeout:2800}).catch(()=>{});
   if(name==='fixed'&&role==='authorized'){
    const readMode=pathname==='/admin/orders/';
+   if(pathname==='/admin/'){
+    result.features.navigation=await page.locator('a[data-workspace=orders][href="/admin/orders/"]').count()===1&&await page.locator('a[data-workspace=delivery][href="/admin/delivery/"]').count()===1;
+   }
+   if(pathname.startsWith('/checkout/')){
+    await page.waitForFunction(()=>!!document.querySelector('#checkout-submit')&&!document.querySelector('#checkout-submit').disabled,{},{timeout:5000});
+    result.features.quote=await page.locator('.checkout-order-form select option:checked').textContent();
+   }
+   if(pathname==='/admin/conjure/'){
+    await page.locator('iframe').contentFrame().locator('[data-conjure-native]').first().waitFor({timeout:4500});
+    result.features.conjureFrame=await page.locator('iframe').contentFrame().locator('.manifest-block').count()>0;
+   }
+   if(pathname==='/admin/email-preview/')result.features.emailPreview=(await page.locator('#preview-status').innerText())==='PREVIEW — NOT A REAL ORDER';
+   if(pathname==='/admin/email-templates/')result.features.emailTemplateCount=await page.locator('#template-list button').count();
    const orderMode=pathname==='/admin/orders/?id='+orderId;
    if(readMode){
     const title=page.getByText('Fulfilment Cost Library',{exact:true});
@@ -120,9 +139,11 @@ async function exercise(b,origin,pathname,role,debug,name,kitTables,legacyOrders
     await date.waitFor({timeout:2800});await date.click();
     await page.getByRole('dialog').waitFor({timeout:2800});
     await page.getByRole('dialog').getByRole('button',{name:'Cancel',exact:true}).click();
+    await page.getByText('Order date correction history',{exact:true}).click();
+    await page.getByText('No corrections recorded.',{exact:true}).waitFor({timeout:2800});
     result.features.dateHistory=true;
     result.features.aftercareOff=await page.getByText('Aftercare Direct sending is off.',{exact:false}).isVisible()&&await page.getByRole('button',{name:'Preview Thank-You',exact:true}).isVisible()&&await page.getByRole('button',{name:'Aftercare Direct',exact:true}).count()===0;
-    await page.locator('[data-finance-workbench] > summary').click({timeout:2800});const advance=page.locator('[data-eclipse-advanced]');await advance.waitFor({timeout:2800});await advance.click();await page.locator('[data-eclipse-back]').waitFor({timeout:2800});result.features.eclipse=true;
+    const advance=page.locator('[data-eclipse-advanced]');await advance.waitFor({timeout:2800});await advance.click();await page.locator('[data-eclipse-back]').waitFor({timeout:2800});result.features.eclipse=true;
    }
   }
   Object.assign(result,await page.evaluate(()=>({url:location.pathname+location.search+location.hash,authorized:document.body.classList.contains('admin-authorized'),gate:document.querySelector('.admin-access-panel')?.innerText,entries:[...document.querySelectorAll('[data-admin-entry]')].map(o=>o.dataset.adminEntry),headings:[...document.querySelectorAll('h1,h2,[role=alert],#operation-status')].filter(e=>e.offsetParent).map(o=>o.innerText).filter(Boolean).slice(0,19),text:document.body.innerText.slice(0,1500)})));

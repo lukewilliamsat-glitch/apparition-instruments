@@ -8,7 +8,7 @@ HASH={
  'release':('ac7b361723c2eea4b75fb4b9c6827ae542ae36c7a8f6bcdf2b84c0365f6ea023','release-a-site/','new'),
  'prior':('52f876edfba409ef1442eceae9a283b0024b53f2a195711f43113b0d6dd43cfe','candidate/','old')
 }
-TAG='?build=sentinel77-b1'
+TAG='?build=sentinel77-b2'
 def h(b):return hashlib.sha256(b).hexdigest()
 def inv(path):return {str(p.relative_to(path)):h(p.read_bytes()) for p in sorted(path.rglob('*')) if p.is_file()}
 for name,(digest,prefix,dest) in HASH.items():
@@ -44,6 +44,14 @@ gate=out/'admin/admin-gate.mjs'
 before=gate.read_text()
 assert before.count("catch{setComponentRepository(null);")==1
 gate.write_text(before.replace(" const reveal=async()=>{"," const reveal=async()=>{\n  let phase='repositories';").replace("   addConjureNavigation(document);","   phase='navigation';\n   addConjureNavigation(document);").replace("   mountAdminShell(document,signOutControl);","   phase='shell';\n   mountAdminShell(document,signOutControl);\n   phase='workspace';").replace("catch{setComponentRepository(null);","catch{console.error('Admin startup failed ('+phase+').');setComponentRepository(null);"))
+# Measuring can skip nodes hidden at one breakpoint. Their validated fallback
+# placements still participate in the grid and must fit the measured extent.
+native=out/'admin/conjure/native-surface.mjs'
+source_native=native.read_text()
+old="for(const id of s.order)l.placements[id].source='manual';"
+new="for(const id of s.order){const placement=l.placements[id];placement.source='manual';const p=placement.value;if(p.visible)l.rows=Math.max(l.rows,p.row+p.rows+l.grid.trailingRows);}"
+assert source_native.count(old)==1
+native.write_text(source_native.replace(old,new))
 # Release composition is based on stamped files plus a source overlay. Resolve cache-only
 # variants to one URL per affected Admin asset, across documents and all of their imports.
 origin='https://sentinel.invalid'
