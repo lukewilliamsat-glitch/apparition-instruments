@@ -5,14 +5,15 @@ d=Path(sys.argv[1])
 def suite(n): return {r['pathname']:r for r in json.loads((d/(n+'.json')).read_text())}
 def errors(r):return ' '.join((e.get('description') or '') for e in r['browserExceptions'])
 new=suite('new-authorized-smoke'); old=suite('old-authorized-smoke')
-assert "Unexpected token 'const'" in errors(new['/admin/orders/']),errors(new['/admin/orders/'])
+assert not new['/admin/orders/']['authorized'] and any('customer-aftercare.mjs' in e for e in new['/admin/orders/']['parseErrors']),new['/admin/orders/']['parseErrors']
 assert 'Admin operations repository is unavailable' in errors(new['/admin/site-operations/']),errors(new['/admin/site-operations/'])
-for p in ['/admin/orders/','/admin/site-operations/','/admin/','/admin/catalogue-settings/','/admin/email-templates/']:
+for p in ['/admin/orders/','/admin/','/admin/catalogue-settings/','/admin/email-templates/']:
  assert old[p]['authorized'],(p,old[p]['gate'],old[p]['pageErrors'])
+assert not old['/admin/site-operations/']['authorized'] and 'Admin operations repository is unavailable' in errors(old['/admin/site-operations/'])
 fixed=suite('fixed-authorized-all')
 for p,r in fixed.items():
  assert not r['blockedWrites'],(p,r['blockedWrites'])
- assert not r['catch'] and not r['pageErrors'] and not r['bad'],(p,r['catch'],r['pageErrors'],r['bad'])
+ assert not r['catch'] and not r['pageErrors'] and not r['bad'] and not r['parseErrors'],(p,r['catch'],r['pageErrors'],r['bad'])
  assert not any('Admin startup failed' in e for e in r['consoleErrors']),(p,r['consoleErrors'])
  if p.startswith('/admin/'):
   assert r['authorized'] and 'Sign Out' in r['text'],(p,r['gate'],r['headings'])
