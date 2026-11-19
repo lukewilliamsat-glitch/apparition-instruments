@@ -1,0 +1,63 @@
+name: Deep Watch exact application package audit
+on:
+  push:
+    branches: [engineering/release-a77a-deep-watch]
+    paths:
+      - .github/workflows/release-a77a-isolated.yml
+      - tests/release-a77a/**
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: release-a77a-isolated
+  cancel-in-progress: true
+jobs:
+  compare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Verify the exact incident and rollback packages; reproduce the exact previous candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/deepwatch"
+          mkdir -m 700 "$work"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14329886408/zip" > "$work/release.zip"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14327320952/zip" > "$work/prior.zip"
+          python3 tests/release-a77a/compose.py "$work"
+          echo "27181e8e32c5014b356af88174a7c347d7f85a414bc80011699e098670b30c2f  $work/release-a77-candidate.zip" | sha256sum -c
+          node --no-warnings --experimental-vm-modules tests/release-a77a/graph.cjs "$work" new old fixed
+      - name: Install pinned browser harness
+        run: |
+          npm install --prefix "$RUNNER_TEMP/deepwatch" --no-save --no-package-lock --ignore-scripts playwright@1.62.1
+          if ! command -v google-chrome >/dev/null; then
+            "$RUNNER_TEMP/deepwatch/node_modules/.bin/playwright" install --with-deps chromium
+          fi
+      - name: Compare exact packages with isolated data and authorisation
+        run: |
+          set -euo pipefail
+          export SENTINEL_ROOT="$RUNNER_TEMP/deepwatch"
+          export NODE_PATH="$SENTINEL_ROOT/node_modules"
+          export SENTINEL_BROWSER="$(command -v google-chrome || true)"
+          "${SENTINEL_BROWSER:-$SENTINEL_ROOT/node_modules/.bin/playwright}" --version
+          node tests/release-a77a/browser.cjs new,old,fixed all
+          for role in anonymous denied expired renewed; do
+            node tests/release-a77a/browser.cjs fixed '/admin/,/admin/orders/,/admin/site-operations/,/admin/email-templates/,/admin/delivery/,/admin/ironclad/' "$role"
+          done
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: release-a77a-three-baseline-audit
+          path: |
+            ${{ runner.temp }}/deepwatch/graph-deepwatch.json
+            ${{ runner.temp }}/deepwatch/fixed-inventory.json
+            ${{ runner.temp }}/deepwatch/*-smoke.json
+            ${{ runner.temp }}/deepwatch/*-all.json
+          retention-days: 14
