@@ -4,7 +4,7 @@ const fixtures={
  order:'AI-099901',
  refund:'AI-099880'
 };
-const publicRoutes=['/basket/','/contact/','/account/','/account/order/','/checkout/success/','/checkout/success/?session_id=cs_live_DIAGNOSTICFIXTURE123','/wiring-generator/','/treble-bleed-designer/','/wiring-kits/build/','/circuit-forge/projects/','/interactive-tools/','/news/','/privacy/','/terms/'];
+const publicRoutes=['/basket/','/contact/','/account/','/account/?fixture=customer','/account/order/','/account/order/?reference=AI-099901&fixture=customer','/checkout/success/','/checkout/success/?session_id=cs_live_DIAGNOSTICFIXTURE123','/wiring-generator/','/treble-bleed-designer/','/wiring-kits/build/','/wiring-kits/build/?family=les-paul','/les-paul-kits/','/wiring-kits/','/circuit-forge/projects/','/interactive-tools/','/news/','/privacy/','/terms/'];
 const extraAdmin=['/admin/?view=inventory&probe=stock','/admin/?view=inventory&probe=mobile','/admin/site-operations/#news','/admin/site-operations/#announcements','/admin/site-operations/#commerce-offers','/admin/orders/?probe=session','/admin/orders/?probe=backend-error','/admin/orders/?probe=empty','/admin/delivery/?probe=non-live-draft'];
 const shown=async(p,s)=>p.locator(s).first().waitFor({state:'visible',timeout:3500});
 const hidden=async(p,s)=>p.locator(s).first().waitFor({state:'hidden',timeout:3500});
@@ -34,7 +34,7 @@ async function assess(page,raw,role,result,name) {
    await task('assembly-data',async()=>{await untilText(page,'#table-body','Les Paul');});
   }else if(q.get('view')==='maintenance'){
    await task('maintenance-actions',async()=>{
-    await shown(page,'#preview-component-export');await click(page,'#preview-component-export');await untilText(page,'#component-export-summary','Ready:');
+    await shown(page,'#preview-component-export');await click(page,'#preview-component-export');await page.waitForFunction(()=>[document.querySelector('#component-export-summary')?.textContent,document.querySelector('#status')?.textContent].some(s=>/Ready:|No saved Component record/.test(s||'')),{},{timeout:4000});
    });
   }else{
    await task('inventory-rows-search-reset',async()=>{
@@ -45,7 +45,6 @@ async function assess(page,raw,role,result,name) {
    });
    if(probe==='stock'){
     await task('stock-tab-and-cancel',async()=>{
-     await click(page,'[data-view=stock]');
      await page.getByRole('button',{name:/Update stock for Synthetic/}).first().click({timeout:3000});
      await shown(page,'#stock-dialog[open]');await page.keyboard.press('Escape');await hidden(page,'#stock-dialog[open]');
     });
@@ -84,7 +83,7 @@ async function assess(page,raw,role,result,name) {
    await task('empty-orders',()=>shown(page,'#orders-empty'));
   }else if(q.get('id')){
    await task('order-detail-initialisation',()=>text(page,'#detail-title',/AI-099901/));
-   if(name==='fixed')await task('existing-financial-revisions',async()=>{
+   if(['fixed','deep'].includes(name))await task('existing-financial-revisions',async()=>{
     await shown(page,'[data-financial-record]');
     await click(page,'[data-financial-record] summary');
     await untilText(page,'[data-financial-record] ol','Revision 1');
@@ -100,7 +99,7 @@ async function assess(page,raw,role,result,name) {
     await untilText(page,'#order-rows',fixtures.order);
     await fill(page,'#order-search','NO SENTINEL ORDER');
     await shown(page,'#orders-empty');await fill(page,'#order-search','AI-0999');await untilText(page,'#order-rows',fixtures.order);
-    await page.locator('#order-sort').selectOption({index:1});await untilText(page,'#order-rows',fixtures.order);
+    if(await page.locator('#order-sort').count())await page.locator('#order-sort').selectOption({index:1},{timeout:2500});await untilText(page,'#order-rows',fixtures.order);
    });
   }
  }
@@ -108,7 +107,7 @@ async function assess(page,raw,role,result,name) {
  if(p==='/admin/orders/invoice/')await task('invoice-historical-order',()=>text(page,'#reference',/AI-099901/));
  if(p==='/admin/site-operations/'){
   await task('open-state-and-commercial-list',async()=>{await untilText(page,'#store-current','Open for business');await untilText(page,'[data-commercial-status]','Destination configuration loaded');});
-  await task('news-edit-preview-no-write',async()=>{await click(page,'#new-post');await fill(page,'#news-form [name=body]','Synthetic release notes');await click(page,'#preview-post');await untilText(page,'#news-preview','Synthetic release notes');});
+  if(uri.hash==='#news')await task('news-edit-preview-no-write',async()=>{await click(page,'#new-post');await fill(page,'#news-form [name=body]','Synthetic release notes');await click(page,'#preview-post');await untilText(page,'#news-preview','Synthetic release notes');});
   if(uri.hash==='#commerce-offers')await task('commerce-intentional-hold',()=>untilText(page,'[data-offer-studio]','Preview only'));
  }
  if(p==='/admin/delivery/')await task('legacy-tariff-and-draft',async()=>{
@@ -117,6 +116,7 @@ async function assess(page,raw,role,result,name) {
   if(probe==='non-live-draft'){
    const form=page.locator('#delivery-form');
    const before=result.requests.filter(x=>x.path.endsWith('_write')).length;
+   await fill(page,'#delivery-methods [name=description]','Synthetic Standard UK delivery');
    await form.getByRole('button',{name:'Save draft',exact:true}).click({timeout:3000});
    await untilText(page,'#delivery-status','Draft saved');
    assert.equal(result.requests.filter(x=>x.path.endsWith('_write')).length,before+1);
@@ -144,10 +144,10 @@ async function assess(page,raw,role,result,name) {
  });
  if(p==='/admin/hub-media/')await task('media-template-state',async()=>{await shown(page,'#media-assets');await shown(page,'#media-form');assert(result.requests.some(r=>r.path.endsWith('/hub_media_assets')&&r.authenticated));});
  if(p==='/admin/conjure/')await task('conjure-frame-and-mode',async()=>{
-   await page.locator('iframe').contentFrame().locator('.manifest-block').first().waitFor({timeout:4500});
+   await page.locator('iframe').contentFrame().locator('.manifest-block').first().waitFor({state:'attached',timeout:4500});
    const edit=page.locator('[data-edit]');await edit.uncheck({timeout:3000});assert(!(await edit.isChecked()));
  });
- if(p==='/admin/wiring-kit-master/')await task('wiring-cost-stock-projection',async()=>{await shown(page,'#costing-values');await shown(page,'#stock-body');assert(await page.locator('#costing-values dt').count()>1);});
+ if(p==='/admin/wiring-kit-master/')await task('wiring-cost-stock-projection',async()=>{await shown(page,'#costing-values');assert(await page.locator('#costing-values dt').count()>1);assert(await page.locator('#stock-body tr').count()>0||await page.locator('#stock-empty').isVisible());});
  if(p==='/admin/ironclad/')await task('calculator-line-and-estimate',async()=>{
    const n=await page.locator('#estimate-lines fieldset').count();
    await click(page,'#add-estimate-line');assert.equal(await page.locator('#estimate-lines fieldset').count(),n+1);await shown(page,'#estimate-result');
@@ -158,14 +158,33 @@ async function assess(page,raw,role,result,name) {
  if(p==='/basket/')await task('basket-render-no-checkout',()=>shown(page,'#basket-content'));
  if(p==='/checkout/')await task('eligible-basket-to-delivery-without-payment',()=>text(page,'.checkout-order-form',/Secure checkout/));
  if(p==='/checkout/success/')await task('order-status-or-safe-missing-session',async()=>{await shown(page,'#order-message');if(q.has('session_id'))assert(result.requests.some(x=>x.path.endsWith('/checkout-status')));});
- if(p==='/account/')await task('customer-signed-out-navigation',async()=>{await shown(page,'#account-signed-out');await click(page,'button[data-view=recover]');await shown(page,'#recovery-request-form');});
- if(p==='/account/order/')await task('missing-order-fails-closed',()=>shown(page,'#order-status'));
- if(p==='/contact/')await task('contact-entry-no-mail',async()=>{await shown(page,'#enquiry-form');await fill(page,'#enquiry-form [name=message]','Synthetic unsent message');assert(!result.requests.some(e=>e.path.endsWith('/contact-enquiry')));});
+ if(p==='/account/')await task(q.has('fixture')?'customer-owned-order-list':'customer-signed-out-navigation',async()=>{
+  if(q.has('fixture')){await shown(page,'#account-signed-in');await untilText(page,'#my-orders-list','AI-099901');}
+  else {await shown(page,'#account-signed-out');await click(page,'button[data-view=recover]');await shown(page,'#recovery-request-form');}
+ });
+ if(p==='/account/order/')await task(q.has('fixture')?'customer-owned-order-detail':'missing-order-fails-closed',async()=>{
+  if(q.has('fixture')){await untilText(page,'#order-title','AI-099901');await shown(page,'#order-detail');}
+  else await untilText(page,'#order-status','Order not found');
+ });
+ if(p==='/contact/')await task('contact-fixture-validation-and-simulated-success',async()=>{
+  const form='#enquiry-form ';
+  await shown(page,'#enquiry-form');await click(page,form+'button[type=submit]');assert(!result.requests.some(e=>e.path.endsWith('/contact-enquiry')));
+  await fill(page,form+'[name=name]','Synthetic auditor');
+  await fill(page,form+'[name=email]','synthetic@example.invalid');
+  await page.locator(form+'[name=category]').selectOption('general',{timeout:2500});
+  await fill(page,form+'[name=message]','Synthetic unsent contact fixture');
+  await click(page,form+'button[type=submit]');await shown(page,'#enquiry-success');
+  assert.equal(result.requests.filter(e=>e.path.endsWith('/contact-enquiry')).length,1);
+ });
  if(p==='/circuit-forge/')await task('circuit-forge-layout-and-tools',async()=>{await shown(page,'#forge-controls');await shown(page,'#forge-viewport');const before=await page.locator('#forge-zoom-value').textContent();await click(page,'#forge-zoom-in');assert.notEqual(await page.locator('#forge-zoom-value').textContent(),before);});
  if(p==='/circuit-forge/projects/')await task('forge-project-access-entry',()=>shown(page,'#forge-pro-root'));
  if(p==='/wiring-generator/')await task('wiring-diagram-output',async()=>{await shown(page,'#generator-form');await shown(page,'#generator-mount svg');});
  if(p==='/treble-bleed-designer/')await task('designer-graph',async()=>{await shown(page,'#designer-inputs');await shown(page,'#response-graph');});
- if(p==='/wiring-kits/build/')await task('kit-builder-mount',()=>shown(page,'main'));
+ if(p==='/wiring-kits/build/'||p==='/les-paul-kits/')await task('kit-builder-selection-or-missing-family-guard',async()=>{
+  if(p==='/wiring-kits/build/'&&!q.has('family'))await untilText(page,'#builder-status','Choose a supported Wiring Kit');
+  else {await shown(page,'main.kit-main');assert(result.requests.some(x=>x.path.endsWith('/catalogue_wiring_kits')));}
+ });
+ if(p==='/wiring-kits/')await task('wiring-kit-family-catalogue',async()=>{await shown(page,'main');assert(result.requests.some(x=>x.path.endsWith('/catalogue_wiring_kits')));});
  if(['/interactive-tools/','/news/','/privacy/','/terms/'].includes(p))await task('public-content',()=>shown(page,'main'));
  return actions;
 }

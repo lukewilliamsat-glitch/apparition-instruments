@@ -16,14 +16,15 @@ workspaces[workspaces.indexOf('/admin/orders/invoice/')]+='?id='+orderId;
 workspaces[workspaces.indexOf('/admin/orders/build-sheet/')]+='?order='+orderId;
 workspaces.push('/admin/orders/?id='+orderId,'/checkout/?fixture=free-delivery',...extraAdmin,...publicRoutes);
 
-const ship={methods:[{id:'standard',name:'UK Delivery',price:399,minOrder:0,minUnits:0}],freeEnabled:true,freeThreshold:5000,overrides:[],promo:null};
+const ship={methods:[{id:'standard',name:'UK Delivery',price:399,minOrder:0,minUnits:0,description:'Standard UK delivery',dispatchDays:null,deliveryDays:null}],freeEnabled:true,freeThreshold:5000,overrides:[],promo:null};
 const ops={server_time:now,store:{state:'OPEN',desired_state:'OPEN',pause_from:null,resume_at:null,revision:1,updated_at:now,customer_title:'',customer_message:'',internal_reason:''},announcement:null,announcements:[],news:[],revision:1};
 const mock=(u,role,kitTables,data,fixture)=>{
  let r=u.pathname.replace('/rest/v1/',''), v;
- if(u.pathname==='/auth/v1/user')return {id:stableId};
+ if(u.pathname==='/auth/v1/user')return fixture.customer?{id:stableId,email:'fictional@example.invalid',email_confirmed_at:now,aud:'authenticated',role:'authenticated',created_at:now,user_metadata:{},app_metadata:{}}:{id:stableId};
  if(u.pathname==='/functions/v1/transactional-email/preview')return {html:'<p>Fictional preview</p>',text:'Fictional preview',subject:'Fictional preview',label:'PREVIEW — NOT A REAL ORDER'};
  if(u.pathname==='/functions/v1/transactional-email/template-preview')return {html:'<p>Fictional preview</p>',text:'Fictional preview',subject:'Fictional preview',label:'SAMPLE ONLY',key:'aftercare:WEBSITE',orderReference:reference};
  if(r==='admin_members')return ['authorized','renewed'].includes(role)?[{user_id:stableId}]:[];
+ if(u.pathname==='/functions/v1/my-orders'&&fixture.customer){const row={reference,createdAt:now,totalPence:1148,pricing:{subtotal:749,delivery:399,total:1148},status:'dispatched',paymentStatus:'paid',items:sampleOrder.items,dispatch:{},address:[]};return u.searchParams.has('reference')?{order:row}:{orders:[row]};}
  if(u.pathname==='/functions/v1/checkout-status')return {reference:'AI-099901',paymentStatus:'paid'};
  switch(r){
  case 'rpc/get_site_operations':return ops;
@@ -50,7 +51,8 @@ async function server(root){
  const assembly={id:k.id,sku:k.sku,name:k.name,category:k.category,kind:'wiring-kit',active:true};
  const defRow={assembly_id:k.id,family:def.family,base_price:def.basePrice,show_on_wiring_kits:def.showOnWiringKits,builder_enabled:def.builderEnabled,defaults:def.defaults,builder_options:def.builderOptions,component_resolvers:def.componentResolvers};
  const cap={id:'synthetic-capacitor',sku:'synthetic-capacitor',name:'Synthetic tone capacitor',category:'capacitors',manufacturer:'Fixture',description:'Only present in the offline fixture',specs:{Capacitance:'1 nF'},individual:true,individually:true,active:true,in_kits:false,sale_price:749,kit_price:500,stock:100,image:null,product_content:{}};
- const kitTables={catalogue_options:[{option_set:'manufacturer',option_key:'fixture',label:'Fixture',active:true}],catalogue_components:[cap],components:[cap],inventory:[{component_id:cap.id,quantity:100,stock_unit:'item'}],catalogue_wiring_kits:[{...defRow,...assembly,slug:def.family}],assemblies:[assembly],assembly_bom:k.bom.map((r,position)=>({assembly_id:k.id,position,component_id:r.componentId,quantity:r.quantity})),kit_definitions:[defRow],kit_definition_internal:[{assembly_id:k.id,metadata:def.metadata}],kit_permitted_components:def.permittedComponentIds.map(component_id=>({assembly_id:k.id,component_id}))};
+ const img={...cap,id:'bleed-cap',sku:'fixture-public-bleed',name:'Synthetic Capacitor-only treble bleed',category:'treble-bleeds',image:{kind:'object',url:'/products/bleed-cap/image.png'},product_content:{productTitle:'Fixture capacitor-only treble bleed'}};
+ const kitTables={catalogue_options:[{option_set:'manufacturer',option_key:'fixture',label:'Fixture',active:true}],catalogue_components:[cap,img],components:[cap],inventory:[{component_id:cap.id,quantity:100,stock_unit:'item'}],catalogue_wiring_kits:[{...defRow,...assembly,slug:def.family}],assemblies:[assembly],assembly_bom:k.bom.map((r,position)=>({assembly_id:k.id,position,component_id:r.componentId,quantity:r.quantity})),kit_definitions:[defRow],kit_definition_internal:[{assembly_id:k.id,metadata:def.metadata}],kit_permitted_components:def.permittedComponentIds.map(component_id=>({assembly_id:k.id,component_id}))};
  const {financeDraft}=await imp('admin/orders/finance-ui.mjs');
  kitTables.financeDocument=financeDraft({items:sampleOrder.items,pricing:{delivery:399,total:1148}});
  const {createKitSnapshot}=await imp('les-paul-kits/snapshot.mjs'),{lesPaul}=await imp('les-paul-kits/config.mjs');
@@ -73,13 +75,14 @@ async function server(root){
 }
 async function exercise(b,origin,pathname,role,debug,name,kitTables,legacyOrders,root){
  const pathnameURL=new URL(pathname,origin),probe=pathnameURL.searchParams.get('probe');
- const fixture={empty:probe==='empty',error:probe==='backend-error',draft:null};
+ const fixture={empty:probe==='empty',error:probe==='backend-error',draft:null,customer:pathnameURL.searchParams.get('fixture')==='customer'};
  const ctx=await b.newContext(probe==='mobile'?{viewport:{width:390,height:844},isMobile:true,hasTouch:true}:{});
  const result={pathname,role,entries:[],browserExceptions:[],pageErrors:[],consoleErrors:[],bad:[],external:[],requests:[],modules:[],catch:[],blockedWrites:[],features:{},parseErrors:[],depth:{},depthErrors:[],unexpected:[]};
  if(role!=='anonymous')await ctx.addInitScript(({legacyOrders,role})=>{
      if(window.top!==window)return;
      if(!sessionStorage.getItem('fixture-admin-initialised')){sessionStorage.setItem('fixture-admin-initialised','true');localStorage.setItem('apparition.admin.supabase-session.v1',JSON.stringify({access_token:'synthetic-only',refresh_token:'synthetic-only',expires_at:Math.floor(Date.now()/1000)+(['expired','renewed'].includes(role)?-60:7200)}));}
      localStorage.setItem('apparition.admin.orders.v1',legacyOrders);
+     if(new URLSearchParams(location.search).get('fixture')==='customer'){const expires_at=Math.floor(Date.now()/1000)+7200,user={id:'b1d8a9b5-a055-414e-a8dd-d1a2356b4100',email:'fictional@example.invalid',email_confirmed_at:'2026-11-19T13:00:00.000Z',aud:'authenticated',role:'authenticated',user_metadata:{},app_metadata:{}};localStorage.setItem('apparition.customer.auth.v1',JSON.stringify({access_token:'fixture-customer-session',refresh_token:'fixture-customer-refresh',expires_at,expires_in:7200,token_type:'bearer',user}));}
      if([' /checkout/',' /basket/'].includes(' '+location.pathname)){
       const quantity=new URLSearchParams(location.search).has('fixture')?7:1;
       localStorage.setItem('apparition.basket.v1',JSON.stringify({version:1,items:[{id:'fixture-basket-only',product:'component',sku:'synthetic-capacitor',quantity}]}));
@@ -104,11 +107,15 @@ async function exercise(b,origin,pathname,role,debug,name,kitTables,legacyOrders
    if(u.pathname==='/auth/v1/logout'&&method==='POST'&&probe==='session')return reply({});
    if(u.pathname==='/rest/v1/orders'&&fixture.error)return reply({message:'Synthetic Orders unavailable'},503);
    const draft=pathnameURL.pathname==='/admin/delivery/'&&probe==='non-live-draft'&&u.pathname.endsWith('/rpc/overseer_delivery_admin_write')&&data.p_action==='draft'&&method==='POST';
+   const contact=pathnameURL.pathname==='/contact/'&&u.pathname==='/functions/v1/contact-enquiry'&&data.email==='synthetic@example.invalid'&&method==='POST';
+   if(contact)return reply({state:'sent'});
    if(!draft&&method!=='GET'&&method!=='HEAD'&&!(method==='POST'&&(u.pathname.startsWith('/rest/v1/rpc/')&&readPosts.has(u.pathname.split('/').at(-1))||u.pathname==='/functions/v1/transactional-email/template-preview'))){
     result.blockedWrites.push(method+' '+u.pathname);
     return x.fulfill({status:403,json:{message:'fixture only: unexpected mutation'},headers:{'access-control-allow-origin':origin}});
    }
-   return reply(mock(u,role,kitTables,data,fixture));
+   const value=mock(u,role,kitTables,data,fixture);
+   if(u.pathname.endsWith('/catalogue_components')&&u.searchParams.get('id')?.startsWith('eq.'))return reply(value.filter(row=>row.id===u.searchParams.get('id').slice(3)));
+   return reply(value);
   }
   result.external.push(u.hostname+u.pathname);
   return x.abort();
@@ -134,17 +141,17 @@ async function exercise(b,origin,pathname,role,debug,name,kitTables,legacyOrders
   await page.waitForFunction(()=>document.body.classList.contains('admin-authorized')||!!document.querySelector('.admin-access-panel [role=alert]')?.textContent?.trim()||!!document.querySelector('.admin-access-panel form')||document.querySelector('.admin-access-note')?.textContent?.includes('not authorised'),{},{timeout:pathname.startsWith('/admin/')?2800:180}).catch(()=>{});
   await page.waitForLoadState('networkidle',{timeout:2800}).catch(()=>{});
   result.depth=await assess(page,pathname,role,result,name);
- if(name==='fixed'&&role==='authorized'&&Object.values(result.depth).includes('passed')){
+ if(['fixed','deep'].includes(name)&&role==='authorized'&&Object.values(result.depth).includes('passed')){
    const readMode=pathname==='/admin/orders/';
    if(pathname==='/admin/'){
     result.features.navigation=await page.locator('a[data-workspace=orders][href="/admin/orders/"]').count()===1&&await page.locator('a[data-workspace=delivery][href="/admin/delivery/"]').count()===1;
    }
-   if(pathname.startsWith('/checkout/')){
+   if(pathnameURL.pathname==='/checkout/'){
     await page.waitForFunction(()=>!!document.querySelector('#checkout-submit')&&!document.querySelector('#checkout-submit').disabled,{},{timeout:5000});
     result.features.quote=await page.locator('.checkout-order-form select option:checked').textContent();
    }
    if(pathname==='/admin/conjure/'){
-    await page.locator('iframe').contentFrame().locator('[data-conjure-native]').first().waitFor({timeout:4500});
+    await page.locator('iframe').contentFrame().locator('[data-conjure-native]').first().waitFor({state:'attached',timeout:4500});
     result.features.conjureFrame=await page.locator('iframe').contentFrame().locator('.manifest-block').count()>0;
    }
    if(pathname==='/admin/email-preview/')result.features.emailPreview=(await page.locator('#preview-status').innerText())==='PREVIEW — NOT A REAL ORDER';

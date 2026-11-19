@@ -33,7 +33,9 @@ jobs:
           gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14327320952/zip" > "$work/prior.zip"
           python3 tests/release-a77a/compose.py "$work"
           echo "27181e8e32c5014b356af88174a7c347d7f85a414bc80011699e098670b30c2f  $work/release-a77-candidate.zip" | sha256sum -c
-          node --no-warnings --experimental-vm-modules tests/release-a77a/graph.cjs "$work" new old fixed
+          python3 tests/release-a77a/candidate.py "$work"
+          node --no-warnings --experimental-vm-modules tests/release-a77a/graph.cjs "$work" new old fixed deep
+          node tests/release-a77a/native.mjs "$work/deep"
       - name: Install pinned browser harness
         run: |
           npm install --prefix "$RUNNER_TEMP/deepwatch" --no-save --no-package-lock --ignore-scripts playwright@1.62.1
@@ -47,17 +49,23 @@ jobs:
           export NODE_PATH="$SENTINEL_ROOT/node_modules"
           export SENTINEL_BROWSER="$(command -v google-chrome || true)"
           "${SENTINEL_BROWSER:-$SENTINEL_ROOT/node_modules/.bin/playwright}" --version
-          node tests/release-a77a/browser.cjs new,old,fixed all
+          node tests/release-a77a/browser.cjs deep all
           for role in anonymous denied expired renewed; do
-            node tests/release-a77a/browser.cjs fixed '/admin/,/admin/orders/,/admin/site-operations/,/admin/email-templates/,/admin/delivery/,/admin/ironclad/' "$role"
+            node tests/release-a77a/browser.cjs deep '/admin/,/admin/orders/,/admin/site-operations/,/admin/email-templates/,/admin/delivery/,/admin/ironclad/' "$role"
           done
+          python3 tests/release-a77a/accept-deep.py "$SENTINEL_ROOT"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
-          name: release-a77a-three-baseline-audit
+          name: release-a77a-final-audit
           path: |
             ${{ runner.temp }}/deepwatch/graph-deepwatch.json
-            ${{ runner.temp }}/deepwatch/fixed-inventory.json
+            ${{ runner.temp }}/deepwatch/deep-inventory.json
             ${{ runner.temp }}/deepwatch/*-smoke.json
             ${{ runner.temp }}/deepwatch/*-all.json
+          retention-days: 14
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: release-a77a-verified-candidate
+          path: ${{ runner.temp }}/deepwatch/release-a77a-candidate.zip
           retention-days: 14

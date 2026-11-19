@@ -19,7 +19,7 @@ async function audit(name){
    parseMap.set(fn,mod?.dependencySpecifiers??mod?.moduleRequests?.map(x=>x.specifier)??[]);
   } catch(e){badSyntax.push({file:fn,message:e.message});}
  }
- const routes=files.filter(f=>f.endsWith('.html')&&(f.startsWith('admin/')||f.startsWith('circuit-forge/')||f.startsWith('forge-pro/')));
+ const routes=files.filter(f=>f.endsWith('.html'));
  const records=[];
  for(const fn of routes){
   const entry=new URL('/'+fn,site);
@@ -63,8 +63,8 @@ async function audit(name){
 }
 (async()=>{
  for(const n of names)all.push(await audit(n));
- for(const r of all)console.log(JSON.stringify({name:r.name,files:r.files,js:r.js,entries:r.routes.length,edges:r.edges,syntax:r.badSyntax,missing:r.routes.flatMap(x=>x.missing),link:r.routes.flatMap(x=>x.linkErrors).map(x=>x.message).filter((v,i,a)=>a.indexOf(v)===i).slice(0,8),singletonAliases:r.routes.flatMap(x=>x.aliases.filter(a=>a.singleton).map(a=>[x.entry,a.file])),cycles:r.routes.reduce((n,x)=>n+x.cycles.length,0)}));
+ for(const r of all)console.log(JSON.stringify({name:r.name,files:r.files,js:r.js,entries:r.routes.length,edges:r.edges,syntax:r.badSyntax,missing:r.routes.flatMap(x=>x.missing),link:r.routes.flatMap(x=>x.linkErrors).map(x=>x.message).filter((v,i,a)=>a.indexOf(v)===i).slice(0,8),singletonAliases:r.routes.filter(x=>x.entry.startsWith('admin/')).flatMap(x=>x.aliases.filter(a=>a.singleton).map(a=>[x.entry,a.file])),publicSingletonAliases:r.routes.filter(x=>!x.entry.startsWith('admin/')).flatMap(x=>x.aliases.filter(a=>a.singleton)).length,cycles:r.routes.reduce((n,x)=>n+x.cycles.length,0)}));
  fs.writeFileSync(path.join(process.argv[2],'graph-deepwatch.json'),JSON.stringify(all,null,2));
- const c=all.find(x=>x.name==='fixed');
- if(c&&(c.badSyntax.length||c.routes.some(r=>r.missing.length||r.linkErrors.length||r.aliases.some(a=>a.singleton))))process.exitCode=1;
+ const c=all.find(x=>x.name==='deep')??all.find(x=>x.name==='fixed');
+ if(c&&(c.badSyntax.length||c.routes.some(r=>r.missing.length||r.linkErrors.length||((c.name==='deep'||r.entry.startsWith('admin/'))&&r.aliases.some(a=>a.singleton)))))process.exitCode=1;
 })().catch(e=>{console.error(e);process.exitCode=1;});
