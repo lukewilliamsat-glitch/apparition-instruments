@@ -1,0 +1,126 @@
+name: Final Ascent cumulative acceptance
+on:
+  push:
+    branches: [engineering/grand-ascent-78a]
+    paths: ['tests/ascent78/**', '.github/workflows/grand-ascent78-acceptance.yml']
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: grand-ascent78-acceptance
+  cancel-in-progress: false
+jobs:
+  database:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        release: [b,c]
+    services:
+      postgres:
+        image: postgres:17.6
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports: ['127.0.0.1:55469:5432', '127.0.0.1:55474:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 4s --health-retries 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          ref: ${{ matrix.release == 'b' && '43a7c0ab2a1546b2cb7fffadc82613a02a109c7d' || 'a1d9e41fd4443f92f050c013c7bb1b70fa67568c' }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - run: npm install --prefix "$RUNNER_TEMP/native-pg" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save pg@8.16.3
+      - name: Reuse exact migration and native PostgreSQL rehearsal
+        env:
+          RELEASE: ${{ matrix.release }}
+        run: |
+          set -euo pipefail
+          if [ "$RELEASE" = b ]; then
+            echo '04ec507549545b31946aaef827e54201a8fec15c806f10f0fd217ea22fe49c90  docs/operations/release69b/ironclad69b-production.atomic.sql' | sha256sum -c
+            node tests/release69b/assemble.mjs "$RUNNER_TEMP/b-spec"
+            cmp "$RUNNER_TEMP/b-spec/ironclad69b-production.atomic.sql" docs/operations/release69b/ironclad69b-production.atomic.sql
+            RELEASE69B_NATIVE=true RELEASE69B_PG_MODULE="$RUNNER_TEMP/native-pg/node_modules/pg" node tests/release69b/rehearse.mjs
+          else
+            echo 'f73d9b68df1eb8bd4a251d29ec58df1941132a4549d80c79e1790260fd9ea6be  supabase/migrations/20261117162718_omniscience74_v1.sql' | sha256sum -c
+            node tests/leviathan74/model.mjs
+            LEVIATHAN74_NATIVE=true LEVIATHAN74_STACK=true LEVIATHAN74_PG_MODULE="$RUNNER_TEMP/native-pg/node_modules/pg" node tests/leviathan74/db.mjs
+          fi
+  browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 13
+    strategy:
+      fail-fast: false
+      matrix:
+        release: [b,c]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: a1d9e41fd4443f92f050c013c7bb1b70fa67568c
+          path: omniscience-source
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Seal cumulative packages and inspect the dependency graphs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE: ${{ matrix.release }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/deepwatch"
+          mkdir -m 700 "$work"
+          test "$(git -C omniscience-source rev-parse HEAD)" = a1d9e41fd4443f92f050c013c7bb1b70fa67568c
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14552190395/zip" > "$work/a.zip"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14329886408/zip" > "$work/old69b.zip"
+          python3 tests/ascent78/compose.py "$work" omniscience-source/dist
+          node --no-warnings --experimental-vm-modules tests/release-a77a/graph.cjs "$work" "release-$RELEASE"
+          python3 - "$work" <<'PY'
+          import json,pathlib,sys
+          groups=json.loads((pathlib.Path(sys.argv[1])/'graph-deepwatch.json').read_text())
+          for g in groups:
+           assert not g['badSyntax']
+           for r in g['routes']:
+            assert not r['missing'] and not r['linkErrors'] and not r['cycles'] and not any(a['singleton'] for a in r['aliases']),r['entry']
+          PY
+          node tests/release-a77a/native.mjs "$work/release-$RELEASE"
+      - name: Install the pinned Chromium harness
+        run: npm install --prefix "$RUNNER_TEMP/deepwatch" --no-save --no-package-lock --ignore-scripts playwright@1.62.1
+      - name: Run Deep Watch and role journeys against exact candidate bytes
+        env:
+          RELEASE: ${{ matrix.release }}
+        run: |
+          set -euo pipefail
+          export SENTINEL_ROOT="$RUNNER_TEMP/deepwatch"
+          export NODE_PATH="$SENTINEL_ROOT/node_modules"
+          export SENTINEL_BROWSER="$(command -v google-chrome)"
+          node tests/ascent78/browser.cjs "release-$RELEASE" all
+          routes='/admin/,/admin/orders/,/admin/site-operations/,/admin/email-templates/,/admin/delivery/,/admin/ironclad/'
+          if [ "$RELEASE" = c ]; then routes="$routes,/admin/omniscience/"; fi
+          for role in anonymous denied expired renewed; do
+            node tests/ascent78/browser.cjs "release-$RELEASE" "$routes" "$role"
+          done
+          python3 tests/ascent78/accept-deep.py "$SENTINEL_ROOT" "release-$RELEASE"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: grand-ascent78-${{ matrix.release }}-audit
+          path: |
+            ${{ runner.temp }}/deepwatch/graph-deepwatch.json
+            ${{ runner.temp }}/deepwatch/release-${{ matrix.release }}-manifest.json
+            ${{ runner.temp }}/deepwatch/release-${{ matrix.release }}-*-all.json
+            ${{ runner.temp }}/deepwatch/release-${{ matrix.release }}-*-smoke.json
+          retention-days: 30
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: grand-ascent78-${{ matrix.release }}-accepted
+          path: ${{ runner.temp }}/deepwatch/release-${{ matrix.release }}.zip
+          if-no-files-found: error
+          retention-days: 30
