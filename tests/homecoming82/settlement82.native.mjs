@@ -63,7 +63,7 @@ try{
   applyVerified:async p=>{
    if(p.type==='payment'){
     const result=await service('select dominion79.consume($1,$2,$3,$4,$5,$6,$7,$8)',
-      [p.orderId,p.account,p.id,plan.orderReference,p.reference,p.transactionId,p.money.minor,p.money.currency]);
+      [p.orderId,p.account,p.id,plan.orderReference,p.reference,p.transactionId,p.money.minor,p.money.currency.toLowerCase()]);
     plan={...plan,intent:p.transactionId};return {state:result};
    }
    if(p.type==='refund'){
