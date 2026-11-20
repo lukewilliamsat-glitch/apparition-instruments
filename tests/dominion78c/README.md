@@ -1,0 +1,23 @@
+# DOMINION 78C: isolated acceptance record
+
+Engineering branch: `engineering/dominion78c-foundations`.
+Tested source: `ebd926b78b6d8c5864997b8bb7f4b860cbc5286b`.
+[Native and fixture acceptance](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/44719274800/job/136230521789): eight JavaScript tests passed; the PostgreSQL server reported 17.6 and both native transactional suites passed.
+
+| Record | Current authority | Boundary for the next integration |
+| --- | --- | --- |
+| Components, SKUs, assemblies and kits | Existing Catalogue component definitions and validated product/kit selections | Use catalogue component IDs for stock and keep the sale SKU as a display/lookup identity. Consume the exact validated saved order BOM, including `snapshot.stockRequirements`; don't guess parts from product names. |
+| Physical quantity and availability | `public.inventory` is the only physical authority; IRONCLAD manages existing allocations, holds and measurements | Reconcile legacy checkout and fulfilment with one reservation operation. Availability subtracts allocated, quality-held and reserved quantities; any physical drift that threatens a hold must fail closed. |
+| Orders and providers | Existing saved order IDs, with separate account-scoped provider order and transaction references | Never merge on references that may collide across accounts. Only attach incoming evidence if currency, identity and existing order correlation agree. |
+| Purchases, batches and measured units | IRONCLAD supplier, procurement, receipts, acquisition batches and measurements | Use physically evidenced unit or batch attribution when available. Keep estimates labelled and immutable per-order financial evidence distinct from current costs. |
+| Packing, dispatch and tracking | Existing Orders fulfilment and dispatch state | Packing/weight checks can recommend a format and record evidence; only the existing authorised fulfilment path may mark an order dispatched. |
+| Financial evidence | ECLIPSE and BLACK LEDGER per-order financial evidence; OMNISCIENCE is reporting over established finance data | Pass cost and provider evidence for review without altering prior revisions, payment state or payout amounts. |
+
+| Workstream | Verified in fixtures | Required before production integration |
+| --- | --- | --- |
+| UNITY | Validated kit/assembly BOM totals and availability; measured-set eligibility; ordered stock locks; duplicate and competing reservations; idempotent consumption; bounded expiry; late-payment refusal; rollback across stock, order and evidence. Tests also reject insufficient stock and legacy quantity drift. | Wire the accepted IRONCLAD allocation/quality projection and saved BOM into the real legacy writer transaction; add same-order lot/measurement provenance; verify permissions, migrations and existing legacy checkout/fulfilment writers against the shared authority. |
+| QUARTERMASTER | Packaging catalogue, dimensions and weight; supplier purchase evidence; packing checklist; idempotent internal packaging inventory; tracking and dispatch readiness review; ECLIPSE cost evidence; escaped printable 50 mm label proof. | Connect authorised fulfilment and cost adapters. Confirm label dimensions, printable area and actual output on the Niimbot M2. No live dispatch, print-device or postage provider integration exists. |
+| MARKETPLACE | Account-scoped eBay GET contract, bounded pagination and retry, deduplication, exact order/listing reconciliation, provider financial transactions, refunds/cancellation evidence, and unresolved-link review. Buyer identity is not emitted by the adapter. | Add approved UK seller OAuth, secure token custody and request signing for Finance API calls, then verify actual provider payloads and reconciliation. No live seller credentials or provider calls were used. |
+| COMMERCE CORONATION | Correlated checkout/payment events, duplicate event and transaction handling, protected stock consumption, cancellation/review states, partial refund evidence without automatic restock, and atomic stock/order/evidence rollback in PostgreSQL. | Connect the real provider signature verifier, payment session/reconciliation service, timeout processing and existing fulfilment path. Genuine sandbox provider acceptance and activation/rollback review remain necessary. |
+
+The workflow runs only on the isolated engineering branch. PostgreSQL binds to loopback on the runner and the SQL fixture rejects use outside `dominion78c_fixture`. No production deploy job, secrets, business writes, live provider connections or production stock authority are included. The fixture verifies transactions and behaviour; it is not a production migration.
