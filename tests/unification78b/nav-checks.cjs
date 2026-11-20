@@ -27,7 +27,7 @@ module.exports=async (page,uri,name)=>{
   await available.getByRole('button',{name:'Measurements',exact:true}).click();
   await available.getByRole('heading',{name:'Precision measurements',exact:true}).waitFor();
   await available.getByRole('button',{name:'Movements',exact:true}).click();
-  await available.getByRole('heading',{name:/Stock movements/}).waitFor();
+  await available.getByRole('heading',{name:'Stock movement history',exact:true}).waitFor();
   assert.match(await crumb.innerText(),/IRONCLAD/,'workspace mount must leave breadcrumb in place');
  }else if(p==='/admin/ironclad/calculator/'){
   assert.equal(await calc.getAttribute('aria-current'),'page');
