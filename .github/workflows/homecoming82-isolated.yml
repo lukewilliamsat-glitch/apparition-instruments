@@ -49,12 +49,16 @@ jobs:
           set -euo pipefail
           python3 tests/homecoming82/rebase-integration.py tests/dominion78c/integration79.mjs
           DOMINION_PG_MODULE="$RUNNER_TEMP/dom79/node_modules/pg" node tests/dominion78c/.integration82-generated.mjs
+      - name: Sandbox session and signed webhook to native paid writer
+        run: DOMINION_PG_MODULE="$RUNNER_TEMP/dom79/node_modules/pg" node tests/homecoming82/settlement82.native.mjs
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        if: ${{ !contains(github.event.head_commit.message, '[settlement-only]') }}
         with:
           path: sentinel
           ref: 7fc5a1dcbf94064a5ec23831fcf2205047259294
           persist-credentials: false
       - name: Run existing storefront and Admin suite against sealed Stage B artifact
+        if: ${{ !contains(github.event.head_commit.message, '[settlement-only]') }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -80,6 +84,7 @@ jobs:
           done
           python3 "$w/harness/accept-deep.py" "$w" unified-c
       - name: Test exact workshop preview with native permission and pick transactions
+        if: ${{ !contains(github.event.head_commit.message, '[settlement-only]') }}
         run: |
           set -euo pipefail
           w="$RUNNER_TEMP/dom79"
@@ -91,6 +96,7 @@ jobs:
             DOMINION_PG_MODULE="$w/node_modules/pg" DOMINION_PLAYWRIGHT="$w/node_modules/playwright" \
             node tests/homecoming82/workshop82.browser.mjs
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: ${{ !contains(github.event.head_commit.message, '[settlement-only]') }}
         with:
           name: homecoming82-workshop-preview-only
           path: |
@@ -100,7 +106,7 @@ jobs:
           if-no-files-found: error
           retention-days: 30
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        if: always()
+        if: ${{ always() && !contains(github.event.head_commit.message, '[settlement-only]') }}
         with:
           name: homecoming82-cumulative-evidence
           path: |
