@@ -8,6 +8,10 @@ do $$ begin
 end $$;
 create schema dominion79;
 revoke all on schema dominion79 from public,anon,authenticated,service_role;
+create table dominion79.lifecycle_control(
+ singleton boolean primary key default true check(singleton), mode text not null check(mode in('paused','accepting','draining'))
+);
+insert into dominion79.lifecycle_control(mode) values('paused');
 create table dominion79.holds(
  order_id uuid primary key references public.orders(id),
  owner_key text not null check(length(owner_key) between 1 and 96),
@@ -142,6 +146,8 @@ begin
   if h.owner_key<>p_owner or h.ends_at<>p_until or h.order_items_hash<>sha256(convert_to(o.items::text,'UTF8')) then raise exception 'Reservation replay differs' using errcode='23505'; end if;
   return h.state;
  end if;
+ if (select mode from dominion79.lifecycle_control where singleton for share) is distinct from 'accepting' then
+  raise exception 'New reservations are paused' using errcode='55000';end if;
  if o.sales_channel<>'WEBSITE' or o.payment_status<>'unpaid' or p_until<=clock_timestamp() or p_until>clock_timestamp()+interval '2 hours'
    or ironclad69.commerce_enabled() then raise exception 'Order is not eligible for a reservation'; end if;
  -- Serialise checks by stable owner; two browser requests cannot create concurrent owner holds past the cap.

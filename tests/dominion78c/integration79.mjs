@@ -3,6 +3,8 @@ import { readFile } from 'node:fs/promises';
 import { createHash, randomUUID } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
+import { prepareFulfilmentRevision } from './finance80.mjs';
 import { marketplaceWalkthrough } from './reconciliation-fixture79.mjs';
 
 const r=createRequire(import.meta.url);
@@ -29,6 +31,7 @@ const admin=randomUUID(),buyer=randomUUID();
 const numberHex=()=>randomUUID().replaceAll('-','');
 const write=(k,body,key=randomUUID())=>as('authenticated',admin,q=>q('select public.ironclad69_write($1,$2,$3)',[key,k,body]));
 const read=(k,body)=>as('authenticated',admin,q=>q('select public.ironclad69_read($1,$2)',[k,body]));
+const adminRpc=(sql,args)=>as('authenticated',admin,q=>q(sql,args));
 const stock=id=>out('select quantity::int from public.inventory where component_id=$1',[id]);
 const expiry=()=>new Date(Date.now()+3600000).toISOString();
 const reserve=(o,owner,until)=>as('service_role',null,q=>q('select dominion79.reserve($1,$2,$3)',[o.id,owner,until]));
@@ -41,6 +44,8 @@ const part=(componentId,quantity)=>({componentId,quantity});
 const refs=o=>({...o,session:'cs_live_'+numberHex(),event:'evt_'+numberHex(),intent:'pi_'+numberHex()});
 async function syntheticOrder(items){
  const id=randomUUID(),o=refs({id,reference:'AI-'+String(++sequence),totalPence:750});
+ if(items.length===3)items=items.map((x,i)=>({...x,productId:x.productId??['fixture80-les-paul','fixture80-treble-bleed'][i],sku:'F80-'+i,
+  name:['Configured Les Paul wiring kit','Treble bleed assembly','Resistor'][i],unitPrice:[150,225,225][i],lineTotal:[300,225,225][i],currency:'GBP'}));
  await query(`insert into public.orders(id,request_id,request_hash,reference,sales_channel,subtotal_pence,delivery_pence,total_pence,customer,delivery,items,payment_status,stripe_checkout_session_id)
  values($1,$1,repeat('a',32),$2,'WEBSITE',750,0,750,'{}','{"country":"GB"}',$3,'unpaid',$4)`,[id,o.reference,JSON.stringify(items),o.session]);
  return o;
@@ -64,6 +69,11 @@ async function setup(){
  await query(await readFile(new URL('unity79.sql',here),'utf8'));
  await query(await readFile(new URL('quartermaster79.sql',here),'utf8'));
  await query(await readFile(new URL('marketplace79.sql',here),'utf8'));
+ await query(await readFile(new URL('legacy-writers80.fixture.sql',here),'utf8'));
+ await query(await readFile(new URL('ironheart80.sql',here),'utf8'));
+ assert.equal(await out('select mode from dominion79.lifecycle_control'),'paused');
+ assert.equal(await out("select md5(pg_get_functiondef('public.record_verified_stripe_refund(text,text,text,text,bigint,text,text,timestamptz,timestamptz)'::regprocedure))"),'641531809393e7e596b89a5a6404fcc3');
+
  await query(`insert into auth.users(id,email,email_confirmed_at) values ($1,'fixture79-admin@example.invalid',now()),($2,'fixture79-buyer@example.invalid',now())`,[admin,buyer]);
  await query('insert into public.admin_members(user_id) values ($1)',[admin]);
  await query(`insert into public.site_operations(id,desired_state) values(true,'OPEN');
@@ -79,6 +89,10 @@ async function setup(){
 }
 try{
  await setup();
+ const pausedOrder=await syntheticOrder([directItem('fixture79-race')]);
+ await assert.rejects(reserve(pausedOrder,'paused-owner',expiry()),/paused/);
+ await query("update dominion79.lifecycle_control set mode='accepting'");
+
  // Scenario C: the actual Admin procurement RPC receives stock and creates a real IRONCLAD batch.
  const supplier=(await write('supplier',{name:'Fixture supplier 79',currency:'GBP'})).id;
  const receive=(componentId,quantity,unitMinor,reference,key=randomUUID())=>write('quickPurchase',{
@@ -105,6 +119,9 @@ try{
  assert.equal(during.reserved,5);assert.equal(during.available,1);
  await assert.rejects(query("update public.inventory set quantity=1 where component_id='fixture79-cap'"),/reserved or protected/);
  await assert.rejects(pay(configured,configured.event,1),/does not match/);
+ await assert.rejects(query("update public.orders set status='cancelled' where id=$1",[configured.id]),/Active reservation/);
+ await assert.rejects(query("update public.orders set items='[]' where id=$1",[configured.id]),/Active reservation/);
+
  assert.equal(await stock('fixture79-cap'),6);
  assert.equal(await out('select count(*)::int from dominion79.provider_events'),0);
  const first=await Promise.all([pay(configured),pay(configured,'evt_'+numberHex())]);
@@ -123,11 +140,53 @@ try{
  assert.equal(await as('service_role',null,q=>q('select quartermaster79.reserve($1,$2,$3,$4)',[configured.id,pack,'F79-LABEL',pick])),'reserved');
  const packSql='select quartermaster79.complete($1,$2,$3,$4,$5,$6,$7,$8)';
  const packArgs=[configured.id,pack,purchase,[200,150,18],113,'large-letter','SYNTHETIC-79',115];
+ const pickSql='select public.quartermaster80_pick($1,$2,$3,$4,$5)';
+ const inspect='select public.quartermaster80_order($1)';
+ const pickKey=randomUUID();
+ assert.equal((await adminRpc(pickSql,[configured.id,pickKey,'fixture79-cap',0,2])).picked,2);
+ assert.equal((await adminRpc(pickSql,[configured.id,pickKey,'fixture79-cap',0,2])).duplicate,true);
+ await assert.rejects(adminRpc(pickSql,[configured.id,randomUUID(),'fixture79-cap',0,3]),e=>e.code==='40001');
+ assert.equal((await adminRpc(inspect,[configured.id])).picked[0].picked,2);
+ await assert.rejects(as('service_role',null,q=>q(packSql,packArgs)),/every saved BOM pick/);
+ assert.equal(await out("select count(*)::int from quartermaster79.movement where kind='packed'"),0);
+ assert.equal(await stock('fixture79-cap'),1);
+ await adminRpc(pickSql,[configured.id,randomUUID(),'fixture79-cap',2,5]);
+ await adminRpc(pickSql,[configured.id,randomUUID(),'fixture79-res',0,3]);
+ await assert.rejects(as('authenticated',buyer,q=>q(inspect,[configured.id])),e=>e.code==='42501');
+
  assert.deepEqual(await Promise.all(Array.from({length:2},()=>as('service_role',null,q=>q(packSql,packArgs)))),['packed','packed']);
  assert.equal(await out("select count(*)::int from quartermaster79.movement where kind='packed'"),1);
  const cost=await as('service_role',null,q=>q('select quartermaster79.cost_evidence($1)',[configured.id]));
  assert.equal(cost.packagingActualMinor,50);assert.equal(cost.postageEstimatedMinor,115);assert.equal(cost.postageActualMinor,null);assert.equal(cost.dispatched,false);
  assert.equal(await out('select status from public.orders where id=$1',[configured.id]),'pending');
+ const paidItems=await out('select items from public.orders where id=$1',[configured.id]);
+ const model=await import(pathToFileURL(resolve(base,'dist/admin/orders/finance-ui.mjs')));
+ const rd='select public.command63_financial_read($1)', wr='select public.command63_financial_save($1,$2,$3,$4,$5)';
+ let current=await adminRpc(rd,[configured.id]);
+ current.document=model.financeDraft({id:configured.id,channel:'WEBSITE',providerBacked:true,items:paidItems,pricing:{subtotal:750,delivery:0,total:750}});
+ let proposal=prepareFulfilmentRevision({current,orderId:configured.id,evidence:(await adminRpc(inspect,[configured.id])).cost});
+ assert.equal(proposal.estimatedPostageMinor,115);
+ assert.equal(proposal.document.costs.shipping.minor,null);
+ const firstKey=randomUUID();
+ const save=async(p,k)=>adminRpc(wr,[configured.id,p.expectedRevision,p.orderBasisHash,k,p.document]);
+ assert.equal((await save(proposal,firstKey)).revision,1);
+ assert.equal((await save(proposal,firstKey)).idempotent,true);
+ const postageKey=randomUUID(), postage='select public.quartermaster80_postage($1,$2,$3,$4)';
+ assert.equal((await adminRpc(postage,[configured.id,postageKey,109,'Fixture receipt RM-80'])).duplicate,false);
+ assert.equal((await adminRpc(postage,[configured.id,postageKey,109,'Fixture receipt RM-80'])).duplicate,true);
+ await assert.rejects(adminRpc(postage,[configured.id,randomUUID(),110,'Different fixture receipt']),e=>e.code==='23505');
+ current=await adminRpc(rd,[configured.id]);
+ proposal=prepareFulfilmentRevision({current,orderId:configured.id,evidence:(await adminRpc(inspect,[configured.id])).cost,
+  adjustment:{minor:15,reference:'Fixture fulfilment review-80'}});
+ assert.equal((await save(proposal,randomUUID())).revision,2);
+ assert.equal((await adminRpc(rd,[configured.id])).document.costs.shipping.minor,109);
+ assert.equal((await out("select after_document from public.order_financial_revisions where order_id=$1 and revision=1",[configured.id])).costs.shipping.minor,null);
+ const report=await adminRpc("select public.omniscience74_orders(current_date-2,current_date+1,null,null)",[]);
+ const row=report.rows.find(x=>x.id===configured.id);
+ assert.equal(row.finance.costs.packaging.minor,50);assert.equal(row.finance.costs.shipping.minor,109);assert.equal(row.finance.costs.other.minor,15);
+ assert.equal(row.current,true);
+ console.log('PASS IRONHEART: partial pick persisted, failed packing rolled back, actual ECLIPSE revision/replay and unchanged history, recorded postage vs estimate reaches OMNISCIENCE');
+
  assert.deepEqual(await as('service_role',null,q=>q("select quartermaster79.ready_stock('F79-LABEL')")),{sku:'F79-LABEL',physical:1,available:1,reorder:true});
  console.log('PASS A/C/F: exact A+B+C, actual IRONCLAD procurement, saved configured BOM, real legacy paid procedure, duplicate payment and packing, traceable batch estimates and no dispatch');
 
@@ -145,10 +204,42 @@ try{
  const legacy=refs(await legacyQuote('F79-RACE'));
  await query('update public.orders set stripe_checkout_session_id=$1 where id=$2',[legacy.session,legacy.id]);
  await assert.rejects(legacyPay(legacy),/reserved or protected/);
+ const extInput={requestId:randomUUID(),channel:'DIRECT',externalReference:'F80-held-external',orderDate:'2026-11-19',
+  customerName:'Synthetic fixture',postagePence:0,items:[{type:'component',productId:'fixture79-race',quantity:1,unitPricePence:8}]};
+ await assert.rejects(adminRpc('select public.create_external_order($1)',[extInput]),/reserved or protected/);
+ assert.equal(await out('select count(*)::int from public.orders where request_id=$1',[extInput.requestId]),0);
+ await assert.rejects(adminRpc('select public.delete_unused_component($1)',['fixture79-race']),e=>e.code==='23503');
+ const holdReceipt=await receive('fixture79-race',2,100,'F80-receipt-during-hold');
+ assert.equal(await stock('fixture79-race'),3);
+ assert.equal((await read('inventory',{componentId:'fixture79-race'}))[0].reserved,1);
+ assert.ok(holdReceipt.batches[0].batchId);
+ await assert.rejects(legacyPay(other),/Reserved order must use/);
+ assert.equal(await stock('fixture79-race'),3);
+ const revision=(await read('inventory',{componentId:'fixture79-race'}))[0].revision;
+ await assert.rejects(write('adjust',{componentId:'fixture79-race',expected:3,expectedRevision:revision,quantity:0,
+  kind:'damage',reason:'Synthetic conflicting count'}),/reserved or protected/);
+ const st=(await write('stocktakeOpen',{componentIds:['fixture79-race'],reason:'IRONHEART count during allocation'})).id;
+ await assert.rejects(write('stocktakeApply',{id:st,counts:{'fixture79-race':0},confirmed:true,reason:'Synthetic conflict test'}),/reserved or protected/);
+ const externalCommitted=await adminRpc('select public.create_external_order($1)',[extInput]);
+ assert.equal((await adminRpc('select public.create_external_order($1)',[extInput])).id,externalCommitted.id);
+ assert.equal(await stock('fixture79-race'),2);
+
  assert.equal(await release(other,'cancelled-unpaid'),'released');
  assert.equal(await legacyPay(legacy),'paid');
  assert.equal(await legacyPay(legacy),'already_paid');
- assert.equal(await stock('fixture79-race'),0);
+ assert.equal(await stock('fixture79-race'),1);
+ await assert.rejects(legacyPay(other),/Reserved order must use/);
+ assert.equal(await stock('fixture79-race'),1);
+ const providerRefund="select public.record_verified_stripe_refund($1,'refund.created',$2,$3,73,'gbp','succeeded',$4,$4)";
+ const refundArgs=['evt_'+numberHex(),'re_'+numberHex(),legacy.intent,new Date().toISOString()];
+ assert.equal(await as('service_role',null,q=>q(providerRefund,refundArgs)),'partially_refunded');
+ assert.equal(await as('service_role',null,q=>q(providerRefund,refundArgs)),'partially_refunded');
+ const refundAt=await out('select latest_refund_at::text from public.orders where id=$1',[legacy.id]);
+ await adminRpc('select public.acknowledge_partial_refund($1,73,$2)',[legacy.id,refundAt]);
+ await adminRpc("select public.advance_order_fulfilment($1,'in_production')",[legacy.id]);
+ assert.equal(await stock('fixture79-race'),1);
+ assert.equal(await out("select count(*)::int from public.stripe_refunds where order_id=$1",[legacy.id]),1);
+
  assert.equal(legacy.totalPence,1149);
  // Move only the fixture hold clock to exercise authoritative overdue expiry without a long sleep.
  const overdue=await syntheticOrder([directItem('fixture79-res')]);
@@ -193,6 +284,15 @@ try{
  await assert.rejects(as('authenticated',buyer,q=>q("select quartermaster79.ready_stock('F79-LABEL')")),e=>e.code==='42501');
  await assert.rejects(as('authenticated',admin,q=>q('select dominion79.reserve($1,$2,$3)',[held.id,'admin-not-service',expiry()])),e=>e.code==='42501');
  await assert.rejects(as('service_role',null,q=>q('select * from dominion79.holds limit 1')),e=>e.code==='42501');
- assert.equal(await out('select count(*)::int from public.order_financial_revisions'),0);
+ assert.equal(await out('select count(*)::int from public.order_financial_revisions'),2);
+ const drain=await syntheticOrder([directItem('fixture79-race')]);
+ const drainUntil=expiry();
+ await reserve(drain,'drain-owner',drainUntil);
+ await query("update dominion79.lifecycle_control set mode='draining'");
+ assert.equal(await reserve(drain,'drain-owner',drainUntil),'held');
+ await assert.rejects(reserve(await syntheticOrder([directItem('fixture79-race')]),'new-owner',expiry()),/paused/);
+ assert.equal(await release(drain,'cancelled-unpaid'),'released');
+ assert.equal(await out("select count(*)::int from dominion79.holds where state='held'"),0);
+
  console.log('PASS D and permissions: exact measured set consumption, quality hold preserved, denied client access, no Financial revisions');
 }finally{await pool.end();}
