@@ -79,7 +79,7 @@ async function setup(){
  end $$;
  rollback;`;
  assert.match(stage,/commit;\s*$/);
- await query(stage.replace(/commit;\s*$/,audit));
+ await query(stage.replace(/commit;\s*$/,()=>audit));
  assert.equal(await out("select to_regnamespace('dominion79') is null and to_regnamespace('quartermaster79') is null"),true);
  console.log('PASS Stage A review SQL: exact prerequisite contracts, private RLS additions, no callable writer or existing hooks');
  await query(await readFile(new URL('unity79.sql',here),'utf8'));

@@ -31,10 +31,11 @@ export async function mountAdminWorkspace({document:d,auth}){
    for(const part of data.picked)list.append(make('li',(part.name||part.component)+' · '+part.picked+' / '+part.quantity+' picked · '+part.currentAvailable+' currently available'));
    packing.append(make('p','Existing fixture order '+data.reference),list);
    const stock=section('Packaging stock'),evidence=section('Cost evidence');
-   stock.append(make('p',data.stock.sku+': '+data.stock.available+' available'),make('p',data.stock.reorder?'Reorder due':'Stock above reorder point'));
-   evidence.append(make('p','Actual packaging: '+money(data.cost.packagingActualMinor)),
-    make('p','Estimated postage: '+money(data.cost.postageEstimatedMinor)),
-    make('p','Actual postage: '+money(data.cost.postageActualMinor)));
+   if(data.stock)stock.append(make('p',data.stock.sku+': '+data.stock.available+' available'),make('p',data.stock.reorder?'Reorder due':'Stock above reorder point'));
+   else stock.append(make('p','No packaging reserved for this order.'));
+   evidence.append(make('p','Actual packaging: '+money(data.cost?.packagingActualMinor)),
+    make('p','Estimated postage: '+money(data.cost?.postageEstimatedMinor)),
+    make('p','Actual postage: '+money(data.cost?.postageActualMinor)));
    grid.append(packing,stock,evidence);target.append(grid);
    const parcel=section('Dispatch review');
    parcel.append(make('p',data.readyForReview?'Ready for dispatch review':'Review required before dispatch'));
@@ -51,7 +52,7 @@ export async function mountAdminWorkspace({document:d,auth}){
     fitResult.textContent=matches.length?matches.map(m=>m.title+' ('+m.sku+')').join(', '):'No available packaging fits those dimensions.';
    };
    size.append(fit,fitResult);target.append(size);
-   const review=make('button','Review measured parcel','button');review.type='button';
+   const review=make('button','Review measured parcel','button');review.type='button';review.disabled=!data.parcel;
    const result=make('output');result.setAttribute('aria-live','polite');
    review.addEventListener('click',()=>{
     try{
@@ -60,7 +61,7 @@ export async function mountAdminWorkspace({document:d,auth}){
      result.textContent=r.eligible?'Parcel fits the selected format. No dispatch recorded.':'Parcel does not fit the selected format.';
     }catch{result.textContent='Review the parcel dimensions and weight.';}
    });
-   const label=make('button','Show 50 mm workshop label','button');label.type='button';
+   const label=make('button','Show 50 mm workshop label','button');label.type='button';label.disabled=!data.stock;
    label.addEventListener('click',()=>{
     if(parcel.querySelector('iframe'))return;
     const frame=make('iframe');frame.title='50 mm workshop label';frame.sandbox='';

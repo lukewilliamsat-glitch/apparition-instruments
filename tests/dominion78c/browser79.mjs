@@ -27,7 +27,9 @@ const errors=[],apiCalls=[];
 async function packing(orderId){
  const data=(await Q(`select o.id,o.reference,q.picked,q.measured_grams,q.measured_mm,q.postal_class,q.tracking,
  quartermaster79.cost_evidence(o.id) cost,quartermaster79.ready_stock(q.sku) stock
- from quartermaster79.packing q join public.orders o on o.id=q.order_id where q.state='packed' and (q.order_id=$1::uuid or $1::uuid is null and q.tracking='SYNTHETIC-79') order by o.id limit 2`,[orderId])).rows;
+ from public.orders o left join quartermaster79.packing q on o.id=q.order_id
+ where o.id=$1::uuid or ($1::uuid is null and q.tracking='SYNTHETIC-79') order by o.id limit 2`,[orderId])).rows;
+ if(data.length===0)return null;
  assert.equal(data.length,1);
  const v=data[0], c=await db.connect();
  try{
@@ -36,7 +38,7 @@ async function packing(orderId){
   await c.query('set local role authenticated');
   await c.query("select set_config('request.jwt.claim.sub',$1,true)",[actor]);
   const row=(await c.query('select public.quartermaster80_order($1) as workspace',[v.id])).rows[0].workspace;
-  return {...row,parcel:{grams:v.measured_grams,outerMm:v.measured_mm,postalClass:v.postal_class,tracking:v.tracking},stock:v.stock};
+  return {...row,parcel:v.measured_grams===null?null:{grams:v.measured_grams,outerMm:v.measured_mm,postalClass:v.postal_class,tracking:v.tracking},stock:v.stock};
  }finally{await c.query('rollback');c.release();}
 }
 const server=createServer(async(req,res)=>{
@@ -51,7 +53,7 @@ const server=createServer(async(req,res)=>{
    const oid=u.searchParams.get('order');
    if(oid&&!/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(oid))return reply(400,'{"message":"Invalid order identity"}');
    const value=u.pathname.endsWith('/quartermaster')?await packing(oid):await marketplaceWalkthrough(Q);
-   return reply(200,JSON.stringify(value));
+   return value===null?reply(404,'{"message":"Order was not found"}'):reply(200,JSON.stringify(value));
   }
   if(u.pathname==='/admin/application.mjs')return reply(200,app,mime['.mjs']);
   if(routes.has(u.pathname))return reply(200,await readFile(new URL('workspace79.html',local)),mime['.html']);
