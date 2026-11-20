@@ -143,7 +143,7 @@ create function quartermaster79.release(p_order uuid,p_request uuid) returns tex
 language plpgsql security definer set search_path='' as $$
 declare k quartermaster79.packing%rowtype; begin
  select * into strict k from quartermaster79.packing where order_id=p_order for update;
- if k.request_id<>p_request or k.state='packed' then raise exception 'Can't release completed or unrelated packing';end if;
+ if k.request_id<>p_request or k.state='packed' then raise exception 'Cannot release completed or unrelated packing';end if;
  perform 1 from quartermaster79.material where sku=k.sku for update;
  update quartermaster79.packing set state='released' where order_id=p_order;
  return 'released';
