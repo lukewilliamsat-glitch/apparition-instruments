@@ -8,7 +8,6 @@ outer={
  'b': ('8c107f07b24815d81f1b4029d2644af2bb0932172f392b795d43324d862d22ea','612e4b57e1fc72d8c2d2adeb871400a3b59cb36a604ebed2b39764dc7fa3d2ea',480),
  'c': ('f089eecc2ef5d8b521378996810328dd4384ad78f4d1ad0d52acda88a450adb8','b5ba06e988cb56bfe3273737d0de74f8a424b09b056e711902309bff254b953f',485),
 }
-stamp='unification78b-v1'
 ref=re.compile(r"""(?P<name>(?:\.{1,2}/|/)[^'";,>\s?]+\.(?:mjs|js))(?P<search>\?[^'";,>\s#]*)?(?=['",\s>])""")
 def target(parent,child):
  return posixpath.normpath(child[1:] if child.startswith('/') else posixpath.join(posixpath.dirname(parent),child))
@@ -16,6 +15,7 @@ def unique(v,a,b):
  if v.count(a)!=1:raise ValueError('Expected exactly one '+a)
  return v.replace(a,b)
 def compose(root,kind):
+ stamp='unification78b-v1' if kind=='b' else 'unification78b-c1'
  raw=(root/f'hosted-{kind}.zip').read_bytes()
  wrap,inner,count=outer[kind]
  assert SHA(raw)==wrap
