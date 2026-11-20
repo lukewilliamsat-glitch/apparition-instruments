@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { createHash, randomUUID } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
+import { marketplaceWalkthrough } from './reconciliation-fixture79.mjs';
 
 const r=createRequire(import.meta.url);
 const {Pool}=r(process.env.DOMINION_PG_MODULE);
@@ -69,7 +70,7 @@ async function setup(){
  insert into public.components(id,sku,name,category,active,individually,sale_price) values
  ('fixture79-cap','F79-CAP','Synthetic capacitor','capacitors',true,true,750),
  ('fixture79-res','F79-RES','Synthetic resistor','resistors',true,true,750),
- ('fixture79-pot','F79-POT','Synthetic measured pot','pots',false,false,750),
+ ('fixture79-pot','F79-POT','Synthetic measured pot','potentiometers',false,false,750),
  ('fixture79-race','F79-RACE','Synthetic race part','capacitors',true,true,750);
  insert into public.inventory(component_id,quantity) values ('fixture79-cap',0),('fixture79-res',4),('fixture79-pot',0),('fixture79-race',1);
  insert into quartermaster79.material(sku,title,reorder_at,inner_mm,outer_mm,tare_grams) values 
@@ -159,6 +160,17 @@ try{
  assert.equal(await stock('fixture79-pot'),1);
  assert.deepEqual(await out('select measured_units from dominion79.provenance where order_id=$1',[selected.id]),units);
  assert.equal((await read('inventory',{componentId:'fixture79-pot'}))[0].available,0);
+
+ // B/F: read-only provider evidence joins an actual existing synthetic external Orders record.
+ const external=randomUUID(), previousStock=await stock('fixture79-cap');
+ await query(`insert into public.orders(id,request_id,request_hash,sales_channel,external_reference,order_date,subtotal_pence,delivery_pence,total_pence,customer,delivery,items,payment_status,paid_at,fulfillment_applied_at)
+ values($1,$1,repeat('b',32),'EBAY','F79-EBAY-PAID',date '2026-11-19',1000,150,1150,'{}','{}',$2,'paid',now(),now())`,[external,JSON.stringify([directItem('fixture79-cap',2)])]);
+ const market=await marketplaceWalkthrough(query);
+ assert.equal(market.orders.length,1);assert.equal(market.orders[0].existingOrderId,external);assert.equal(market.orders[0].stockMutation,false);
+ assert.equal(market.finance.length,2);assert.ok(market.finance.every(x=>x.manualOrderId===external));
+ assert.equal(market.review[0].kind,'unmapped-listing');assert.equal(await stock('fixture79-cap'),previousStock);
+ assert.equal(await out("select count(*)::int from public.orders where external_reference='F79-EBAY-PAID'"),1);
+ console.log('PASS B/F: eBay read-only import matched an existing external Orders record; fee and refund evidence deduplicated, no stock or additional orders');
 
  // An authorised role still cannot directly use experimental database routines or see their evidence.
  await assert.rejects(as('authenticated',buyer,q=>q("select quartermaster79.ready_stock('F79-LABEL')")),e=>e.code==='42501');

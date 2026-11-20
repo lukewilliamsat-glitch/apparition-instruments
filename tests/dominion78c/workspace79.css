@@ -1,0 +1,8 @@
+.dominion79 { display:grid; gap:1rem; min-width:0; padding-bottom:2rem; }
+.dominion79 h1,.dominion79 h2,.dominion79 h3,.dominion79 p { margin-block:.35rem; }
+.dominion79-card { border:1px solid #715b34; background:#211e19; color:#f6ede0; border-radius:.65rem; padding:clamp(.8rem,2.6vw,1.4rem); overflow-wrap:anywhere; }
+.dominion79-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr)); gap:1rem; }
+.dominion79-field { display:flex; flex-wrap:wrap; align-items:center; gap:.5rem; margin-block:.65rem; }
+.dominion79 output { display:block; margin-top:.7rem; min-height:1.4em; }
+.dominion79 iframe { display:block; width:100%; max-width:17rem; height:15rem; margin-top:.7rem; border:1px solid #715b34; background:#fff; }
+.dominion79 .muted { color:#d6c2a0; }

@@ -76,3 +76,16 @@ export function roundLabel({title,reference,detail=''}) {
  if(reference.length>24)throw Error('Label reference too long');
  return '<!doctype html><meta charset="utf-8"><title>50 mm label proof</title><style>@page{size:50mm 50mm;margin:0}body{margin:0;color:#000;background:#fff}svg{display:block;width:50mm;height:50mm}</style><svg viewBox="0 0 50 50" aria-label="Printable label" role="img" xmlns="http://www.w3.org/2000/svg"><g text-anchor="middle" font-family="system-ui" font-size="2.4"><text x="25" y="20">'+escape(title)+'</text><text x="25" y="25" font-size="3.1" font-weight="700">'+escape(reference)+'</text><text x="25" y="30">'+escape(detail)+'</text></g></svg>';
 }
+
+// 50 mm crop with a 4 mm quiet edge. All identifiers come from internal workshop records.
+export function workshopLabel({kind,title,reference,detail=''}){
+ const names={component:'Component',batch:'Acquisition batch',set:'Matched set',packaging:'Packaging'};
+ if(!Object.hasOwn(names,kind))throw Error('Unsupported label kind');
+ identifier(reference,'label reference');
+ if(reference.length>32||typeof title!=='string'||!title.trim()||title.length>32||typeof detail!=='string'||detail.length>36||
+    /[\u0000-\u001f\u007f]/.test(title+detail))throw Error('Printable label text is outside bounds');
+ const esc=s=>s.replace(/[&<>"']/g,v=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[v]));
+ const text=(s,y,size,width,weight=400)=>'<text x="25" y="'+y+'" font-size="'+size+'" font-weight="'+weight+'"'+(s.length*size*.85>width?' textLength="'+width+'" lengthAdjust="spacingAndGlyphs"':'')+'>'+esc(s)+'</text>';
+ return '<!doctype html><html lang="en"><meta charset="utf-8"><title>Apparition workshop label</title><style>@page{size:50mm 50mm;margin:0}html,body{margin:0;width:50mm;height:50mm;background:white;color:black}svg{display:block;width:50mm;height:50mm}@media print{html,body{overflow:hidden}}</style><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" aria-label="50 millimetre circular label" role="img"><g text-anchor="middle" font-family="sans-serif">'+
+ text(names[kind],14,2.1,30)+text(title,21,2.55,38)+text(reference,28,3.05,38,700)+text(detail,35,2.2,31)+'</g></svg></html>';
+}

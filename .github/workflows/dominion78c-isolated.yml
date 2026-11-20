@@ -5,6 +5,7 @@ on:
     paths: ['tests/dominion78c/**', '.github/workflows/dominion78c-isolated.yml']
 permissions:
   contents: read
+  actions: read
 jobs:
   integration:
     runs-on: ubuntu-24.04
@@ -39,7 +40,7 @@ jobs:
       - name: Fixture contracts, packing, marketplace and commerce
         run: node --test tests/dominion78c/*.test.mjs
       - name: Install pinned disposable test dependencies
-        run: npm install --prefix "$RUNNER_TEMP/dom79" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save pg@8.16.3
+        run: npm install --prefix "$RUNNER_TEMP/dom79" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save pg@8.16.3 playwright@1.62.1
       - name: Native isolated integration with exact A, B and C SQL
         env:
           DOMINION_ACCEPTED_ROOT: ${{ github.workspace }}/release69b
@@ -47,3 +48,19 @@ jobs:
         run: |
           set -euo pipefail
           DOMINION_PG_MODULE="$RUNNER_TEMP/dom79/node_modules/pg" node tests/dominion78c/integration79.mjs
+      - name: Chromium fixture with native evidence and exact Release C Admin shell
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          w="$RUNNER_TEMP/dom79"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14619393716/zip" > "$w/verified-c.zip"
+          echo "0a303d83433e480bfa897075f4b8e30b8fbd0152d7772e3af35dc61150ae5b14  $w/verified-c.zip" | sha256sum -c
+          unzip -p "$w/verified-c.zip" unified-c.zip > "$w/unified-c.zip"
+          echo "be062020a7f3362357cd9a5f6613fe75104d55bb38aeaedccd695b0c55ea0c30  $w/unified-c.zip" | sha256sum -c
+          mkdir -m 700 "$w/static"
+          unzip -q "$w/unified-c.zip" -d "$w/static"
+          unset GH_TOKEN
+          DOMINION_STATIC_FIXTURE="$w/static" DOMINION_CHROMIUM="$(command -v google-chrome)" \
+            DOMINION_PG_MODULE="$w/node_modules/pg" DOMINION_PLAYWRIGHT="$w/node_modules/playwright" \
+            node tests/dominion78c/browser79.mjs
