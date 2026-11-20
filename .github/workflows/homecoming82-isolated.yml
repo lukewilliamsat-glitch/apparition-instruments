@@ -39,6 +39,8 @@ jobs:
           node-version: '22.20.0'
       - name: Install pinned disposable test dependencies
         run: npm install --prefix "$RUNNER_TEMP/dom79" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save pg@8.16.3 playwright@1.62.1
+      - name: Offline provider adapter tests
+        run: node --test tests/dominion78c/*.test.mjs tests/homecoming82/providers82.test.mjs
       - name: Native isolated integration with exact A, B and C SQL
         env:
           DOMINION_ACCEPTED_ROOT: ${{ github.workspace }}/release69b
@@ -77,6 +79,26 @@ jobs:
             node "$w/harness/browser.cjs" unified-c '/admin/,/admin/ironclad/,/admin/ironclad/calculator/,/admin/orders/,/admin/delivery/,/admin/catalogue-settings/,/admin/omniscience/' "$role" quiet
           done
           python3 "$w/harness/accept-deep.py" "$w" unified-c
+      - name: Test exact workshop preview with native permission and pick transactions
+        run: |
+          set -euo pipefail
+          w="$RUNNER_TEMP/dom79"
+          python3 tests/homecoming82/package-workshop.py "$w"
+          mkdir -p "$w/workshop-graph"
+          ln -s "$w/workshop82" "$w/workshop-graph/fixed"
+          node --experimental-vm-modules tests/stageb81/graph-admin.cjs "$w/workshop-graph" fixed
+          DOMINION_STATIC_FIXTURE="$w/workshop82" DOMINION_CHROMIUM="$(command -v google-chrome)" \
+            DOMINION_PG_MODULE="$w/node_modules/pg" DOMINION_PLAYWRIGHT="$w/node_modules/playwright" \
+            node tests/homecoming82/workshop82.browser.mjs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: homecoming82-workshop-preview-only
+          path: |
+            ${{ runner.temp }}/dom79/workshop82-preview-only.zip
+            ${{ runner.temp }}/dom79/workshop82-manifest.json
+            tests/homecoming82/workshop82.read.review.sql
+          if-no-files-found: error
+          retention-days: 30
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:

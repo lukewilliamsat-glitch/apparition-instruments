@@ -1,0 +1,6 @@
+#quartermaster-workshop { max-width: 70rem; display: grid; gap: 1rem; }
+#quartermaster-workshop .workshop-record { display: grid; gap: 1rem; }
+#quartermaster-workshop .workshop-record section { background: #211e1a; border: 1px solid #655644; border-radius: .75rem; padding: clamp(.75rem, 3vw, 1.5rem); min-width: 0; overflow-wrap: anywhere; }
+#quartermaster-workshop .workshop-pick { display: flex; gap: .75rem; flex-wrap: wrap; align-items: center; margin-block: .75rem; }
+#quartermaster-workshop .workshop-pick input { max-width: 6rem; display: block; }
+#quartermaster-workshop h1, #quartermaster-workshop h2, #quartermaster-workshop p { margin-block: .25rem .5rem; }
