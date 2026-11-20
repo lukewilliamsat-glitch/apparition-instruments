@@ -1,0 +1,130 @@
+# INERT REVIEW ONLY. Separate exact Stage B authority and a verified read RPC are mandatory.
+name: 82 DOMINION read-only publication
+on:
+  workflow_dispatch:
+    inputs:
+      execution_confirmed:
+        description: Exact Stage B production approval and installed read-only RPC verified
+        required: true
+        type: boolean
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: phoenix66-pages-publisher
+  cancel-in-progress: false
+jobs:
+  production_gate:
+    if: github.event_name == 'workflow_dispatch' && github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview' && github.run_attempt == 1 && inputs.execution_confirmed
+    environment: phoenix66-production
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Keep the established approved production target
+        env:
+          APPROVED_TARGET: ${{ vars.PHOENIX66_APPROVED_TARGET }}
+        run: test "$APPROVED_TARGET" = 'apparition-instruments:production:43845328622'
+  publish:
+    needs: production_gate
+    environment: phoenix66-preview
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Verify and stage only the pinned cumulative static candidate and rollback
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          umask 077
+          work="$RUNNER_TEMP/unification78b"
+          mkdir "$work"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14643717958/zip" > "$work/candidate.zip"
+          unset GH_TOKEN
+          python3 - "$work/candidate.zip" "$work" <<'VERIFY'
+          """Verify exact sealed Stage B input without rebuilding or requesting production access."""
+          import hashlib
+          import json
+          import sys
+          import zipfile
+          from pathlib import Path
+
+          outer, dest = map(Path, sys.argv[1:])
+          sha = lambda b: hashlib.sha256(b).hexdigest()
+          assert sha(outer.read_bytes()) == '7764bebe684efd8441bdf778bf51dced4497de0a5b8c2d7adf250072503b19ac'
+          expected = {
+              'stageb81-static.zip': 'b5900c3e15b92db98a345f202bac9d56a1559809b82646d3b62c9c1c093809e7',
+              'stageb81-manifest.json': 'f81df04b03fd01cb4da56e7d97e3a96c74ce00aec7369bd4165ad06fbffde23e',
+              'rollback-release-c.zip': 'be062020a7f3362357cd9a5f6613fe75104d55bb38aeaedccd695b0c55ea0c30',
+              'stageb81.read.review.sql': '73cf2dd78c475cab34c6b0e3d47b81b4a4e44dd4aedfeaeb7f8dd283caf4e124',
+          }
+          dest.mkdir(exist_ok=True)
+          with zipfile.ZipFile(outer) as source:
+              for p, h in expected.items():
+                  body = source.read(p)
+                  assert sha(body) == h, p
+                  (dest / p).write_bytes(body)
+          m = json.loads((dest / 'stageb81-manifest.json').read_text())
+          after, before = (zipfile.ZipFile(dest / n) for n in ['stageb81-static.zip', 'rollback-release-c.zip'])
+          assert m['files'] == len(after.namelist()) == len(m['inventory']) == 488
+          assert len(before.namelist()) == 485
+          assert set(m['inventory']) == set(after.namelist()) and set(before.namelist()) <= set(after.namelist())
+          changes = {}
+          for p in after.namelist():
+              assert p and not p.startswith('/') and not p.endswith('/') and '..' not in p.split('/') and '\\' not in p
+              b = after.read(p)
+              h = sha(b)
+              assert h == m['inventory'][p]
+              if p not in before.namelist() or b != before.read(p):
+                  assert p.startswith('admin/') or p == 'commercial/admin.mjs'
+                  changes[p] = h
+              target = dest / 'unified-c' / p
+              target.parent.mkdir(parents=True, exist_ok=True)
+              target.write_bytes(b)
+          assert changes == m['modifiedOrAdded'] and len(changes) == 33
+          print('PASS exact 488-file Stage B and 485-file rollback; all customer-facing bytes unchanged')
+          VERIFY
+          mv "$work/unified-c" "$work/static"
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Prepare the previously used pinned Pages uploader
+        run: npm install --prefix "$RUNNER_TEMP/cloudflare-uploader" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false wrangler@4.162.0
+      - name: Require exact live rollback and publish the verified tree
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/unification78b"
+          endpoint="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/apparition-instruments"
+          prior='f290e564-6dde-4123-a349-997c70308729'
+          source='49e011c6ef0bd583dca403f888912b465b610b0c'
+          project() { curl -fsS --max-time 12 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$endpoint"; }
+          project | jq -e --arg id "$prior" '.success and (.result.domains|index("apparitioninstruments.co.uk")!=null) and .result.production_branch=="production" and .result.canonical_deployment.id==$id and .result.canonical_deployment.environment=="production" and .result.canonical_deployment.latest_stage.status=="success" and .result.canonical_deployment.deployment_trigger.metadata.commit_hash=="7fc5a1dcbf94064a5ec23831fcf2205047259294"' >/dev/null
+          cd "$work"
+          "$RUNNER_TEMP/cloudflare-uploader/node_modules/.bin/wrangler" pages deploy "$work/static"             --project-name=apparition-instruments --branch=production --commit-hash="$source"             --commit-dirty=true --commit-message="Authorisation 82 read-only Stage B artifact 14643717958"
+          project | jq -e --arg old "$prior" --arg source "$source"             'select(.success) | .result.canonical_deployment | select(.id!=$old and .environment=="production" and .latest_stage.status=="success" and .deployment_trigger.metadata.commit_hash==$source) | {id,url,environment,source:.deployment_trigger.metadata.commit_hash}' | tee "$work/deployment.json" >> "$GITHUB_STEP_SUMMARY"
+          readback() {
+            local path="$1" expected="$2" attempt
+            for attempt in 1 2 3; do
+              if curl -fsS --max-time 14 --max-filesize 3000000 "https://apparitioninstruments.co.uk${path}" -o "$work/readback" && cmp -s "$expected" "$work/readback"; then return 0; fi
+              if [[ "$attempt" != 3 ]]; then sleep 4; fi
+            done
+            printf 'Served byte difference: %s\n' "$path" >&2
+            return 1
+          }
+          for path in / /components/ /products/bleed-cap/ /products/bleed-cap/image.png /wiring-kits/ /wiring-kits/build/ /wiring-generator/ /basket/ /checkout/ /operations/snapshot.json /admin/ /admin/orders/ /admin/site-operations/ /admin/delivery/ /admin/catalogue-settings/ /admin/email-templates/ /admin/conjure/ /admin/ironclad/ /admin/ironclad/calculator/ /admin/omniscience/ /admin/dominion/; do
+            expected="${path#/}"
+            [[ "$path" != */ ]] || expected="${expected}index.html"
+            readback "${path}?ascent78=${GITHUB_RUN_ID}" "$work/static/$expected"
+          done
+          for path in /admin/orders/customer-aftercare.mjs /backend/operations-admin.mjs /backend/order-data.mjs /backend/catalogue-options.mjs /backend/email-templates.mjs /admin/assembly-repository.mjs; do
+            readback "${path}?build=sentinel77a-c1" "$work/static${path}"
+          done
+          for path in /admin/admin-gate.mjs /admin/application.mjs /admin/ironclad/app.mjs /admin/ironclad/entry.mjs /admin/orders/app.mjs /admin/overview.mjs; do
+            readback "${path}?build=unification78b-81b1" "$work/static${path}"
+          done
+          readback '/admin/omniscience/entry.mjs' "$work/static/admin/omniscience/entry.mjs"
+          readback '/admin/dominion/entry.mjs?build=stageb81' "$work/static/admin/dominion/entry.mjs"
+          readback '/admin/dominion/workspace.css?build=stageb81' "$work/static/admin/dominion/workspace.css"
+          printf 'Verified public and Admin static responses. Authenticated owner acceptance is separate.\n' >> "$GITHUB_STEP_SUMMARY"
