@@ -1,0 +1,115 @@
+# INERT STAGE III DRAFT. Do not register or dispatch unless Release B owner acceptance and exact C migration are verified.
+name: 78C OMNISCIENCE cumulative publication
+on:
+  workflow_dispatch:
+    inputs:
+      execution_confirmed:
+        description: Authenticated B owner acceptance and verified exact Omniscience migration recorded
+        required: true
+        type: boolean
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: phoenix66-pages-publisher
+  cancel-in-progress: false
+jobs:
+  production_gate:
+    if: github.event_name == 'workflow_dispatch' && github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview' && github.run_attempt == 1 && inputs.execution_confirmed
+    environment: phoenix66-production
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Keep the established approved production target
+        env:
+          APPROVED_TARGET: ${{ vars.PHOENIX66_APPROVED_TARGET }}
+        run: test "$APPROVED_TARGET" = 'apparition-instruments:production:43845328622'
+  publish:
+    needs: production_gate
+    environment: phoenix66-preview
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Verify and stage only the pinned cumulative static candidate and rollback
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          umask 077
+          work="$RUNNER_TEMP/unification78b"
+          mkdir "$work"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14619393716/zip" > "$work/candidate.zip"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14618294558/zip" > "$work/rollback.zip"
+          python3 - "$work" <<'VERIFY'
+          import hashlib,io,json,pathlib,stat,sys,zipfile
+          w=pathlib.Path(sys.argv[1]); sha=lambda b:hashlib.sha256(b).hexdigest()
+          def verify(outer,outer_hash,member,inner_hash,count):
+           raw=outer.read_bytes()
+           if sha(raw)!=outer_hash:raise ValueError('Artifact wrapper hash mismatch')
+           with zipfile.ZipFile(io.BytesIO(raw)) as z:
+            if z.namelist()!=[member]:raise ValueError('Unexpected artifact members')
+            data=z.read(member)
+           if sha(data)!=inner_hash:raise ValueError('Release ZIP hash mismatch')
+           result={}
+           with zipfile.ZipFile(io.BytesIO(data)) as z:
+            for i in z.infolist():
+             n=i.filename
+             if n in result or not n or n.startswith('/') or not all(x not in {'', '.', '..'} for x in n.split('/')) or chr(92) in n or stat.S_IFMT(i.external_attr >> 16)!=stat.S_IFREG:
+              raise ValueError('Unsafe file inventory')
+             result[n]=z.read(n)
+           if len(result)!=count:raise ValueError('File count mismatch')
+           return result
+          before=verify(w/'rollback.zip','5148645050c1a337370a1de2834071ad083de24894cad48ba584453fc1380c19','unified-b.zip','870a2f159c944bc7d8384a2fa57aa3138da23a253014a48532ad6199a8797953',480)
+          after=verify(w/'candidate.zip','0a303d83433e480bfa897075f4b8e30b8fbd0152d7772e3af35dc61150ae5b14','unified-c.zip','be062020a7f3362357cd9a5f6613fe75104d55bb38aeaedccd695b0c55ea0c30',485)
+          actual=sha(json.dumps({k:sha(v) for k,v in after.items()},sort_keys=True,separators=(',',':')).encode())
+          if actual!='0ab8c2fbf0e328f5d1e24871bb769e7b64768e811fd071f8bd4b7505819d17ad':raise ValueError('File inventory hash mismatch')
+          expected_delta=['admin/admin-gate.mjs', 'admin/admin.mjs', 'admin/application.mjs', 'admin/catalogue-settings/index.html', 'admin/command/command01/view.mjs', 'admin/command/command02/editor-view.mjs', 'admin/command/entry.mjs', 'admin/conjure/index.html', 'admin/delivery/index.html', 'admin/email-preview/index.html', 'admin/email-templates/index.html', 'admin/hub-cms/admin.mjs', 'admin/hub-cms/index.html', 'admin/hub-media/index.html', 'admin/index.html', 'admin/ironclad/calculator/index.html', 'admin/ironclad/entry.mjs', 'admin/ironclad/index.html', 'admin/omniscience/entry.mjs', 'admin/omniscience/index.html', 'admin/omniscience/model.mjs', 'admin/omniscience/repository.mjs', 'admin/omniscience/workspace.css', 'admin/orders/app.mjs', 'admin/orders/build-sheet/index.html', 'admin/orders/detail-presentation.mjs', 'admin/orders/index.html', 'admin/orders/invoice/index.html', 'admin/overview.mjs', 'admin/overview/index.html', 'admin/site-operations/index.html', 'admin/site-operations/operations.mjs', 'admin/wiring-kit-master/index.html', 'commercial/admin.mjs']
+          if sorted(k for k in set(before)|set(after) if before.get(k)!=after.get(k))!=expected_delta:raise ValueError("Unapproved static delta")
+          out=w/'static'
+          out.mkdir(mode=0o700)
+          for n,data in after.items():
+           f=out/n; f.parent.mkdir(exist_ok=True,parents=True); f.write_bytes(data)
+          print('Exact package and immediate rollback verified')
+          VERIFY
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Prepare the previously used pinned Pages uploader
+        run: npm install --prefix "$RUNNER_TEMP/cloudflare-uploader" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false wrangler@4.162.0
+      - name: Require exact live rollback and publish the verified tree
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/unification78b"
+          endpoint="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/apparition-instruments"
+          prior='e9d6806a-a568-4c0f-b533-c99eebda9699'
+          source='7fc5a1dcbf94064a5ec23831fcf2205047259294'
+          project() { curl -fsS --max-time 12 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$endpoint"; }
+          project | jq -e --arg id "$prior" '.success and (.result.domains|index("apparitioninstruments.co.uk")!=null) and .result.production_branch=="production" and .result.canonical_deployment.id==$id and .result.canonical_deployment.environment=="production" and .result.canonical_deployment.latest_stage.status=="success" and .result.canonical_deployment.deployment_trigger.metadata.commit_hash=="c906a28ec218d6ee715681cdc4fc362f79e9a34d"' >/dev/null
+          cd "$work"
+          "$RUNNER_TEMP/cloudflare-uploader/node_modules/.bin/wrangler" pages deploy "$work/static"             --project-name=apparition-instruments --branch=production --commit-hash="$source"             --commit-dirty=true --commit-message="Authorisation 78C verified cumulative C artifact 14619393716"
+          project | jq -e --arg old "$prior" --arg source "$source"             'select(.success) | .result.canonical_deployment | select(.id!=$old and .environment=="production" and .latest_stage.status=="success" and .deployment_trigger.metadata.commit_hash==$source) | {id,url,environment,source:.deployment_trigger.metadata.commit_hash}' | tee "$work/deployment.json" >> "$GITHUB_STEP_SUMMARY"
+          readback() {
+            local path="$1" expected="$2" attempt
+            for attempt in 1 2 3; do
+              if curl -fsS --max-time 14 --max-filesize 3000000 "https://apparitioninstruments.co.uk${path}" -o "$work/readback" && cmp -s "$expected" "$work/readback"; then return 0; fi
+              if [[ "$attempt" != 3 ]]; then sleep 4; fi
+            done
+            printf 'Served byte difference: %s\n' "$path" >&2
+            return 1
+          }
+          for path in / /components/ /products/bleed-cap/ /products/bleed-cap/image.png /wiring-kits/ /wiring-kits/build/ /wiring-generator/ /basket/ /checkout/ /operations/snapshot.json /admin/ /admin/orders/ /admin/site-operations/ /admin/delivery/ /admin/catalogue-settings/ /admin/email-templates/ /admin/conjure/ /admin/ironclad/ /admin/ironclad/calculator/ /admin/omniscience/; do
+            expected="${path#/}"
+            [[ "$path" != */ ]] || expected="${expected}index.html"
+            readback "${path}?ascent78=${GITHUB_RUN_ID}" "$work/static/$expected"
+          done
+          for path in /admin/orders/customer-aftercare.mjs /backend/operations-admin.mjs /backend/order-data.mjs /backend/catalogue-options.mjs /backend/email-templates.mjs /admin/assembly-repository.mjs; do
+            readback "${path}?build=sentinel77a-c1" "$work/static${path}"
+          done
+          for path in /admin/admin-gate.mjs /admin/application.mjs /admin/ironclad/app.mjs /admin/ironclad/entry.mjs /admin/orders/app.mjs /admin/overview.mjs; do
+            readback "${path}?build=unification78b-c1" "$work/static${path}"
+          done
+          readback '/admin/omniscience/entry.mjs' "$work/static/admin/omniscience/entry.mjs"
+          printf 'Verified public and Admin static responses. Authenticated owner acceptance is separate.\n' >> "$GITHUB_STEP_SUMMARY"
