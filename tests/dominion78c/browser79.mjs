@@ -27,7 +27,7 @@ const errors=[],apiCalls=[];
 async function packing(orderId){
  const data=(await Q(`select o.id,o.reference,q.picked,q.measured_grams,q.measured_mm,q.postal_class,q.tracking,
  quartermaster79.cost_evidence(o.id) cost,quartermaster79.ready_stock(q.sku) stock
- from quartermaster79.packing q join public.orders o on o.id=q.order_id where q.state='packed' and ($1::uuid is null or q.order_id=$1) order by o.id limit 2`,[orderId])).rows;
+ from quartermaster79.packing q join public.orders o on o.id=q.order_id where q.state='packed' and (q.order_id=$1::uuid or $1::uuid is null and q.tracking='SYNTHETIC-79') order by o.id limit 2`,[orderId])).rows;
  assert.equal(data.length,1);
  const v=data[0], c=await db.connect();
  try{

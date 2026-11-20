@@ -5,6 +5,7 @@ import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { prepareFulfilmentRevision } from './finance80.mjs';
+import { seededKitRequest } from './kit80.fixture.mjs';
 import { marketplaceWalkthrough } from './reconciliation-fixture79.mjs';
 
 const r=createRequire(import.meta.url);
@@ -189,6 +190,28 @@ try{
  assert.equal(row.finance.costs.packaging.minor,50);assert.equal(row.finance.costs.shipping.minor,109);assert.equal(row.finance.costs.other.minor,15);
  assert.equal(row.current,true);
  console.log('PASS IRONHEART: partial pick persisted, failed packing rolled back, actual ECLIPSE revision/replay and unchanged history, recorded postage vs estimate reaches OMNISCIENCE');
+ // The production checkout validator, rather than an inserted order fixture, creates the second order.
+ const request=await seededKitRequest(base,query);
+ const webkit=refs(await as('service_role',null,q=>q('select public.create_guest_kit_order($1)',[request])));
+ assert.equal(webkit.totalPence,5798);
+ const actualBom=await out('select dominion79.requirements(o.items) from public.orders o where o.id=$1',[webkit.id]);
+ assert.deepEqual(actualBom,{'pot-short-alpha-a':4,'cde-022':1,'cde-047':1,'bleed-prs':2});
+ await query('update public.orders set stripe_checkout_session_id=$1 where id=$2',[webkit.session,webkit.id]);
+ await reserve(webkit,'F80-configured-checkout',expiry());
+ assert.equal(await pay(webkit),'paid');
+ assert.equal(await pay(webkit),'duplicate');
+ for(const [id,quantity] of Object.entries(actualBom))assert.equal(await stock(id),20-quantity);
+ await query("insert into quartermaster79.material(sku,title,reorder_at,inner_mm,outer_mm,tare_grams) values('F80-KIT-MAILER','Synthetic kit box',0,array[240,160,60],array[250,175,65],40)");
+ const ki=randomUUID(),batchKey=randomUUID();
+ await as('service_role',null,q=>q('select quartermaster79.receive($1,$2,$3,$4,$5,$6)',[batchKey,'F80-KIT-MAILER',supplier,'F80-KIT-BOX-BATCH',1,210]));
+ await as('service_role',null,q=>q('select quartermaster79.reserve($1,$2,$3,$4)',[webkit.id,ki,'F80-KIT-MAILER',actualBom]));
+ for(const [id,quantity] of Object.entries(actualBom))await adminRpc(pickSql,[webkit.id,randomUUID(),id,0,quantity]);
+ await as('service_role',null,q=>q(packSql,[webkit.id,ki,batchKey,[250,175,65],280,'small-parcel',null,379]));
+ const webEvidence=(await adminRpc(inspect,[webkit.id])).cost;
+ assert.equal(webEvidence.packagingActualMinor,210);assert.equal(webEvidence.postageActualMinor,null);
+ assert.equal(await out('select status from public.orders where id=$1',[webkit.id]),'pending');
+ console.log('PASS builder-to-Orders: existing Les Paul checkout validates exact six roles and £57.98; payment, four component deductions, packing and actual cost evidence');
+
 
  assert.deepEqual(await as('service_role',null,q=>q("select quartermaster79.ready_stock('F79-LABEL')")),{sku:'F79-LABEL',physical:1,available:1,reorder:true});
  console.log('PASS A/C/F: exact A+B+C, actual IRONCLAD procurement, saved configured BOM, real legacy paid procedure, duplicate payment and packing, traceable batch estimates and no dispatch');
