@@ -67,6 +67,21 @@ async function setup(){
  assert.equal(digest(b),'04ec507549545b31946aaef827e54201a8fec15c806f10f0fd217ea22fe49c90');await query(b);
  const c=await readFile(resolve(process.env.DOMINION_C_SQL),'utf8');
  assert.equal(digest(c),'f73d9b68df1eb8bd4a251d29ec58df1941132a4549d80c79e1790260fd9ea6be');await query(c);
+ const stage=await readFile(new URL('ironheart80-stage-a.review.sql',here),'utf8');
+ const audit=`do $$ begin
+  if (select mode from dominion79.lifecycle_control)<>'paused' or (select mode from quartermaster79.rollout)<>'disabled'
+   or exists(select 1 from pg_proc where pronamespace in ('dominion79'::regnamespace,'quartermaster79'::regnamespace))
+   or exists(select from pg_class c where c.relnamespace in ('dominion79'::regnamespace,'quartermaster79'::regnamespace)
+     and c.relkind='r' and (not c.relrowsecurity or has_table_privilege('authenticated',c.oid,'SELECT,INSERT,UPDATE,DELETE')
+       or has_table_privilege('service_role',c.oid,'SELECT,INSERT,UPDATE,DELETE')))
+   or exists(select 1 from pg_trigger where tgname like 'ironheart80%')
+  then raise exception 'Stage A exposed a runtime writer, missing RLS or attached hook';end if;
+ end $$;
+ rollback;`;
+ assert.match(stage,/commit;\s*$/);
+ await query(stage.replace(/commit;\s*$/,audit));
+ assert.equal(await out("select to_regnamespace('dominion79') is null and to_regnamespace('quartermaster79') is null"),true);
+ console.log('PASS Stage A review SQL: exact prerequisite contracts, private RLS additions, no callable writer or existing hooks');
  await query(await readFile(new URL('unity79.sql',here),'utf8'));
  await query(await readFile(new URL('quartermaster79.sql',here),'utf8'));
  await query(await readFile(new URL('marketplace79.sql',here),'utf8'));
