@@ -63,6 +63,7 @@ async function setup(){
  assert.equal(digest(c),'f73d9b68df1eb8bd4a251d29ec58df1941132a4549d80c79e1790260fd9ea6be');await query(c);
  await query(await readFile(new URL('unity79.sql',here),'utf8'));
  await query(await readFile(new URL('quartermaster79.sql',here),'utf8'));
+ await query(await readFile(new URL('marketplace79.sql',here),'utf8'));
  await query(`insert into auth.users(id,email,email_confirmed_at) values ($1,'fixture79-admin@example.invalid',now()),($2,'fixture79-buyer@example.invalid',now())`,[admin,buyer]);
  await query('insert into public.admin_members(user_id) values ($1)',[admin]);
  await query(`insert into public.site_operations(id,desired_state) values(true,'OPEN');
@@ -100,6 +101,8 @@ try{
  assert.equal(await reserve(configured,'fixture-purchaser',deadlines),'held');
  await assert.rejects(reserve(configured,'wrong-owner',deadlines),/differs/);
  assert.equal(await stock('fixture79-cap'),6);
+ const during=(await read('inventory',{componentId:'fixture79-cap'}))[0];
+ assert.equal(during.reserved,5);assert.equal(during.available,1);
  await assert.rejects(query("update public.inventory set quantity=1 where component_id='fixture79-cap'"),/reserved or protected/);
  await assert.rejects(pay(configured,configured.event,1),/does not match/);
  assert.equal(await stock('fixture79-cap'),6);
@@ -108,6 +111,8 @@ try{
  assert.deepEqual(first.sort(),['duplicate','paid']);
  assert.equal(await pay(configured),'duplicate');
  assert.equal(await stock('fixture79-cap'),1);
+ const after=(await read('inventory',{componentId:'fixture79-cap'}))[0];
+ assert.equal(after.reserved,0);assert.equal(after.available,1);
  assert.equal(await stock('fixture79-res'),1);
  const trace=await out("select batches from dominion79.provenance where order_id=$1 and component_id='fixture79-cap'",[configured.id]);
  assert.deepEqual(trace,[{batch:q1.batches[0].batchId,quantity:5,basis:'estimated-batch',batchCostMinor:700,batchUnits:6}]);
@@ -145,6 +150,14 @@ try{
  assert.equal(await legacyPay(legacy),'already_paid');
  assert.equal(await stock('fixture79-race'),0);
  assert.equal(legacy.totalPence,1149);
+ // Move only the fixture hold clock to exercise authoritative overdue expiry without a long sleep.
+ const overdue=await syntheticOrder([directItem('fixture79-res')]);
+ await reserve(overdue,'fixture-expiry',expiry());
+ await query("update dominion79.holds set opened_at=now()-interval '90 minutes',ends_at=now()-interval '30 minutes' where order_id=$1",[overdue.id]);
+ assert.equal(await release(overdue,'expired-unpaid'),'expired');
+ assert.equal(await release(overdue,'expired-unpaid'),'expired');
+ await assert.rejects(pay(overdue),/no longer usable/);
+ assert.equal(await stock('fixture79-res'),1);
  console.log('PASS E/F: concurrent holds, false cancellation/late payment refusal, original checkout and postage, legacy writer protection and fallback');
 
  // D: actual bench measurement, allocation, guarded pick and legacy retirement of the exact reserved physical units.
@@ -165,9 +178,13 @@ try{
  const external=randomUUID(), previousStock=await stock('fixture79-cap');
  await query(`insert into public.orders(id,request_id,request_hash,sales_channel,external_reference,order_date,subtotal_pence,delivery_pence,total_pence,customer,delivery,items,payment_status,paid_at,fulfillment_applied_at)
  values($1,$1,repeat('b',32),'EBAY','F79-EBAY-PAID',date '2026-11-19',1000,150,1150,'{}','{}',$2,'paid',now(),now())`,[external,JSON.stringify([directItem('fixture79-cap',2)])]);
- const market=await marketplaceWalkthrough(query);
+ const market=await marketplaceWalkthrough(query,{persist:true});
  assert.equal(market.orders.length,1);assert.equal(market.orders[0].existingOrderId,external);assert.equal(market.orders[0].stockMutation,false);
  assert.equal(market.finance.length,2);assert.ok(market.finance.every(x=>x.manualOrderId===external));
+ const applyStage='select marketplace79.stage($1,$2,$3,$4,$5::jsonb,$6::jsonb)';
+ await assert.rejects(query(applyStage,['fixture-ebay','orders',0,'2026-11-19T10:30:00Z','[]','[]']),e=>e.code==='40001');
+ await assert.rejects(query(applyStage,['fixture-ebay','orders',1,'2026-11-19T10:30:00Z',JSON.stringify([{...market.orders[0],buyer:'forbidden'}]),'[]']),/outside scoped evidence/);
+ assert.equal(await out("select revision::int from marketplace79.watermarks where account='fixture-ebay' and kind='orders'"),1);
  assert.equal(market.review[0].kind,'unmapped-listing');assert.equal(await stock('fixture79-cap'),previousStock);
  assert.equal(await out("select count(*)::int from public.orders where external_reference='F79-EBAY-PAID'"),1);
  console.log('PASS B/F: eBay read-only import matched an existing external Orders record; fee and refund evidence deduplicated, no stock or additional orders');

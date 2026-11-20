@@ -85,9 +85,10 @@ export async function importWindow({kind,account,initialFrom,until,read,reposito
  const linked=reconcile({orders:kind==='orders'?incoming:existing,transactions:kind==='transactions'?incoming:[],manualOrders,listingMappings});
  const staged=kind==='orders'?linked.staged.map(o=>({...o,needsStockReview:o.decision==='review'||o.cancelled||o.lines.some(l=>!l.verifiedSku),
   stockMutation:false,shipping:o.shipping??null})):linked.financialEvidence;
- const record={account,kind,expectedRevision:marker.revision,through:to,evidence:staged,review:linked.review};
+ const review=kind==='transactions'?linked.review.filter(x=>x.kind==='finance-review'):linked.review;
+ const record={account,kind,expectedRevision:marker.revision,through:to,evidence:staged,review};
  await repository.commit(record);
- return {kind,account,through:to,review:linked.review.length,staged:staged.length};
+ return {kind,account,through:to,review:review.length,staged:staged.length};
 }
 
 export function createReadAdapter(args){return fixtureReader(args);}

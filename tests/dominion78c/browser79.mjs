@@ -116,7 +116,7 @@ try{
  await page.getByRole('link',{name:'MARKETPLACE: Reconciliation'}).click();
  await page.getByText('Existing external order matched').waitFor();
  await page.getByText('Order-level shipping: £1.50').waitFor();await page.getByText('refund evidence: £1.50 (linked for review)').waitFor();
- assert.ok(await page.getByText('Unmapped listing').isVisible());
+ assert.ok(await page.getByRole('listitem').filter({hasText:'1 × Unmapped listing'}).isVisible());
  await page.getByRole('button',{name:'Sign Out',exact:true}).click();
  await page.getByRole('button',{name:'Sign In',exact:true}).waitFor();
  assert.equal(await page.getByRole('heading',{name:'MARKETPLACE',exact:true}).count(),0);

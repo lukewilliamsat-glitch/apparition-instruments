@@ -82,6 +82,16 @@ declare c text; begin
  end loop;
 end $$;
 
+-- Bridge existing IRONCLAD availability/read controls to this fixture's one reservation source.
+-- CREATE OR REPLACE retains the existing private grants on this routine.
+create or replace function ironclad69.reservations(c text) returns bigint language plpgsql stable set search_path='' as $$
+declare n bigint; begin
+ if to_regnamespace('commerce67') is not null then raise exception 'Two reservation authorities cannot operate together';end if;
+ select coalesce(sum(l.quantity-cardinality(l.picked_units)),0)::bigint into n
+ from dominion79.hold_lines l join dominion79.holds h using(order_id) where l.component_id=c and h.state='held';
+ return n;
+end $$;
+
 -- An explicit pick is counted just once: it already belongs to an IRONCLAD allocated set.
 create function dominion79.unavailable(c text, own uuid default null) returns bigint language sql volatile set search_path='' as $$
  select
@@ -89,7 +99,7 @@ create function dominion79.unavailable(c text, own uuid default null) returns bi
    (m.quality in ('quarantine','rejected') or exists(select 1 from ironclad69.set_members sm join ironclad69.sets s on s.id=sm.set_id where sm.unit_id=m.id and sm.active and s.state='allocated')))
   + (select coalesce(sum(l.quantity-cardinality(l.picked_units)),0)::bigint from dominion79.hold_lines l join dominion79.holds h using(order_id)
      where l.component_id=c and h.state='held' and h.order_id is distinct from own)
-  + ironclad69.reservations(c);
+  + (case when to_regnamespace('commerce67') is not null then ironclad69.reservations(c) else 0 end);
 $$;
 
 create function dominion79.guard_inventory() returns trigger language plpgsql security definer set search_path='' as $$
