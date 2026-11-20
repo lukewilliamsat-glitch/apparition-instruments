@@ -18,7 +18,9 @@ export async function mountAdminWorkspace({document:d,auth}){
  try{
   const signal=AbortSignal.any([AbortSignal.timeout(6000),session.signal]);
   const token=await auth.accessToken({signal,bounded:true});
-  const response=await fetch('/_dominion-fixture/'+where,{method:'GET',credentials:'omit',cache:'no-store',redirect:'error',signal,headers:{Authorization:'Bearer '+token}});
+  const orderId=where==='quartermaster'?new URL(d.location.href).searchParams.get('order'):null;
+  const requestPath='/_dominion-fixture/'+where+(orderId?'?'+new URLSearchParams({order:orderId}):'');
+  const response=await fetch(requestPath,{method:'GET',credentials:'omit',cache:'no-store',redirect:'error',signal,headers:{Authorization:'Bearer '+token}});
   if(!response.ok)throw Error('Fixture evidence could not be loaded.');
   const data=await response.json();
   status.remove();
@@ -26,7 +28,7 @@ export async function mountAdminWorkspace({document:d,auth}){
   if(where==='quartermaster'){
    const packing=section('Pick and pack');
    const list=make('ul');
-   for(const part of data.picked)list.append(make('li',part.quantity+' × '+part.component));
+   for(const part of data.picked)list.append(make('li',(part.name||part.component)+' · '+part.picked+' / '+part.quantity+' picked · '+part.currentAvailable+' currently available'));
    packing.append(make('p','Existing fixture order '+data.reference),list);
    const stock=section('Packaging stock'),evidence=section('Cost evidence');
    stock.append(make('p',data.stock.sku+': '+data.stock.available+' available'),make('p',data.stock.reorder?'Reorder due':'Stock above reorder point'));
@@ -35,6 +37,20 @@ export async function mountAdminWorkspace({document:d,auth}){
     make('p','Actual postage: '+money(data.cost.postageActualMinor)));
    grid.append(packing,stock,evidence);target.append(grid);
    const parcel=section('Dispatch review');
+   parcel.append(make('p',data.readyForReview?'Ready for dispatch review':'Review required before dispatch'));
+   const size=section('Packaging fit check');
+   const dims=['Length (mm)','Width (mm)','Height (mm)'].map((label,i)=>{
+    const wrap=make('label',label),input=make('input');input.type='number';input.min='1';input.max='1500';input.required=true;input.inputMode='numeric';
+    wrap.append(input);size.append(wrap);return input;
+   });
+   const fit=make('button','Find packaging that fits','button');fit.type='button';const fitResult=make('output');fitResult.setAttribute('aria-live','polite');
+   fit.onclick=()=>{
+    if(dims.some(x=>!x.validity.valid)){fitResult.textContent='Enter measured contents dimensions in millimetres.';return;}
+    const sorted=dims.map(x=>x.valueAsNumber).sort((a,b)=>b-a);
+    const matches=data.materials.filter(m=>m.available>0&&m.inner_mm.toSorted((a,b)=>b-a).every((n,i)=>n>=sorted[i]));
+    fitResult.textContent=matches.length?matches.map(m=>m.title+' ('+m.sku+')').join(', '):'No available packaging fits those dimensions.';
+   };
+   size.append(fit,fitResult);target.append(size);
    const review=make('button','Review measured parcel','button');review.type='button';
    const result=make('output');result.setAttribute('aria-live','polite');
    review.addEventListener('click',()=>{

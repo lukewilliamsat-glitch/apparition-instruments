@@ -28,6 +28,20 @@ create trigger ironheart80_protect_reserved_order before update on public.orders
  for each row execute function dominion79.guard_reserved_order();
 revoke all on function dominion79.guard_reserved_order() from public,anon,authenticated,service_role;
 
+create table quartermaster79.rollout(
+ singleton boolean primary key default true check(singleton),
+ mode text not null check(mode in ('disabled','observe','workshop'))
+);
+insert into quartermaster79.rollout(mode) values('disabled');
+alter table quartermaster79.rollout enable row level security;
+revoke all on quartermaster79.rollout from public,anon,authenticated,service_role;
+create function quartermaster79.require_write() returns void language plpgsql set search_path='' as $$
+begin
+ if (select mode from quartermaster79.rollout where singleton for share) is distinct from 'workshop' then
+  raise exception 'Packing writes are disabled' using errcode='55000';end if;
+end $$;
+revoke all on function quartermaster79.require_write() from public,anon,authenticated,service_role;
+
 create table quartermaster79.pick_events(
  id uuid primary key, order_id uuid not null references quartermaster79.packing,
  component_id text not null references public.inventory,
@@ -55,6 +69,8 @@ language plpgsql stable security definer set search_path='' as $$
 declare o public.orders%rowtype; pack quartermaster79.packing%rowtype; bom jsonb; items jsonb; materials jsonb; costs jsonb;
 begin
  perform ironclad69.actor();
+ if (select mode from quartermaster79.rollout where singleton)='disabled' then
+  raise exception 'Packing lookup is disabled' using errcode='55000';end if;
  select * into strict o from public.orders where id=p_order;
  if o.payment_status not in ('paid','partially_refunded') or o.fulfillment_applied_at is null then
   raise exception 'Use an eligible paid Order' using errcode='22023';end if;
@@ -77,7 +93,8 @@ begin
     from quartermaster79.postage_evidence e where e.order_id=o.id),'{}'::jsonb);
  end if;
  return jsonb_build_object('id',o.id,'reference',o.reference,'status',o.status,
-  'readyForReview',pack.state='packed' and o.status in ('pending','in_production','ready_to_dispatch'),
+  'readyForReview',coalesce(pack.state='packed' and o.status in ('pending','in_production','ready_to_dispatch')
+   and (o.payment_status='paid' or exists(select 1 from public.partial_refund_reviews r where r.order_id=o.id and r.refunded_pence=o.refunded_pence and r.refund_at=o.latest_refund_at)),false),
   'packingState',pack.state,'picked',items,'materials',materials,'cost',costs);
 end $$;
 
@@ -85,6 +102,7 @@ create function public.quartermaster80_pick(p_order uuid,p_request uuid,p_compon
 language plpgsql security definer set search_path='' as $$
 declare member uuid:=ironclad69.actor(); o public.orders%rowtype; p quartermaster79.packing%rowtype; e quartermaster79.pick_events%rowtype; cap integer; prior integer;
 begin
+ perform quartermaster79.require_write();
  select * into strict o from public.orders where id=p_order for share;
  select * into strict p from quartermaster79.packing where order_id=p_order for update;
  select * into e from quartermaster79.pick_events where id=p_request;
@@ -109,6 +127,11 @@ end $$;
 create function quartermaster79.require_confirmed_picks() returns trigger
 language plpgsql security definer set search_path='' as $$
 begin
+ if new.state='packed' and old.state='reserved' and not exists(
+   select 1 from public.orders o where o.id=new.order_id and
+    (o.payment_status='paid' or o.payment_status='partially_refunded' and exists(select 1 from public.partial_refund_reviews r
+      where r.order_id=o.id and r.refunded_pence=o.refunded_pence and r.refund_at=o.latest_refund_at)))
+ then raise exception 'Review the current partial refund before packing' using errcode='23514';end if;
  if new.state='packed' and old.state='reserved' and (
    exists(select 1 from jsonb_each_text(new.picked) a left join quartermaster79.pick_progress p
      on p.order_id=new.order_id and p.component_id=a.key where p.picked is distinct from a.value::int)
@@ -119,12 +142,25 @@ end $$;
 create trigger ironheart80_require_confirmed_picks before update of state on quartermaster79.packing
  for each row execute function quartermaster79.require_confirmed_picks();
 revoke all on function quartermaster79.require_confirmed_picks() from public,anon,authenticated,service_role;
+-- Service helpers from the 79 pilot may only write during the explicitly enabled workshop stage.
+create function quartermaster79.guard_rollout() returns trigger
+language plpgsql security definer set search_path='' as $$
+begin
+ perform quartermaster79.require_write();return null;
+end $$;
+create trigger ironheart80_packing_gate before insert or update on quartermaster79.packing
+ for each statement execute function quartermaster79.guard_rollout();
+create trigger ironheart80_receipt_gate before insert or update on quartermaster79.purchase
+ for each statement execute function quartermaster79.guard_rollout();
+revoke all on function quartermaster79.guard_rollout() from public,anon,authenticated,service_role;
+
 
 -- Evidence only. A correction requires an explicit future workflow, rather than replacing accounting evidence in place.
 create function public.quartermaster80_postage(p_order uuid,p_request uuid,p_minor integer,p_receipt text) returns jsonb
 language plpgsql security definer set search_path='' as $$
 declare member uuid:=public.command63_finance_actor(); e quartermaster79.postage_evidence%rowtype; r text:=btrim(p_receipt);
 begin
+ perform quartermaster79.require_write();
  perform 1 from quartermaster79.packing where order_id=p_order and state='packed' for update;
  if not found or p_minor is null or p_minor not between 0 and 1000000
    or coalesce(r,'') !~ '^[A-Za-z0-9][A-Za-z0-9 .:_/-]{2,119}$' then raise exception 'A recorded parcel and postage evidence are required';end if;

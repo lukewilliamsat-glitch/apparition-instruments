@@ -72,6 +72,7 @@ async function setup(){
  await query(await readFile(new URL('legacy-writers80.fixture.sql',here),'utf8'));
  await query(await readFile(new URL('ironheart80.sql',here),'utf8'));
  assert.equal(await out('select mode from dominion79.lifecycle_control'),'paused');
+ assert.equal(await out('select mode from quartermaster79.rollout'),'disabled');
  assert.equal(await out("select md5(pg_get_functiondef('public.record_verified_stripe_refund(text,text,text,text,bigint,text,text,timestamptz,timestamptz)'::regprocedure))"),'641531809393e7e596b89a5a6404fcc3');
 
  await query(`insert into auth.users(id,email,email_confirmed_at) values ($1,'fixture79-admin@example.invalid',now()),($2,'fixture79-buyer@example.invalid',now())`,[admin,buyer]);
@@ -91,7 +92,9 @@ try{
  await setup();
  const pausedOrder=await syntheticOrder([directItem('fixture79-race')]);
  await assert.rejects(reserve(pausedOrder,'paused-owner',expiry()),/paused/);
- await query("update dominion79.lifecycle_control set mode='accepting'");
+ await query("update quartermaster79.rollout set mode='observe'");
+ await assert.rejects(adminRpc('select public.quartermaster80_pick($1,$2,$3,$4,$5)',[pausedOrder.id,randomUUID(),'fixture79-race',0,1]),/disabled/);
+ await query("update quartermaster79.rollout set mode='workshop'; update dominion79.lifecycle_control set mode='accepting'");
 
  // Scenario C: the actual Admin procurement RPC receives stock and creates a real IRONCLAD batch.
  const supplier=(await write('supplier',{name:'Fixture supplier 79',currency:'GBP'})).id;
@@ -264,6 +267,25 @@ try{
  assert.equal(await stock('fixture79-pot'),1);
  assert.deepEqual(await out('select measured_units from dominion79.provenance where order_id=$1',[selected.id]),units);
  assert.equal((await read('inventory',{componentId:'fixture79-pot'}))[0].available,0);
+
+
+ // A selected non-FIFO set may not be reported consumed if the current real trigger retires another batch.
+ await query(`insert into public.components(id,sku,name,category,active,individually,sale_price)
+ values('fixture80-nonfifo','F80-NONFIFO','Synthetic non-FIFO potentiometer','potentiometers',false,false,750);
+ insert into public.inventory(component_id,quantity) values('fixture80-nonfifo',0)`);
+ await receive('fixture80-nonfifo',2,220,'F80-NONFIFO-OPEN');
+ const newer=(await receive('fixture80-nonfifo',2,300,'F80-NONFIFO-NEW')).batches[0];
+ await write('measure',{batchId:newer.batchId,nominalOhm:500000,taper:'A',shaft:'short split',units:[{slot:1,ohm:498700},{slot:2,ohm:499200}]});
+ const pickedUnits=(await read('measurements',{batchId:newer.batchId})).map(r=>r.id);
+ const laterSet=(await write('allocate',{componentId:'fixture80-nonfifo',toleranceBp:100,unitIds:pickedUnits})).id;
+ const later=await syntheticOrder([directItem('fixture80-nonfifo',2,{dominionSetId:laterSet})]);
+ await reserve(later,'non-fifo-review',expiry());
+ await assert.rejects(pay(later),/does not prove the measured pick/);
+ assert.equal(await stock('fixture80-nonfifo'),4);
+ assert.equal(await out('select count(*)::int from dominion79.provenance where order_id=$1',[later.id]),0);
+ assert.equal(await out('select payment_status from public.orders where id=$1',[later.id]),'unpaid');
+ assert.equal(await release(later,'cancelled-unpaid'),'released');
+ console.log('PASS unproven non-FIFO measurement rolls back physical stock, payment and provenance');
 
  // B/F: read-only provider evidence joins an actual existing synthetic external Orders record.
  const external=randomUUID(), previousStock=await stock('fixture79-cap');

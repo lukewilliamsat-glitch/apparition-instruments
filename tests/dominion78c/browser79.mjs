@@ -24,14 +24,20 @@ const routeMark=" ['conjure','Conjure website editor'";
 assert.equal(app.split(routeMark).length,2);
 app=app.replace(routeMark," ['quartermaster','QUARTERMASTER: Packing','/admin/quartermaster/','Sales'],['marketplace','MARKETPLACE: Reconciliation','/admin/marketplace/','Sales'],\n"+routeMark);
 const errors=[],apiCalls=[];
-async function packing(){
+async function packing(orderId){
  const data=(await Q(`select o.id,o.reference,q.picked,q.measured_grams,q.measured_mm,q.postal_class,q.tracking,
  quartermaster79.cost_evidence(o.id) cost,quartermaster79.ready_stock(q.sku) stock
- from quartermaster79.packing q join public.orders o on o.id=q.order_id where q.state='packed' order by o.id limit 2`)).rows;
+ from quartermaster79.packing q join public.orders o on o.id=q.order_id where q.state='packed' and ($1::uuid is null or q.order_id=$1) order by o.id limit 2`,[orderId])).rows;
  assert.equal(data.length,1);
- const v=data[0];
- return {id:v.id,reference:v.reference,picked:Object.entries(v.picked).map(([component,quantity])=>({component,quantity})),
-  parcel:{grams:v.measured_grams,outerMm:v.measured_mm,postalClass:v.postal_class,tracking:v.tracking},cost:v.cost,stock:v.stock};
+ const v=data[0], c=await db.connect();
+ try{
+  const actor=(await c.query('select user_id from public.admin_members limit 1')).rows[0].user_id;
+  await c.query('begin read only');
+  await c.query('set local role authenticated');
+  await c.query("select set_config('request.jwt.claim.sub',$1,true)",[actor]);
+  const row=(await c.query('select public.quartermaster80_order($1) as workspace',[v.id])).rows[0].workspace;
+  return {...row,parcel:{grams:v.measured_grams,outerMm:v.measured_mm,postalClass:v.postal_class,tracking:v.tracking},stock:v.stock};
+ }finally{await c.query('rollback');c.release();}
 }
 const server=createServer(async(req,res)=>{
  const u=new URL(req.url,'http://localhost');
@@ -42,7 +48,9 @@ const server=createServer(async(req,res)=>{
    const authorized=req.headers.authorization==='Bearer '+token;
    apiCalls.push({path:u.pathname,authorized});
    if(!authorized)return reply(403,'{"message":"Admin required"}');
-   const value=u.pathname.endsWith('/quartermaster')?await packing():await marketplaceWalkthrough(Q);
+   const oid=u.searchParams.get('order');
+   if(oid&&!/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(oid))return reply(400,'{"message":"Invalid order identity"}');
+   const value=u.pathname.endsWith('/quartermaster')?await packing(oid):await marketplaceWalkthrough(Q);
    return reply(200,JSON.stringify(value));
   }
   if(u.pathname==='/admin/application.mjs')return reply(200,app,mime['.mjs']);
@@ -108,6 +116,12 @@ try{
  await start(page,'/admin/quartermaster/');
  await page.getByText('Actual packaging: £0.50').waitFor();
  await page.getByText('Estimated postage: £1.15').waitFor();
+ await page.getByText('Actual postage: £1.09').waitFor();
+ await page.getByText('5 / 5 picked',{exact:false}).waitFor();
+ await page.getByText('Ready for dispatch review',{exact:true}).waitFor();
+ for(const [label,value] of [['Length (mm)','100'],['Width (mm)','70'],['Height (mm)','10']])await page.getByLabel(label,{exact:true}).fill(value);
+ await page.getByRole('button',{name:'Find packaging that fits'}).click();
+ await page.getByText('Synthetic mailer (F79-LABEL)',{exact:true}).waitFor();
  assert.equal(await page.locator('[data-workspace=quartermaster]').getAttribute('aria-current'),'page');
  await page.getByRole('button',{name:'Review measured parcel'}).click();
  await page.getByText('Parcel fits the selected format. No dispatch recorded.').waitFor();
