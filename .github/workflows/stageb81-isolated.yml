@@ -1,0 +1,76 @@
+name: IRONHEART 81 Stage B isolated acceptance
+on:
+  push:
+    branches: [engineering/dominion78c-foundations]
+    paths: ['tests/stageb81/**', '.github/workflows/stageb81-isolated.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  integration:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 11
+    services:
+      postgres:
+        image: postgres:17.6
+        env:
+          POSTGRES_DB: dominion79_fixture
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports: ['127.0.0.1:55478:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d dominion79_fixture"
+          --health-interval 5s --health-timeout 4s --health-retries 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          path: release69b
+          ref: 43a7c0ab2a1546b2cb7fffadc82613a02a109c7d
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          path: release-c
+          ref: a1d9e41fd4443f92f050c013c7bb1b70fa67568c
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Install pinned disposable test dependencies
+        run: npm install --prefix "$RUNNER_TEMP/dom79" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save pg@8.16.3 playwright@1.62.1
+      - name: Native isolated integration with exact A, B and C SQL
+        env:
+          DOMINION_ACCEPTED_ROOT: ${{ github.workspace }}/release69b
+          DOMINION_C_SQL: ${{ github.workspace }}/release-c/supabase/migrations/20261117162718_omniscience74_v1.sql
+        run: |
+          set -euo pipefail
+          DOMINION_PG_MODULE="$RUNNER_TEMP/dom79/node_modules/pg" node tests/stageb81/stageb81.native.mjs
+      - name: Chromium fixture with native evidence and exact Release C Admin shell
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          w="$RUNNER_TEMP/dom79"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14619393716/zip" > "$w/verified-c.zip"
+          echo "0a303d83433e480bfa897075f4b8e30b8fbd0152d7772e3af35dc61150ae5b14  $w/verified-c.zip" | sha256sum -c
+          unzip -p "$w/verified-c.zip" unified-c.zip > "$w/unified-c.zip"
+          echo "be062020a7f3362357cd9a5f6613fe75104d55bb38aeaedccd695b0c55ea0c30  $w/unified-c.zip" | sha256sum -c
+          unset GH_TOKEN
+          python3 tests/stageb81/stageb81-package.py "$w/unified-c.zip" "$w/stageb81"
+          mkdir -m 700 "$w/fixed"
+          unzip -q "$w/stageb81/stageb81-static.zip" -d "$w/fixed"
+          node --experimental-vm-modules tests/stageb81/graph-admin.cjs "$w" fixed
+          mv "$w/graph-deepwatch.json" "$w/stageb81/"
+          DOMINION_STATIC_FIXTURE="$w/fixed" DOMINION_CHROMIUM="$(command -v google-chrome)" \
+            DOMINION_PG_MODULE="$w/node_modules/pg" DOMINION_PLAYWRIGHT="$w/node_modules/playwright" \
+            node tests/stageb81/stageb81.browser.mjs
+          cp "$w/unified-c.zip" "$w/stageb81/rollback-release-c.zip"
+          cp tests/stageb81/stageb81.read.review.sql "$w/stageb81/"
+          sha256sum "$w/stageb81/stageb81-static.zip" "$w/stageb81/stageb81-manifest.json"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: stageb81-review-only
+          path: ${{ runner.temp }}/dom79/stageb81/
+          if-no-files-found: error
+          retention-days: 30

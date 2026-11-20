@@ -1,0 +1,8 @@
+#dominion-workspace { display: grid; gap: 1rem; max-width: 68rem; }
+#dominion-workspace :is(h1, h2, p, dl) { margin: 0; }
+#dominion-workspace header, #dominion-workspace section { display: grid; gap: .75rem; align-content: start; min-width: 0; }
+#dominion-workspace .dominion-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); gap: 1rem; }
+#dominion-workspace section { border: 1px solid #5c5346; border-radius: .75rem; padding: clamp(1rem, 3vw, 1.6rem); background: #211e1a; }
+#dominion-workspace .dominion-mode { color: #e3c193; font-weight: 650; }
+#dominion-workspace dl { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .5rem .8rem; }
+#dominion-workspace dd { margin: 0; font-variant-numeric: tabular-nums; }
