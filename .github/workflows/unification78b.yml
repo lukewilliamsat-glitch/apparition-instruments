@@ -1,0 +1,82 @@
+name: 78B Admin unification acceptance
+on:
+  push:
+    branches: [engineering/unification-78b]
+    paths: ['tests/unification78b/**','.github/workflows/unification78b.yml']
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: acceptance-unification78b
+  cancel-in-progress: false
+jobs:
+  acceptance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        release: [b,c]
+    env:
+      RELEASE: ${{ matrix.release }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Verify input ZIP and seal the navigation-only correction
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/78b"
+          mkdir -m 700 "$work"
+          id=14554414841; if [ "$RELEASE" = c ]; then id=14554744116; fi
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$id/zip" > "$work/hosted-$RELEASE.zip"
+          python3 tests/unification78b/compose.py "$work" "$RELEASE"
+          node --no-warnings --experimental-vm-modules tests/release-a77a/graph.cjs "$work" "unified-$RELEASE"
+          python3 - "$work" <<'PY'
+          import json,pathlib,sys
+          for g in json.loads((pathlib.Path(sys.argv[1])/'graph-deepwatch.json').read_text()):
+           assert not g['badSyntax']
+           for r in g['routes']:
+            assert not r['missing'] and not r['linkErrors'] and not r['cycles'] and not any(a['singleton'] for a in r['aliases']),r['entry']
+          PY
+          node tests/release-a77a/native.mjs "$work/unified-$RELEASE"
+      - name: Reuse pinned Chromium harness
+        run: |
+          set -euo pipefail
+          npm install --prefix "$RUNNER_TEMP/78b" --no-save --no-package-lock --ignore-scripts playwright@1.62.1
+          python3 tests/unification78b/install-harness.py "$RUNNER_TEMP/78b/harness"
+      - name: Authenticated navigation, deny paths, session and Release A/B preservation
+        run: |
+          set -euo pipefail
+          export SENTINEL_ROOT="$RUNNER_TEMP/78b"
+          export NODE_PATH="$SENTINEL_ROOT/node_modules"
+          export SENTINEL_BROWSER="$(command -v google-chrome)"
+          harness="$SENTINEL_ROOT/harness"
+          node "$harness/browser.cjs" "unified-$RELEASE" all
+          targets='/admin/,/admin/ironclad/,/admin/ironclad/calculator/,/admin/orders/,/admin/delivery/,/admin/catalogue-settings/'
+          if [ "$RELEASE" = c ]; then targets="$targets,/admin/omniscience/"; fi
+          for role in anonymous denied expired renewed; do
+            node "$harness/browser.cjs" "unified-$RELEASE" "$targets" "$role"
+          done
+          python3 "$harness/accept-deep.py" "$SENTINEL_ROOT" "unified-$RELEASE"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: unification78b-${{ matrix.release }}-acceptance
+          path: |
+            ${{ runner.temp }}/78b/unified-${{ matrix.release }}-manifest.json
+            ${{ runner.temp }}/78b/unified-${{ matrix.release }}-*-all.json
+            ${{ runner.temp }}/78b/unified-${{ matrix.release }}-*-smoke.json
+            ${{ runner.temp }}/78b/graph-deepwatch.json
+          retention-days: 30
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: unification78b-${{ matrix.release }}-sealed
+          path: ${{ runner.temp }}/78b/unified-${{ matrix.release }}.zip
+          if-no-files-found: error
+          retention-days: 30
