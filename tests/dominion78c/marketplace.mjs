@@ -50,9 +50,13 @@ export function normalizeOrder(account,x) {
  if(minor<0)throw Error('Negative order total');
  if(!Array.isArray(x.lineItems)||!x.lineItems.length||x.lineItems.length>100||!unique(x.lineItems,l=>identifier(l.lineItemId,'line ID')))throw Error('Invalid marketplace lines');
  const lines=x.lineItems.map(l=>({lineRef:identifier(l.lineItemId),listingRef:identifier(l.legacyItemId,'listing ID'),sku:l.sku==null?null:identifier(l.sku,'SKU'),quantity:whole(l.quantity,'quantity',1,10000)}));
- const cancellation=['CANCELED','CANCELLED','CANCEL_CLOSED_WITH_REFUND'].includes(x.cancelStatus?.cancelState);
+ const state=x.cancelStatus?.cancelState??null;
+ const latest=x.cancelStatus?.cancelRequests?.at(-1)?.cancelStatus??null;
+ const cancellation=['CANCELED','CANCELLED'].includes(state)||['CANCEL_CLOSED_WITH_REFUND','CANCEL_CLOSED_NO_REFUND','CANCEL_CLOSED_FOR_COMMITMENT','CANCEL_CLOSED_UNKNOWN_REFUND'].includes(latest);
+ const rawDelivery=x.pricingSummary?.deliveryCost,shipping=rawDelivery?price(rawDelivery):null;
+ if(shipping&&(shipping.currency!==currency||shipping.minor<0))throw Error('Invalid order-level shipping evidence');
  return {key:keyFor(account,reference),provider:'ebay',account,reference,updatedAt:instant(x.lastModifiedDate),
-  currency,totalMinor:minor,cancelled:cancellation,
+  currency,totalMinor:minor,cancelled:cancellation,cancellation:{state,latest},shipping,
   lines:lines.sort((a,b)=>a.lineRef.localeCompare(b.lineRef))};
 }
 export function normalizeFinancial(account,x){

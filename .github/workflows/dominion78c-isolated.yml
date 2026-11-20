@@ -1,4 +1,4 @@
-name: DOMINION 78C isolated foundations
+name: DOMINION 79 cumulative isolated integration
 on:
   push:
     branches: [engineering/dominion78c-foundations]
@@ -6,31 +6,44 @@ on:
 permissions:
   contents: read
 jobs:
-  fixtures:
+  integration:
     runs-on: ubuntu-24.04
-    timeout-minutes: 8
+    timeout-minutes: 11
     services:
       postgres:
         image: postgres:17.6
         env:
-          POSTGRES_DB: dominion78c_fixture
+          POSTGRES_DB: dominion79_fixture
           POSTGRES_HOST_AUTH_METHOD: trust
         ports: ['127.0.0.1:55478:5432']
         options: >-
-          --health-cmd "pg_isready -U postgres -d dominion78c_fixture"
+          --health-cmd "pg_isready -U postgres -d dominion79_fixture"
           --health-interval 5s --health-timeout 4s --health-retries 12
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          path: release69b
+          ref: 43a7c0ab2a1546b2cb7fffadc82613a02a109c7d
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          path: release-c
+          ref: a1d9e41fd4443f92f050c013c7bb1b70fa67568c
+          persist-credentials: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '22.20.0'
       - name: Fixture contracts, packing, marketplace and commerce
-        run: node --test tests/dominion78c/acceptance.test.mjs
-      - name: Install disposable PostgreSQL client dependency
-        run: npm install --prefix "$RUNNER_TEMP/dom78" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save pg@8.16.3
-      - name: Native concurrent reservations and transactional stock proof
+        run: node --test tests/dominion78c/*.test.mjs
+      - name: Install pinned disposable test dependencies
+        run: npm install --prefix "$RUNNER_TEMP/dom79" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save pg@8.16.3
+      - name: Native isolated integration with exact A, B and C SQL
+        env:
+          DOMINION_ACCEPTED_ROOT: ${{ github.workspace }}/release69b
+          DOMINION_C_SQL: ${{ github.workspace }}/release-c/supabase/migrations/20261117162718_omniscience74_v1.sql
         run: |
           set -euo pipefail
-          DOMINION_PG_MODULE="$RUNNER_TEMP/dom78/node_modules/pg" node tests/dominion78c/native.mjs
+          DOMINION_PG_MODULE="$RUNNER_TEMP/dom79/node_modules/pg" node tests/dominion78c/integration79.mjs
