@@ -11,6 +11,14 @@
 | 5 | **COMMERCE CORONATION** · Synthetic signed settlement passed through PostgreSQL. Genuine provider acceptance outstanding. | Separately authorise a protected Stripe Sandbox account and key, isolated durable provider plan store and webhook secret. Accept real provider sessions, test card, signed delivery and replay, late/expired settlement, partial refunds, and compatible legacy checkout. Decide together with UNITY which proven writer path is permitted. Seek entirely separate production activation approval. | Retain checkout v16, status v10, Stripe webhook v15 and transactional email v15 until formally replaced. Freeze new sessions on a failed cutover and reconcile existing sessions, payment, refunds and holds before restoring routes. Legacy fallback is safe only without an existing plan, hold or provider session. |
 | 6 | **GRAND ASCENSION** · Releases A/B/C published, historical closure pending. | Record owner walkthrough of existing IRONCLAD, Orders/ECLIPSE/BLACK LEDGER and OMNISCIENCE. Check genuine stock/receipts or order evidence when available, saved order contribution/report inclusion and applicable real expense or director entry and export. Reimburse only an actual amount due. Close completed releases against receipts, retaining explicit deferrals and separate approvals. This walkthrough can proceed alongside the queue. | No release cutover required. For a verified C application regression, corrected B `e9d6806a-a568-4c0f-b533-c99eebda9699` is C's application fallback. Keep legitimate records and additive schemas. |
 
+## 84B owner acceptance checkpoint
+
+23 November 2026. FIRST LIGHT remains canonical at `62f2f737-da53-49a5-960f-a38bdd10af11` and native signed-in DOMINION shows UNITY Paused and QUARTERMASTER Disabled. Explicit owner screen acceptance is pending.
+
+The protected QUARTERMASTER walkthrough is also pending. The Cloudflare protected preview project has no deployment of the QUARTERMASTER workshop or 84A candidate. The historical preview and exact 84A read-only package remain available as GitHub Actions artifacts. Isolated CI and artifact access do not establish owner acceptance of the protected walkthrough.
+
+The five 84B digests match the pinned proposal and the exact packaged inventory (491 files, seven Admin changes). Production QUARTERMASTER remains disabled with the proposed RPC and helper absent. The reviewed production publisher is unregistered on both refs. Production preflight, installation, publication and observe-mode acceptance follow explicit confirmation of both owner gates.
+
 ## Current operating checkpoints
 
 - Use the [Astra operating policy](07-OPERATING-POLICY.md) and [FIRST LIGHT closure register](08-FIRST-LIGHT-CLOSURE.md) for current execution state.
