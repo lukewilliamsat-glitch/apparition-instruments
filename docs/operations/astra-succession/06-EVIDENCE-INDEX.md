@@ -2,7 +2,11 @@
 
 **Verified 23 November 2026.** Production provider metadata, published byte samples, historical receipts and isolated tests describe different stages of the release.
 
-## Live evidence from 83H
+## Current FIRST LIGHT evidence
+
+See the [83R closure register](08-FIRST-LIGHT-CLOSURE.md) for the production publication and 84A recheck. See [QUARTERMASTER readiness](../quartermaster84/RELEASE-PROPOSAL.md) for the next candidate and its isolated evidence.
+
+## Historical live evidence from 83H
 
 | Source | Readback and scope |
 | --- | --- |

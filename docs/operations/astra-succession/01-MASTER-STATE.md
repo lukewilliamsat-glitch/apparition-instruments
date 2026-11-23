@@ -1,10 +1,10 @@
 # Apparition Astra master state
 
-**83H snapshot · 23 November 2026 · Europe/London**
+**84A update · 23 November 2026 · Europe/London**
 
-**FIRST LIGHT is partially complete.** Supabase has the approved read-only RPC. GitHub has the exact manual publisher on its default and guarded refs and reports zero workflow runs. Cloudflare still serves Release C. Resume at authenticated RPC acceptance and release preflight. See [02 Release queue](02-RELEASE-QUEUE.md) and [05 Next Astra bootstrap](05-NEXT-ASTRA-BOOTSTRAP.md).
+**FIRST LIGHT is live and independently verified.** Production now serves `62f2f737-da53-49a5-960f-a38bdd10af11`. Owner post-publication business acceptance is pending. See [current closure register](08-FIRST-LIGHT-CLOSURE.md) for deployment, exact artifact and verification and [02 Release queue](02-RELEASE-QUEUE.md) for the next workstream.
 
-## Production baseline
+## Historical 83H production baseline
 
 | Area | Observed state |
 | --- | --- |
@@ -36,7 +36,7 @@
 
 The gateway flag describes provider configuration. Application-level identity, Stripe signatures and established internal transport controls still apply. No checkout, payment, order, stock or email write was tested during 83H.
 
-## Application and trust boundaries
+## Application and trust boundaries from 83H
 
 - Cloudflare serves the sealed static storefront and Admin. The deployed tree includes cumulative overlays. Use the sealed artifact and its inventory for byte identity. `main` is the GitHub default branch for manual publisher registration.
 - Supabase Auth supplies sessions. The shared Admin shell checks `public.admin_members`. Backend RPCs enforce their own membership or role checks, and customer order endpoints enforce account ownership. Production catalogues, orders, finance and stock keep their existing interfaces. RLS is enabled on `public.admin_members`, `public.orders`, `public.inventory` and `public.order_financial_revisions`.

@@ -2,7 +2,13 @@
 
 Start at [01 Master state](01-MASTER-STATE.md), [02 Release queue](02-RELEASE-QUEUE.md) and [04 Safety and authority](04-SAFETY-AND-AUTHORITY.md), then use [03 Engineering workstreams](03-ENGINEERING-WORKSTREAMS.md) and [06 Evidence index](06-EVIDENCE-INDEX.md) to locate exact sources and receipts.
 
-## Copy-paste starter prompt
+## Current restart point
+
+FIRST LIGHT is live. Resume from the [closure register](08-FIRST-LIGHT-CLOSURE.md), [updated queue](02-RELEASE-QUEUE.md), [operating policy](07-OPERATING-POLICY.md) and [QUARTERMASTER proposal](../quartermaster84/RELEASE-PROPOSAL.md). The owner walkthrough remains pending. Preserve the FIRST LIGHT deployment as the expected baseline for the next release.
+
+## Historical SUCCESSION 83H starter prompt
+
+The following is the original 83H snapshot before the FIRST LIGHT dispatch. Use the current restart point for release execution.
 
 ```text
 Resume Apparition Instruments Astra engineering from the SUCCESSION 83H handover.
