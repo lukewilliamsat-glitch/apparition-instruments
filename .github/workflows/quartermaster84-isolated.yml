@@ -1,0 +1,48 @@
+name: QUARTERMASTER 84 read-only isolated acceptance
+on:
+  push:
+    branches: [engineering/astra-iron-discipline-84a]
+    paths:
+      - .github/workflows/quartermaster84-isolated.yml
+      - tests/quartermaster84/**
+permissions:
+  contents: read
+  actions: read
+jobs:
+  observe:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/astra-iron-discipline-84a'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Download pinned source artifacts and build the review candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/quartermaster84"
+          mkdir -p "$work"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14643717958/zip" > "$work/stageb.zip"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14645814636/zip" > "$work/workshop.zip"
+          unset GH_TOKEN
+          python3 tests/quartermaster84/build.py "$work/stageb.zip" "$work/workshop.zip" "$work/candidate"
+          python3 -m zipfile -e "$work/candidate/quartermaster84-observe-static.zip" "$work/static"
+      - name: Run disposable database and Chromium acceptance
+        run: |
+          set -euo pipefail
+          npm ci --prefix tests/quartermaster84 --ignore-scripts --no-audit --no-fund
+          export QUARTERMASTER_PGLITE="$PWD/tests/quartermaster84/node_modules/@electric-sql/pglite"
+          export QUARTERMASTER_PLAYWRIGHT="$PWD/tests/quartermaster84/node_modules/playwright"
+          export QUARTERMASTER_CHROMIUM="$(command -v google-chrome)"
+          node tests/quartermaster84/acceptance.mjs "$RUNNER_TEMP/quartermaster84/static" | tee "$RUNNER_TEMP/quartermaster84/candidate/acceptance.txt"
+          cp tests/quartermaster84/observe.review.sql "$RUNNER_TEMP/quartermaster84/candidate"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: quartermaster84-observe-review-only
+          path: ${{ runner.temp }}/quartermaster84/candidate
+          if-no-files-found: error
