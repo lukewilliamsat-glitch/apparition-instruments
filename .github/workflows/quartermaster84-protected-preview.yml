@@ -1,0 +1,81 @@
+name: QUARTERMASTER 84B-P protected fixture walkthrough
+on:
+  push:
+    branches: [engineering/phoenix66-preview]
+    paths: ['.github/workflows/quartermaster84-protected-preview.yml']
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: phoenix66-pages-publisher
+  cancel-in-progress: false
+env:
+  FIXTURE_SOURCE: '8c40306989da0dcfc0437b7686c9bf2bde38e0de'
+jobs:
+  verify:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ env.FIXTURE_SOURCE }}
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Assemble the exact fixture from both accepted wrappers
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$FIXTURE_SOURCE"
+          out="$RUNNER_TEMP/quartermaster84p"
+          mkdir "$out"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14809317163/zip" > "$RUNNER_TEMP/approved.zip"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14645814636/zip" > "$RUNNER_TEMP/historical.zip"
+          unset GH_TOKEN
+          python3 preview/quartermaster84p/pack.py "$RUNNER_TEMP/approved.zip" "$RUNNER_TEMP/historical.zip" "$out"
+      - name: Test browser interactions with network limited to fixture GETs
+        run: |
+          set -euo pipefail
+          npm install --prefix "$RUNNER_TEMP/pw" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save playwright@1.62.1
+          export QUARTERMASTER_PLAYWRIGHT="$RUNNER_TEMP/pw/node_modules/playwright"
+          export QUARTERMASTER_CHROMIUM="$(command -v google-chrome)"
+          node preview/quartermaster84p/acceptance.mjs "$RUNNER_TEMP/quartermaster84p/site" | tee "$RUNNER_TEMP/quartermaster84p/acceptance.txt"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: quartermaster84p-verified-fixture
+          path: ${{ runner.temp }}/quartermaster84p
+          if-no-files-found: error
+  protected_preview:
+    needs: verify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    environment: phoenix66-preview
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ env.FIXTURE_SOURCE }}
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: quartermaster84p-verified-fixture
+          path: ${{ runner.temp }}/quartermaster84p
+      - run: npm install --prefix "$RUNNER_TEMP/cloudflare-uploader" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save wrangler@4.162.0
+      - name: Publish once to the Access-protected preview branch and verify live bytes
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
+          PHOENIX66_ACCESS_CLIENT_ID: ${{ secrets.PHOENIX66_ACCESS_CLIENT_ID }}
+          PHOENIX66_ACCESS_CLIENT_SECRET: ${{ secrets.PHOENIX66_ACCESS_CLIENT_SECRET }}
+          WRANGLER_BIN: ${{ runner.temp }}/cloudflare-uploader/node_modules/.bin/wrangler
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$FIXTURE_SOURCE"
+          out="$RUNNER_TEMP/quartermaster84p"
+          node preview/quartermaster84p/publish.mjs "$out/site" "$out/inventory.json" "$FIXTURE_SOURCE"
