@@ -1,0 +1,56 @@
+# Activate on the existing guarded ref only after 84C DB installation and denial readback.
+name: QUARTERMASTER 84C protected stage preview
+on:
+  push:
+    branches: [engineering/phoenix66-preview]
+    paths: ['.github/workflows/quartermaster84c-stage-preview.yml']
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: phoenix66-pages-publisher
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    environment: phoenix66-preview
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: 244f3616c081701fe45fa2ec8622cba80155f617
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Verify 84C source and one exact staged artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = '244f3616c081701fe45fa2ec8622cba80155f617'
+          out="$RUNNER_TEMP/quartermaster84c"
+          mkdir "$out"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14920546326/zip" > "$out/archive.zip"
+          unset GH_TOKEN
+          test "$(sha256sum "$out/archive.zip" | cut -d' ' -f1)" = '3fe57a7ee15acf8d06d796cd1b720adc3a13f66fa1083ddb3f5388ecf55b0f26'
+          unzip -q "$out/archive.zip" -d "$out"
+          (cd "$out"; printf '%s\n' \
+            '84cda3a968e228d230879ab9b75d192599c0a7517cac25ea5f630a526d5da5a7  staging84c.sql' \
+            '539df247ff7b7f06bd378f87fdc498be88ae6b4f7727cd50fc8d4a5e90e30904  quartermaster84c-static.zip' \
+            '03f55a7d0c6b01c8f7d2382a788dc975155c48645d6973b30583378fa161b59a  inventory.json' | sha256sum -c)
+          unzip -q "$out/quartermaster84c-static.zip" -d "$out/site"
+      - run: npm install --prefix "$RUNNER_TEMP/cloudflare-uploader" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save wrangler@4.162.0
+      - name: Verify Access, publish staging only and verify deployed bytes
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
+          PHOENIX66_ACCESS_CLIENT_ID: ${{ secrets.PHOENIX66_ACCESS_CLIENT_ID }}
+          PHOENIX66_ACCESS_CLIENT_SECRET: ${{ secrets.PHOENIX66_ACCESS_CLIENT_SECRET }}
+          WRANGLER_BIN: ${{ runner.temp }}/cloudflare-uploader/node_modules/.bin/wrangler
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/quartermaster84c"
+          node tests/quartermaster84c/publisher/publish.mjs "$out/site" "$out/inventory.json" 'c74b0303702105bb42ec74c882addba8dba6929d'

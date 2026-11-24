@@ -1,6 +1,6 @@
 # QUARTERMASTER 84C staging release register
 
-24 November 2026. Sealed candidate passed the isolated gates. The three corrected staging Auth identities are confirmed. Persistent installation and publication are pending.
+24 November 2026. Sealed candidate passed the isolated gates. The three corrected staging Auth identities are confirmed. Staging SQL and seed are applied. Protected preview publication is pending.
 
 | Item | Pinned identity |
 | --- | --- |
@@ -9,7 +9,7 @@
 | Wrapper | [Artifact 14920546326](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45394609239/artifacts/14920546326). SHA-256 `3fe57a7ee15acf8d06d796cd1b720adc3a13f66fa1083ddb3f5388ecf55b0f26`. |
 | Atomic stage SQL | SHA-256 `84cda3a968e228d230879ab9b75d192599c0a7517cac25ea5f630a526d5da5a7`, including seed SHA-256 `a82f260164bd77a92f0b16fe02865a16906fce4adda8c9f76f3879c3483bef24`. |
 | Static package | 18 files. ZIP SHA-256 `539df247ff7b7f06bd378f87fdc498be88ae6b4f7727cd50fc8d4a5e90e30904`. Inventory SHA-256 `03f55a7d0c6b01c8f7d2382a788dc975155c48645d6973b30583378fa161b59a`. |
-| Protected uploader | Code commit `03dddd350727690b731e6c9c0a9dba29e7b24ed3`. Publish script SHA-256 `dc374d2d43da3b93973d67989044b054a5e3280d7d343aab4e1c9e8c076d4132`. Reviewed pending workflow SHA-256 `a85dcc64522a54a600963da607bb0f286d7d0603ee945f5c683cd592b815714d`. |
+| Protected uploader | Code commit `244f3616c081701fe45fa2ec8622cba80155f617`. Publish script SHA-256 `62a83181dcc003bab52c815c4a7a560c675b620382fefb82182c9d358f8ce143`. Reviewed pending workflow SHA-256 `f5f8296a8a8884d5e40a44990e7522eec63306b301de67f6bb0fdf60ce687be3`. |
 | Supabase scope | Project `prwmowexhonguvtiywsy` only. Stage issuer and exact PostgREST/Auth allowlist. No Edge, checkout, webhook, mailing, carrier, Stripe or eBay routes in the package. |
 | Preview scope | Approved target `apparition-phoenix-preview`, branch `quartermaster84c-stage`, intended route `https://quartermaster84c-stage.apparition-phoenix-preview.pages.dev/admin/orders/`. The Access redirect was verified before publication. Preview project canonical `a73b0e75-fd2c-4321-953d-c6c173e9ecfe`; prior latest remains the separate 84B-P fixture `704c4ce5-7d52-4aaf-8155-eda60a6db978`. |
 | Production preflight | Canonical 84B `3d31097e-0418-4547-bdb0-bd9f7ce91b6e`, exact source `15efc3473d9b91ab6664c5c2e47408bdca529b40`, two read-only packing functions; UNITY paused, QUARTERMASTER observe, Aftercare Direct off, OPEN, delivery revision 5. Counts 34 Orders, 35 inventory, seven financial revisions. Nine Edge versions matched. FIRST LIGHT remains rollback `62f2f737-da53-49a5-960f-a38bdd10af11`. 84B owner business acceptance remains pending. |
@@ -35,8 +35,12 @@ The SQL failed atomically when a confirmed user was absent. With fixture identit
 
 Drain SHA-256 `d8a4fb9f2ce49999db37fd96f49313915be173d4f70901e144626def8a48f793`. Final disable SHA-256 `07b28c92acf90580844a1d37984c2875b1aaaedb79c0bd6ff7973ada2793eb10`. Drain freezes new receipts, reservations, picks, completion and approvals. Resolve known uncertain requests, then release only physically unconsumed holds. Final disable requires zero reservations and revokes the scoped writer RPCs. Completed stock movements and finance history remain. Failed preflight leaves the stage untouched. For a fresh pass use the next unused seeded order or rebuild disposable PostgreSQL. Retain completed stage evidence and the existing fixture/deployment alias. If the stage test seats are retired, remove the separately recorded temporary finance Admin membership and retire the three Auth users through the approved staging process.
 
+## Staging migration receipt
+
+Staging migration `20261124123950`, `quartermaster84c_staging_integration`, applied once to `prwmowexhonguvtiywsy`. Readback verified four new 84C orders, one supplier, one zero-quantity packaging material, three confirmed scoped roles, one general Admin grant for finance alone and closed private grants/RLS. Anonymous HTTPS returned HTTP 401 / 42501. The exact staging Auth guard fingerprint remains active. Existing five stage orders, three stage suppliers and two prior finance revisions were retained.
+
 ## Acceptance still open
 
-- Persistent SQL/seed, exact preview deployment, genuine Auth, stage database-backed browser and financial acceptance have no receipts yet. The target alias is not a live 84C walkthrough until the publisher and readback succeed.
+- Protected preview deployment, stage database-backed browser and financial acceptance remain open. The target alias is not a live 84C walkthrough until the publisher and readback succeed.
 - Production writer release composition follows genuine stage acceptance. Require the final cumulative Admin archive, exact dormant writer SQL and original Orders and finance bindings, named production roles, protected publisher, separate activation transition, complete packing drain and evidence-preserving reversal. This stage package is deliberately incompatible with production.
 - Existing 50 × 50 mm [Niimbot proofs](https://chatgpt.com/library?file_id=libfile_2b36395af1908191a28c1aacfaec6a70&account_id=personal) remain available. Physical labels are a separate acceptance gate.
