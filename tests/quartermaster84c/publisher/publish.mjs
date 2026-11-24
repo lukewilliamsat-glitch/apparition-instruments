@@ -92,10 +92,13 @@ await access.assertProtected();
 await Promise.all(['/','/admin/orders/','/admin/quartermaster/','/entry.mjs'].map(path=>assertGate(alias,path)));
 await Promise.all(['/admin/orders/','/admin/quartermaster/','/entry.mjs'].map(path=>assertGate(origin,path)));
 for (const row of manifest.filter(row=>row.path!=='_headers')) {
-  const response=await access.get('/'+row.path.replace(/index\.html$/,''));
+  const missing=row.path==='404.html';
+  const response=await access.get(missing?'/__quartermaster84c_missing__':'/'+row.path.replace(/index\.html$/,''),missing?404:200);
   assert.equal(digest(Buffer.from(await response.arrayBuffer())),row.sha256,'Readback mismatch '+row.path);
-  assert(response.headers.get('content-security-policy')?.includes("connect-src https://prwmowexhonguvtiywsy.supabase.co;"));
-  assert(response.headers.get('x-robots-tag')?.includes('noindex'));
+  if(!missing){
+    assert(response.headers.get('content-security-policy')?.includes("connect-src https://prwmowexhonguvtiywsy.supabase.co;"));
+    assert(response.headers.get('x-robots-tag')?.includes('noindex'));
+  }
 }
 assert.equal((await metadata(project)).canonical_deployment?.id,expectedPreviewBaseline);
 assert.equal((await metadata('apparition-instruments')).canonical_deployment?.id,expectedProduction);

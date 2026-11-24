@@ -26,9 +26,10 @@ export function createPreviewAccess(origin, project, {clientId,clientSecret}, re
    await response.body?.cancel();
    assert(login||response.status===401||response.status===403,'Unauthenticated preview was not gated.');
   },
-  async get(path){
+  async get(path,expectedStatus=200){
+   assert(expectedStatus===200||expectedStatus===404,'Unexpected expected preview status.');
    const response=await probe(path,true);
-   assert.equal(response.status,200,'Preview Access or route check failed: '+path);
+   assert.equal(response.status,expectedStatus,'Preview Access or route check failed: '+path);
    return response;
   }
  };
