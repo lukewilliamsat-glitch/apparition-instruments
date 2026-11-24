@@ -1,0 +1,42 @@
+name: QUARTERMASTER isolated writer acceptance
+on:
+  push:
+    branches: [engineering/quartermaster84w-isolated]
+    paths:
+      - 'tests/quartermaster84w/**'
+      - '.github/workflows/quartermaster84w-isolated.yml'
+permissions:
+  contents: read
+jobs:
+  writer-fixtures:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    services:
+      fixture-postgres:
+        image: postgres:17.12-bookworm
+        env:
+          POSTGRES_DB: quartermaster84w_fixture
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: disposable-fixture
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d quartermaster84w_fixture"
+          --health-interval 3s --health-timeout 3s --health-retries 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Install locked fixture test dependencies
+        run: npm ci --prefix tests/quartermaster84w --ignore-scripts --no-audit --no-fund
+      - name: Verify genuine concurrent PostgreSQL sessions
+        env:
+          PGPASSWORD: disposable-fixture
+        run: node tests/quartermaster84w/concurrency.mjs
+      - name: Verify the isolated workshop overlay on desktop and mobile
+        env:
+          QUARTERMASTER_CHROMIUM: /usr/bin/google-chrome
+        run: node tests/quartermaster84w/browser.mjs
