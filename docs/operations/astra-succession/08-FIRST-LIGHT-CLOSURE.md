@@ -15,3 +15,5 @@
 84A rechecked the canonical deployment and rollback directly in Cloudflare. Store OPEN, Aftercare Direct off, delivery revision 5, standard £3.99 below £50 and free from £50, and the existing £4.99 option were verified with read-only queries. All nine active Edge versions match the accepted baseline. QUARTERMASTER remains disabled with no installed workshop routines. The eight private packing tables retain RLS and no direct application-role reads or writes.
 
 **Rollback:** Release C `f290e564-6dde-4123-a349-997c70308729` remains the FIRST LIGHT static rollback. FIRST LIGHT `62f2f737-da53-49a5-960f-a38bdd10af11` is the expected baseline and immediate static rollback for the proposed QUARTERMASTER release. Use the approved protected application rollback route and retain additive schemas and genuine business evidence.
+
+On 24 November 2026, the verified [QUARTERMASTER 84B observe release](../quartermaster84/84B-PRODUCTION-RECEIPT.md) superseded FIRST LIGHT as canonical. FIRST LIGHT remains the immediate 84B recovery deployment, and its earlier Release C rollback remains retained.

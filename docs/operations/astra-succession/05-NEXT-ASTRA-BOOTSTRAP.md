@@ -4,7 +4,7 @@ Start at [01 Master state](01-MASTER-STATE.md), [02 Release queue](02-RELEASE-QU
 
 ## Current restart point
 
-QUARTERMASTER 84B is live in observe. Resume from the [production receipt](../quartermaster84/84B-PRODUCTION-RECEIPT.md), [release queue](02-RELEASE-QUEUE.md), [operating policy](07-OPERATING-POLICY.md) and [staging assessment](../quartermaster84/STAGING-READINESS.md). The owner accepted FIRST LIGHT and the fixture walkthrough. Keep writer work isolated while the new live owner walkthrough and future candidate gates remain open. Preserve FIRST LIGHT as the immediate rollback.
+QUARTERMASTER 84B is live in observe. Resume from the [production receipt](../quartermaster84/84B-PRODUCTION-RECEIPT.md), [release queue](02-RELEASE-QUEUE.md), [operating policy](07-OPERATING-POLICY.md) and [staging assessment](../quartermaster84/STAGING-READINESS.md). The owner accepted FIRST LIGHT and the fixture walkthrough. Continue from the [tested writer checkpoint](../quartermaster84/WRITER-CHECKPOINT.md) and [remaining workstreams](../quartermaster84/HOMECOMING-NEXT.md) while the new live owner walkthrough and future writer candidate gates remain open. Preserve FIRST LIGHT as the immediate rollback.
 
 ## Historical SUCCESSION 83H starter prompt
 
