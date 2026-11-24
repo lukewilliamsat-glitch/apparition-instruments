@@ -1,6 +1,6 @@
 # QUARTERMASTER 84C staging release register
 
-24 November 2026. Sealed candidate passed the isolated gates. The three corrected staging Auth identities are confirmed. Staging SQL and seed are applied. The protected staging preview is live. Genuine native role acceptance remains open.
+24 November 2026. Sealed candidate passed the isolated gates. The three corrected staging Auth identities are confirmed. Staging SQL and seed are applied. The protected staging preview is live. Genuine signed-in desktop role acceptance and the synthetic packing-to-finance journey passed. Owner business acceptance and the remaining live coverage are listed below.
 
 | Item | Pinned identity |
 | --- | --- |
@@ -20,7 +20,7 @@ The original domain instructions were corrected before staging SQL. The existing
 
 Use Dashboard Authentication → Users → Add user → Create user in **apparition-staging**. Confirm the password users `84c-operator@example.invalid`, `84c-finance@example.invalid`, and `84c-observer@example.invalid` without sending invitations. Keep passwords in the owner's password manager. At preflight check three exact confirmed password users, all without existing general Admin grants. The atomically applied seed grants a fixture-only seat to each and the existing staging finance Admin authority to the finance approver alone. Operator and observer retain scoped membership and cannot call the general finance writer.
 
-Verify the authoritative staging schema fingerprints and prior preview receipt again. Apply the pinned SQL once through the staging connector and verify its migration ledger receipt, four fixture order identities, one supplier, zero initial packaging stock, three exact scoped roles and anonymous denial. Register the reviewed publishing workflow at `.github/workflows/quartermaster84c-stage-preview.yml` on the existing guarded `engineering/phoenix66-preview` ref once. Verify the protected run and actual bytes, independent Access protection, application headers and retained canonical targets. Await native signed-in acceptance using the three distinct roles through the normal verified staging Auth flow.
+Verify the authoritative staging schema fingerprints and prior preview receipt again. Apply the pinned SQL once through the staging connector and verify its migration ledger receipt, four fixture order identities, one supplier, zero initial packaging stock, three exact scoped roles and anonymous denial. Register the reviewed publishing workflow at `.github/workflows/quartermaster84c-stage-preview.yml` on the existing guarded `engineering/phoenix66-preview` ref once. Verify the protected run and actual bytes, independent Access protection, application headers and retained canonical targets. The native signed-in acceptance followed using the three distinct roles through the normal staging Auth flow.
 
 | Seat | Scope |
 | --- | --- |
@@ -43,8 +43,25 @@ Staging migration `20261124123950`, `quartermaster84c_staging_integration`, appl
 
 [Run 45396137208](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45396137208), attempt 1, successfully uploaded deployment `96237d9e-1586-45c6-979a-0d55d22217a0` and independently read back all served assets behind Access. The protected alias is [QUARTERMASTER staging Orders](https://quartermaster84c-stage.apparition-phoenix-preview.pages.dev/admin/orders/). Verified original production `3d31097e-0418-4547-bdb0-bd9f7ce91b6e` and original preview project canonical `a73b0e75-fd2c-4321-953d-c6c173e9ecfe` remain canonical in their respective projects. A staging observer-role database read returned four fixture orders with writer and finance permissions both false.
 
-## Acceptance still open
+## Genuine native browser acceptance
 
-- Live operator, finance and observer browser acceptance and the genuine staged finance walkthrough remain open. PostgreSQL and Chromium fixture evidence is already recorded.
-- Production writer release composition follows genuine stage acceptance. Require the final cumulative Admin archive, exact dormant writer SQL and original Orders and finance bindings, named production roles, protected publisher, separate activation transition, complete packing drain and evidence-preserving reversal. This stage package is deliberately incompatible with production.
-- Existing 50 × 50 mm [Niimbot proofs](https://chatgpt.com/library?file_id=libfile_2b36395af1908191a28c1aacfaec6a70&account_id=personal) remain available. Physical labels are a separate acceptance gate.
+24 November 2026. Cloudflare Access granted entry through its email-code flow. The application then used three separate password sessions in `apparition-staging`. All writes affected the approved synthetic fixture `84C-FIXTURE-1`.
+
+| Role | Live browser evidence |
+| --- | --- |
+| Operator | Orders opened the packing workshop and returned to the same order. Received one `84C-MAILER` at 40p from the fixture supplier, reserved it, released it back to availability and reserved it again. Saved one of two picks, reloaded and resumed at one, then saved both picks and completed one pack. The parcel was 40 × 30 × 20 mm, 75 g, Large letter, with synthetic tracking. Postage displayed a £1.30 estimate and £1.15 recorded actual. ECLIPSE showed an unsaved proposal at revision 0 with no approval button. |
+| Finance | Approved the proposal once and received **Saved revision 1**. OMNISCIENCE showed **Recorded**, packaging £0.40, shipping £1.15 and contribution £7.95. The packing route showed the saved pick list with no writer actions. |
+| Observer | Saw the fixture order and the saved 2/2 pick list with no writers. The finance deep link showed only the order, with no proposal or approval. DOMINION showed UNITY paused and QUARTERMASTER review observe. |
+| Sign-out | The finance route after operator sign-out and the packing route after observer sign-out both returned to the staging sign-in. Cloudflare Access continued to protect the host. |
+
+## Independent readback after the browser walkthrough
+
+Supabase recorded one receipt, one positive packaging movement, one completing movement with a delta of −1, zero remaining batch and physical units, zero outstanding reservations, two pick events, the packed state and the 40p, 130p and 115p values. There was one committed approval receipt and one revision for the fixture. Two prior non-84C financial revisions remained present.
+
+Cloudflare verified the 84C preview deployment and separate canonical 84B production deployment. FIRST LIGHT and Release C retained their successful rollback deployment records. Production readback showed UNITY paused, QUARTERMASTER observe, Aftercare Direct off and delivery revision 5. Orders, inventory and finance revision counts remained 34, 35 and seven. Production had zero packing, material and movement rows, and the writer schema was absent. Nine active Edge Function versions and JWT settings were retained.
+
+## Remaining acceptance
+
+- The live native browser ran at 1363 CSS px. The accepted isolated Chromium run covers 390 px and expiry. Genuine narrow-width and elapsed-session expiry remain open. Stale/concurrent attempts and drain/recovery remain disposable PostgreSQL evidence.
+- The owner can open [protected staging Orders](https://quartermaster84c-stage.apparition-phoenix-preview.pages.dev/admin/orders/), sign in through Cloudflare Access and use the observer fixture to check `84C-FIXTURE-1` → **Open packing workshop** → 2/2 picks → **Back to this order**. A finance fixture session can inspect the saved result from ECLIPSE → **Open OMNISCIENCE result**. The historical 84B-P fixture walkthrough and this database-backed 84C application are separate environments. Request explicit acceptance of the staging workflow and of the live 84B read-only view separately.
+- See the [production writer release preparation](WRITER-RELEASE-PREPARATION.md) for the exact inputs, outstanding seal and separate approval boundaries. [50 × 50 mm Niimbot proofs](https://chatgpt.com/library?file_id=libfile_2b36395af1908191a28c1aacfaec6a70&account_id=personal) remain available for physical print acceptance.
