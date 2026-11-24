@@ -38,3 +38,7 @@ The single 84B-P deployment succeeded on 23 November 2026. Project `apparition-p
 
 - **QUARTERMASTER workshop** source `78c37ad24f0eef9723271986ec2818a09dcdb296`, [preview artifact 14645814636](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/44770162646/artifacts/14645814636), wrapper `f24ec6d163dce5879e2810cfee390db4c2a6db9a8bc36c17c96aa36960701f07`, 491-file ZIP `8cc5d57c5fadcc0c6dda5e21db8b1f3a38829e41510a93c4a04a063d8b636295`, disposable read wrapper SQL `8b0298851be08d2fd027031a2548da4728391b9cd434a8aecaa380ad620ab3fc`. Expiry 20 December 2026 at 16:09:15 GMT. Preview SQL is for isolated acceptance.
 - **UNITY, MARKETPLACE and COMMERCE** currently have isolated engineering and test receipts. The next approved release needs its own explicit production/durable provider scope, exact source, candidate identities, workflow and rollback capture. See [03 Engineering workstreams](03-ENGINEERING-WORKSTREAMS.md).
+
+## 84C protected staging checkpoint
+
+[Staging release register](../quartermaster84/STAGING-84C-REGISTER.md) records the sealed 84C candidate, exact protected publisher and PostgreSQL/Chromium acceptance. Persistent staging, native role sign-in and receipt remain gated on the three confirmed fixture Auth users. See [follow-on provider prerequisites](../quartermaster84/HOMECOMING-84C-FOLLOW-ON.md). 84B remains the canonical production baseline.
