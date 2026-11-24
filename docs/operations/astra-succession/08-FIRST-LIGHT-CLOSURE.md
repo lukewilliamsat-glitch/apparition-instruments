@@ -1,6 +1,6 @@
 # FIRST LIGHT closure register
 
-23 November 2026, Europe/London. **Publication, production readback and authenticated browser acceptance are complete. Post-publication owner business acceptance is pending.**
+24 November 2026, Europe/London. **Publication, production readback, authenticated browser acceptance and owner screen acceptance are complete.**
 
 | Evidence category | Reference and scope |
 | --- | --- |
@@ -10,7 +10,7 @@
 | Production static publication | [Run 45153826642](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45153826642), attempt 1, protected gate and publisher successful. Canonical Cloudflare `62f2f737-da53-49a5-960f-a38bdd10af11`. All 52 independently checked live responses matched the approved inventory, including all 33 changes. |
 | Authenticated browser acceptance | Signed-in native [DOMINION](https://apparitioninstruments.co.uk/admin/dominion/) loaded UNITY Paused, QUARTERMASTER Disabled and both empty states. Desktop navigation, mobile and sign-out checks are in the 83R receipt. 84A rechecked the live authenticated status screen independently. |
 | Genuine provider acceptance | Stripe and eBay provider acceptance are later workstreams. |
-| Owner business acceptance | Pending explicit owner confirmation that live DOMINION displays UNITY Paused and QUARTERMASTER Disabled. The pre-publication owner RPC result is recorded under production database evidence. |
+| Owner business acceptance | The owner explicitly accepted the live DOMINION screen showing UNITY Paused and QUARTERMASTER Disabled in Authorisation 84B-R on 24 November 2026. The pre-publication owner RPC result is recorded under production database evidence. |
 
 84A rechecked the canonical deployment and rollback directly in Cloudflare. Store OPEN, Aftercare Direct off, delivery revision 5, standard £3.99 below £50 and free from £50, and the existing £4.99 option were verified with read-only queries. All nine active Edge versions match the accepted baseline. QUARTERMASTER remains disabled with no installed workshop routines. The eight private packing tables retain RLS and no direct application-role reads or writes.
 
