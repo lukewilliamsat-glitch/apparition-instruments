@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {setTimeout as wait} from 'node:timers/promises';
 import {createRequire} from 'node:module';
+import {pathToFileURL} from 'node:url';
+import {join} from 'node:path';
 const require=createRequire(import.meta.url);
 const {Client}=require(process.env.QUARTERMASTER_PG_MODULE??'pg');
 const host=process.env.QUARTERMASTER_PG_HOST??'127.0.0.1';
@@ -118,6 +120,28 @@ try{
  assert.equal(report.current,true);
  assert.equal(report.finance.costs.packaging.minor,40);assert.equal(report.finance.costs.shipping.minor,115);
  assert.equal(await val(db,'select count(*)::int v from public.order_financial_revisions'),1);
+ if(process.env.QUARTERMASTER_STAGE_SITE){
+  const model=await import(pathToFileURL(join(process.env.QUARTERMASTER_STAGE_SITE,'admin/omniscience/model.mjs')));
+  const result=model.evaluate(report);
+  assert.equal(result.state,'recorded');
+  assert.equal(result.calculation.fulfilmentCosts.packaging,40);
+  assert.equal(result.calculation.fulfilmentCosts.shipping,115);
+ }
+ const original=report.finance;
+ const correction=structuredClone(original);
+ correction.costs.other={minor:10,state:'confirmed',source:'84C synthetic correction'};
+ const corrected=await scoped(as(2),'select public.command63_financial_save($1,1,$2,$3,$4) v',
+   [ids[0],p.orderBasisHash,uid(25),correction]);
+ assert.equal(corrected.revision,2);
+ const records=(await db.query('select before_document,after_document from public.order_financial_revisions where order_id=$1 order by revision',[ids[0]])).rows;
+ assert.equal(records.length,2);
+ assert.deepEqual(records[0].after_document,original);
+ assert.deepEqual(records[1].before_document,original);
+ assert.deepEqual(records[1].after_document,correction);
+ const p2=await proposal();
+ assert.equal(p2.document.costs.other.minor,10);
+ assert.equal(p2.document.costs.shipping.minor,115);
+ console.log('PASS OMNISCIENCE recorded costs and preserved previous financial revision after correction');
  assert.equal(await val(db,"select quantity::int v from public.inventory where component_id='fixture-staging-pot'"),99);
  assert.equal(await val(db,"select count(*)::int v from quartermaster79.movement where kind='packed'"),1);
  const financeBefore=await val(db,"select md5(string_agg(after_document::text,',' order by revision)) v from public.order_financial_revisions");
