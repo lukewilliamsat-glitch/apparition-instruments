@@ -4,7 +4,7 @@ Start at [01 Master state](01-MASTER-STATE.md), [02 Release queue](02-RELEASE-QU
 
 ## Current restart point
 
-FIRST LIGHT is live. Resume from the [closure register](08-FIRST-LIGHT-CLOSURE.md), [updated queue](02-RELEASE-QUEUE.md), [operating policy](07-OPERATING-POLICY.md) and [QUARTERMASTER proposal](../quartermaster84/RELEASE-PROPOSAL.md). The owner walkthrough remains pending. Preserve the FIRST LIGHT deployment as the expected baseline for the next release.
+QUARTERMASTER 84B is live in observe. Resume from the [production receipt](../quartermaster84/84B-PRODUCTION-RECEIPT.md), [release queue](02-RELEASE-QUEUE.md), [operating policy](07-OPERATING-POLICY.md) and [staging assessment](../quartermaster84/STAGING-READINESS.md). The owner accepted FIRST LIGHT and the fixture walkthrough. Keep writer work isolated while the new live owner walkthrough and future candidate gates remain open. Preserve FIRST LIGHT as the immediate rollback.
 
 ## Historical SUCCESSION 83H starter prompt
 

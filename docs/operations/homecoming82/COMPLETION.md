@@ -1,5 +1,7 @@
 # HOMECOMING 82 completion register
 
+The [live HOMECOMING release queue](../astra-succession/02-RELEASE-QUEUE.md) records subsequent production releases and their acceptance gates. See the [QUARTERMASTER 84B receipt](../quartermaster84/84B-PRODUCTION-RECEIPT.md) for the canonical read-only baseline.
+
 20 November 2026. This pass read production metadata, reused the sealed Stage B candidate, and ran isolated acceptance. It installed no production schema, published no static application, deployed no Edge Function, and made no production stock, order, payment, financial, eBay or email changes.
 
 ## Production checkpoint
