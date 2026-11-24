@@ -1,22 +1,24 @@
 # QUARTERMASTER 84C staging release register
 
-24 November 2026. Sealed candidate passed the isolated gates. Persistent installation and publication await confirmed staging Auth identities.
+24 November 2026. Sealed candidate passed the isolated gates. The three corrected staging Auth identities are confirmed. Persistent installation and publication are pending.
 
 | Item | Pinned identity |
 | --- | --- |
-| Source | `cd0714a37817085cd9c4a666e4fe1a45d0fb8030`. Reuses the accepted 84B artifact and writer source. |
-| Disposable rehearsal | [Run 45391192174](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45391192174), attempt 1, PostgreSQL and Chromium succeeded. |
-| Wrapper | [Artifact 14918089422](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45391192174/artifacts/14918089422). SHA-256 `c36b0958431fa6b0e812cce88723b7fbbccacabacf2f2998c923a6ecfb9f5b9b`. |
-| Atomic stage SQL | SHA-256 `015c8d8446902ce48f462bc4099eb3f88451a4604066ad0952b032da9c0789a0`, including seed SHA-256 `3b66590d2b7d9ea6830785de6113a9f1c17dbe36a5eccadaf7de4e2dc693dbfb`. |
+| Source | `c74b0303702105bb42ec74c882addba8dba6929d`. Reuses the accepted 84B artifact and writer source. |
+| Disposable rehearsal | [Run 45394609239](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45394609239), attempt 1, PostgreSQL and Chromium succeeded. |
+| Wrapper | [Artifact 14920546326](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45394609239/artifacts/14920546326). SHA-256 `3fe57a7ee15acf8d06d796cd1b720adc3a13f66fa1083ddb3f5388ecf55b0f26`. |
+| Atomic stage SQL | SHA-256 `84cda3a968e228d230879ab9b75d192599c0a7517cac25ea5f630a526d5da5a7`, including seed SHA-256 `a82f260164bd77a92f0b16fe02865a16906fce4adda8c9f76f3879c3483bef24`. |
 | Static package | 18 files. ZIP SHA-256 `539df247ff7b7f06bd378f87fdc498be88ae6b4f7727cd50fc8d4a5e90e30904`. Inventory SHA-256 `03f55a7d0c6b01c8f7d2382a788dc975155c48645d6973b30583378fa161b59a`. |
-| Protected uploader | Code commit `03dddd350727690b731e6c9c0a9dba29e7b24ed3`. Publish script SHA-256 `dc374d2d43da3b93973d67989044b054a5e3280d7d343aab4e1c9e8c076d4132`. Reviewed pending workflow SHA-256 `964a7f141797f474615d57adbdefa1e23564c796cfe29eb334560050efc5d751`. |
+| Protected uploader | Code commit `03dddd350727690b731e6c9c0a9dba29e7b24ed3`. Publish script SHA-256 `dc374d2d43da3b93973d67989044b054a5e3280d7d343aab4e1c9e8c076d4132`. Reviewed pending workflow SHA-256 `a85dcc64522a54a600963da607bb0f286d7d0603ee945f5c683cd592b815714d`. |
 | Supabase scope | Project `prwmowexhonguvtiywsy` only. Stage issuer and exact PostgREST/Auth allowlist. No Edge, checkout, webhook, mailing, carrier, Stripe or eBay routes in the package. |
 | Preview scope | Approved target `apparition-phoenix-preview`, branch `quartermaster84c-stage`, intended route `https://quartermaster84c-stage.apparition-phoenix-preview.pages.dev/admin/orders/`. The Access redirect was verified before publication. Preview project canonical `a73b0e75-fd2c-4321-953d-c6c173e9ecfe`; prior latest remains the separate 84B-P fixture `704c4ce5-7d52-4aaf-8155-eda60a6db978`. |
 | Production preflight | Canonical 84B `3d31097e-0418-4547-bdb0-bd9f7ce91b6e`, exact source `15efc3473d9b91ab6664c5c2e47408bdca529b40`, two read-only packing functions; UNITY paused, QUARTERMASTER observe, Aftercare Direct off, OPEN, delivery revision 5. Counts 34 Orders, 35 inventory, seven financial revisions. Nine Edge versions matched. FIRST LIGHT remains rollback `62f2f737-da53-49a5-960f-a38bdd10af11`. 84B owner business acceptance remains pending. |
 
 ## Identity prerequisite and release sequence
 
-Use Dashboard Authentication → Users → Add user → Create user in **apparition-staging**. Confirm the password users `84c-operator@fixtures.example`, `84c-finance@fixtures.example`, and `84c-observer@fixtures.example` without sending invitations. Keep passwords in the owner's password manager. At preflight check three exact confirmed password users, all without existing general Admin grants. The atomically applied seed grants a fixture-only seat to each and the existing staging finance Admin authority to the finance approver alone. Operator and observer retain scoped membership and cannot call the general finance writer.
+The original domain instructions were corrected before staging SQL. The existing enabled synthetic Auth guard requires @example.invalid. Its function-definition MD5 is `2f7a054f7d60cccb1673602c55cb9591`. The disposable rehearsal verifies guard rejection of the earlier domain and the exact stage prerequisites. No change to the guard was required.
+
+Use Dashboard Authentication → Users → Add user → Create user in **apparition-staging**. Confirm the password users `84c-operator@example.invalid`, `84c-finance@example.invalid`, and `84c-observer@example.invalid` without sending invitations. Keep passwords in the owner's password manager. At preflight check three exact confirmed password users, all without existing general Admin grants. The atomically applied seed grants a fixture-only seat to each and the existing staging finance Admin authority to the finance approver alone. Operator and observer retain scoped membership and cannot call the general finance writer.
 
 Verify the authoritative staging schema fingerprints and prior preview receipt again. Apply the pinned SQL once through the staging connector and verify its migration ledger receipt, four fixture order identities, one supplier, zero initial packaging stock, three exact scoped roles and anonymous denial. Register the reviewed publishing workflow at `.github/workflows/quartermaster84c-stage-preview.yml` on the existing guarded `engineering/phoenix66-preview` ref once. Verify the protected run and actual bytes, independent Access protection, application headers and retained canonical targets. Await native signed-in acceptance using the three distinct roles through the normal verified staging Auth flow.
 

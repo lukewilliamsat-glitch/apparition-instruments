@@ -41,4 +41,4 @@ The single 84B-P deployment succeeded on 23 November 2026. Project `apparition-p
 
 ## 84C protected staging checkpoint
 
-[Staging release register](../quartermaster84/STAGING-84C-REGISTER.md) records the sealed 84C candidate, exact protected publisher and PostgreSQL/Chromium acceptance. Persistent staging, native role sign-in and receipt remain gated on the three confirmed fixture Auth users. See [follow-on provider prerequisites](../quartermaster84/HOMECOMING-84C-FOLLOW-ON.md). 84B remains the canonical production baseline.
+[Staging release register](../quartermaster84/STAGING-84C-REGISTER.md) records the sealed 84C candidate, exact protected publisher and PostgreSQL/Chromium acceptance. The three staging Auth users are confirmed on the existing permitted domain. The corrected candidate passed the isolated gates. Persistent installation, protected publication and native acceptance are pending. See [follow-on provider prerequisites](../quartermaster84/HOMECOMING-84C-FOLLOW-ON.md). 84B remains the canonical production baseline.
