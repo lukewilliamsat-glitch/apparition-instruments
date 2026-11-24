@@ -1,0 +1,140 @@
+# Review source. Register and run only under a later release-specific authority.
+name: QUARTERMASTER 84B exact read-only Pages publication
+on:
+  workflow_dispatch:
+    inputs:
+      execution_confirmed:
+        description: Exact 84B publication and read-only database preflight approved
+        required: true
+        type: boolean
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: phoenix66-pages-publisher
+  cancel-in-progress: false
+jobs:
+  production_gate:
+    if: github.event_name == 'workflow_dispatch' && github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview' && github.run_attempt == 1 && inputs.execution_confirmed
+    environment: phoenix66-production
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Verify the protected production target
+        env:
+          APPROVED_TARGET: ${{ vars.PHOENIX66_APPROVED_TARGET }}
+        run: test "$APPROVED_TARGET" = 'apparition-instruments:production:43845328622'
+  publish:
+    needs: production_gate
+    environment: phoenix66-preview
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Verify the exact candidate and immediate rollback
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          umask 077
+          work="$RUNNER_TEMP/quartermaster84"
+          mkdir "$work"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14809317163/zip" > "$work/candidate.zip"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14643717958/zip" > "$work/baseline.zip"
+          unset GH_TOKEN
+          python3 - "$work" <<'PY'
+          from hashlib import sha256
+          from io import BytesIO
+          import json
+          from pathlib import Path
+          import sys
+          from zipfile import ZipFile
+
+          work = Path(sys.argv[1])
+          digest = lambda data: sha256(data).hexdigest()
+
+          def verified(data, expected):
+              assert digest(data) == expected
+              return data
+
+          expected_entries = {
+              'admin/admin-gate.mjs', 'admin/application.mjs', 'admin/orders/app.mjs',
+              'admin/orders/index.html', 'admin/quartermaster/entry.mjs',
+              'admin/quartermaster/index.html', 'admin/quartermaster/workspace.css',
+          }
+          with ZipFile(BytesIO(verified((work / 'candidate.zip').read_bytes(),
+               'c4a196b23575b5fd0f9374f92d0bb192405ad5813b19f17579b19c9ca9b1ee07'))) as archive:
+              static = verified(archive.read('quartermaster84-observe-static.zip'),
+                  '72bafac531f558fc297706fa4a9d76c90ec2986f4de847d6868f8f275c03e7be')
+              manifest = json.loads(verified(archive.read('quartermaster84-observe-manifest.json'),
+                  '8bf1dbdd4385922a46fcb73675c8d40ddbc069681682c5ed5cc8920f0c3fa30c'))
+              verified(archive.read('observe.review.sql'),
+                  '6a7279540a84a97363b2a2e6139aecff54ee3dfa24f500fd3920d9446a84b0f2')
+          with ZipFile(BytesIO(verified((work / 'baseline.zip').read_bytes(),
+               '7764bebe684efd8441bdf778bf51dced4497de0a5b8c2d7adf250072503b19ac'))) as archive:
+              rollback = verified(archive.read('stageb81-static.zip'),
+                  'b5900c3e15b92db98a345f202bac9d56a1559809b82646d3b62c9c1c093809e7')
+
+          def files(data):
+              with ZipFile(BytesIO(data)) as archive:
+                  names = archive.namelist()
+                  assert len(names) == len(set(names))
+                  for name in names:
+                      assert not name.startswith('/') and not name.endswith('/') and '\\' not in name
+                      assert all(part not in ('', '.', '..') for part in name.split('/'))
+                  return {name: archive.read(name) for name in names}
+
+          old, new = files(rollback), files(static)
+          inventory = {name: digest(data) for name, data in new.items()}
+          changes = {name: inventory[name] for name, data in new.items() if old.get(name) != data}
+          assert len(old) == 488 and len(new) == manifest['files'] == 491
+          assert old.keys() <= new.keys() and inventory == manifest['inventory']
+          assert changes == manifest['changed'] and changes.keys() == expected_entries
+          for name, data in new.items():
+              target = work / 'static' / name
+              target.parent.mkdir(parents=True, exist_ok=True)
+              target.write_bytes(data)
+          print('Verified the exact 491-file candidate, seven Admin changes and FIRST LIGHT rollback')
+          PY
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Prepare the approved Pages uploader
+        run: npm install --prefix "$RUNNER_TEMP/cloudflare-uploader" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false wrangler@4.162.0
+      - name: Require FIRST LIGHT baseline, upload and verify served responses
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/quartermaster84"
+          endpoint="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/apparition-instruments"
+          prior='62f2f737-da53-49a5-960f-a38bdd10af11'
+          prior_source='49e011c6ef0bd583dca403f888912b465b610b0c'
+          candidate='15efc3473d9b91ab6664c5c2e47408bdca529b40'
+          project() { curl -fsS --max-time 12 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$endpoint"; }
+          project | jq -e --arg id "$prior" --arg source "$prior_source" \
+            '.success and (.result.domains|index("apparitioninstruments.co.uk")!=null) and .result.production_branch=="production" and .result.canonical_deployment.id==$id and .result.canonical_deployment.environment=="production" and .result.canonical_deployment.latest_stage.status=="success" and .result.canonical_deployment.deployment_trigger.metadata.commit_hash==$source' >/dev/null
+          cd "$work"
+          "$RUNNER_TEMP/cloudflare-uploader/node_modules/.bin/wrangler" pages deploy "$work/static" \
+            --project-name=apparition-instruments --branch=production --commit-hash="$candidate" \
+            --commit-dirty=true --commit-message="Authorisation 84B read-only QUARTERMASTER artifact 14809317163"
+          project | jq -e --arg old "$prior" --arg source "$candidate" \
+            'select(.success) | .result.canonical_deployment | select(.id!=$old and .environment=="production" and .latest_stage.status=="success" and .deployment_trigger.metadata.commit_hash==$source) | {id,url,environment,source:.deployment_trigger.metadata.commit_hash}' >> "$GITHUB_STEP_SUMMARY"
+          readback() {
+            local route="$1" expected="$2" attempt
+            for attempt in 1 2 3; do
+              if curl -fsS --max-time 14 --max-filesize 3000000 "https://apparitioninstruments.co.uk$route" -o "$work/served" && cmp -s "$work/static/$expected" "$work/served"; then return; fi
+              if [[ "$attempt" != 3 ]]; then sleep 4; fi
+            done
+            printf 'Served byte difference: %s\n' "$route" >&2
+            return 1
+          }
+          for route in / /account/ /checkout/ /admin/orders/ /admin/dominion/ /admin/quartermaster/; do
+            readback "${route}?quartermaster84=$GITHUB_RUN_ID" "${route#/}index.html"
+          done
+          for path in admin/admin-gate.mjs admin/application.mjs admin/orders/app.mjs admin/quartermaster/entry.mjs; do
+            readback "/$path?build=quartermaster84-observe1" "$path"
+          done
+          readback '/admin/quartermaster/workspace.css?build=82-workshop' 'admin/quartermaster/workspace.css'
+          readback '/operations/snapshot.json' 'operations/snapshot.json'
+          printf 'Canonical static deployment and served bytes verified. Database and signed-in acceptance are recorded separately.\n' >> "$GITHUB_STEP_SUMMARY"
