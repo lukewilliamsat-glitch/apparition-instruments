@@ -1,0 +1,69 @@
+name: QUARTERMASTER 84C staging candidate
+on:
+  push:
+    branches: [engineering/quartermaster84c-stage]
+    paths: ['tests/quartermaster84c/**', '.github/workflows/quartermaster84c-candidate.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  candidate:
+    if: github.ref == 'refs/heads/engineering/quartermaster84c-stage'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      pg:
+        image: postgres:17.12-bookworm
+        env:
+          POSTGRES_DB: quartermaster84w_fixture
+          POSTGRES_PASSWORD: disposable-fixture
+        ports: ['5432:5432']
+        options: --health-cmd "pg_isready -U postgres -d quartermaster84w_fixture" --health-interval 3s --health-timeout 3s --health-retries 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Build exact staging assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          dir=tests/quartermaster84c
+          out="$RUNNER_TEMP/84c"
+          mkdir "$out"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14809317163/zip" > "$RUNNER_TEMP/accepted84.zip"
+          unset GH_TOKEN
+          python3 "$dir/assemble.py" . "$out/staging84c.sql"
+          python3 "$dir/pack.py" "$RUNNER_TEMP/accepted84.zip" tests/quartermaster84w/workspace.mjs "$out"
+          (
+            cd "$out"
+            printf '%s\n' \
+              '015c8d8446902ce48f462bc4099eb3f88451a4604066ad0952b032da9c0789a0  staging84c.sql' \
+              '539df247ff7b7f06bd378f87fdc498be88ae6b4f7727cd50fc8d4a5e90e30904  quartermaster84c-static.zip' \
+              '03f55a7d0c6b01c8f7d2382a788dc975155c48645d6973b30583378fa161b59a  inventory.json' \
+              | sha256sum -c
+          )
+          unzip -q "$out/quartermaster84c-static.zip" -d "$RUNNER_TEMP/84c-site"
+      - name: Rehearse atomic SQL, competing writes, finance and compensation
+        env:
+          PGPASSWORD: disposable-fixture
+        run: |
+          set -euo pipefail
+          npm ci --prefix tests/quartermaster84w --ignore-scripts --no-audit --no-fund
+          export QUARTERMASTER_PG_MODULE="$PWD/tests/quartermaster84w/node_modules/pg"
+          node tests/quartermaster84c/test/install.mjs "$RUNNER_TEMP/84c/staging84c.sql" | tee "$RUNNER_TEMP/84c/database-acceptance.txt"
+      - name: Verify packaged browser with synthetic fixtures
+        env:
+          QUARTERMASTER_CHROMIUM: /usr/bin/google-chrome
+        run: |
+          set -euo pipefail
+          export QUARTERMASTER_PLAYWRIGHT="$PWD/tests/quartermaster84w/node_modules/playwright"
+          node tests/quartermaster84c/test/browser.mjs "$RUNNER_TEMP/84c-site" | tee "$RUNNER_TEMP/84c/browser-acceptance.txt"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: quartermaster84c-sealed-stage-candidate
+          path: ${{ runner.temp }}/84c
+          if-no-files-found: error

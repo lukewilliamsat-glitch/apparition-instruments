@@ -1,0 +1,16 @@
+:root{font-family:system-ui,sans-serif;color-scheme:dark;background:#13161b;color:#ece7da;line-height:1.5}
+*{box-sizing:border-box}
+header{display:flex;align-items:center;flex-wrap:wrap;gap:1rem;justify-content:space-between;padding:1rem max(1.1rem,calc((100vw - 62rem) / 2));border-bottom:1px solid #666050;background:#1c2028}
+header span{color:#e1ca91}
+main{max-width:64rem;margin:1.5rem auto;padding:0 1rem 3rem}
+h1,h2{line-height:1.2}
+a{color:#e5cb89}
+button,input,select{font:inherit;padding:.55rem .7rem;border:1px solid #736c5c;border-radius:.25rem;color:inherit;background:#222831;max-width:100%}
+button{cursor:pointer;border-color:#aa945f}
+button:disabled{opacity:.5;cursor:default}
+label{display:flex;align-items:flex-start;flex-direction:column;gap:.2rem}
+form{display:flex;align-items:flex-end;flex-wrap:wrap;gap:.75rem;padding:.5rem 0}
+form[hidden],button[hidden]{display:none}
+section{border:1px solid #504b43;border-radius:.4rem;padding:.85rem 1rem;margin:1rem 0;background:#1b1f26}
+nav{display:flex;gap:1rem;flex-wrap:wrap}
+:focus-visible{outline:3px solid #e7ca7f;outline-offset:3px}
