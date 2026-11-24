@@ -13,11 +13,18 @@
 
 ## 84B owner acceptance checkpoint
 
-23 November 2026. FIRST LIGHT remains canonical at `62f2f737-da53-49a5-960f-a38bdd10af11` and native signed-in DOMINION shows UNITY Paused and QUARTERMASTER Disabled. Explicit owner screen acceptance is pending.
+### FIRST LIGHT
 
-The protected QUARTERMASTER walkthrough is also pending. The Cloudflare protected preview project has no deployment of the QUARTERMASTER workshop or 84A candidate. The historical preview and exact 84A read-only package remain available as GitHub Actions artifacts. Isolated CI and artifact access do not establish owner acceptance of the protected walkthrough.
+Rechecked 24 November 2026. Canonical production remains `62f2f737-da53-49a5-960f-a38bdd10af11`, UNITY is paused and QUARTERMASTER is disabled. The established native signed-in screen showed **UNITY Paused** and **QUARTERMASTER Disabled**. Explicit owner screen acceptance is pending. See [FIRST LIGHT closure register](08-FIRST-LIGHT-CLOSURE.md).
 
-The five 84B digests match the pinned proposal and the exact packaged inventory (491 files, seven Admin changes). Production QUARTERMASTER remains disabled with the proposed RPC and helper absent. The reviewed production publisher is unregistered on both refs. Production preflight, installation, publication and observe-mode acceptance follow explicit confirmation of both owner gates.
+### Protected QUARTERMASTER walkthrough
+
+The single 84B-P deployment succeeded on 23 November 2026. Project `apparition-phoenix-preview`, preview branch `quartermaster84`, deployment `704c4ce5-7d52-4aaf-8155-eda60a6db978`. The preview project's canonical recovery baseline remains `a73b0e75-fd2c-4321-953d-c6c173e9ecfe`. Its previous latest deployment was `60f12490-db5f-46fa-8c9b-9f8877da684a` on the Omniscience preview branch.
+
+- [Protected Orders walkthrough](https://quartermaster84.apparition-phoenix-preview.pages.dev/admin/orders/). In the native browser on 24 November, Cloudflare Access requested an email login code. Native interactive verification remains pending owner authentication. After sign-in, choose `FIXTURE-101` and **Review workshop packing**, check packed evidence and **Back to this order**, and try the disabled, slow and unavailable states. `FIXTURE-100` is a separate historical picking exercise whose counts reset on reload.
+- Fixture wrapper source `8c40306989da0dcfc0437b7686c9bf2bde38e0de` on `engineering/quartermaster84p-fixture`. It reuses the exact read-only entry from [candidate 14809317163](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45157492147/artifacts/14809317163) and the historical picking entry from [workshop 14645814636](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/44770162646/artifacts/14645814636). This is a separate 11-file fixture package. Inventory SHA-256 `2a647b8ec3654c15b552985aa8db03ade94b13e34d1e4219ee6e21e7373504a5`.
+- [Run 45164515077](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45164515077), attempt 1, succeeded. [Fixture artifact 14813706658](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45164515077/artifacts/14813706658). Isolated Chromium at 1360 and 390 px verified Orders context and return, the BOM and packaging, parcel and cost evidence, disabled/loading/error states and the disposable pick interaction. The protected publisher matched all served asset bytes to the fixture inventory and verified the no-network CSP. Independent unauthenticated checks received Access redirects for five routes/assets on each of the alias and immutable hosts. The preview routes have no production backend, customer data, or runtime production credentials.
+- Explicit QUARTERMASTER owner acceptance remains pending. Passing fixture tests establish the walkthrough behaviour. The reviewed 84B candidate remains intact. The production RPC and helper remain absent. Production preflight, installation, publication and observe-mode transition follow explicit confirmation of both owner gates.
 
 ## Current operating checkpoints
 
