@@ -59,7 +59,7 @@ try{
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
   await page.goto(origin+'/admin/orders/');
   const login=async()=>{
-   await page.getByLabel('Staging email').fill('operator@fixtures.example');
+   await page.getByLabel('Staging email').fill('operator@example.invalid');
    await page.getByLabel('Password').fill('isolated-fixture-only');
    await page.getByRole('button',{name:'Sign in',exact:true}).click();
   };

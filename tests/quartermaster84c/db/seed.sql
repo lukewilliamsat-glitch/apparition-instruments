@@ -27,11 +27,11 @@ declare
  finance_id uuid;
  observer_id uuid;
 begin
-  select id into strict operator_id from auth.users where email='84c-operator@fixtures.example' and email_confirmed_at is not null
+  select id into strict operator_id from auth.users where email='84c-operator@example.invalid' and email_confirmed_at is not null
       and coalesce(encrypted_password,'')<>'';
-  select id into strict finance_id from auth.users where email='84c-finance@fixtures.example' and email_confirmed_at is not null
+  select id into strict finance_id from auth.users where email='84c-finance@example.invalid' and email_confirmed_at is not null
       and coalesce(encrypted_password,'')<>'';
-  select id into strict observer_id from auth.users where email='84c-observer@fixtures.example' and email_confirmed_at is not null
+  select id into strict observer_id from auth.users where email='84c-observer@example.invalid' and email_confirmed_at is not null
       and coalesce(encrypted_password,'')<>'';
   if exists(select from public.admin_members where user_id in(operator_id,observer_id)) then
     raise exception '84C operator and observer must have stage-only membership';

@@ -41,7 +41,7 @@ jobs:
           (
             cd "$out"
             printf '%s\n' \
-              '015c8d8446902ce48f462bc4099eb3f88451a4604066ad0952b032da9c0789a0  staging84c.sql' \
+              '84cda3a968e228d230879ab9b75d192599c0a7517cac25ea5f630a526d5da5a7  staging84c.sql' \
               '539df247ff7b7f06bd378f87fdc498be88ae6b4f7727cd50fc8d4a5e90e30904  quartermaster84c-static.zip' \
               '03f55a7d0c6b01c8f7d2382a788dc975155c48645d6973b30583378fa161b59a  inventory.json' \
               | sha256sum -c
@@ -54,6 +54,7 @@ jobs:
           set -euo pipefail
           npm ci --prefix tests/quartermaster84w --ignore-scripts --no-audit --no-fund
           export QUARTERMASTER_PG_MODULE="$PWD/tests/quartermaster84w/node_modules/pg"
+          export QUARTERMASTER_STAGE_SITE="$RUNNER_TEMP/84c-site"
           node tests/quartermaster84c/test/install.mjs "$RUNNER_TEMP/84c/staging84c.sql" | tee "$RUNNER_TEMP/84c/database-acceptance.txt"
       - name: Verify packaged browser with synthetic fixtures
         env:

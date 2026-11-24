@@ -2,7 +2,7 @@
 -- Disposable fixture prerequisites. Auth and inventory are minimal test doubles.
 create role anon; create role authenticated; create role service_role;
 create schema commerce67; create schema ironclad69; create schema auth; create schema eclipse_finance;
-create table auth.users(id uuid primary key,email text not null unique,email_confirmed_at timestamptz,encrypted_password text);
+create table auth.users(id uuid primary key,email text not null unique,phone text,email_confirmed_at timestamptz,encrypted_password text);
 create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
 create sequence public.order_reference_seq;
 create table public.components(id text primary key,name text not null);
@@ -10,11 +10,25 @@ create table public.inventory(component_id text primary key,quantity bigint not 
 create table ironclad69.measurements(id uuid primary key);
 insert into public.components values('fixture-staging-pot','84C Fixture Pot');
 insert into public.inventory values('fixture-staging-pot',99);
-insert into auth.users values
- ('a0000000-0000-4000-8000-000000000001','84c-operator@fixtures.example',now(),'fixture-only'),
- ('a0000000-0000-4000-8000-000000000002','84c-finance@fixtures.example',now(),'fixture-only'),
- ('a0000000-0000-4000-8000-000000000003','84c-observer@fixtures.example',now(),'fixture-only'),
- ('a0000000-0000-4000-8000-000000000004','unrelated@fixtures.example',null,null);
+CREATE OR REPLACE FUNCTION public.proving_grounds_synthetic_auth_only()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SET search_path TO ''
+AS $function$
+begin
+ if new.email is null or lower(new.email) !~ '^[a-z0-9._+-]+@example[.]invalid$'
+    or new.phone is not null then
+   raise exception 'Use an internal example.invalid staging identity' using errcode='42501';
+ end if;
+ return new;
+end $function$;
+CREATE TRIGGER proving_grounds_synthetic_auth_only BEFORE INSERT OR UPDATE OF email, phone ON auth.users FOR EACH ROW EXECUTE FUNCTION public.proving_grounds_synthetic_auth_only();
+
+insert into auth.users(id,email,email_confirmed_at,encrypted_password) values
+ ('a0000000-0000-4000-8000-000000000001','84c-operator@example.invalid',now(),'fixture-only'),
+ ('a0000000-0000-4000-8000-000000000002','84c-finance@example.invalid',now(),'fixture-only'),
+ ('a0000000-0000-4000-8000-000000000003','84c-observer@example.invalid',now(),'fixture-only'),
+ ('a0000000-0000-4000-8000-000000000004','unrelated@example.invalid',null,null);
 
 
 create table public.admin_members (user_id uuid not null, created_at timestamp with time zone default now() not null, constraint admin_members_pkey PRIMARY KEY (user_id), constraint admin_members_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE);

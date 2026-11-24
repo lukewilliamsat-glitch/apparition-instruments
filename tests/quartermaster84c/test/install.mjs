@@ -47,6 +47,7 @@ async function lockWait(client){
 try{
  assert.equal((await row(db,'select current_database() name')).name,options.database);
  await db.query(await file('./stage-prerequisites.sql'));
+ await check(db.query("insert into auth.users(id,email) values($1,$2)",[uid(99),'wrong-auth-domain@fixtures.example']),'42501');
  const sql=await readFile(files,'utf8');
  // Missing verified identity must fail atomically.
  await db.query('update auth.users set email_confirmed_at=null where id=$1',[as(3)]);

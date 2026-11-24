@@ -12,6 +12,11 @@ begin
      or md5(pg_get_functiondef('public.omniscience74_orders(date,date,date,uuid)'::regprocedure)) is distinct from 'b728d8e8b2a23d4a08319aa316684d7c' then
     raise exception 'Unexpected Orders finance or Admin interface';
   end if;
+  if not exists(select from pg_trigger t where t.tgrelid='auth.users'::regclass
+      and t.tgname='proving_grounds_synthetic_auth_only' and t.tgenabled in ('O','A')
+      and md5(pg_get_functiondef(t.tgfoid))='2f7a054f7d60cccb1673602c55cb9591') then
+    raise exception 'Staging Auth identity restriction changed';
+  end if;
   if not exists(select from public.inventory where component_id='fixture-staging-pot')
      or exists(select from pg_trigger t where not t.tgisinternal and t.tgenabled<>'D'
          and t.tgrelid in ('public.orders'::regclass,'ironclad69.suppliers'::regclass,'public.order_financial_records'::regclass,
