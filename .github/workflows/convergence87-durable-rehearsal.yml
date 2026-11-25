@@ -1,0 +1,50 @@
+name: HOMECOMING durable settlement rehearsal
+on:
+  push:
+    branches: [engineering/convergence87-sandbox]
+    paths: [.github/workflows/convergence87-durable-rehearsal.yml]
+permissions:
+  contents: read
+jobs:
+  isolated:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17.6
+        env:
+          POSTGRES_DB: dominion79_fixture
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 127.0.0.1:55478:5432
+        options: --health-cmd "pg_isready -U postgres -d dominion79_fixture" --health-interval 5s --health-timeout 4s --health-retries 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: f7f1192daeceacae56d7a2545cbb09be0ceeab3f
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: 43a7c0ab2a1546b2cb7fffadc82613a02a109c7d
+          path: release69b
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: a1d9e41fd4443f92f050c013c7bb1b70fa67568c
+          path: release-c
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Reuse the accepted native fixture and verify durable settlement
+        env:
+          DOMINION_ACCEPTED_ROOT: ${{ github.workspace }}/release69b
+          DOMINION_C_SQL: ${{ github.workspace }}/release-c/supabase/migrations/20261117162718_omniscience74_v1.sql
+        run: |
+          set -euo pipefail
+          npm install --prefix "$RUNNER_TEMP/dom79" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save pg@8.16.3
+          export DOMINION_PG_MODULE="$RUNNER_TEMP/dom79/node_modules/pg"
+          python3 tests/homecoming82/rebase-integration.py tests/dominion78c/integration79.mjs
+          node tests/dominion78c/.integration82-generated.mjs
+          node tests/homecoming82/settlement82.native.mjs
