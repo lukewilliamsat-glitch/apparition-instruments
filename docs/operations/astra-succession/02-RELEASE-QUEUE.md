@@ -1,5 +1,7 @@
 # HOMECOMING release queue
 
+**Current production baseline · 25 November 2026.** NOCTURNE 89 is canonical on Cloudflare deployment `59f628b9-6665-4c0b-847f-c6c833c1304b`, source `f0d3c3717cd5a37678733a71c455b602222d3357`. UNITY remains paused. QUARTERMASTER remains in workshop. Live checkout and payment files are unchanged. The immediate static rollback is 86A `2e682696-0111-444d-805a-a4200cfe3457`. Earlier dated entries below are historical receipts.
+
 **24 November 2026 · Ordered by production release dependency.** Isolated provider preparation may proceed independently when authorised. QUARTERMASTER 86A is live in workshop. UNITY remains paused pending genuine Stripe Sandbox settlement evidence. The owner’s operational walkthrough can proceed independently. Each later activation needs its own exact candidate and authority.
 
 | Order | Release and current readiness | Scope, blocker and next action | Rollback |
@@ -43,15 +45,22 @@ The single 84B-P deployment succeeded on 23 November 2026. Project `apparition-p
 
 [Staging release register](../quartermaster84/STAGING-84C-REGISTER.md) records the sealed 84C candidate, exact protected publisher and PostgreSQL/Chromium acceptance. The three staging Auth users are confirmed on the existing permitted domain. The corrected candidate passed the isolated gates. Staging migration `20261124123950` and protected preview deployment `96237d9e-1586-45c6-979a-0d55d22217a0` are verified. Native staged role and finance acceptance remain pending. See [follow-on provider prerequisites](../quartermaster84/HOMECOMING-84C-FOLLOW-ON.md). 84B remains the canonical production baseline.
 
-## AUTHORISATION 88 · NEXUS
+## AUTHORISATION 89 · NOCTURNE ASCENDANT
+
+NOCTURNE ASCENDANT is the Admin usability and shared design programme. Use the existing NOCTURNE shell and build progressively around plain-language navigation, compact forms, clear financial scope, responsive layouts, searchable selectors and reusable state patterns. Retain NEXUS requirement identifiers.
 
 | Reference | Current status |
 |---|---|
-| IR-UX-001, IR-UX-002 | Isolated Admin source separates GBP component subtotal, shared allocation and landed unit cost. Other acquisition costs are historical read-only values in existing drafts. Duty, postage and non-recoverable tax stay visible. Supplier credits and allocation overrides sit under advanced corrections. The guarded writer candidate accepts exact GBP line totals even when unit prices are fractional in pence, and makes conversion references optional. Rehearse the writer and UI together before publication. |
-| IR-UX-003 | Isolated source calculates the measured full spread and makes the maximum-spread filter optional. Existing bench compatibility and commitment limits apply. |
-| IR-UX-004, QM-UX-001 | Navigation remains open. [QUARTERMASTER candidate](https://github.com/lukewilliamsat-glitch/apparition-instruments/commit/c9c08588950a56bb9b1ddfc4f39dfdc59f5bae64) adds registered dimensions and tare to the existing read contract. Size and weight fixtures pass. Staging uses an earlier workshop function, so the exact 86A read baseline, GET and signed-in UI checks need rehearsal before publication. |
-| EC-UX-001, EC-AUTO-001, EC-AUTO-002 | Open. Keep unknown fees explicit and reuse attributable IRONCLAD and QUARTERMASTER evidence through existing financial revisions. |
-| OM-UX-001 | Open. Dashboard totals require complete period scope and explicit evidence coverage. Retain detailed drill-down and exports. |
-| UNITY × COMMERCE | Owner confirmed the isolated HOMECOMING Staging account. Stripe returned an open, unpaid GBP test Checkout Session. Readback matched amount, currency and reference. Staging migration `20261125143044` established an empty, RLS-enabled private plan store with direct API role access denied. The [durable settlement fixture](https://github.com/lukewilliamsat-glitch/apparition-instruments/commit/f7f1192daeceacae56d7a2545cbb09be0ceeab3f) is ready for a PostgreSQL rerun. The available Stripe connector did not expose Checkout completion or forced expiry. Verified payment, signed delivery, reservation coupling, replay, refunds and expiry remain open. Production UNITY stays paused. |
+| IR-UX-001, IR-UX-002, IR-UX-003 | **Live.** Exact GBP component line totals, precise landed unit cost, optional conversion reference, standard postage/duty/tax inputs, advanced corrections and calculated pair/quartet tolerances. Native PostgreSQL covered historic totals, legacy clients, partial receipts, duplicate protection and restricted actors. Stable labels and allocation remain guarded. |
+| IR-UX-004, QM-UX-001 | **Live.** Calculator remains inside IRONCLAD and off shared navigation. QUARTERMASTER shows registered dimensions and tare, offers editable actual dimensions and Royal Mail format guidance, and retains the saved completed parcel snapshot. Tested read-only GET contract against exact 86A; production signed-in workshop verified without business writes. |
+| EC-UX-001, EC-AUTO-001, EC-AUTO-002 | Open. Simplify order profitability, reuse attributable historical IRONCLAD and QUARTERMASTER evidence, and keep unknown fees explicit. |
+| OM-UX-001 | Open. Build the financial dashboard on complete-period totals with evidence coverage, separate cash expenditure and recognised costs, and preserve drill-down and exports. |
+| COMMAND and shared NOCTURNE patterns | The calculator navigation cleanup and plain-language workshop label shipped. COMMAND dashboard, advanced searchable selectors and the wider design system remain open. |
+| UNITY × COMMERCE | The isolated durable settlement rehearsal passed native PostgreSQL with signed synthetic events, exactly-once stock consumption and partial refunds. A genuine £12.34 GBP Sandbox Checkout payment was confirmed paid with a matching `checkout.session.completed` provider event. The smoke session was independent of the staging order plan. Genuine signed webhook delivery and application settlement remain outstanding. Staging private plan store migration `20261125143044`. UNITY remains paused in production. |
 
-NEXUS changes are in development. Each independently safe release uses the current verified production baseline and protected release process.
+### NOCTURNE 89 release evidence
+
+- Staging migration `20261125144713`. Production migration `20261125145923`. Verified function hashes `670b90a1c3ada73602fe89772ab1fc6a` and `54e1cb16125f68ab39796a2e58ec85a6`, and retained direct anonymous denial.
+- [Sealed Chrome rehearsal](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45639644027) passed procurement and packing at 1360 px and 390 px. Artifact `15033354572` contains the 495-file static package, SHA-256 `8308c7fe278f1edd3dd90582dbaebee019336c47c12eacfc8e1a49f1db807800`.
+- [Protected publication](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45640228866) uploaded once. The immediate Orders probe got HTTP 500 after upload. The signed-in browser confirmed Orders on the normal and cache-busted URLs. [Independent canonical readback](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45641925105) subsequently matched all 27 changed Admin responses plus home, account and checkout. Cloudflare independently confirmed the canonical ID. No repeat publication or rollback was needed.
+- [Native settlement rehearsal](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45639807379) remains isolated. No production payment, checkout or reservation changes.
