@@ -39,7 +39,7 @@ export function stripeSandboxTransport({key,account,returnOrigin,fetcher,apiVers
   if(x?.object!=='checkout.session'||x.livemode!==false||!session(x.id))throw Error('Unexpected Stripe Sandbox session');
   const checkoutURL=x.url===null||x.url===undefined?null:new URL(x.url);
   if(checkoutURL&&(checkoutURL.origin!=='https://checkout.stripe.com'||checkoutURL.username||checkoutURL.password||
-   !checkoutURL.pathname.startsWith('/c/pay/cs_test_')))throw Error('Unexpected hosted Sandbox checkout URL');
+   !['/c/pay/'+x.id,'/g/pay/'+x.id].includes(checkoutURL.pathname)))throw Error('Unexpected hosted Sandbox checkout URL');
   return {id:x.id,object:x.object,livemode:false,client_reference_id:x.client_reference_id,metadata:{dominion_binding:x.metadata?.dominion_binding},
    amount_total:x.amount_total,currency:x.currency,payment_status:x.payment_status,status:x.status,payment_intent:x.payment_intent,url:checkoutURL?.href??null};
  }
@@ -47,7 +47,9 @@ export function stripeSandboxTransport({key,account,returnOrigin,fetcher,apiVers
   async get({sessionId,account}){
    if(!session(sessionId))throw Error('Non-Sandbox session ID');
    await ensureAccount(account);
-   return safeObject(await api('/v1/checkout/sessions/'+sessionId,'GET'));
+   const result=safeObject(await api('/v1/checkout/sessions/'+sessionId,'GET'));
+   if(result.id!==sessionId)throw Error('Sandbox response does not match the requested session');
+   return result;
   },
   async createOnce({idempotencyKey,account,orderId,expectedMinor,currency,expiresAt,metadata}){
    identifier(orderId,'saved order');whole(expectedMinor,'saved total',1,100000000);whole(expiresAt,'planned expiry',1,4102444800);
