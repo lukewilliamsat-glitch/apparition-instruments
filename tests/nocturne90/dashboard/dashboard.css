@@ -1,0 +1,12 @@
+.nocturne-panel .nocturne-chart {display:grid;gap:.7rem;margin:.4rem 0 0;padding:0;list-style:none}
+.nocturne-chart li {display:grid;gap:.25rem}
+.nocturne-chart li > div {display:flex;justify-content:space-between;gap:.8rem;font-size:.86rem}
+.nocturne-chart strong {color:var(--nocturne-text);font-variant-numeric:tabular-nums}
+.nocturne-chart meter {width:100%;height:.48rem;border:0;border-radius:10rem;background:var(--nocturne-highlight)}
+.nocturne-chart meter::-webkit-meter-bar {border:0;border-radius:10rem;background:var(--nocturne-highlight)}
+.nocturne-chart meter::-webkit-meter-optimum-value {background:var(--nocturne-primary)}
+.nocturne-chart meter::-moz-meter-bar {background:var(--nocturne-primary)}
+.nocturne-panel .nocturne-quick-link {display:inline-block;margin-block:.4rem .1rem;color:var(--nocturne-primary);text-underline-offset:.2em;font-size:.875rem}
+.omniscience .nocturne-panel {padding:0;margin-block:1.1rem;border:0;background:transparent}
+.omniscience .nocturne-panel .nocturne-breakdown {margin:0}
+.omniscience .nocturne-panel .nocturne-columns {grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr))}

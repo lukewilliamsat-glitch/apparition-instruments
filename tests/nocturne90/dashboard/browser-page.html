@@ -1,0 +1,90 @@
+<!doctype html>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self'; connect-src 'none'; base-uri 'none'">
+<link rel=stylesheet href="/admin/application.css">
+<link rel=stylesheet href="/admin/omniscience/workspace.css">
+<link rel=stylesheet href="/admin/nocturne.css">
+<link rel=stylesheet href="/admin/business-dashboard.css">
+<main class="admin-main omniscience"><div id="omniscience-workspace"></div><p id="overview-status"></p><div id="overview-content"></div></main><output id=result></output>
+<script type=module>
+import {mountAdminWorkspace as mountFinance} from '/admin/omniscience/entry.mjs';
+import {mountAdminWorkspace as mountCommand,purchaseCount} from '/admin/overview.mjs';
+import {collectPeriod,previousPeriod,recordedSpend} from '/admin/omniscience/dashboard.mjs';
+import {reportRange} from '/admin/omniscience/model.mjs';
+import {financeDraft} from '/admin/orders/finance-ui.mjs';
+import {withTrustedFacts} from '/admin/orders/eclipse-model.mjs';
+const result=document.querySelector('output');
+const mode=new URL(location.href).searchParams.get('mode');
+const check=(valid,message)=>{if(!valid)throw Error(message)};
+const wait=async predicate=>{
+ for(let i=0;i<60;i++){if(predicate())return;await new Promise(resolve=>setTimeout(resolve,20));}
+ throw Error('Timed out waiting for fixture state');
+};
+const button=label=>[...document.querySelectorAll('button')].find(b=>b.textContent===label);
+const metric=label=>[...document.querySelectorAll('dt')].find(t=>t.textContent===label)?.nextElementSibling?.textContent;
+const period=reportRange('month');
+const order=(id,day,total,withFinance)=>{
+ const items=[{productId:'fixture-pot',name:'Fixture potentiometer',type:'component',quantity:1,unitPrice:total,lineTotal:total}];
+ const draft=withTrustedFacts(financeDraft({items,channel:'WEBSITE',providerBacked:true,paidAt:day+'T12:00:00Z',pricing:{total,delivery:0}}),{channel:'WEBSITE',providerBacked:true,paidAt:true});
+ draft.feesComplete=true;
+ draft.lines[0]={...draft.lines[0],unitCostMicro:100000,costState:'confirmed',costSource:'Fixture',costProvenance:{basis:'historical_snapshot'}};
+ for(const [k,value] of [['packaging',4],['shipping',30],['other',0]]) draft.costs[k]={minor:value,state:'confirmed',source:'Fixture'};
+ draft.tax={state:'not_applicable',minor:null,source:'Fixture'};
+ return {id,day,total,refund:0,reference:'FIXTURE-'+id,channel:'WEBSITE',currency:'GBP',items,finance:withFinance?draft:null,current:withFinance};
+};
+const orders=[order('a',period.to,400,true),order('b',period.from,600,false)];
+const outlays=[{id:'x',day:period.to,vendor:'Synthetic packaging supplier',category:'Packaging',purpose:'Fixture',currency:'GBP',original_minor:300,sterling_minor:300,funding:'director',treatment:'recorded-elsewhere',reimbursed:150},
+{id:'y',day:period.from,vendor:'Synthetic office supplier',category:'Office',purpose:'Fixture',currency:'GBP',original_minor:200,sterling_minor:200,funding:'business',treatment:'overhead',reimbursed:0}];
+try {
+ const previous=previousPeriod({from:'2026-03-01',to:'2026-03-03'});
+ check(previous.from==='2026-02-26'&&previous.to==='2026-02-28','Equal inclusive comparison length');
+ const spent=recordedSpend(outlays);
+ check(spent.overhead===200&&spent.business===200&&spent.director===300,'No double-counting linked expense or reimbursements');
+ const blocked=await collectPeriod(async()=>({rows:[{id:'cap'}],next:{id:'cap'}}),period,new AbortController().signal,1);
+ check(!blocked.complete,'A capped report cannot become a full-period total');
+ let duplicateCaught=false;
+ try{await collectPeriod(async()=>({rows:[{id:'repeat'}],next:{id:'repeat'}}),period,new AbortController().signal,10);}
+ catch{duplicateCaught=true;}
+ check(duplicateCaught,'Repeated cursor must be refused');
+ if(mode==='finance'){
+  let reads=0, comparisons=0;
+  const repo={
+   orders:async(range,cursor)=>{
+    if(range.from!==period.from){comparisons++;return {rows:[order('c',range.from,700,true)],next:null};}
+    reads++;if(!cursor)return {rows:[orders[0]],next:{id:'a',day:period.to}};
+    await new Promise(r=>setTimeout(r,60));
+    return {rows:[orders[1]],next:null};
+   },
+   outlays:async()=>({rows:outlays,next:null})
+  };
+  const mounted=mountFinance({document,repository:repo});
+  check(!metric('Gross buyer payments'),'No provisional headline from an incomplete page');
+  await wait(()=>metric('Gross buyer payments')==='£10.00');
+  check(reads===2&&comparisons===0,'One bounded traversal, no automatic previous-period call');
+  check(metric('Financial records to review')==='1','Evidence coverage count');
+  check(metric('Verified contribution')==='£3.56','Covered contribution is kept separate');
+  check(metric('Recorded overheads')==='£2.00'&&metric('Director-paid spend')==='£3.00','Recorded overhead and cash treatment');
+  check(document.querySelectorAll('meter').length>=2,'Verified-range charts with textual labels');
+  check([...document.querySelectorAll('summary')].some(x=>x.textContent==='Detailed sales and expense records'),'Detailed source records retained');
+  button('Compare previous period').click();
+  await wait(()=>document.body.innerText.includes('£7.00 in the previous period'));
+  check(comparisons===1,'Explicit comparison requested once');
+  check(document.documentElement.scrollWidth<=innerWidth,'No horizontal overflow');
+  mounted.lock();check(!document.querySelector('#omniscience-workspace').innerText,'Dashboard cleared on sign-out');
+ }else{
+  check(purchaseCount(new Array(25),[1,2])==='27+','Bounded purchases show a lower bound');
+  const mounted=mountCommand({document,reads:{
+   workshop:async()=>({schema:1,totals:{awaiting:2,packing:1,packed:3,low:1},rows:[{kind:'pack',happened:'2026-11-25T11:30:00Z'}]}),
+   purchasing:async()=>'4',stock:async()=>'25+',sales:async()=>({rows:orders,complete:true})
+  }});
+  await wait(()=>metric('Open workshop orders')==='6'&&metric('Gross buyer payments · GBP')==='£10.00');
+  check(metric('Packed, awaiting dispatch')==='3'&&metric('Low-stock components')==='25+','Task metrics use authoritative counts and bounds');
+  check(document.querySelector('a[href="/admin/ironclad/?view=purchases"]'),'Direct purchase workflow');
+  check(document.body.innerText.includes('Pack completed'),'Recent activity rendered');
+  check(document.documentElement.scrollWidth<=innerWidth,'No horizontal overflow');
+  mounted.lock();check(!document.querySelector('#overview-content').innerText,'COMMAND cleared on sign-out');
+ }
+ result.textContent='PASS 90 '+mode;
+}catch(error){result.textContent='FAIL 90 '+error.message;}
+</script>

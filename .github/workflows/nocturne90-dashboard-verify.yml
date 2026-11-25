@@ -1,0 +1,39 @@
+name: NOCTURNE 90 business dashboard fixture acceptance
+on:
+  push:
+    branches: [engineering/nocturne90]
+    paths:
+      - tests/nocturne90/dashboard/**
+      - .github/workflows/nocturne90-dashboard-verify.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verify:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Rebuild the sealed Admin bundle and rehearse financial evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/nocturne90-dashboard"
+          mkdir "$work"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/15037774317/zip" > "$work/baseline.zip"
+          unset GH_TOKEN
+          unzip -q "$work/baseline.zip" -d "$work"
+          python3 tests/nocturne90/dashboard/seal.py "$work/nocturne90-eclipse-static.zip" tests/nocturne90/dashboard "$work"
+          sha256sum "$work"/nocturne90-dashboard-*
+          unzip -q "$work/nocturne90-dashboard-static.zip" -d "$work/static"
+          QUARTERMASTER_CHROMIUM=google-chrome node tests/nocturne90/dashboard/browser.mjs "$work/static"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: nocturne90-dashboard-sealed
+          path: ${{ runner.temp }}/nocturne90-dashboard/nocturne90-dashboard-*
+          if-no-files-found: error
+          retention-days: 7
