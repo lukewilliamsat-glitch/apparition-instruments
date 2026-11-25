@@ -42,9 +42,10 @@ jobs:
           for file in build.py hq.mjs hq.css manage.mjs; do
             fetch_source 357223ca42dcdace285e4fed61f2f38f87d934ce "tests/quartermaster86a/$file" "war-room/$file"
           done
-          for file in seal.py browser.mjs browser-page.html; do
+          for file in seal.py browser-page.html; do
             fetch_source f0d3c3717cd5a37678733a71c455b602222d3357 "tests/nocturne89/$file" "nexus/$file"
           done
+          fetch_source 8a66a80253ea25364843282520ae701347d73d93 tests/nocturne89/browser.mjs nexus/browser.mjs
           fetch_source a542148986f8857a57a20307750dd3370318b281 dist/admin/ironclad/app.mjs nexus/ir
           gh api "repos/$GITHUB_REPOSITORY/git/blobs/14baf321130f5ae8051fb7ad123b9556f0d31ae4" --jq '.content' | base64 --decode > "$work/nexus/model"
           test "$(git hash-object "$work/nexus/model")" = '14baf321130f5ae8051fb7ad123b9556f0d31ae4'
