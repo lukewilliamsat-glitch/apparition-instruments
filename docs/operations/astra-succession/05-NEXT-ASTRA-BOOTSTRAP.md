@@ -8,9 +8,9 @@ Follow [07 Operating policy](07-OPERATING-POLICY.md). Start with connected integ
 
 ## Current restart point
 
-NOCTURNE 89 is the verified production baseline at `59f628b9-6665-4c0b-847f-c6c833c1304b`, with migration `20261125145923`. QUARTERMASTER is in workshop. UNITY is paused. Live checkout and payments retain their existing contracts. QUARTERMASTER 86A `2e682696-0111-444d-805a-a4200cfe3457` is the immediate rollback for NOCTURNE 89.
+NOCTURNE 90 COMMAND, OMNISCIENCE and ECLIPSE are live at `d1da4256-7613-4237-8cc4-e9712b6716a4`. The immediate application rollback is `56719956-1f87-48c0-8185-cfcefc0d0209` (ECLIPSE). The database remains on existing migrations, including NOCTURNE 89 `20261125145923`. QUARTERMASTER is in workshop, UNITY is paused, and live checkout and payments retain their existing contracts.
 
-Continue Authorisation 90 from the [current release queue](02-RELEASE-QUEUE.md). Prioritise shared NOCTURNE patterns and ECLIPSE, then the OMNISCIENCE and COMMAND dashboards. The genuine sandbox payment and synthetic native rehearsal are accepted evidence. Genuine signed delivery and application settlement against a staging order remain open. Refresh the canonical baseline and protect rollout controls before production mutation.
+Continue from the [current release queue](02-RELEASE-QUEUE.md). Extend shared NOCTURNE patterns and attributable historical assembly costs as suitable. The genuine Sandbox payment and synthetic native rehearsal are accepted independently. Continue staged runtime, signed provider delivery and application settlement when the prerequisites are ready. Refresh the canonical baseline and protect rollout controls before production mutation.
 
 ## Historical SUCCESSION 83H starter prompt
 

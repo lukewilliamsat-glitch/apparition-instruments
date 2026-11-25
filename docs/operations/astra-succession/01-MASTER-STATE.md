@@ -2,7 +2,7 @@
 
 **Current operating checkpoint · 25 November 2026**
 
-NOCTURNE 89 is live. See [02 Release queue](02-RELEASE-QUEUE.md) for the canonical deployment and Authorisation 90 delivery evidence and [07 Operating policy](07-OPERATING-POLICY.md) for the mandatory plugin-first hierarchy and prohibition on the owner’s browser, tabs and sessions.
+NOCTURNE 90 is live at `d1da4256-7613-4237-8cc4-e9712b6716a4`. COMMAND, OMNISCIENCE and ECLIPSE are deployed. See [02 Release queue](02-RELEASE-QUEUE.md) for the canonical deployment and Authorisation 90 delivery evidence and [07 Operating policy](07-OPERATING-POLICY.md) for the mandatory plugin-first hierarchy and prohibition on the owner’s browser, tabs and sessions.
 
 ## Historical 83H production baseline
 
