@@ -1,0 +1,147 @@
+# Authorisation 89. Verify independently before the protected publication.
+name: NOCTURNE 89 NEXUS Admin publication
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish after the isolated browser checks and protected environment approval
+        required: true
+        default: false
+        type: boolean
+      migration_receipt:
+        description: Required production migration receipt when publishing
+        required: false
+        type: string
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: phoenix66-pages-publisher
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.event_name == 'workflow_dispatch' && github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Rebuild and verify the exact Admin application
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          umask 077
+          work="$RUNNER_TEMP/nocturne89"
+          mkdir -p "$work/rollback" "$work/war-room" "$work/nexus"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14809317163/zip" > "$work/base.zip"
+          fetch_source() {
+            gh api -H 'Accept: application/vnd.github.raw+json'               "repos/$GITHUB_REPOSITORY/contents/$2?ref=$1" > "$work/$3"
+          }
+          for file in seal.py entry.mjs production.mjs workshop.mjs; do
+            fetch_source 803f9bd3b33678cc57f3e7529b0aaa16b5eacc66 "tests/quartermaster84d/$file" "rollback/$file"
+          done
+          for file in build.py hq.mjs hq.css manage.mjs; do
+            fetch_source 357223ca42dcdace285e4fed61f2f38f87d934ce "tests/quartermaster86a/$file" "war-room/$file"
+          done
+          for file in seal.py browser.mjs browser-page.html; do
+            fetch_source f0d3c3717cd5a37678733a71c455b602222d3357 "tests/nocturne89/$file" "nexus/$file"
+          done
+          fetch_source a542148986f8857a57a20307750dd3370318b281 dist/admin/ironclad/app.mjs nexus/ir
+          fetch_source a542148986f8857a57a20307750dd3370318b281 dist/admin/ironclad/model.mjs nexus/model
+          fetch_source c9c08588950a56bb9b1ddfc4f39dfdc59f5bae64 tests/nexus88/workshop.mjs nexus/qm
+          unset GH_TOKEN
+          cd "$work"
+          python3 rollback/seal.py base.zip rollback
+          python3 war-room/build.py rollback/quartermaster84d-static.zip .
+          python3 nexus/seal.py quartermaster86a-static.zip nexus .
+          sha256sum --check <<'SUMS'
+          8308c7fe278f1edd3dd90582dbaebee019336c47c12eacfc8e1a49f1db807800  nocturne89-static.zip
+          33d02337ee40acafeaa56acb672027b3357508fcc4ebf3c5cf30be56117f35f8  nocturne89-inventory.json
+          SUMS
+          unzip -q nocturne89-static.zip -d static
+          QUARTERMASTER_CHROMIUM=google-chrome node nexus/browser.mjs static
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: nocturne89-sealed
+          path: |
+            ${{ runner.temp }}/nocturne89/nocturne89-static.zip
+            ${{ runner.temp }}/nocturne89/nocturne89-inventory.json
+          if-no-files-found: error
+          retention-days: 7
+  production_gate:
+    needs: verify
+    if: inputs.publish && inputs.migration_receipt != ''
+    environment: phoenix66-production
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Verify the protected production target
+        env:
+          APPROVED_TARGET: ${{ vars.PHOENIX66_APPROVED_TARGET }}
+        run: test "$APPROVED_TARGET" = 'apparition-instruments:production:43845328622'
+  publish:
+    needs: production_gate
+    environment: phoenix66-preview
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: nocturne89-sealed
+          path: ${{ runner.temp }}/nocturne89
+      - name: Confirm migration receipt and exact archive
+        env:
+          MIGRATION_RECEIPT: ${{ inputs.migration_receipt }}
+        run: |
+          set -euo pipefail
+          [[ "$MIGRATION_RECEIPT" =~ ^[0-9]{14}$ ]]
+          cd "$RUNNER_TEMP/nocturne89"
+          sha256sum --check <<'SUMS'
+          8308c7fe278f1edd3dd90582dbaebee019336c47c12eacfc8e1a49f1db807800  nocturne89-static.zip
+          33d02337ee40acafeaa56acb672027b3357508fcc4ebf3c5cf30be56117f35f8  nocturne89-inventory.json
+          SUMS
+          unzip -q nocturne89-static.zip -d static
+          printf 'Production database migration %s\n' "$MIGRATION_RECEIPT" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Prepare the approved Pages uploader
+        run: npm install --prefix "$RUNNER_TEMP/cloudflare-uploader" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false wrangler@4.162.0
+      - name: Require 86A baseline, upload and verify served responses
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/nocturne89"
+          endpoint="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/apparition-instruments"
+          prior='2e682696-0111-444d-805a-a4200cfe3457'
+          prior_source='357223ca42dcdace285e4fed61f2f38f87d934ce'
+          candidate='f0d3c3717cd5a37678733a71c455b602222d3357'
+          project() { curl -fsS --max-time 12 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$endpoint"; }
+          project | jq -e --arg id "$prior" --arg source "$prior_source" \
+            '.success and (.result.domains|index("apparitioninstruments.co.uk")!=null) and .result.production_branch=="production" and .result.canonical_deployment.id==$id and .result.canonical_deployment.environment=="production" and .result.canonical_deployment.latest_stage.status=="success" and .result.canonical_deployment.deployment_trigger.metadata.commit_hash==$source' >/dev/null
+          curl -fsS --max-time 12 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$endpoint/deployments/$prior" |
+            jq -e --arg id "$prior" '.success and .result.id==$id and .result.environment=="production" and .result.latest_stage.status=="success"' >/dev/null
+          cd "$work"
+          "$RUNNER_TEMP/cloudflare-uploader/node_modules/.bin/wrangler" pages deploy "$work/static" \
+            --project-name=apparition-instruments --branch=production --commit-hash="$candidate" \
+            --commit-dirty=true --commit-message="NOCTURNE 89 NEXUS Admin improvements"
+          project | jq -e --arg old "$prior" --arg source "$candidate" \
+            'select(.success) | .result.canonical_deployment | select(.id!=$old and .environment=="production" and .latest_stage.status=="success" and .deployment_trigger.metadata.commit_hash==$source) | {id,url,environment,source:.deployment_trigger.metadata.commit_hash}' >> "$GITHUB_STEP_SUMMARY"
+          readback() {
+            local route="$1" expected="$2" attempt
+            for attempt in 1 2 3; do
+              if curl -fsS --max-time 14 --max-filesize 3000000 "https://apparitioninstruments.co.uk$route" -o "$work/served" && cmp -s "$work/static/$expected" "$work/served"; then return; fi
+              if [[ "$attempt" != 3 ]]; then sleep 4; fi
+            done
+            printf 'Served byte difference: %s\n' "$route" >&2
+            return 1
+          }
+          for route in / /account/ /checkout/; do
+            readback "${route}?nocturne89=$GITHUB_RUN_ID" "${route#/}index.html"
+          done
+          jq -r '.changed[]' nocturne89-inventory.json | while IFS= read -r path; do
+            route="${path%index.html}"
+            readback "/$route?nocturne89=$GITHUB_RUN_ID" "$path"
+          done
+          printf 'Canonical static deployment and served bytes verified. Database and signed-in acceptance are recorded separately.\n' >> "$GITHUB_STEP_SUMMARY"
