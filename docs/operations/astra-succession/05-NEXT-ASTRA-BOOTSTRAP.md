@@ -8,9 +8,7 @@ Follow [07 Operating policy](07-OPERATING-POLICY.md). Start with connected integ
 
 ## Current restart point
 
-NOCTURNE 89 is the verified production baseline at `59f628b9-6665-4c0b-847f-c6c833c1304b`, with migration `20261125145923`. QUARTERMASTER is in workshop. UNITY is paused. Live checkout and payments retain their existing contracts. QUARTERMASTER 86A `2e682696-0111-444d-805a-a4200cfe3457` is the immediate rollback for NOCTURNE 89.
-
-Continue Authorisation 90 from the [current release queue](02-RELEASE-QUEUE.md). Prioritise shared NOCTURNE patterns and ECLIPSE, then the OMNISCIENCE and COMMAND dashboards. The genuine sandbox payment and synthetic native rehearsal are accepted evidence. Genuine signed delivery and application settlement against a staging order remain open. Refresh the canonical baseline and protect rollout controls before production mutation.
+Use the [current verified release queue](https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/engineering/nocturne90-handover/docs/operations/astra-succession/02-RELEASE-QUEUE.md) for the canonical deployment, rollback baseline, live modes and remaining workstreams. The mandatory browser boundary above applies across Apparition engineering.
 
 ## Historical SUCCESSION 83H starter prompt
 
