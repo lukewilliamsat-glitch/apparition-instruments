@@ -1,4 +1,4 @@
-import {money,pence,statistics,toOhms,resistance,matchUnits,allocateShared} from './model.mjs';
+import {money,pence,statistics,toOhms,resistance,matchUnits,measuredToleranceBp,allocateShared,purchaseLineCosts} from './model.mjs';
 const names={inventory:'Inventory Command',suppliers:'Suppliers',purchases:'Procurement',batches:'Acquisition batches',measurements:'Measurements',sets:'Matched sets',stocktakes:'Stocktake',movements:'Movements',costs:'Order cost evidence'};
 const el=(tag,text,cls)=>{const e=document.createElement(tag);if(text!=null)e.textContent=text;if(cls)e.className=cls;return e;};
 const group=(...children)=>{const d=el('div',null,'form-grid');d.append(...children);return d;};
@@ -151,16 +151,16 @@ export function mountArmoury(root,repository,{fixture=false}={}){
  },
  async sets(signal,p){
   const box=section('Matched sets','Recommendations are proposals. Commit a set only after checking the physical labels. Commitments are limited to isolated bench stock.');
-  const batch=field('Batch for matching',{value:p.batchId}),component=field('Component ID',{value:p.componentId}),size=field('Set size',{value:'2',options:[['2','Pairs'],['4','Quartets']]}),objective=field('Matching objective',{value:'maximum',options:[['best','Smallest full spread'],['maximum','Most non-overlapping sets']]}),tolerance=field('Matching tolerance (%)',{value:'1',required:true,inputMode:'decimal'}),result=el('div');
-  box.append(form('Matching bench','Uses at most 100 readings per selection. Full spread: (highest − lowest) ÷ lowest.',[batch,component,size,objective,tolerance],'Generate matches',async()=>{
+  const batch=field('Batch for matching',{value:p.batchId}),component=field('Component ID',{value:p.componentId}),size=field('Set size',{value:'2',options:[['2','Pairs'],['4','Quartets']]}),objective=field('Matching objective',{value:'maximum',options:[['best','Smallest full spread'],['maximum','Most non-overlapping sets']]}),tolerance=field('Maximum full spread (%) (optional)',{inputMode:'decimal'}),result=el('div');
+  box.append(form('Matching bench','Uses up to 100 readings. Full spread is the difference between the highest and lowest readings divided by the lowest. Leave the maximum blank to see recommendations within the 20% bench limit.',[batch,component,size,objective,tolerance],'Generate matches',async()=>{
    if(!batch.value()&&!component.value())throw Error('Choose a batch or component.');
    const x=await read('measurements',{...(batch.value()?{batchId:batch.value()}:{componentId:component.value()}),limit:100});
-   const bp=pence(tolerance.value());
+   const bp=tolerance.value().trim()?pence(tolerance.value()):2000;
    const matches=matchUnits(x,{size:+size.value(),toleranceBp:bp,objective:objective.value()});
    result.replaceChildren(table(['Members','Absolute spread','Full spread','Average / deviation','Allocated cost basis','Commit'],matches.map(m=>[
     m.units.map(u=>resistance(u.resistance_ohm)+' (slot '+u.slot+')').join(', '),m.abs+' Ω',m.spread.toFixed(3)+'%',resistance(m.avg)+' / '+m.nominalDeviation.toFixed(2)+'%',money(m.costMinor),
-    button('Commit set',()=>write('allocate',{componentId:m.units[0].component_id,toleranceBp:bp,unitIds:m.units.map(u=>u.id)},'Bench set allocated. Physical stock unchanged.',()=>go('sets',{componentId:m.units[0].component_id,batchId:batch.value()})))
-   ]),'No compatible set at this tolerance.'));
+    button('Commit set',()=>write('allocate',{componentId:m.units[0].component_id,toleranceBp:measuredToleranceBp(m),unitIds:m.units.map(u=>u.id)},'Bench set allocated. Physical stock unchanged.',()=>go('sets',{componentId:m.units[0].component_id,batchId:batch.value()})))
+   ]),'No compatible set found. Check the selected readings and any maximum spread.'));
   }),result);
   const rows=await read('sets',defaultPage(p.componentId?{componentId:p.componentId}:{}),signal);
   box.append(table(['Set','Component','Units','State','Release'],rows.map(r=>[r.id,r.component_id,r.units?.map(u=>resistance(u.ohm)).join(' · '),r.state,
@@ -220,7 +220,11 @@ export function mountArmoury(root,repository,{fixture=false}={}){
    date=field(quick?'Purchase or receipt date':'Purchase date',{type:'date',value:draft?.purchase_date||today,required:true}),currency=field('Purchase currency',{value:draft?.currency||'GBP',max:3,required:true}),
    evidence=field('Actual GBP conversion evidence',{value:draft?.evidence}),method=field('Shared cost allocation',{value:draft?.method||'quantity',options:[['quantity','By quantity (default)'],['value','By GBP line value'],['manual','Enter amounts manually']]}),
    notes=field('Purchase notes (optional)',{value:draft?.notes,max:300}),
-   charges=Object.entries({freight:'Supplier postage (GBP)',duty:'Import duty (GBP)',nonRecoverableTax:'Non-recoverable taxes (GBP)',extra:'Other acquisition costs (GBP)',credit:'Supplier credits (GBP)'}).map(([k,t])=>[k,field(t,{inputMode:'decimal',value:formatInput(draft?.charges?.[k])})]);
+   charges=Object.entries({freight:'Supplier postage (GBP)',duty:'Import duty (GBP)',nonRecoverableTax:'Non-recoverable taxes (GBP)',extra:'Existing other acquisition costs (GBP)',credit:'Supplier credits (GBP)'}).map(([k,t])=>[k,field(t,{inputMode:'decimal',value:formatInput(draft?.charges?.[k])})]);
+  const standardCharges=charges.slice(0,3).map(([,input])=>input);
+  const legacyCharge=charges.find(([key])=>key==='extra')[1];
+  legacyCharge.i.readOnly=true;
+  const supplierCredit=charges.find(([key])=>key==='credit')[1];
   const staged=[],lineContainer=el('div',null,'purchase-lines'),basis=el('p',null,'cost-summary');basis.setAttribute('role','status');
   const hidden=(f,hide)=>{f.wrap.hidden=hide;f.i.disabled=hide;};
   const code=()=>currency.value().trim().toUpperCase();
@@ -230,8 +234,8 @@ export function mountArmoury(root,repository,{fixture=false}={}){
    if(staged.length>=30)return;
    const row=el('fieldset'),legend=el('legend','Component'),search=field('Search components',{type:'search',max:100}),choice=field('Purchased component',{required:true,options:[['','Choose a component']]}),
     part=field('Supplier part number',{value:l.part_no,max:100}),quantity=field(quick?'Received quantity':'Quantity',{required:true,value:String(l.quantity||1),inputMode:'numeric'}),
-    unit=field('Unit price',{required:true,inputMode:'decimal',value:formatInput(l.supplier_unit_minor)}),
-    gbp=field('Actual converted line total (GBP)',{inputMode:'decimal',value:formatInput(l.merchandise_minor)}),
+    unit=field('Supplier unit price (purchase currency)',{required:true,inputMode:'decimal',value:formatInput(l.supplier_unit_minor)}),
+    gbp=field('Actual component line total (GBP, excluding shared costs)',{inputMode:'decimal',value:formatInput(l.merchandise_minor)}),
     manual=field('Manual shared allocation (GBP)',{inputMode:'decimal',value:formatInput(l.allocation_minor)}),lineTotal=el('p',null,'line-total');
    let optionRows=initialChoices;
    function setChoices(values,choose=l.component_id){
@@ -278,23 +282,33 @@ export function mountArmoury(root,repository,{fixture=false}={}){
    try{
     const d=values(),value=d.lines.map(l=>foreign?l.gbpMinor:l.quantity*l.unitMinor);
     const extras=Object.entries(d.charges).reduce((n,[k,v])=>n+(k==='credit'?-v:v),0);
-    for(const [i,l] of staged.entries())l.lineTotal.textContent='Line total: '+currencyFormat(d.lines[i].quantity*d.lines[i].unitMinor)+(foreign&&value[i]!=null?' · '+money(value[i])+' converted':'');
+    for(const [i,l] of staged.entries()){
+     l.lineTotal.textContent='Supplier component subtotal: '+currencyFormat(d.lines[i].quantity*d.lines[i].unitMinor);
+    }
     if(value.some(v=>v==null)){basis.textContent='Enter the actual GBP amounts to see the landed total.';return;}
     const shares=d.method==='manual'?d.lines.map(l=>l.allocationMinor):allocateShared(extras,d.method==='value'?value:d.lines.map(l=>l.quantity));
     if(shares.reduce((a,b)=>a+b,0)!==extras||shares.some((n,i)=>n+value[i]<0))throw Error('Review the allocation. Shared costs must reconcile and no line can be negative.');
-    basis.textContent='Landed total: '+money(value.reduce((a,b)=>a+b,extras))+(extras?' · Shared costs: '+money(extras):'');
+    for(const [i,l] of staged.entries()){
+     const c=purchaseLineCosts(value[i],shares[i],d.lines[i].quantity);
+     l.lineTotal.textContent+=' · GBP component total: '+money(c.merchandise)
+      +' ('+c.merchandiseUnit+' each) · Shared allocation: '+money(c.allocation)
+      +' · Landed total: '+money(c.landed)+' ('+c.landedUnit+' each)';
+    }
+    basis.textContent='Total purchase expenditure: '+money(value.reduce((a,b)=>a+b,extras))
+     +(extras?' · Total shared costs after credits: '+money(extras):'');
    }catch(e){basis.textContent=e.message;}
   }
   const f=form(draft?'Edit purchase draft':quick?'Quick stock purchase':'New purchase order',
    quick?'Record stock that has already arrived. This saves the purchase, receipt and stock movement together.':'Create a draft. Saving it does not add stock.',
-   [supplier,reference,date,currency,charges[0][1],evidence],draft?'Save draft changes':quick?'Record purchase and receive stock':'Save purchase draft',()=>{
+   [supplier,reference,date,currency,...standardCharges,notes,evidence],draft?'Save draft changes':quick?'Record purchase and receive stock':'Save purchase draft',()=>{
     const payload=values(true);
     return write(draft?'purchaseEdit':quick?'quickPurchase':'purchase',draft?{...payload,id:draft.id,revision:draft.revision}:payload,
      draft?'Purchase draft updated.':quick?'Purchase recorded and stock received.':'Purchase draft created.',()=>go('purchases'));
   });
   const footer=f.querySelector('.actions'),advanced=el('details',null,'purchase-advanced');
-  advanced.append(el('summary','Advanced acquisition costs'),group(...charges.slice(1).map(([,x])=>x.wrap),method.wrap,notes.wrap));
-  if(draft?.method==='manual'||Object.entries(draft?.charges||{}).some(([k,v])=>k!=='freight'&&v))advanced.open=true;
+  advanced.append(el('summary','Advanced allocation and corrections'),
+   group(method.wrap,supplierCredit.wrap,...(draft?.charges?.extra?[legacyCharge.wrap]:[])));
+  if(draft?.method==='manual'||draft?.charges?.credit||draft?.charges?.extra)advanced.open=true;
   f.insertBefore(lineContainer,footer);f.insertBefore(actions(button('Add purchase line',()=>addLine())),footer);f.insertBefore(advanced,footer);f.insertBefore(basis,footer);
   supplier.i.addEventListener('change',()=>{const entry=allSuppliers.find(x=>x.id===supplier.value());if(entry)currency.i.value=entry.currency;paint();});
   f.addEventListener('input',paint);f.addEventListener('change',paint);

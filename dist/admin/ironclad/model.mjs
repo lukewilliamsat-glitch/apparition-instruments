@@ -45,6 +45,10 @@ function summarize(units){
   ?roundedCost(units):null;
  return {units,min,max,abs,spread:100*abs/min,avg,nominalDeviation:100*(avg-units[0].nominal_ohm)/units[0].nominal_ohm,costMinor:basis};
 }
+export function measuredToleranceBp(match){
+ // Round up to the smallest whole basis point that still covers the measured spread.
+ return Math.floor((match.abs*10000+match.min-1)/match.min);
+}
 export function matchUnits(pool,{size=2,toleranceBp=100,objective='best'}={}){
  check([2,4].includes(size)&&Number.isInteger(toleranceBp)&&toleranceBp>=0&&toleranceBp<=2000&&['best','maximum'].includes(objective),
   'Select pairs or quartets and a tolerance from 0% to 20%.');
@@ -70,6 +74,18 @@ export function matchUnits(pool,{size=2,toleranceBp=100,objective='best'}={}){
  if(objective==='maximum')return sets;
  sets.sort((a,b)=>a.abs*b.min-b.abs*a.min||a.abs-b.abs||compare(a.units.map(u=>u.id).join(':'),b.units.map(u=>u.id).join(':')));
  return sets.slice(0,1);
+}
+const unitGbp=new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',minimumFractionDigits:2,maximumFractionDigits:6});
+export function purchaseLineCosts(merchandise,allocation,quantity){
+ check(Number.isSafeInteger(merchandise)&&merchandise>=0&&Number.isSafeInteger(allocation)
+  &&Number.isSafeInteger(quantity)&&quantity>0,'Invalid purchase line costs.');
+ const landed=merchandise+allocation;
+ check(Number.isSafeInteger(landed)&&landed>=0,'Landed line cost cannot be negative.');
+ return {
+  merchandise,allocation,landed,
+  merchandiseUnit:unitGbp.format(merchandise/(quantity*100)),
+  landedUnit:unitGbp.format(landed/(quantity*100)),
+ };
 }
 export function allocateShared(total,weights){
  check(Number.isSafeInteger(total)&&weights.length&&weights.every(w=>Number.isSafeInteger(w)&&w>=0),'Invalid allocation inputs.');
