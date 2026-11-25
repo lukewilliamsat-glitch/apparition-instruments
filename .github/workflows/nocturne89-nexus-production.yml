@@ -46,7 +46,8 @@ jobs:
             fetch_source f0d3c3717cd5a37678733a71c455b602222d3357 "tests/nocturne89/$file" "nexus/$file"
           done
           fetch_source a542148986f8857a57a20307750dd3370318b281 dist/admin/ironclad/app.mjs nexus/ir
-          fetch_source a542148986f8857a57a20307750dd3370318b281 dist/admin/ironclad/model.mjs nexus/model
+          gh api "repos/$GITHUB_REPOSITORY/git/blobs/14baf321130f5ae8051fb7ad123b9556f0d31ae4" --jq '.content' | base64 --decode > "$work/nexus/model"
+          test "$(git hash-object "$work/nexus/model")" = '14baf321130f5ae8051fb7ad123b9556f0d31ae4'
           fetch_source c9c08588950a56bb9b1ddfc4f39dfdc59f5bae64 tests/nexus88/workshop.mjs nexus/qm
           unset GH_TOKEN
           cd "$work"
