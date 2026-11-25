@@ -13,7 +13,8 @@ const app=createServer(async(req,res)=>{
   if(!file.startsWith(root+sep))return res.writeHead(404).end();
   try{
     const type={'.mjs':'text/javascript','.css':'text/css'}[extname(file)]??'application/octet-stream';
-    res.writeHead(200,{'content-type':type}).end(await readFile(file));
+    const bytes=await readFile(file);
+    res.writeHead(200,{'content-type':type}).end(bytes);
   }catch{res.writeHead(404).end();}
 });
 await new Promise(r=>app.listen(0,'127.0.0.1',r));
