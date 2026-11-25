@@ -1,0 +1,49 @@
+name: NOCTURNE 89 independent live byte verification
+on:
+  push:
+    branches: [engineering/nocturne89]
+    paths: [.github/workflows/nocturne89-live-readback.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  readback:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - name: Compare the canonical and immutable production responses to the sealed archive
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/nocturne89-readback"
+          mkdir -p "$work"
+          cd "$work"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/15033354572/zip" > sealed.zip
+          unset GH_TOKEN
+          unzip -q sealed.zip
+          sha256sum --check <<'SUMS'
+          8308c7fe278f1edd3dd90582dbaebee019336c47c12eacfc8e1a49f1db807800  nocturne89-static.zip
+          33d02337ee40acafeaa56acb672027b3357508fcc4ebf3c5cf30be56117f35f8  nocturne89-inventory.json
+          SUMS
+          unzip -q nocturne89-static.zip -d static
+          verify() {
+            local host="$1" route="$2" path="$3"
+            local result
+            result=$(curl --silent --show-error --retry 4 --retry-delay 3 --max-time 14 --max-filesize 3000000 --output served --write-out '%{http_code}' "$host$route")
+            if [[ "$result" != '200' ]] || ! cmp -s "static/$path" served; then
+              printf 'Verification failed HTTP %s for %s%s\n' "$result" "$host" "$route" >&2
+              return 1
+            fi
+            printf 'MATCH %s%s\n' "$host" "$route"
+          }
+          for host in 'https://59f628b9.apparition-instruments.pages.dev' 'https://apparitioninstruments.co.uk'; do
+            for route in / /account/ /checkout/; do
+              verify "$host" "$route" "${route#/}index.html"
+            done
+            jq -r '.changed[]' nocturne89-inventory.json | while IFS= read -r path; do
+              route="${path%index.html}"
+              verify "$host" "/$route" "$path"
+            done
+          done
