@@ -1,0 +1,97 @@
+<!doctype html>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<link rel=stylesheet href="/admin/application.css">
+<link rel=stylesheet href="/admin/ironclad/armoury.css">
+<link rel=stylesheet href="/admin/quartermaster/workspace.css">
+<main class="admin-main" id="quartermaster-workshop"></main><output id=result></output>
+<script type=module>
+import {mountArmoury} from '/admin/ironclad/app.mjs';
+import {mountAdminWorkspace} from '/admin/quartermaster/entry.mjs';
+import {adminRoutes,workspaceFor,mountAdminShell} from '/admin/application.mjs';
+const mode=new URL(location.href).searchParams.get('mode');
+const root=document.querySelector('main');
+const result=document.querySelector('output');
+const check=(truth,label)=>{if(!truth)throw Error(label)};
+const settle=()=>new Promise(r=>setTimeout(r,20));
+const button=text=>[...root.querySelectorAll('button')].find(b=>b.textContent===text);
+const field=name=>root.querySelector('[aria-label="'+name+'"]')||[...root.querySelectorAll('label')].find(l=>l.textContent.startsWith(name))?.querySelector('input,select');
+const fill=(name,value)=>{
+ const target=field(name);
+ check(target,name);
+ target.value=value;target.dispatchEvent(new Event('input',{bubbles:true}));
+};
+try {
+ check(adminRoutes.some(r=>r.id==='landed-cost'),'calculator route metadata retained');
+ check(workspaceFor({pathname:'/admin/ironclad/calculator/',search:''})==='landed-cost','calculator route breadcrumb');
+ if(mode==='procurement'){
+  mountAdminShell(document,document.createElement('button'));
+  check(!document.querySelector('[data-workspace="landed-cost"]'),'duplicate calculator navigation');
+  let payload;
+  const component={component_id:'fixture-pot',name:'Fixture pot',sku:'TEST-POT'};
+  const supplier={id:'supplier',name:'Fixture supplier',currency:'GBP',active:true};
+  mountArmoury(root,{
+   read:async key=>({suppliers:[supplier],purchaseChoices:[component],measurements:[499900,500000,500200,500300].map((v,i)=>({id:'reading-'+i,slot:i+1,component_id:'fixture-pot',nominal_ohm:500000,resistance_ohm:v,taper:'a',shaft:'short',quality:'accepted'}))}[key]??[]),
+   write:async(id,action,body)=>{payload={id,action,body};return {id:1};},
+  });
+  check(root.querySelector('a[href="/admin/ironclad/calculator/"]'),'calculator access within IRONCLAD');
+  button('Procurement').click();await settle();button('New purchase order').click();await settle();
+  fill('Supplier','supplier');fill('Purchase reference','89-SYNTHETIC');fill('Purchase date','2026-11-25');
+  fill('Purchased component','fixture-pot');fill('Quantity','7');fill('Actual component line total (GBP, excluding shared costs)','0.01');
+  fill('Supplier postage (GBP)','0.01');fill('Import duty (GBP)','0.01');fill('Non-recoverable taxes (GBP)','0.01');
+  check(field('Supplier unit price (purchase currency)').disabled,'GBP subtotal used once');
+  check(!field('Conversion reference (optional)').closest('details').open,'conversion reference is advanced');
+  check(root.innerText.includes('£0.001429 each')&&root.innerText.includes('£0.005714 each'),'sub-penny landed costs');
+  button('Save purchase draft').click();await settle();
+  check(payload?.action==='purchase'&&payload.body.lines[0].gbpMinor===1&&payload.body.lines[0].quantity===7,'exact GBP payload');
+  button('Matched sets').click();await settle();
+  fill('Component ID','fixture-pot');fill('Set size','4');
+  check(field('Maximum full spread (%) (optional)').value==='','optional maximum');
+  button('Generate matches').click();await settle();
+  check(root.innerText.includes('0.080%'),'quartet tolerance');
+  button('Commit set').click();await settle();
+  check(payload.action==='allocate'&&payload.body.unitIds.length===4&&payload.body.toleranceBp===9,'guarded matching commit');
+ } else {
+  let state='none',completion=null;
+  const sku={sku:'MAILER',title:'Fixture mailer',available:2,outerMm:[240,165,5],tareGrams:14};
+  window.fetch=async(url,options)=>{
+   const target=new URL(url);
+   check(target.origin==='https://acdxpxvksvdwfajntzfx.supabase.co','fixture backend origin');
+   const rpc=target.pathname.split('/').at(-1);
+   if(rpc==='quartermaster84d_access')return Response.json({mode:'workshop',packing:true});
+   if(rpc==='quartermaster84w_workspace'){
+    check(options.method==='GET','read RPC must use GET');
+    return Response.json({schema:1,mode:'workshop',order:{reference:'SYNTHETIC',generation:1,revision:0,state,
+     picks:[{id:'fixture-pot',title:'Fixture pot',quantity:1,picked:1}],materials:[sku],
+     batches:state==='reserved'?[{id:'00000000-0000-4000-8000-000000000777',remaining:2}]:[],
+     reservedPackaging:state==='reserved'?sku:null,canReserve:state==='none',canPick:state==='reserved',
+     canRelease:state==='reserved',canReceive:false,canRecordPostage:false,cost:{material:null,estimate:null,actual:null},
+     parcel:completion?{mm:completion.mm,grams:completion.grams,format:completion.format,tracking:null}:null}});
+   }
+   if(rpc==='quartermaster84w_pack'){
+    check(options.method==='POST','write RPC must use POST');
+    const {p_action:action}=JSON.parse(options.body);
+    if(action.kind==='reserve'){state='reserved';return Response.json(true);}
+    check(action.kind==='complete','unexpected write action');
+    completion=action;state='packed';return Response.json(true);
+   }
+   throw Error('unexpected fixture operation '+rpc);
+  };
+  const token='fixture.'+btoa(JSON.stringify({iss:'https://acdxpxvksvdwfajntzfx.supabase.co/auth/v1'}))+'.fixture';
+  const mount=mountAdminWorkspace({document,auth:{accessToken:async()=>token}});
+  await settle();check(root.innerText.includes('240 × 165 × 5 mm')&&root.innerText.includes('tare 14 g'),'selected SKU data');
+  button('Reserve packaging').click();await settle();
+  check(field('Actual outer length (mm)').value==='240','length prefilled');
+  check(field('Measured packed weight (g)').value==='','tare must not populate actual weight');
+  fill('Actual outer height (mm)','10');fill('Measured packed weight (g)','120');fill('Postal format','large-letter');
+  fill('Estimated postage (pence)','150');
+  check(root.innerText.includes('Royal Mail UK size and weight guide · Large Letter'),'format suggestion after override');
+  button('Record completed pack').click();await settle();
+  check(completion?.mm.join(',')==='240,165,10'&&completion.grams===120,'actual measurements stored');
+  check(root.scrollWidth<=window.innerWidth,'packing horizontal overflow');
+  mount.lock();check(root.innerText==='','session lock clears record');
+ }
+ check(document.documentElement.scrollWidth<=window.innerWidth,'page horizontal overflow');
+ result.textContent='PASS 89 '+mode;
+}catch(e){result.textContent='FAIL 89 '+e.message;}
+</script>
