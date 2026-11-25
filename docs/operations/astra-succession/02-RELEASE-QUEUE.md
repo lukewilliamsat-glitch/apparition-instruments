@@ -1,6 +1,6 @@
 # HOMECOMING release queue
 
-**24 November 2026 · Ordered by production release dependency.** Isolated provider preparation may proceed independently when authorised. QUARTERMASTER 84B is the live read-only baseline. QUARTERMASTER writer preparation is next. Each later activation needs its own exact candidate and authority.
+**24 November 2026 · Ordered by production release dependency.** Isolated provider preparation may proceed independently when authorised. QUARTERMASTER 86A is live in workshop. UNITY remains paused pending genuine Stripe Sandbox settlement evidence. The owner’s operational walkthrough can proceed independently. Each later activation needs its own exact candidate and authority.
 
 | Order | Release and current readiness | Scope, blocker and next action | Rollback |
 | --- | --- | --- | --- |
