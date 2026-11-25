@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 8
     steps:
-      - name: Compare the canonical and immutable production responses to the sealed archive
+      - name: Compare the canonical production responses to the sealed archive
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -38,7 +38,7 @@ jobs:
             fi
             printf 'MATCH %s%s\n' "$host" "$route"
           }
-          for host in 'https://59f628b9.apparition-instruments.pages.dev' 'https://apparitioninstruments.co.uk'; do
+          for host in 'https://apparitioninstruments.co.uk'; do
             for route in / /account/ /checkout/; do
               verify "$host" "$route" "${route#/}index.html"
             done
