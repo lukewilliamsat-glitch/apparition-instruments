@@ -28,8 +28,8 @@ The production owner will keep the existing Admin login. A later provisioning ap
 
 Niimbot integration and physical printing acceptance were cancelled in 84D. Digital proof files remain historical evidence.
 
-## Single owner walkthrough and draft production authority
+## Owner acceptance and controlled production release
 
-Open production Admin with the existing login. In Orders, open an eligible paid order, select **Review workshop packing**, check the saved pick list and use **Back to this order**. This accepts the live 84B observe screen. If useful for confirming 84C as part of the same walkthrough, open [protected staging Orders](https://quartermaster84c-stage.apparition-phoenix-preview.pages.dev/admin/orders/) and inspect saved order `84C-FIXTURE-1` with the already provisioned staging observer. Technical staging evidence is recorded and does not require a new fixture transaction or repeat of the three role sign-ins.
+25 November 2026. Under Authorisation 85A the owner confirmed the 84B production walkthrough. Paid eBay order `AI-010040` opened **Review workshop packing** and showed the same reference, the saved CDE 715P 600V 223J component, one required and zero picked. The view was read-only and **Back to this order** returned to the same order.
 
-Proposed authorisation after owner acceptance. Authorise one application of the exact dormant SQL and one protected publication of the exact 493-file archive above. Require canonical 84B `3d31097e-0418-4547-bdb0-bd9f7ce91b6e`, verified rollback bytes, paused UNITY, read-only observe and the expected dormant writer gate. Verify the database and live read-only application independently. Preserve existing Orders, checkout, payments, stock, finance and provider behaviour. Approve existing-account entitlement provisioning and workshop activation separately.
+85A authorises the exact dormant SQL and a single protected static publication. Production entitlement provisioning and workshop activation are separate approvals. Immediate rollback: 84B deployment `3d31097e-0418-4547-bdb0-bd9f7ce91b6e`.
