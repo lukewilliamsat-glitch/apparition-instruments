@@ -1,0 +1,106 @@
+# Review source. Register and run only under a later release-specific authority.
+name: QUARTERMASTER 84D exact dormant Pages publication
+on:
+  workflow_dispatch:
+    inputs:
+      execution_confirmed:
+        description: Exact 84D static publication and verified dormant migration approved
+        required: true
+        type: boolean
+      migration_receipt:
+        description: Verified 14-digit 84D production migration receipt
+        required: true
+        type: string
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: phoenix66-pages-publisher
+  cancel-in-progress: false
+jobs:
+  production_gate:
+    if: github.event_name == 'workflow_dispatch' && github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview' && github.run_attempt == 1 && inputs.execution_confirmed
+    environment: phoenix66-production
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Verify the protected production target
+        env:
+          APPROVED_TARGET: ${{ vars.PHOENIX66_APPROVED_TARGET }}
+        run: test "$APPROVED_TARGET" = 'apparition-instruments:production:43845328622'
+  publish:
+    needs: production_gate
+    environment: phoenix66-preview
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Rebuild and verify the exact candidate against the 84B rollback
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MIGRATION_RECEIPT: ${{ inputs.migration_receipt }}
+        run: |
+          set -euo pipefail
+          umask 077
+          [[ "$MIGRATION_RECEIPT" =~ ^[0-9]{14}$ ]]
+          work="$RUNNER_TEMP/quartermaster84d"
+          mkdir "$work"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14809317163/zip" > "$work/baseline.zip"
+          source='803f9bd3b33678cc57f3e7529b0aaa16b5eacc66'
+          for source_file in seal.py entry.mjs production.mjs workshop.mjs; do
+            gh api -H 'Accept: application/vnd.github.raw+json' \
+              "repos/$GITHUB_REPOSITORY/contents/tests/quartermaster84d/$source_file?ref=$source" > "$work/$source_file"
+          done
+          unset GH_TOKEN
+          cd "$work"
+          python3 seal.py baseline.zip .
+          sha256sum --check <<'SUMS'
+          3312915d6b4659117ad348e64e1cf6b90d7efea19e6bcbf8289e3de071ec64bf  quartermaster84d-static.zip
+          1fd79c6001c4ac76f41c79c4438e25ac535e7b0e39577e4190602c93bfd19ab2  inventory.json
+          SUMS
+          unzip -q quartermaster84d-static.zip -d static
+          printf 'Protected approval for reviewed dormant migration %s\n' "$MIGRATION_RECEIPT" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Prepare the approved Pages uploader
+        run: npm install --prefix "$RUNNER_TEMP/cloudflare-uploader" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false wrangler@4.162.0
+      - name: Require 84B baseline, upload and verify served responses
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/quartermaster84d"
+          endpoint="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/apparition-instruments"
+          prior='3d31097e-0418-4547-bdb0-bd9f7ce91b6e'
+          prior_source='15efc3473d9b91ab6664c5c2e47408bdca529b40'
+          candidate='803f9bd3b33678cc57f3e7529b0aaa16b5eacc66'
+          project() { curl -fsS --max-time 12 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$endpoint"; }
+          project | jq -e --arg id "$prior" --arg source "$prior_source" \
+            '.success and (.result.domains|index("apparitioninstruments.co.uk")!=null) and .result.production_branch=="production" and .result.canonical_deployment.id==$id and .result.canonical_deployment.environment=="production" and .result.canonical_deployment.latest_stage.status=="success" and .result.canonical_deployment.deployment_trigger.metadata.commit_hash==$source' >/dev/null
+          curl -fsS --max-time 12 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$endpoint/deployments/$prior" |
+            jq -e --arg id "$prior" '.success and .result.id==$id and .result.environment=="production" and .result.latest_stage.status=="success"' >/dev/null
+          cd "$work"
+          "$RUNNER_TEMP/cloudflare-uploader/node_modules/.bin/wrangler" pages deploy "$work/static" \
+            --project-name=apparition-instruments --branch=production --commit-hash="$candidate" \
+            --commit-dirty=true --commit-message="QUARTERMASTER 84D sealed dormant release"
+          project | jq -e --arg old "$prior" --arg source "$candidate" \
+            'select(.success) | .result.canonical_deployment | select(.id!=$old and .environment=="production" and .latest_stage.status=="success" and .deployment_trigger.metadata.commit_hash==$source) | {id,url,environment,source:.deployment_trigger.metadata.commit_hash}' >> "$GITHUB_STEP_SUMMARY"
+          readback() {
+            local route="$1" expected="$2" attempt
+            for attempt in 1 2 3; do
+              if curl -fsS --max-time 14 --max-filesize 3000000 "https://apparitioninstruments.co.uk$route" -o "$work/served" && cmp -s "$work/static/$expected" "$work/served"; then return; fi
+              if [[ "$attempt" != 3 ]]; then sleep 4; fi
+            done
+            printf 'Served byte difference: %s\n' "$route" >&2
+            return 1
+          }
+          for route in / /account/ /checkout/ /admin/orders/ /admin/dominion/ /admin/quartermaster/; do
+            readback "${route}?quartermaster84=$GITHUB_RUN_ID" "${route#/}index.html"
+          done
+          for path in admin/admin-gate.mjs admin/application.mjs admin/orders/app.mjs admin/quartermaster/entry.mjs admin/quartermaster/production.mjs admin/quartermaster/workshop.mjs; do
+            readback "/$path?build=quartermaster84d" "$path"
+          done
+          readback '/admin/quartermaster/workspace.css?build=82-workshop' 'admin/quartermaster/workspace.css'
+          readback '/operations/snapshot.json' 'operations/snapshot.json'
+          printf 'Canonical static deployment and served bytes verified. Database and signed-in acceptance are recorded separately.\n' >> "$GITHUB_STEP_SUMMARY"
