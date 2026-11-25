@@ -218,7 +218,7 @@ export function mountArmoury(root,repository,{fixture=false}={}){
   const formatInput=n=>n==null?'':(n/100).toFixed(2),today=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/London',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
   const supplier=field('Supplier',{required:true,options:suppliers,value:draft?.supplier_id||''}),reference=field(quick?'Reference (optional)':'Purchase reference',{required:!quick,value:draft?.reference}),
    date=field(quick?'Purchase or receipt date':'Purchase date',{type:'date',value:draft?.purchase_date||today,required:true}),currency=field('Purchase currency',{value:draft?.currency||'GBP',max:3,required:true}),
-   evidence=field('Actual GBP conversion evidence',{value:draft?.evidence}),method=field('Shared cost allocation',{value:draft?.method||'quantity',options:[['quantity','By quantity (default)'],['value','By GBP line value'],['manual','Enter amounts manually']]}),
+   evidence=field('Conversion reference (optional)',{value:draft?.evidence}),method=field('Shared cost allocation',{value:draft?.method||'quantity',options:[['quantity','By quantity (default)'],['value','By GBP line value'],['manual','Enter amounts manually']]}),
    notes=field('Purchase notes (optional)',{value:draft?.notes,max:300}),
    charges=Object.entries({freight:'Supplier postage (GBP)',duty:'Import duty (GBP)',nonRecoverableTax:'Non-recoverable taxes (GBP)',extra:'Existing other acquisition costs (GBP)',credit:'Supplier credits (GBP)'}).map(([k,t])=>[k,field(t,{inputMode:'decimal',value:formatInput(draft?.charges?.[k])})]);
   const standardCharges=charges.slice(0,3).map(([,input])=>input);
@@ -235,7 +235,7 @@ export function mountArmoury(root,repository,{fixture=false}={}){
    const row=el('fieldset'),legend=el('legend','Component'),search=field('Search components',{type:'search',max:100}),choice=field('Purchased component',{required:true,options:[['','Choose a component']]}),
     part=field('Supplier part number',{value:l.part_no,max:100}),quantity=field(quick?'Received quantity':'Quantity',{required:true,value:String(l.quantity||1),inputMode:'numeric'}),
     unit=field('Supplier unit price (purchase currency)',{required:true,inputMode:'decimal',value:formatInput(l.supplier_unit_minor)}),
-    gbp=field('Actual component line total (GBP, excluding shared costs)',{inputMode:'decimal',value:formatInput(l.merchandise_minor)}),
+    gbp=field('Actual component line total (GBP, excluding shared costs)',{required:true,inputMode:'decimal',value:formatInput(l.merchandise_minor)}),
     manual=field('Manual shared allocation (GBP)',{inputMode:'decimal',value:formatInput(l.allocation_minor)}),lineTotal=el('p',null,'line-total');
    let optionRows=initialChoices;
    function setChoices(values,choose=l.component_id){
@@ -269,28 +269,33 @@ export function mountArmoury(root,repository,{fixture=false}={}){
   }
   function values(requireSelected=false){
    const cur=code(),charge=Object.fromEntries(charges.map(([k,f])=>[k,pence(f.value())])),foreign=cur!=='GBP';
-   if(requireSelected&&(!/^[A-Z]{3}$/.test(cur)||foreign&&evidence.value().trim().length<5))throw Error('Record the actual GBP conversion and evidence for this purchase.');
-   const d=staged.map(l=>({componentId:l.choice.value(),partNo:l.part.value(),quantity:int(l.quantity.value(),1,100000),unitMinor:pence(l.unit.value()),
-    ...(foreign?{gbpMinor:l.gbp.value().trim()?pence(l.gbp.value()):null}:{}),
-    ...(method.value()==='manual'?{allocationMinor:pence(l.manual.value(),{signed:true})}:{})}));
-   if(requireSelected&&d.some(l=>!l.componentId||l.gbpMinor===null))throw Error('Choose each component and enter each converted total.');
+   if(requireSelected&&!/^[A-Z]{3}$/.test(cur))throw Error('Enter a three-letter purchase currency code.');
+   const d=staged.map(l=>{
+    const quantity=int(l.quantity.value(),1,100000);
+    const gbpMinor=l.gbp.value().trim()?pence(l.gbp.value()):null;
+    // GBP totals are authoritative. The legacy supplier unit field is minor-unit precision only.
+    const unitMinor=foreign?pence(l.unit.value()):Math.round((gbpMinor??0)/quantity);
+    return {componentId:l.choice.value(),partNo:l.part.value(),quantity,unitMinor,gbpMinor,
+     ...(method.value()==='manual'?{allocationMinor:pence(l.manual.value(),{signed:true})}:{})};
+   });
+   if(requireSelected&&d.some(l=>!l.componentId||l.gbpMinor===null))throw Error('Choose each component and enter its actual GBP line total before shared costs.');
    return {supplierId:supplier.value(),reference:reference.value(),date:date.value(),notes:notes.value(),currency:cur,evidence:foreign?evidence.value():'',method:method.value(),charges:charge,lines:d};
   }
   function paint(){
    const foreign=code()!=='GBP';hidden(evidence,!foreign);
-   for(const l of staged){hidden(l.gbp,!foreign);hidden(l.manual,method.value()!=='manual');}
+   for(const l of staged){hidden(l.unit,!foreign);hidden(l.manual,method.value()!=='manual');}
    try{
-    const d=values(),value=d.lines.map(l=>foreign?l.gbpMinor:l.quantity*l.unitMinor);
+    const d=values(),value=d.lines.map(l=>l.gbpMinor);
     const extras=Object.entries(d.charges).reduce((n,[k,v])=>n+(k==='credit'?-v:v),0);
     for(const [i,l] of staged.entries()){
-     l.lineTotal.textContent='Supplier component subtotal: '+currencyFormat(d.lines[i].quantity*d.lines[i].unitMinor);
+     l.lineTotal.textContent=foreign?'Supplier component subtotal: '+currencyFormat(d.lines[i].quantity*d.lines[i].unitMinor):'';
     }
     if(value.some(v=>v==null)){basis.textContent='Enter the actual GBP amounts to see the landed total.';return;}
     const shares=d.method==='manual'?d.lines.map(l=>l.allocationMinor):allocateShared(extras,d.method==='value'?value:d.lines.map(l=>l.quantity));
     if(shares.reduce((a,b)=>a+b,0)!==extras||shares.some((n,i)=>n+value[i]<0))throw Error('Review the allocation. Shared costs must reconcile and no line can be negative.');
     for(const [i,l] of staged.entries()){
      const c=purchaseLineCosts(value[i],shares[i],d.lines[i].quantity);
-     l.lineTotal.textContent+=' · GBP component total: '+money(c.merchandise)
+     l.lineTotal.textContent+=(foreign?' · ':'')+'GBP component total: '+money(c.merchandise)
       +' ('+c.merchandiseUnit+' each) · Shared allocation: '+money(c.allocation)
       +' · Landed total: '+money(c.landed)+' ('+c.landedUnit+' each)';
     }
@@ -300,14 +305,14 @@ export function mountArmoury(root,repository,{fixture=false}={}){
   }
   const f=form(draft?'Edit purchase draft':quick?'Quick stock purchase':'New purchase order',
    quick?'Record stock that has already arrived. This saves the purchase, receipt and stock movement together.':'Create a draft. Saving it does not add stock.',
-   [supplier,reference,date,currency,...standardCharges,notes,evidence],draft?'Save draft changes':quick?'Record purchase and receive stock':'Save purchase draft',()=>{
+   [supplier,reference,date,currency,...standardCharges,notes],draft?'Save draft changes':quick?'Record purchase and receive stock':'Save purchase draft',()=>{
     const payload=values(true);
     return write(draft?'purchaseEdit':quick?'quickPurchase':'purchase',draft?{...payload,id:draft.id,revision:draft.revision}:payload,
      draft?'Purchase draft updated.':quick?'Purchase recorded and stock received.':'Purchase draft created.',()=>go('purchases'));
   });
   const footer=f.querySelector('.actions'),advanced=el('details',null,'purchase-advanced');
   advanced.append(el('summary','Advanced allocation and corrections'),
-   group(method.wrap,supplierCredit.wrap,...(draft?.charges?.extra?[legacyCharge.wrap]:[])));
+   group(method.wrap,supplierCredit.wrap,evidence.wrap,...(draft?.charges?.extra?[legacyCharge.wrap]:[])));
   if(draft?.method==='manual'||draft?.charges?.credit||draft?.charges?.extra)advanced.open=true;
   f.insertBefore(lineContainer,footer);f.insertBefore(actions(button('Add purchase line',()=>addLine())),footer);f.insertBefore(advanced,footer);f.insertBefore(basis,footer);
   supplier.i.addEventListener('change',()=>{const entry=allSuppliers.find(x=>x.id===supplier.value());if(entry)currency.i.value=entry.currency;paint();});
@@ -318,7 +323,7 @@ export function mountArmoury(root,repository,{fixture=false}={}){
  async function purchaseDetail(box,r){
   try{
    const items=await read('purchaseLines',{id:r.id});box.querySelector('[data-purchase-detail]')?.remove();
-   const s=section('Purchase '+r.reference,'Landed total '+money(r.total_minor)+' · '+r.method+' allocation · '+(r.evidence||'GBP purchase'));
+   const s=section('Purchase '+r.reference,'Landed total '+money(r.total_minor)+' · '+r.method+' allocation · '+(r.evidence||r.currency||'Purchase currency unavailable'));
    s.dataset.purchaseDetail='true';
    s.append(table(['Component / supplier part','Ordered','Received','Merchandise GBP','Shared GBP'],items.map(l=>[l.name+' · '+l.part_no,l.quantity,l.received,money(l.merchandise_minor),money(l.allocation_minor)])));
    if(['ordered','partial'].includes(r.state)){
