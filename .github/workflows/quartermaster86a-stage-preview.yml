@@ -1,0 +1,55 @@
+# Protected fixture preview after verified staging migration 20261125112638.
+name: QUARTERMASTER 86A protected stage preview
+on:
+  push:
+    branches: [engineering/phoenix66-preview]
+    paths: ['.github/workflows/quartermaster86a-stage-preview.yml']
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: phoenix66-pages-publisher
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    environment: phoenix66-preview
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: 357223ca42dcdace285e4fed61f2f38f87d934ce
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Build and verify the exact fixture overlay
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/quartermaster86a"
+          mkdir "$out"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/14920546326/zip" > "$out/archive.zip"
+          unset GH_TOKEN
+          test "$(sha256sum "$out/archive.zip" | cut -d' ' -f1)" = '3fe57a7ee15acf8d06d796cd1b720adc3a13f66fa1083ddb3f5388ecf55b0f26'
+          unzip -q "$out/archive.zip" -d "$out"
+          python3 tests/quartermaster86a/stage.py "$out/quartermaster84c-static.zip" "$out"
+          cp tests/quartermaster86a/stage.sql "$out/stage.sql"
+          (cd "$out"; printf '%s\n' \
+            'd973a5273c299aec3bd62921f93f19acd3a3f1333947beebbe758ed0f8ab011f  stage.sql' \
+            '47a067eb30c049a58609bf9a05558e7f59a35c4efd3faf54cc362ac0f8999ccc  stage-inventory.json' | sha256sum -c)
+      - run: npm install --prefix "$RUNNER_TEMP/cloudflare-uploader" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save wrangler@4.162.0
+      - name: Verify Access, publish staging only and verify deployed bytes
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
+          PHOENIX66_ACCESS_CLIENT_ID: ${{ secrets.PHOENIX66_ACCESS_CLIENT_ID }}
+          PHOENIX66_ACCESS_CLIENT_SECRET: ${{ secrets.PHOENIX66_ACCESS_CLIENT_SECRET }}
+          WRANGLER_BIN: ${{ runner.temp }}/cloudflare-uploader/node_modules/.bin/wrangler
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/quartermaster86a"
+          node tests/quartermaster86a/stage-publish.mjs "$out/site" "$out/stage-inventory.json" 357223ca42dcdace285e4fed61f2f38f87d934ce
