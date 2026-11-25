@@ -53,6 +53,9 @@ jobs:
           python3 rollback/seal.py base.zip rollback
           python3 war-room/build.py rollback/quartermaster84d-static.zip .
           python3 nexus/seal.py quartermaster86a-static.zip nexus .
+          git hash-object nexus/seal.py nexus/ir nexus/model nexus/qm
+          sha256sum quartermaster86a-static.zip nocturne89-static.zip nocturne89-inventory.json
+          jq -r '.inventory | to_entries[] | select(.key | test("admin/(application.mjs|ironclad/(app|model).mjs|quartermaster/workshop.mjs)$")) | [.key,.value] | @tsv' nocturne89-inventory.json
           sha256sum --check <<'SUMS'
           8308c7fe278f1edd3dd90582dbaebee019336c47c12eacfc8e1a49f1db807800  nocturne89-static.zip
           33d02337ee40acafeaa56acb672027b3357508fcc4ebf3c5cf30be56117f35f8  nocturne89-inventory.json
