@@ -1,19 +1,20 @@
 # Astra engineering operating policy
 
-Adopted under Authorisation 84A on 23 November 2026. This policy applies across Apparition engineering. Release-specific owner authorisations and protected environment rules govern each operation.
+Adopted under Authorisation 84A on 23 November 2026 and amended under Authorisation 90 on 25 November 2026. This policy applies across Apparition engineering. Release-specific owner authorisations and protected environment rules govern each operation.
 
 ## Choose the execution surface
 
 | Priority | Surface | Use |
 | --- | --- | --- |
-| 1 | Connected provider integrations | Discover actual permissions and operations. Use GitHub for source, commits, Actions and artifacts, Supabase for schema and permitted database checks, and Cloudflare for deployment metadata and configuration. |
-| 2 | Astra native Computer Use browser | Use it for supported browser-only settings, GitHub protected environments, provider dashboards, genuine Admin sessions, visual checks and responsive acceptance. Prefer the provider's supported authentication flow. |
-| 3 | Owner-connected browser | Use the owner's browser when the necessary authorised session cannot reasonably be used in the native browser. |
-| 4 | Owner action | Group genuine authentication, consent, release approvals, physical device checks and business acceptance into one checkpoint. Identify the exact limitation after checking the integration, native browser and established authorised procedure. |
+| 1 | Connected plugins and provider integrations | Check the tools' actual operations and grants. Use GitHub, Supabase, Cloudflare, Stripe and other in-scope providers directly wherever supported. |
+| 2 | Isolated execution environment | Implement, build, test and rehearse with approved, isolated data and credentials. |
+| 3 | Existing protected automation runners | Use approved workflows for repeatable testing, artifact sealing, protected publication and readback. Preserve all environment gates. |
+| 4 | Astra's independent cloud browser | Use only for an essential operation that the first three surfaces cannot perform. Establish that the browser is independently hosted and isolated from the owner before opening it. Use the provider's approved sign-in flow. |
+| 5 | Owner action | Continue independent work. Report the precise remaining blocker and group any essential owner authentication, consent, protected approval, physical check or business acceptance into one checkpoint. |
 
-Native and owner browsers have independent sessions. Verify the target origin, account, auth state and observed capability before claiming a cross-tool check. Reuse a current session without exporting cookies or tokens. Use secure sign-in or verified native takeover for login. Keep passwords, tokens, private keys, one-time codes and customer data out of chat, scripts, output and persistent evidence.
+Authorisation 90 supersedes all earlier owner-browser permissions, including 84A. The owner's personal browser, connected desktop browser, personal tabs, and authenticated personal sessions are prohibited. Do not inspect, open, control or navigate those surfaces, reuse the owner's sessions, or export or transfer cookies or tokens. An unavailable or unverified independent browser does not permit fallback. The owner can separately perform any essential authentication, consent or approval step.
 
-At workstream start, identify the actual providers, relevant account and environment, minimum permissions, tested read capability and any protected write or approval path. Check only providers in scope. Browser and plugin capability changes do not amend an authorisation.
+On an authorised independent browser, verify the target origin, account, auth state and the browser's isolation. Keep passwords, tokens, private keys, one-time codes and customer data out of chat, scripts, output and persistent evidence. At workstream start, identify only the providers, accounts, environments, minimum permissions and protected write paths needed. Tool access does not expand release authority.
 
 ## Execute and release
 

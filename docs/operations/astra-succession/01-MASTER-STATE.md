@@ -1,8 +1,8 @@
 # Apparition Astra master state
 
-**84A update · 23 November 2026 · Europe/London**
+**Current operating checkpoint · 25 November 2026**
 
-**FIRST LIGHT is live and independently verified.** Production now serves `62f2f737-da53-49a5-960f-a38bdd10af11`. Owner post-publication business acceptance is pending. See [current closure register](08-FIRST-LIGHT-CLOSURE.md) for deployment, exact artifact and verification and [02 Release queue](02-RELEASE-QUEUE.md) for the next workstream.
+NOCTURNE 89 is live. See [02 Release queue](02-RELEASE-QUEUE.md) for the canonical deployment and Authorisation 90 delivery evidence and [07 Operating policy](07-OPERATING-POLICY.md) for the mandatory plugin-first hierarchy and prohibition on the owner’s browser, tabs and sessions.
 
 ## Historical 83H production baseline
 

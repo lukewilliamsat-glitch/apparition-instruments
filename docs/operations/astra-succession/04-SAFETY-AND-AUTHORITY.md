@@ -1,5 +1,7 @@
 # Production safety and authority
 
+**Mandatory since Authorisation 90.** The owner’s browser, tabs and personal sessions are prohibited. Follow the [execution hierarchy](07-OPERATING-POLICY.md) and treat the 83H material below as historical. Current production modes and rollback are in the [release queue](02-RELEASE-QUEUE.md).
+
 ## Scope and approvals
 
 - **83H SUCCESSION** authorises read-only verification and this docs-only isolated branch. No deployment, SQL install, Edge deployment, workflow dispatch, provider connection, production business record write, reset or repository cleanup occurred.

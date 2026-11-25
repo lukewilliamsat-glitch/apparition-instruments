@@ -1,5 +1,7 @@
 # HOMECOMING release queue
 
+**Current operating policy.** Authorisation 90 requires connected integrations first, then isolated execution, protected runners, and the independently hosted Astra cloud browser only when essential. Owner browser use is prohibited. [Operating policy](07-OPERATING-POLICY.md).
+
 **Current production baseline · 25 November 2026.** NOCTURNE 89 is canonical on Cloudflare deployment `59f628b9-6665-4c0b-847f-c6c833c1304b`, source `f0d3c3717cd5a37678733a71c455b602222d3357`. UNITY remains paused. QUARTERMASTER remains in workshop. Live checkout and payment files are unchanged. The immediate static rollback is 86A `2e682696-0111-444d-805a-a4200cfe3457`. Earlier dated entries below are historical receipts.
 
 **24 November 2026 · Ordered by production release dependency.** Isolated provider preparation may proceed independently when authorised. QUARTERMASTER 86A is live in workshop. UNITY remains paused pending genuine Stripe Sandbox settlement evidence. The owner’s operational walkthrough can proceed independently. Each later activation needs its own exact candidate and authority.

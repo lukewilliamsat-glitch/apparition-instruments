@@ -2,9 +2,15 @@
 
 Start at [01 Master state](01-MASTER-STATE.md), [02 Release queue](02-RELEASE-QUEUE.md) and [04 Safety and authority](04-SAFETY-AND-AUTHORITY.md), then use [03 Engineering workstreams](03-ENGINEERING-WORKSTREAMS.md) and [06 Evidence index](06-EVIDENCE-INDEX.md) to locate exact sources and receipts.
 
+## Mandatory browser boundary
+
+Follow [07 Operating policy](07-OPERATING-POLICY.md). Start with connected integrations, then isolated execution and existing protected runners. Use only Astra’s independently hosted cloud browser when essential. Authorisation 90 prohibits accessing the owner’s browser, desktop browser, tabs or personal sessions, including when the independent browser is unavailable. Continue independent work and report any essential owner action.
+
 ## Current restart point
 
-QUARTERMASTER 84B is live in observe. Resume from the [production receipt](../quartermaster84/84B-PRODUCTION-RECEIPT.md), [release queue](02-RELEASE-QUEUE.md), [operating policy](07-OPERATING-POLICY.md) and [staging assessment](../quartermaster84/STAGING-READINESS.md). The owner accepted FIRST LIGHT and the fixture walkthrough. Continue from the [tested writer checkpoint](../quartermaster84/WRITER-CHECKPOINT.md) and [remaining workstreams](../quartermaster84/HOMECOMING-NEXT.md) while the new live owner walkthrough and future writer candidate gates remain open. Preserve FIRST LIGHT as the immediate rollback.
+NOCTURNE 89 is the verified production baseline at `59f628b9-6665-4c0b-847f-c6c833c1304b`, with migration `20261125145923`. QUARTERMASTER is in workshop. UNITY is paused. Live checkout and payments retain their existing contracts. QUARTERMASTER 86A `2e682696-0111-444d-805a-a4200cfe3457` is the immediate rollback for NOCTURNE 89.
+
+Continue Authorisation 90 from the [current release queue](02-RELEASE-QUEUE.md). Prioritise shared NOCTURNE patterns and ECLIPSE, then the OMNISCIENCE and COMMAND dashboards. The genuine sandbox payment and synthetic native rehearsal are accepted evidence. Genuine signed delivery and application settlement against a staging order remain open. Refresh the canonical baseline and protect rollout controls before production mutation.
 
 ## Historical SUCCESSION 83H starter prompt
 
