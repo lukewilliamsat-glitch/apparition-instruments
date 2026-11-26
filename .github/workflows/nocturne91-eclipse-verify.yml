@@ -1,0 +1,40 @@
+name: NOCTURNE 91 unified ECLIPSE fixture acceptance
+on:
+  push:
+    branches: [engineering/nocturne91]
+    paths:
+      - tests/nocturne91/eclipse/**
+      - .github/workflows/nocturne91-eclipse-verify.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verify:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Seal the unified financial workspace and test financial boundaries
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/nocturne91-eclipse"
+          mkdir "$work"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/15099199950/zip" > "$work/baseline.zip"
+          unset GH_TOKEN
+          unzip -q "$work/baseline.zip" -d "$work"
+          python3 tests/nocturne91/eclipse/seal.py "$work/nocturne91-orders-static.zip" tests/nocturne91/eclipse "$work"
+          sha256sum "$work"/nocturne91-eclipse-*
+          unzip -q "$work/nocturne91-eclipse-static.zip" -d "$work/static"
+          npm install --prefix "$work/client" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save playwright-core@1.56.1
+          ORDERS_PLAYWRIGHT_MODULE="$work/client/node_modules/playwright-core" QUARTERMASTER_CHROMIUM="$(command -v google-chrome)" node tests/nocturne91/eclipse/browser.mjs "$work/static"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: nocturne91-eclipse-sealed
+          path: ${{ runner.temp }}/nocturne91-eclipse/nocturne91-eclipse-*
+          if-no-files-found: error
+          retention-days: 7

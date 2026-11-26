@@ -1,0 +1,14 @@
+.eclipse-inline-inputs fieldset {
+  min-inline-size: 0;
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid var(--line, #655239);
+  border-radius: .45rem;
+}
+.eclipse-inline-inputs label { display: block; margin-block: .5rem; }
+.eclipse-inline-inputs input:not([type=checkbox]) { display: block; width: 100%; }
+.eclipse-inline-inputs input[aria-invalid=true] { outline: 2px solid #d67764; }
+.eclipse-inline-inputs[hidden] { display: none; }
+.nocturne-exceptions { margin-block: 1rem; }
+.nocturne-exceptions > summary { padding-block: .6rem; }
+.nocturne-exceptions > fieldset { border: 0; padding: 0; min-inline-size: 0; }

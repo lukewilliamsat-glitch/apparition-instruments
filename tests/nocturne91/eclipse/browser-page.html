@@ -1,0 +1,110 @@
+<!doctype html>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self'; connect-src 'none'; base-uri 'none'">
+<link rel=stylesheet href="/admin/application.css">
+<link rel=stylesheet href="/admin/orders/eclipse.css">
+<link rel=stylesheet href="/admin/nocturne.css">
+<link rel=stylesheet href="/admin/orders/finance-workspace.css">
+<main class="admin-main" id="feature"></main><output id=result></output>
+<script type=module>
+import {mountFinancialOrder} from '/admin/orders/financial-order.mjs';
+import {financeDraft} from '/admin/orders/finance-ui.mjs';
+import {withTrustedFacts} from '/admin/orders/eclipse-model.mjs';
+import {attributableCosts} from '/admin/orders/profitability.mjs';
+const root=document.querySelector('main');
+const result=document.querySelector('output');
+const check=(valid,message)=>{if(!valid)throw Error(message)};
+const wait=async predicate=>{
+ for(let i=0;i<60;i++){if(predicate())return; await new Promise(resolve=>setTimeout(resolve,20));}
+ throw Error('Timed out waiting for fixture state');
+};
+const button=(label)=>[...root.querySelectorAll('button')].find(b=>b.textContent===label&&!b.hidden);
+const text=()=>root.innerText;
+const basis='1'.repeat(64),evidence='2'.repeat(64);
+const order={id:'00000000-0000-4000-8000-000000000901',reference:'FIXTURE-901',channel:'WEBSITE',
+ paidAt:'2026-11-24T13:00:00Z',createdAt:'2026-11-24T12:00:00Z',providerBacked:true,paymentStatus:'partially_refunded',refundedPence:50,
+ pricing:{total:2500,delivery:500},
+ items:[{productId:'pot-1',name:'Measured potentiometer',type:'component',quantity:1,unitPrice:800},
+ {productId:'cap-1',name:'Film capacitor',type:'component',quantity:1,unitPrice:400},
+ {productId:'kit-1',name:'Wiring kit',type:'kit',quantity:1,unitPrice:800,snapshot:{stockRequirements:[{componentId:'pot-1',quantity:2},{componentId:'cap-1',quantity:1}]}}]};
+const doc=withTrustedFacts(financeDraft(order),order);
+doc.lines[1].costState='confirmed';
+doc.lines[1].costProvenance={basis:'historical_snapshot'};
+doc.lines[1].costSource='Original confirmed evidence';
+doc.lines[1].unitCostMicro=120000;
+const trace={line_index:0,component_id:'pot-1',quantity:1,batch_id:'fixture-lot',batch_total_minor:101,batch_quantity:7,basis:'verified_physical_trace',evidence:'Fixture receipt'};
+const row=()=>({version:1,orderId:order.id,revision,document:structuredClone(saved),orderBasisHash:basis,orderBasisMatches:true,history:[]});
+let revision=7,saved=structuredClone(doc),approve=0,statusChecks=0,latestReceipt,financialWrites=0;
+const repo={read:async()=>({record:row(),bytes:1}),save:async p=>{
+ financialWrites++;revision++;saved=structuredClone(p.document);
+ return {bytes:1,receipt:{outcome:'committed',revision,document:saved,orderId:order.id,orderBasisHash:basis,requestId:p.requestId}};
+},status:async()=>{throw Error('Unexpected general save check')},dispose(){}};
+const workshop=async (method,body)=>{
+ check(body.p_order===order.id,'Bound workshop order');
+ if(method==='proposal'){
+  return revision===7?{state:'ready',revision,basis,evidence,packaging:85,postage:315}:{state:'already-recorded'};
+ }
+ if(method==='financeSave'){
+  check(body.p_revision===7&&body.p_evidence===evidence&&body.p_basis===basis,'Revision and evidence guard');
+  approve++;revision++;
+  saved.costs.packaging={minor:85,state:'confirmed',source:'Pack movement'};
+  saved.costs.shipping={minor:315,state:'confirmed',source:'Postage evidence'};
+  latestReceipt={outcome:'committed',revision,orderId:order.id,requestId:body.p_request};
+  throw Error('Simulated lost approval response');
+ }
+ check(method==='financeStatus'&&body.p_request===latestReceipt.requestId,'Only the original receipt may be checked');
+ statusChecks++;
+ return latestReceipt;
+};
+try{
+ const direct=attributableCosts(doc,[trace,{...trace,line_index:1,component_id:'cap-1'}]);
+ check(direct.count===1&&direct.document.lines[0].unitCostMicro===144286,'Exact acquisition micro-unit value');
+ check(direct.document.lines[1].unitCostMicro===120000&&direct.document.lines[2].costState==='unknown','Confirmed and unsupported lines stay intact');
+ check(attributableCosts(doc,[trace,trace]).count===0,'Ambiguous batch evidence ignored');
+ check(attributableCosts(doc,[{...trace,basis:'allocated_batch'}]).document.lines[0].costState==='estimated','Allocated basis remains estimated');
+ const panel=mountFinancialOrder({root,order,repository:repo,historicalCosts:async()=>[trace],
+  componentCosts:async ids=>{
+   check(ids.join(',')==='pot-1,cap-1','Only saved BOM identities requested');
+   return {costs:{'pot-1':200000,'cap-1':140000}};
+  },workshop});
+ await wait(()=>button('Approve workshop costs')&&!button('Approve workshop costs').disabled);
+ check(!button('Financial details')&&!button('Advanced reconciliation'),'One workspace');
+ check(root.querySelectorAll('.eclipse-inline-inputs input[inputmode=decimal]').length===2,'Amount entry without evidence IDs');
+ check(text().includes('1 saved BOM estimate'),'Saved BOM estimate labelled');
+ check(text().includes('£25.00')&&text().includes('£20.00')&&text().includes('£5.00')&&text().includes('£0.50'),'Order income and refunds');
+ check(text().includes('£0.85')&&text().includes('£3.15'),'Trusted pack and actual postage evidence');
+ check([...root.querySelectorAll('dt')].find(t=>t.textContent==='Marketplace and payment fees')?.nextSibling.textContent==='Unknown','Unknown fees never zero-filled');
+ check(approve===0&&financialWrites===0,'Evidence never writes without action');
+ button('Approve workshop costs').click();
+ await wait(()=>button('Check workshop approval')&&!button('Check workshop approval').disabled);
+ check(approve===1&&financialWrites===0&&root.querySelector('.nocturne-exceptions').hidden,'No second write on uncertain receipt');
+ button('Check workshop approval').click();
+ await wait(()=>button('Save financial record')&&!button('Save financial record').disabled);
+ check(approve===1&&statusChecks===1&&text().includes('Workshop costs are recorded'),'Receipt recovered, saved revision reloaded');
+ const others=[...root.querySelectorAll('.eclipse-inline-inputs label')].find(x=>x.textContent==='Other direct costs (GBP)').querySelector('input');
+ others.value='not valid';others.dispatchEvent(new Event('input'));
+ check(!button('Save financial record'),'Invalid input blocks saving');
+ others.value='0.25';others.dispatchEvent(new Event('input'));
+ check(panel.session.snapshot().draft.costs.other.minor===25,'GBP input maps exactly to minor units');
+ const verify=others.parentNode.nextElementSibling.querySelector('input');
+ verify.click();
+ check(panel.session.snapshot().draft.costs.other.state==='confirmed','Owner confirmation records the evidence basis');
+ button('Save financial record').click();
+ await wait(()=>panel.session.snapshot().record.revision===9);
+ check(financialWrites===1&&saved.lines[0].costState==='confirmed','Acquisition cost saved only explicitly');
+ check(saved.costs.shipping.minor===315&&saved.lines[1].costSource==='Original confirmed evidence','Verified history preserved');
+ check(saved.lines[2].costState==='estimated'&&saved.lines[2].unitCostMicro===540000,'Saved BOM acquisition estimate');
+ check(saved.costs.other.minor===25&&saved.costs.other.state==='confirmed'&&!saved.feesComplete,'Manual other cost and unknown fees retained');
+ check(root.scrollWidth<=innerWidth&&document.documentElement.scrollWidth<=innerWidth,'No horizontal overflow');
+ const exceptions=root.querySelector('.nocturne-exceptions');
+ exceptions.open=true;
+ await wait(()=>exceptions.querySelector('[data-finance-workbench]'));
+ check(root.querySelector('[data-finance-field="marketplace-tax"]'),'Exceptional corrections open inline');
+ exceptions.open=false;
+ await wait(()=>!exceptions.querySelector('[data-finance-workbench]'));
+ panel.dispose();
+ check(!root.querySelector('[data-financial-record]'),'Sign-out disposal removes evidence');
+ result.textContent='PASS 91 ECLIPSE';
+}catch(error){result.textContent='FAIL 91 '+error.message;}
+</script>
