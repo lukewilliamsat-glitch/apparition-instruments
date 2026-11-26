@@ -51,7 +51,8 @@ begin
  refund:=event->>'type' in ('refund.created','refund.updated');
  if not checkout and not refund then return jsonb_build_object('outcome','ignored'); end if;
  object:=event#>'{data,object}';
- if object->'livemode' is distinct from 'false'::jsonb then
+ if (checkout and object->'livemode' is distinct from 'false'::jsonb)
+   or (refund and object ? 'livemode' and object->'livemode' is distinct from 'false'::jsonb) then
   raise exception 'Sandbox object required' using errcode='22023';
  end if;
  if checkout then
@@ -70,7 +71,12 @@ begin
    or plan.expected_minor<>order_row.total_pence or plan.session_id is distinct from order_row.stripe_checkout_session_id then
    raise exception 'Stored plan binding changed' using errcode='23514';
  end if;
- fingerprint:=sha256(convert_to((event-'pending_webhooks'-'request')::text,'UTF8'));
+ fingerprint:=sha256(convert_to(jsonb_build_array(
+   event->'id',event->'type',event->'created',plan.order_id,plan.account,
+   object->'object',object->'id',object->'client_reference_id',object#>'{metadata,dominion_binding}',
+   object->'amount_total',object->'amount',object->'currency',object->'payment_status',
+   object->'status',object->'payment_intent',object->'created'
+ )::text,'UTF8'));
  select * into previous from convergence92.receipts where event_id=event->>'id';
  if found then
    if previous.fingerprint<>fingerprint or previous.order_id<>plan.order_id then
