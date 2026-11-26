@@ -1,6 +1,6 @@
 # Astra engineering operating policy
 
-Adopted under Authorisation 84A on 23 November 2026 and amended under Authorisation 90 on 25 November 2026. This policy applies across Apparition engineering. Release-specific owner authorisations and protected environment rules govern each operation.
+Adopted under Authorisation 84A on 23 November 2026 and amended under Authorisation 90 on 25 November 2026 and Authorisation 93 on 26 November 2026. This policy applies across Apparition engineering. Release-specific owner authorisations and protected environment rules govern each operation.
 
 ## Choose the execution surface
 
@@ -15,6 +15,30 @@ Adopted under Authorisation 84A on 23 November 2026 and amended under Authorisat
 Authorisation 90 supersedes all earlier owner-browser permissions, including 84A. The owner's personal browser, connected desktop browser, personal tabs, and authenticated personal sessions are prohibited. Do not inspect, open, control or navigate those surfaces, reuse the owner's sessions, or export or transfer cookies or tokens. An unavailable or unverified independent browser does not permit fallback. The owner can separately perform any essential authentication, consent or approval step.
 
 On an authorised independent browser, verify the target origin, account, auth state and the browser's isolation. Keep passwords, tokens, private keys, one-time codes and customer data out of chat, scripts, output and persistent evidence. At workstream start, identify only the providers, accounts, environments, minimum permissions and protected write paths needed. Tool access does not expand release authority.
+
+## Resource efficiency
+
+Adopted under Authorisation 93 on 26 November 2026 from the owner's Apparition Resource Efficiency Directive. Apply these requirements across all engineering workstreams.
+
+- Reuse accepted implementation, architecture and test evidence.
+- Inspect only files directly relevant to the current objective.
+- Avoid repeated repository-wide discovery.
+- Avoid re-auditing completed programmes.
+- Prefer targeted changes over unnecessary architectural rewrites.
+- Batch independent plugin operations where appropriate.
+- Keep tool responses bounded and relevant.
+- Avoid repeatedly polling unchanged provider and workflow states.
+- Use proportionate regression testing, retaining mandatory safety gates.
+- Avoid speculative development and unnecessary scope expansion.
+- Maintain concise documentation and completion reports.
+- Record durable checkpoints after each meaningful implementation milestone.
+- Preserve exact source references and outstanding actions to allow another model to resume without repeating completed work.
+
+Where several independent objectives exist, prioritise completing individual deliverables rather than partially implementing all of them.
+
+Do not compromise security, payment integrity, financial accuracy or inventory integrity to reduce usage.
+
+Prioritise completed, verified functionality over extensive analysis or documentation.
 
 ## Execute and release
 
