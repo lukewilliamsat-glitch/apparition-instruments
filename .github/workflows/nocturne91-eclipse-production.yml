@@ -1,0 +1,108 @@
+name: NOCTURNE 91 ECLIPSE protected publication
+on:
+  push:
+    branches: [engineering/phoenix66-preview]
+    paths: [.github/release-intents/nocturne91-eclipse.json]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: phoenix66-pages-publisher
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.event_name == 'push' && github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview' && github.actor == 'lukewilliamsat-glitch' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - name: Validate release intent and exact acceptance receipt
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          intent='.github/release-intents/nocturne91-eclipse.json'
+          gh api -H 'Accept: application/vnd.github.raw+json' "repos/$GITHUB_REPOSITORY/contents/$intent?ref=$GITHUB_SHA" |
+            jq -e '.authorisation == 91 and .migration == "20261126084943" and .publish == true and .source == "774783d9d098e38fb9e5e827e6b7ad6350699815" and .artifact == 15100333777 and .rollback == "0a24545f-d66d-43f2-9221-5521493d9fca"' >/dev/null
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/45786732157" |
+            jq -e '.conclusion == "success" and .head_sha == "774783d9d098e38fb9e5e827e6b7ad6350699815" and .head_branch == "engineering/nocturne91"' >/dev/null
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/15100333777" |
+            jq -e '.expired == false and .workflow_run.id == 45786732157 and .workflow_run.head_sha == "774783d9d098e38fb9e5e827e6b7ad6350699815"' >/dev/null
+  production_gate:
+    needs: verify
+    environment: phoenix66-production
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Verify the protected production target
+        env:
+          APPROVED_TARGET: ${{ vars.PHOENIX66_APPROVED_TARGET }}
+        run: test "$APPROVED_TARGET" = 'apparition-instruments:production:43845328622'
+  publish:
+    needs: production_gate
+    environment: phoenix66-preview
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Download and verify the sealed acceptance artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/nocturne91-eclipse"
+          mkdir -p "$work"
+          cd "$work"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/15100333777/zip" > sealed.zip
+          unset GH_TOKEN
+          unzip -q sealed.zip
+          sha256sum --check <<'SUMS'
+          f2d2788baeba42aab4986dbd69ad46187461f2e447d8cc7a9ea5e69dce53b065  nocturne91-eclipse-static.zip
+          c95662c32c9ce383d8d1533bdc185ac09423a755c97fd60ad207ca8fc46cdd19  nocturne91-eclipse-inventory.json
+          SUMS
+          unzip -q nocturne91-eclipse-static.zip -d static
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Prepare the approved Pages uploader
+        run: npm install --prefix "$RUNNER_TEMP/cloudflare-uploader" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false wrangler@4.162.0
+      - name: Verify rollback, publish once and compare the served bytes
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/nocturne91-eclipse"
+          endpoint="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/apparition-instruments"
+          prior='0a24545f-d66d-43f2-9221-5521493d9fca'
+          prior_source='b92b3a3c8db5528a53638feca16b7ed35c5a727e'
+          candidate='774783d9d098e38fb9e5e827e6b7ad6350699815'
+          project() { curl -fsS --max-time 12 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$endpoint"; }
+          project | jq -e --arg id "$prior" --arg source "$prior_source" \
+            '.success and (.result.domains|index("apparitioninstruments.co.uk")!=null) and .result.production_branch=="production" and .result.canonical_deployment.id==$id and .result.canonical_deployment.environment=="production" and .result.canonical_deployment.latest_stage.status=="success" and .result.canonical_deployment.deployment_trigger.metadata.commit_hash==$source' >/dev/null
+          curl -fsS --max-time 12 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$endpoint/deployments/$prior" |
+            jq -e --arg id "$prior" '.success and .result.id==$id and .result.environment=="production" and .result.latest_stage.status=="success"' >/dev/null
+          cd "$work"
+          "$RUNNER_TEMP/cloudflare-uploader/node_modules/.bin/wrangler" pages deploy "$work/static" \
+            --project-name=apparition-instruments --branch=production --commit-hash="$candidate" \
+            --commit-dirty=true --commit-message="NOCTURNE 91 ECLIPSE unified financials"
+          project | jq -e --arg old "$prior" --arg source "$candidate" \
+            'select(.success) | .result.canonical_deployment | select(.id!=$old and .environment=="production" and .latest_stage.status=="success" and .deployment_trigger.metadata.commit_hash==$source) | {id,environment,source:.deployment_trigger.metadata.commit_hash}' >> "$GITHUB_STEP_SUMMARY"
+          readback() {
+            local route="$1" expected="$2" attempt status
+            for attempt in {1..6}; do
+              status=$(curl --silent --show-error --max-time 14 --max-filesize 3000000 --output served --write-out '%{http_code}' "https://apparitioninstruments.co.uk$route") || true
+              if [[ "$status" = "200" ]] && cmp -s "$work/static/$expected" served; then
+                printf 'MATCH %s\n' "$route"
+                return
+              fi
+              if [[ "$attempt" != 6 ]]; then sleep 6; fi
+            done
+            printf 'Readback differs for %s (HTTP %s)\n' "$route" "$status" >&2
+            return 1
+          }
+          for route in / /account/ /checkout/; do
+            readback "$route" "${route#/}index.html"
+          done
+          jq -r '.changed[]' nocturne91-eclipse-inventory.json | while IFS= read -r path; do
+            readback "/${path%index.html}" "$path"
+          done
+          echo 'Exact sealed Admin assets and unchanged public storefront, account and checkout responses verified.' >> "$GITHUB_STEP_SUMMARY"
