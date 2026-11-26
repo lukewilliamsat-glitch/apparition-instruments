@@ -4,7 +4,7 @@ Production activation is not authorised by 93. This package changes no Cloudflar
 
 ## Fresh preflight and custody
 
-Require production UNITY paused, QUARTERMASTER workshop, expected 92 application, original checkout v16, status v10, webhook v15 and email v15 before installation. Pin original paid writer MD5 `bb9667b96e2aa3d8a557863434463294`, create-order MD5 from `create-order.accepted.sql`, and catalogue view MD5 `16626212b80b5685c88aa75fe6bcdd24`. Require the expected unused foundations, no competing reservation authority and zero open UNITY holds. Stop on drift.
+Require production UNITY paused, QUARTERMASTER workshop, expected 92 application, original checkout v16, status v10, webhook v15 and email v15 before installation. Pin original paid writer MD5 `bb9667b96e2aa3d8a557863434463294`, create-order MD5 `ba4bf95a75a64036cb04f280be006d92` (definition snapshot in `create-order.accepted.sql`), and catalogue view MD5 `16626212b80b5685c88aa75fe6bcdd24`. Require the expected unused foundations, no competing reservation authority and zero open UNITY holds. Stop on drift.
 
 Reconcile every unpaid pending legacy website Checkout Session with Stripe before enabling new holds. Use bounded pages, verify account, amount, currency and Session identity, retain payment/expiry evidence and drain uncertain Sessions. Do not infer expiry from local time or fabricate production transactions. This live-provider reconciliation is a release-time gate; no live Stripe operation was used for isolated testing.
 

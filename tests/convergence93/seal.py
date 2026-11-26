@@ -6,7 +6,8 @@ root=Path(__file__).parent
 out=Path(sys.argv[1]);out.mkdir(parents=True,exist_ok=True)
 files={}
 for path in root.rglob('*'):
- if path.is_file():files['convergence93/'+str(path.relative_to(root))]=path.read_bytes()
+ if path.is_file() and not any(part.startswith('.') for part in path.relative_to(root).parts):
+  files['convergence93/'+str(path.relative_to(root))]=path.read_bytes()
 for path in (root.parent/'convergence92').iterdir():
  if path.is_file() and path.name!='verify.yml':files['convergence92/'+path.name]=path.read_bytes()
 manifest={'version':1,'authorisation':93,'environment':'production-review-only','files':{n:sha256(b).hexdigest() for n,b in sorted(files.items())}}
