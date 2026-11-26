@@ -4,7 +4,7 @@
 
 CONVERGENCE 92 complete-period reporting is live at `9a69e1ab-59fa-44e6-9e7e-03ed50d3d175`, source `e0b789640367088ccd3d38c856c8735408796c51`. Immediate static rollback is Authorisation 91 `04971be9-6d8a-42f2-bad5-ae553dc8aeb6`. QUARTERMASTER remains in workshop; production UNITY remains paused. Checkout v16, status v10, Stripe webhook v15 and transactional email v15 remain unchanged.
 
-The 92 signed Sandbox settlement and refund receipts are accepted independently of ordinary checkout routing. The sealed integration review source is `8e5fdc0a564b2a6bfc7bf50b5e7f5310e0e192e6`; complete-period OM-AUTO-002 is published. NEXUS and NOCTURNE stay closed. Historical acquisition attribution and the reviewed production checkout cutover remain open. Use [the current 92 checkpoint](02-RELEASE-QUEUE.md#authorisation-92-checkpoint--26-november-2026). No further production UNITY authority is implied.
+Authorisation 93 completed genuine ordinary Sandbox checkout, saved contact, signed settlement, HTTP resend and three provider expiry releases. Staging is paused with zero holds. The exact activation review source is `b6c60d66a30843c16300ee595113327c91d31fdb`, [acceptance 45849854941](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45849854941), artifact `15132832207`. Production installation and activation remain separately controlled. Use [the current 93 checkpoint](02-RELEASE-QUEUE.md#authorisation-93--nexus-gate--isolated-acceptance-complete); do not repeat accepted provider tests or request the staging key again. NEXUS, NOCTURNE and OM-AUTO-002 remain closed; historical acquisition attribution remains separately scoped.
 
 ## Historical 83H production baseline
 

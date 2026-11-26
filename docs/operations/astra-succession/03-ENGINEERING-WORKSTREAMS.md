@@ -2,9 +2,9 @@
 
 Use the [evidence index](06-EVIDENCE-INDEX.md) for immutable commits, workflows and receipts. The [78B workspace matrix](https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/388a9b53f4898d32a561349b82be2ccd9715ab7f/docs/operations/grand-ascent78/unification-audit-78b.md#workspace-and-supersession-matrix) documents preserved routes and capabilities. Its staged C wording predates the [verified Release C publication](https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/f2e10ec9fdac23e3b2c268a80dabf13697353d99/docs/operations/grand-ascent78/ascension79-live-c.md).
 
-## Authorisation 92 restart
+## Authorisation 93 restart
 
-Use [the current 92 checkpoint](02-RELEASE-QUEUE.md#authorisation-92-checkpoint--26-november-2026) for genuine signed Sandbox settlement and refund evidence, sealed integration review source `8e5fdc0a564b2a6bfc7bf50b5e7f5310e0e192e6`, and the published OM-AUTO-002 increment. Ordinary reserved checkout integration, protected test key and reviewed production cutover remain open. Historical constituent costing remains open. NEXUS and NOCTURNE stay closed; earlier tables are historical.
+[The current 93 checkpoint](02-RELEASE-QUEUE.md#authorisation-93--nexus-gate--isolated-acceptance-complete) records complete isolated ordinary checkout, signed settlement/resend/expiry, native recovery and the sealed activation review. Source `b6c60d66a30843c16300ee595113327c91d31fdb`, artifact `15132832207`, acceptance `45849854941`. No additional provider credential is needed. Next is separately authorised production installation and controlled cutover with fresh live legacy-Session reconciliation and protected approval. NEXUS, NOCTURNE and OM-AUTO-002 remain closed; historical acquisition costing remains open. Earlier tables are historical.
 
 ## Canonical branches and accepted checkpoints
 
