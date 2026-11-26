@@ -41,10 +41,28 @@ jobs:
           set -euo pipefail
           [[ "$SOURCE" =~ ^[a-f0-9]{40}$ && "$RUN" =~ ^[0-9]+$ && "$ARTIFACT" =~ ^[0-9]+$ && "$DIGEST" =~ ^[a-f0-9]{64}$ ]]
           gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN" > run.json
-          jq -e --arg source "$SOURCE" '.head_sha==$source and .conclusion=="success" and .run_attempt==1' run.json >/dev/null
+          jq -e --arg source "$SOURCE" '.head_sha==$source and .conclusion=="success" and .run_attempt==1 and .path==".github/workflows/convergence92-verify.yml" and .head_branch=="engineering/convergence92" and .event=="push"' run.json >/dev/null
           gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN/artifacts" > artifacts.json
           jq -e --argjson id "$ARTIFACT" '.artifacts[]|select(.id==$id and .name=="nexus93-production-accepted" and .expired==false)' artifacts.json >/dev/null
           gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$ARTIFACT/zip" > artifact.zip
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          from hashlib import sha256
+          import json,os,io
+          with ZipFile('artifact.zip') as outer:
+            assert set(outer.namelist())=={'nexus93-activation-review.zip','nexus93-manifest.json'}
+            assert sum(f.file_size for f in outer.infolist())<2000000
+            candidate=outer.read('nexus93-activation-review.zip')
+            assert sha256(candidate).hexdigest()==os.environ['DIGEST']
+            manifest=json.loads(outer.read('nexus93-manifest.json'))
+          assert manifest['authorisation']==93 and manifest['environment']=='production-review-only'
+          with ZipFile(io.BytesIO(candidate)) as inner:
+            assert set(inner.namelist())==set(manifest['files'])
+            for name,digest in manifest['files'].items():
+              assert sha256(inner.read(name)).hexdigest()==digest
+          print('Exact accepted source package and all sealed file digests verified')
+          PY
           unzip -q artifact.zip -d accepted
           printf '%s  accepted/nexus93-activation-review.zip\n' "$DIGEST" | sha256sum --check
           echo 'Exact accepted activation package verified. This workflow performs no production mutation.' >> "$GITHUB_STEP_SUMMARY"

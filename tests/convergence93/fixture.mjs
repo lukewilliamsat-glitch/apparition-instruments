@@ -31,6 +31,7 @@ try{
  await db.query(await sql('catalogue.baseline.sql'));
  await db.query('grant select on public.catalogue_components to anon,authenticated');
  await db.query(await sql(live?'contact.production.accepted.sql':'contact.staging.accepted.sql'));
+ await db.query('revoke all on function public.save_stripe_order_contact(uuid,text,text,text,jsonb,jsonb) from public,anon,authenticated;grant execute on function public.save_stripe_order_contact(uuid,text,text,text,jsonb,jsonb) to service_role');
  await db.query(await sql(live?'receiver.production.review.sql':'receiver.staging.sql'));
  await db.query(await sql('availability.sql'));
  await db.query("insert into public.components(id,active,individually,in_kits) values('fixture92-stock',true,true,false);update public.inventory set quantity=10");
