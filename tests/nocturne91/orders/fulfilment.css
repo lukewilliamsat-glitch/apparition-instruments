@@ -1,0 +1,17 @@
+.orders-fulfilment-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .75rem;
+  margin-block: .75rem;
+}
+.orders-fulfilment-toolbar[hidden] { display: none; }
+[data-fulfilment-select] {
+  min-width: 11rem;
+  max-width: 100%;
+  min-height: 44px;
+  border-radius: .4rem;
+}
+[data-fulfilment-select][data-tone=warning] { color: #efc783; border-color: #9b794a; }
+[data-historical-order] { margin-inline-end: .65rem; accent-color: #c6a361; }
+.external-dispatch-dialog textarea[name=reason] { display: block; width: 100%; min-height: 5rem; margin-block: .5rem; }

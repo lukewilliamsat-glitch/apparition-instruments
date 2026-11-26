@@ -1,0 +1,83 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="/admin/orders/fulfilment.css">
+<div id="message" role="status"></div>
+<div id="table" style="overflow:auto;max-width:100%"></div>
+<output id="result"></output>
+<script type="module">
+import {mountFulfilmentTable} from '/admin/orders/fulfilment-table.mjs';
+const table=document.querySelector('#table'),message=document.querySelector('#message');
+const out=document.querySelector('#result');
+const assert=(condition,label)=>{if(!condition)throw new Error(label);};
+const settle=()=>new Promise(resolve=>setTimeout(resolve,10));
+const change=select=>{select.value=select.options[1].value;select.dispatchEvent(new Event('change'));};
+const original='2026-11-25T12:00:00Z';
+const modified='2026-11-25T13:00:00Z';
+const order=(id,channel,status,paymentStatus='paid')=>({id,reference:'AI-TEST-'+id,
+ channel,externalReference:'marketplace-reference',fulfilmentStatus:status,paymentStatus,
+ paidAt:original,fulfilledAt:original,updatedAt:original});
+const rows=[order('one','EBAY','ready_to_dispatch'),order('two','OTHER','pending'),
+ order('three','EBAY','pending','refunded'),order('four','WEBSITE','pending')];
+const requests=[];
+let shouldSave=false, allowConfirm=false, finish;
+const view=mountFulfilmentTable({document,root:table,message,getOrders:()=>rows,
+ update(changes) {
+  for(const next of changes){
+    const row=rows.find(row=>row.id===next.id);
+    Object.assign(row,{fulfilmentStatus:next.status,updatedAt:next.updated_at});
+  }
+  render();
+ },
+ request(operation,body) {
+  requests.push({operation,body});
+  if(!shouldSave)throw Error('Order changed. Refresh Orders.');
+  if(operation==='complete_external_orders')return body.p_orders.length;
+  return new Promise(resolve=>{finish=()=>resolve({status:body.p_target,updatedAt:modified});});
+ },
+ confirm:description=>description.includes('dispatch')&&allowConfirm,
+ askReason:async({description})=>{
+  assert(description.includes('AI-TEST-two')&&description.includes('without sending email'),'confirmation context');
+  return {reason:'Verified marketplace fulfilment'};
+ }
+});
+function render(){
+ table.replaceChildren();
+ for(const row of rows){
+  const cell=document.createElement('div');
+  view.addSelection(cell,row);
+  view.renderStatus(cell,row,row.fulfilmentStatus,'neutral');
+  table.append(cell);
+ }
+ view.sync(rows);
+}
+try {
+ render();
+ assert(!table.querySelector('[data-fulfilment-select="three"]'),'refund control');
+ change(table.querySelector('[data-fulfilment-select="one"]'));
+ assert(!requests.length,'dispatch cancellation');
+ allowConfirm=true;
+ change(table.querySelector('[data-fulfilment-select="one"]'));
+ await settle();
+ assert(message.textContent.includes('changed')&&rows[0].fulfilmentStatus==='ready_to_dispatch','failed save display');
+ shouldSave=true;
+ const select=table.querySelector('[data-fulfilment-select="one"]');
+ change(select);change(select);
+ assert(requests.length===2&&select.disabled,'concurrent submission');
+ finish();
+ await settle();
+ assert(requests.at(-1).body.p_expected_updated_at===original&&rows[0].fulfilmentStatus==='dispatched','guard and response');
+ assert(table.querySelector('[data-fulfilment-select="one"]').options[1].value==='completed','next legal choice');
+ document.querySelector('.orders-fulfilment-toolbar button').click();
+ assert(table.querySelectorAll('input').length===2,'only eligible marketplace rows');
+ table.querySelector('[aria-label="Select AI-TEST-two for historical correction"]').click();
+ document.querySelector('.orders-fulfilment-toolbar button:last-child').click();
+ await settle();
+ assert(rows[1].fulfilmentStatus==='completed'&&rows[3].fulfilmentStatus==='pending','historical correction');
+ assert(requests.at(-1).body.p_reason==='Verified marketplace fulfilment','correction audit input');
+ view.conceal();
+ assert(document.querySelector('.orders-fulfilment-toolbar').hidden,'sign-out concealment');
+ assert(document.documentElement.scrollWidth<=window.innerWidth,'responsive horizontal bounds');
+ out.textContent='PASS 91 orders';
+}catch(error){out.textContent='FAIL '+error.message;}
+</script>

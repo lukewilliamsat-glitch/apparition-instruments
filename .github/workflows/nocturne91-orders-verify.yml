@@ -1,0 +1,50 @@
+name: NOCTURNE 91 Orders fixture acceptance
+on:
+  push:
+    branches: [engineering/nocturne91]
+    paths:
+      - tests/nocturne91/orders/**
+      - .github/workflows/nocturne91-orders-verify.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verify:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17.6
+        env:
+          POSTGRES_PASSWORD: fixture-only
+        ports: ['55432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 3s --health-retries 6
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Rehearse guarded Orders writes and seal the accepted static bundle
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PG_ORDERS_PASSWORD: fixture-only
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/nocturne91-orders"
+          mkdir "$work"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/15038133757/zip" > "$work/baseline.zip"
+          unset GH_TOKEN
+          unzip -q "$work/baseline.zip" -d "$work"
+          npm install --prefix "$work/client" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save pg@8.16.3
+          PG_ORDERS_MODULE="$work/client/node_modules/pg" node tests/nocturne91/orders/fixture.mjs
+          python3 tests/nocturne91/orders/seal.py "$work/nocturne90-dashboard-static.zip" tests/nocturne91/orders "$work"
+          sha256sum "$work"/nocturne91-orders-* tests/nocturne91/orders/fulfilment.review.sql
+          unzip -q "$work/nocturne91-orders-static.zip" -d "$work/static"
+          QUARTERMASTER_CHROMIUM=google-chrome node tests/nocturne91/orders/browser.mjs "$work/static"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: nocturne91-orders-sealed
+          path: ${{ runner.temp }}/nocturne91-orders/nocturne91-orders-*
+          if-no-files-found: error
+          retention-days: 7
