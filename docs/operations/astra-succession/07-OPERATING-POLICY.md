@@ -40,6 +40,12 @@ Do not compromise security, payment integrity, financial accuracy or inventory i
 
 Prioritise completed, verified functionality over extensive analysis or documentation.
 
+## Authorisation 94 execution economy
+
+Connected GitHub, Stripe, Supabase and Cloudflare plugins are mandatory first choice for supported operations. Use isolated execution and existing protected runners for implementation and tests. Before browser use, record the exact missing plugin operation. Keep at most two active task-related independent cloud tabs, reuse them and close completed task tabs. Never inspect or close owner browser tabs. Avoid screenshots, repeated navigation and full-page dumps unless essential.
+
+Batch independent reads and filter returned fields. Do not repeatedly poll unchanged workflows or provider state. Reuse accepted paths, source, fixtures and evidence; no broad repository discovery or historical audit without material drift. Keep reasoning and records proportionate, and record durable resume checkpoints. Payment, stock, security and financial integrity remain mandatory.
+
 ## Execute and release
 
 Complete authorised routine work independently. Keep implementation and documentation on the isolated workstream ref. Reserve production changes, real transactions, new privileged grants, provider consent and production rollout for their approved scope. Do not manufacture customer, order, stock, finance, payment or email transactions in production.
