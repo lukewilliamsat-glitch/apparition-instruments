@@ -50,6 +50,14 @@ try{
  await db.query('begin read only;set local role authenticated');
  const unity=await scalar('select public.ironclad69_cost_read($1) result',[second]);await db.query('commit');
  assert.equal(unity[0].line_cost_minor,50);assert.equal(unity[0].basis,'allocated_batch','UNITY inferred physical allocation is not silently verified');
+ const peer=new Client({host:'127.0.0.1',port:55494,user:'postgres',database:'postgres'});await peer.connect();
+ try{
+  const race='00000000-0000-4000-8000-000000000096';
+  await db.query('insert into public.orders select $1,items,currency,payment_status,fulfillment_applied_at from public.orders where id=$2',[race,id]);
+  const body=(componentId,batchId,quantity)=>JSON.stringify({orderId:race,lineIndex:0,componentId,batchId,quantity,basis:'verified_physical_trace',evidence:'Concurrent isolated fixture trace'});
+  await Promise.all([db.query('select ironclad69.capture_cost($1,$2)',[actor,body('cap-1',batch1,4)]),peer.query('select ironclad69.capture_cost($1,$2)',[actor,body('res-1',batch2,2)])]);
+  assert.equal((await scalar('select public.ironclad69_cost_read($1) result',[race]))[0].line_cost_minor,50);
+ }finally{await peer.end();}
  await writeFile(process.argv[2],JSON.stringify(rows));
  console.log('PASS immutable complete-BOM evidence, missing/stale rejection, actual read-only Admin semantics, denied roles and unchanged UNITY estimated basis');
 }finally{await db.end();}

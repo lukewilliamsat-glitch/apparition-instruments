@@ -146,7 +146,7 @@ AS $function$
 declare o public.orders%rowtype; b ironclad69.batches%rowtype; line jsonb;
  pos int; qty int; comp text; basis text; ref uuid;
 begin
- select * into strict o from public.orders where id=(d->>'orderId')::uuid for share;
+ select * into strict o from public.orders where id=(d->>'orderId')::uuid for update;
  if o.payment_status not in('paid','partially_refunded','refunded') or o.fulfillment_applied_at is null
  then raise exception 'Use a recorded fulfilment, not a quote or unpaid order';end if;
  pos:=ironclad69.integer(d->'lineIndex',0,249);line:=o.items->pos;
