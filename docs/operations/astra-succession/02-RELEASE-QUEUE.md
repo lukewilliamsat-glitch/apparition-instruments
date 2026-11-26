@@ -4,6 +4,16 @@
 
 **Current production baseline · 26 November 2026.** CONVERGENCE 92 complete-period reporting is live at `9a69e1ab-59fa-44e6-9e7e-03ed50d3d175`, source `e0b789640367088ccd3d38c856c8735408796c51`. Immediate static rollback is Authorisation 91 `04971be9-6d8a-42f2-bad5-ae553dc8aeb6`. QUARTERMASTER remains in workshop; production UNITY remains paused. Checkout v16, status v10, Stripe webhook v15 and transactional email v15 remain unchanged.
 
+## Authorisation 93 · NEXUS GATE · awaiting credential confirmation
+
+Production stays on `9a69e1ab-59fa-44e6-9e7e-03ed50d3d175`; UNITY paused and live checkout unchanged. Reuse the 92 settlement evidence and accepted integration source `8e5fdc0a564b2a6bfc7bf50b5e7f5310e0e192e6`.
+
+The permanent [operating policy](07-OPERATING-POLICY.md#resource-efficiency) now incorporates the owner's Resource Efficiency Directive, commit `84702d200d1f340f524a2f11a41cc4badd090c97`. NEXUS, NOCTURNE and OM-AUTO-002 remain closed.
+
+The owner was asked to confirm that the test-only key is saved in apparition-staging and independent browser control has returned. No credential value is requested or recorded. Ordinary runtime acceptance must wait for secure confirmation. The staging adapter accepts the prepared `STRIPE_SECRET_KEY` name as an alias for `STRIPE_SANDBOX_SECRET_KEY`; an explicitly configured sandbox key takes precedence. Target, enabled gate, test-key and exact provider-account checks remain unchanged. Local isolated configuration acceptance passed seven cases with no provider requests. This corrects the 92 handoff naming mismatch and does not modify the accepted production adapter or any deployed runtime.
+
+After confirmation, perform the remaining ordinary staging checkout, provider HTTP resend, availability and guest-abuse guards, endpoint coexistence, legacy compatibility and cutover/drain acceptance. Seal the exact activation composition after these gates pass. No production UNITY installation, checkout change or activation is authorised by 93. Historical constituent costing remains separately scoped.
+
 ## Authorisation 92 checkpoint · 26 November 2026
 
 CONVERGENCE 92 complete-period reporting is live at `9a69e1ab-59fa-44e6-9e7e-03ed50d3d175`, source `e0b789640367088ccd3d38c856c8735408796c51`. Immediate static rollback is Authorisation 91 `04971be9-6d8a-42f2-bad5-ae553dc8aeb6`. QUARTERMASTER remains in workshop; production UNITY remains paused. Checkout v16, status v10, Stripe webhook v15 and transactional email v15 remain unchanged.

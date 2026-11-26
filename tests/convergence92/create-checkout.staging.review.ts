@@ -21,7 +21,7 @@ export async function startCheckout(req:Request,env:Environment=Deno.env,request
  if(req.method==='OPTIONS')return new Response(null,{status:204,headers:{'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Headers':'apikey, authorization, content-type','Access-Control-Allow-Methods':'POST, OPTIONS','Vary':'Origin'}});
  if(req.method!=='POST')return err('Only checkout requests are supported.',405);
  if(env.get('SUPABASE_URL')!=='https://prwmowexhonguvtiywsy.supabase.co'||env.get('UNITY92_CHECKOUT')!=='enabled')return err('Isolated checkout is unavailable.',503);
- const stripeKey=env.get('STRIPE_SANDBOX_SECRET_KEY');
+ const stripeKey=env.get('STRIPE_SANDBOX_SECRET_KEY')??env.get('STRIPE_SECRET_KEY');
  if(!stripeKey||!/^(?:sk|rk)_test_[A-Za-z0-9]+$/.test(stripeKey))return err('Sandbox secure checkout is not configured.',503);
  const supabaseUrl=env.get('SUPABASE_URL'),publicKey=env.get('SUPABASE_ANON_KEY'),serviceKey=env.get('SUPABASE_SERVICE_ROLE_KEY');
  if(!supabaseUrl||!publicKey||!serviceKey)return err('Checkout database connection is unavailable.',503);
