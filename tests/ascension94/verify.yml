@@ -43,3 +43,23 @@ jobs:
           path: ${{ runner.temp }}/ascension94/ascension94-*
           if-no-files-found: error
           retention-days: 30
+
+  compatibility:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    services:
+      postgres:
+        image: postgres:17.6
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports: ['127.0.0.1:55494:5432']
+        options: --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 4s --health-retries 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Verify existing production lock table compatibility only
+        run: |
+          npm install --prefix "$RUNNER_TEMP/client" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save pg@8.16.3
+          PRODUCTION_SHAPE=1 PG_ORDERS_MODULE="$RUNNER_TEMP/client/node_modules/pg" node tests/ascension94/runtime.compatibility.test.mjs
+          sha256sum tests/ascension94/runtime.compatibility.review.sql
