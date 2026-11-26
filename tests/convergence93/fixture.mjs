@@ -24,7 +24,8 @@ async function order(owner='fixture93',quantity=1){
 }
 await db.connect();
 try{
- await db.query(`alter table public.orders add column delivery jsonb default '{"country":"GB"}';
+ await db.query(`alter table ironclad69.batches alter column id set default gen_random_uuid();
+ alter table public.orders add column delivery jsonb default '{"country":"GB"}';
  create table public.components(id text primary key,sku text,name text,category text,manufacturer text,description text,
  specs jsonb,product_content jsonb,active boolean,individually boolean,in_kits boolean,sale_price integer,kit_price integer,image jsonb,kit_price_quantity integer);`);
  await db.query(await sql('catalogue.baseline.sql'));
