@@ -1,0 +1,45 @@
+name: ASCENSION 94 constituent costing acceptance
+on:
+  push:
+    branches: [engineering/convergence92]
+    paths: [tests/ascension94/**, .github/workflows/ascension94-verify.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    services:
+      postgres:
+        image: postgres:17.6
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports: ['127.0.0.1:55494:5432']
+        options: --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 4s --health-retries 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Verify immutable constituent evidence and existing financial contribution
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/ascension94"
+          mkdir -p "$work"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/15104865897/zip" > "$work/baseline.zip"
+          unset GH_TOKEN
+          unzip -q "$work/baseline.zip" -d "$work"
+          npm install --prefix "$work/client" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save pg@8.16.3 playwright-core@1.56.1
+          PG_ORDERS_MODULE="$work/client/node_modules/pg" node tests/ascension94/sql.test.mjs "$work/constituent-rows.json"
+          python3 tests/ascension94/seal.py "$work/omniscience92-static.zip" tests/ascension94 "$work"
+          unzip -q "$work/ascension94-static.zip" -d "$work/static"
+          ORDERS_PLAYWRIGHT_MODULE="$work/client/node_modules/playwright-core" QUARTERMASTER_CHROMIUM="$(command -v google-chrome)" node tests/ascension94/browser.mjs "$work/static" "$work/constituent-rows.json"
+          sha256sum "$work"/ascension94-*
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ascension94-sealed
+          path: ${{ runner.temp }}/ascension94/ascension94-*
+          if-no-files-found: error
+          retention-days: 30
