@@ -2,6 +2,10 @@
 
 **Verified 23 November 2026.** Production provider metadata, published byte samples, historical receipts and isolated tests describe different stages of the release.
 
+## Current NOCTURNE 91 evidence
+
+[Programme closure and exact receipts](02-RELEASE-QUEUE.md#authorisation-91-programme-closure--26-november-2026) record the verification, production migration, independent served bytes, rollback and remaining evidence gates for Orders and ECLIPSE.
+
 ## Current FIRST LIGHT evidence
 
 See the [83R closure register](08-FIRST-LIGHT-CLOSURE.md) for the production publication and 84A recheck. See [QUARTERMASTER readiness](../quartermaster84/RELEASE-PROPOSAL.md) for the next candidate and its isolated evidence.

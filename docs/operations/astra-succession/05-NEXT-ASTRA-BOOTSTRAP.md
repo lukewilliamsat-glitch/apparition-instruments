@@ -8,7 +8,9 @@ Follow [07 Operating policy](07-OPERATING-POLICY.md). Start with connected integ
 
 ## Current restart point
 
-Use the [current verified release queue](https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/engineering/nocturne90-handover/docs/operations/astra-succession/02-RELEASE-QUEUE.md) for the canonical deployment, rollback baseline, live modes and remaining workstreams. The mandatory browser boundary above applies across Apparition engineering.
+NOCTURNE 91 is live at `04971be9-6d8a-42f2-bad5-ae553dc8aeb6` with Orders fulfilment and the unified ECLIPSE workspace. Immediate rollback is `0a24545f-d66d-43f2-9221-5521493d9fca`. Orders migration `20261126084943` is installed. QUARTERMASTER remains in workshop, UNITY is paused and live checkout and payments retain their existing contracts.
+
+Start with [the programme closure and exact receipts](02-RELEASE-QUEUE.md#authorisation-91-programme-closure--26-november-2026). Continue the isolated UNITY × COMMERCE provider path, with the staging reservation-engine conflict and protected signing-secret custody resolved first. Keep the outstanding historical acquisition and scalable reporting requirements individually scoped. Use normal maintenance for wider Admin refinement. Do not repeat completed publication or fixture checks without a material change.
 
 ## Historical SUCCESSION 83H starter prompt
 

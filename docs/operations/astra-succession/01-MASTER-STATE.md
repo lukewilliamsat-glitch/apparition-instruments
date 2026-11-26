@@ -1,8 +1,8 @@
 # Apparition Astra master state
 
-**Current operating checkpoint · 25 November 2026**
+**Current operating checkpoint · 26 November 2026**
 
-NOCTURNE 89 is live. See [02 Release queue](02-RELEASE-QUEUE.md) for the canonical deployment and Authorisation 90 delivery evidence and [07 Operating policy](07-OPERATING-POLICY.md) for the mandatory plugin-first hierarchy and prohibition on the owner’s browser, tabs and sessions.
+NOCTURNE 91 is live at `04971be9-6d8a-42f2-bad5-ae553dc8aeb6`. Guarded Orders changes and unified ECLIPSE are deployed with existing COMMAND and OMNISCIENCE. Immediate rollback is `0a24545f-d66d-43f2-9221-5521493d9fca`. See [02 Release queue](02-RELEASE-QUEUE.md#authorisation-91-programme-closure--26-november-2026) for the release and outstanding requirements, and [07 Operating policy](07-OPERATING-POLICY.md) for the tool and browser boundaries.
 
 ## Historical 83H production baseline
 
