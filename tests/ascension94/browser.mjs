@@ -17,7 +17,7 @@ try {
       const url=new URL(route.request().url());
       if(url.origin!==origin){outbound.push(route.request().method()+' '+route.request().resourceType()+' '+url.origin+url.pathname);return route.abort();}
       if(url.pathname==='/constituent-rows.json')return route.fulfill({contentType:'application/json',body:await readFile(process.argv[3])});
-      if(url.pathname==='/')return route.fulfill({contentType:'text/html',body:fixture});
+      if(url.pathname==='/')return route.fulfill({contentType:'text/html',body:fixture.replace('__CONSTITUENT_ROWS__',await readFile(process.argv[3],'utf8'))});
       const path=resolve(root,'.'+url.pathname);
       assert.ok(path.startsWith(root+sep));
       const contentType={'.mjs':'text/javascript','.css':'text/css'}[extname(path)]??'application/octet-stream';

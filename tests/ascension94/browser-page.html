@@ -12,6 +12,7 @@ import {mountFinancialOrder} from '/admin/orders/financial-order.mjs';
 import {financeDraft} from '/admin/orders/finance-ui.mjs';
 import {withTrustedFacts} from '/admin/orders/eclipse-model.mjs';
 import {attributableCosts} from '/admin/orders/profitability.mjs';
+const constituentRows=__CONSTITUENT_ROWS__;
 const root=document.querySelector('main');
 const result=document.querySelector('output');
 const check=(valid,message)=>{if(!valid)throw Error(message)};
@@ -63,7 +64,7 @@ try{
  check(direct.document.lines[1].unitCostMicro===120000&&direct.document.lines[2].costState==='unknown','Confirmed and unsupported lines stay intact');
  check(attributableCosts(doc,[trace,trace]).count===0,'Ambiguous batch evidence ignored');
  check(attributableCosts(doc,[{...trace,basis:'allocated_batch'}]).document.lines[0].costState==='estimated','Allocated basis remains estimated');
- const panel=mountFinancialOrder({root,order,repository:repo,historicalCosts:async()=>[trace,{...(await (await fetch('/constituent-rows.json')).json())[0],line_index:2}],
+ const panel=mountFinancialOrder({root,order,repository:repo,historicalCosts:async()=>[trace,{...constituentRows[0],line_index:2}],
   componentCosts:async()=>{throw Error('Historical constituent cost must not use current references');
   },workshop});
  await wait(()=>button('Approve workshop costs')&&!button('Approve workshop costs').disabled);
