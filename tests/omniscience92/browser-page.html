@@ -27,7 +27,7 @@ try{
  button('Next order records').click();
  await wait(()=>document.body.innerText.includes('Next detail records loaded'));
  check(pages===2&&aggregates===1,'Detail pagination reuses existing summary');
- check(document.body.innerText.includes('FIXTURE-11')&&!document.body.innerText.includes('FIXTURE-1\n'),'Next source records');
+ check([...document.querySelectorAll('a')].some(a=>a.textContent==='FIXTURE-11')&&!document.querySelector('a[href$="000000000001"]'),'Next source records');
  button('Compare previous period').click();
  await wait(()=>document.body.innerText.includes('Compared with'));
  check(aggregates===2,'Comparison uses complete aggregation');

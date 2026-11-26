@@ -7,7 +7,7 @@ export function mountAdminWorkspace({document:d=globalThis.document,auth,reposit
  const root=d.querySelector('#omniscience-workspace'), stop=new AbortController(), e=(tag,text,cls)=>{const n=d.createElement(tag);if(text!=null)n.textContent=text;if(cls)n.className=cls;return n;};
  if(!root)return null;
  const state={orders:[],outlays:[],complete:false,valid:false,comparison:null,comparisonText:'',aggregate:null,orderCursor:null,outlayCursor:null};
- let reading=null,selected=null,busy=false,retryKey=null;
+ let reading=null,selected=null,busy=false,retryKey=null,detailExpanded=false;
  const addField=(where,label,opts={})=>{
   const n=e('label',label), inp=e(opts.options?'select':'input');inp.name=opts.name||'';inp.setAttribute('aria-label',label);
   if(opts.options)for(const [key,value] of opts.options){const o=e('option',value);o.value=key;inp.append(o);}
@@ -109,7 +109,7 @@ export function mountAdminWorkspace({document:d=globalThis.document,auth,reposit
    const partial=e('p','This period exceeds the 250-record limit for orders or expenses. Choose a shorter period for dashboard totals. The loaded records remain available below.','nocturne-status');
    partial.setAttribute('role','status');data.append(partial);
   }
-  const details=e('details');
+  const details=e('details');details.open=detailExpanded;details.addEventListener('toggle',()=>{detailExpanded=details.open;});
   details.append(e('summary','Detailed sales and expense records'),op);
   data.append(details);
   op.append(e('h2',state.aggregate?'Complete-period summaries':state.complete?'Period detail':'Loaded records only'));
@@ -176,7 +176,7 @@ export function mountAdminWorkspace({document:d=globalThis.document,auth,reposit
   try{
    const page=await repository[kind](state.range,cursor,signal);
    if(signal.aborted)return;
-   state[kind]=page.rows;
+   state[kind]=page.rows;detailExpanded=true;
    if(kind==='orders')state.orderCursor=page.next;else state.outlayCursor=page.next;
    notice.textContent='Next detail records loaded. Complete-period totals remain available above. Reload the period after changing a record.';
   }catch(error){if(!signal.aborted)errLine.textContent=error.message;}
