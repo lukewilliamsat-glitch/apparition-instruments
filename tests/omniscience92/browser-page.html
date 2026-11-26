@@ -1,0 +1,40 @@
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="/admin/application.css"><link rel="stylesheet" href="/admin/nocturne.css">
+<link rel="stylesheet" href="/admin/business-dashboard.css"><link rel="stylesheet" href="/admin/omniscience/workspace.css">
+<main class="admin-main" id="omniscience-workspace"></main><output id="result"></output>
+<script type="module">
+import {mountAdminWorkspace} from '/admin/omniscience/entry.mjs';
+const result=document.querySelector('#result');
+const check=(value,message)=>{if(!value)throw Error(message)};
+const wait=async predicate=>{for(let i=0;i<100;i++){if(predicate())return;await new Promise(r=>setTimeout(r,10));}throw Error('Timed out')};
+const button=label=>[...document.querySelectorAll('button')].find(button=>button.textContent===label);
+const summary=await (await fetch('/fixture-summary.json')).json();
+const row=index=>({id:'00000000-0000-4000-8000-'+String(index).padStart(12,'0'),day:'2026-11-26',
+ reference:'FIXTURE-'+index,channel:'DIRECT',currency:'GBP',total:1000,refund:0,finance:null,current:true,
+ items:[{productId:'fixture',name:'Synthetic product',quantity:1,lineTotal:1000}]});
+let aggregates=0,pages=0;
+try{
+ const control=mountAdminWorkspace({document,repository:{
+  async aggregate(range){aggregates++;return {...summary,range};},
+  async orders(_range,cursor){pages++;return cursor?{rows:[row(11)],next:null}:{rows:Array.from({length:10},(_,i)=>row(i+1)),next:{day:'2026-11-26',id:row(10).id}};},
+  async outlays(){return {rows:[],next:null};}
+ }});
+ await wait(()=>document.body.innerText.includes('Complete-period totals verified'));
+ check(aggregates===1&&pages===1,'One summary read and one detail page');
+ check(document.body.innerText.includes('301 orders and 301 expense records'),'Complete selected scope');
+ const metric=[...document.querySelectorAll('dt')].find(node=>node.textContent==='Gross buyer payments');
+ check(metric?.nextElementSibling.textContent==='£3,010.00','Full-period total independent of detail page');
+ button('Next order records').click();
+ await wait(()=>document.body.innerText.includes('Next detail records loaded'));
+ check(pages===2&&aggregates===1,'Detail pagination reuses existing summary');
+ check(document.body.innerText.includes('FIXTURE-11')&&!document.body.innerText.includes('FIXTURE-1\n'),'Next source records');
+ button('Compare previous period').click();
+ await wait(()=>document.body.innerText.includes('Compared with'));
+ check(aggregates===2,'Comparison uses complete aggregation');
+ check(button('Export loaded orders').disabled===false,'Source export remains available');
+ check(document.documentElement.scrollWidth<=innerWidth,'Responsive layout');
+ control.lock();
+ check(!document.querySelector('#omniscience-workspace').children.length,'Session concealment');
+ result.textContent='PASS 92 complete-period reporting';
+}catch(error){result.textContent='FAIL '+error.message}
+</script>

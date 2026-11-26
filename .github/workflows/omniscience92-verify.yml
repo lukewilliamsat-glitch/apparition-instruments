@@ -1,0 +1,48 @@
+name: OMNISCIENCE 92 complete-period acceptance
+on:
+  push:
+    branches: [engineering/omniscience92]
+    paths: [tests/omniscience92/**, .github/workflows/omniscience92-verify.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17.6
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports: ['127.0.0.1:55493:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 4s --health-retries 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Verify complete-period calculations and read-only contracts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/omniscience92"
+          mkdir "$work"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/15100333777/zip" > "$work/baseline.zip"
+          unset GH_TOKEN
+          unzip -q "$work/baseline.zip" -d "$work"
+          npm install --prefix "$work/client" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save pg@8.16.3 playwright-core@1.56.1
+          PG_ORDERS_MODULE="$work/client/node_modules/pg" node tests/omniscience92/sql.test.mjs
+          node tests/omniscience92/test.mjs "$work/fixture-summary.json"
+          python3 tests/omniscience92/seal.py "$work/nocturne91-eclipse-static.zip" tests/omniscience92 "$work"
+          unzip -q "$work/omniscience92-static.zip" -d "$work/static"
+          ORDERS_PLAYWRIGHT_MODULE="$work/client/node_modules/playwright-core" QUARTERMASTER_CHROMIUM="$(command -v google-chrome)" node tests/omniscience92/browser.mjs "$work/static" "$work/fixture-summary.json"
+          sha256sum "$work"/omniscience92-*
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: omniscience92-sealed
+          path: ${{ runner.temp }}/omniscience92/omniscience92-*
+          if-no-files-found: error
+          retention-days: 30
