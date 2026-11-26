@@ -1,0 +1,8 @@
+{
+  "authorisation": 91,
+  "publish": true,
+  "source": "b92b3a3c8db5528a53638feca16b7ed35c5a727e",
+  "artifact": 15099199950,
+  "rollback": "d1da4256-7613-4237-8cc4-e9712b6716a4",
+  "migration": "20261126084943"
+}
