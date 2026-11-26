@@ -1,0 +1,108 @@
+name: ECLIPSE 94 protected publication
+on:
+  push:
+    branches: [engineering/phoenix66-preview]
+    paths: [.github/release-intents/ascension94.json]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: phoenix66-pages-publisher
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.event_name == 'push' && github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview' && github.actor == 'lukewilliamsat-glitch' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - name: Validate release intent and exact acceptance receipt
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          intent='.github/release-intents/ascension94.json'
+          gh api -H 'Accept: application/vnd.github.raw+json' "repos/$GITHUB_REPOSITORY/contents/$intent?ref=$GITHUB_SHA" |
+            jq -e '.authorisation == 94 and .migration == "20261126220922" and .publish == true and .source == "3dda2084bb2c1c2e8b9267d34644738114aa0c69" and .artifact == 15155734047 and .rollback == "9a69e1ab-59fa-44e6-9e7e-03ed50d3d175"' >/dev/null
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/45902759809" |
+            jq -e '.conclusion == "success" and .head_sha == "3dda2084bb2c1c2e8b9267d34644738114aa0c69" and .head_branch == "engineering/convergence92"' >/dev/null
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/15155734047" |
+            jq -e '.expired == false and .workflow_run.id == 45902759809 and .workflow_run.head_sha == "3dda2084bb2c1c2e8b9267d34644738114aa0c69"' >/dev/null
+  production_gate:
+    needs: verify
+    environment: phoenix66-production
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Verify the protected production target
+        env:
+          APPROVED_TARGET: ${{ vars.PHOENIX66_APPROVED_TARGET }}
+        run: test "$APPROVED_TARGET" = 'apparition-instruments:production:43845328622'
+  publish:
+    needs: production_gate
+    environment: phoenix66-preview
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Download and verify the sealed acceptance artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/ascension94"
+          mkdir -p "$work"
+          cd "$work"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/15155734047/zip" > sealed.zip
+          unset GH_TOKEN
+          unzip -q sealed.zip
+          sha256sum --check <<'SUMS'
+          80cf3bfbeaba475b8d08c773a3fc2c20bf0db5644d5bbd71a023bd7d439a9b71  ascension94-static.zip
+          3a64af570153d3ae4b6452ef8187027680dede9dfd4b44aa181751cca60266dd  ascension94-inventory.json
+          SUMS
+          unzip -q ascension94-static.zip -d static
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Prepare the approved Pages uploader
+        run: npm install --prefix "$RUNNER_TEMP/cloudflare-uploader" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false wrangler@4.162.0
+      - name: Verify rollback, publish once and compare the served bytes
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/ascension94"
+          endpoint="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/apparition-instruments"
+          prior='9a69e1ab-59fa-44e6-9e7e-03ed50d3d175'
+          prior_source='e0b789640367088ccd3d38c856c8735408796c51'
+          candidate='3dda2084bb2c1c2e8b9267d34644738114aa0c69'
+          project() { curl -fsS --max-time 12 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$endpoint"; }
+          project | jq -e --arg id "$prior" --arg source "$prior_source" \
+            '.success and (.result.domains|index("apparitioninstruments.co.uk")!=null) and .result.production_branch=="production" and .result.canonical_deployment.id==$id and .result.canonical_deployment.environment=="production" and .result.canonical_deployment.latest_stage.status=="success" and .result.canonical_deployment.deployment_trigger.metadata.commit_hash==$source' >/dev/null
+          curl -fsS --max-time 12 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$endpoint/deployments/$prior" |
+            jq -e --arg id "$prior" '.success and .result.id==$id and .result.environment=="production" and .result.latest_stage.status=="success"' >/dev/null
+          cd "$work"
+          "$RUNNER_TEMP/cloudflare-uploader/node_modules/.bin/wrangler" pages deploy "$work/static" \
+            --project-name=apparition-instruments --branch=production --commit-hash="$candidate" \
+            --commit-dirty=true --commit-message="ECLIPSE 94 constituent acquisition evidence"
+          project | jq -e --arg old "$prior" --arg source "$candidate" \
+            'select(.success) | .result.canonical_deployment | select(.id!=$old and .environment=="production" and .latest_stage.status=="success" and .deployment_trigger.metadata.commit_hash==$source) | {id,environment,source:.deployment_trigger.metadata.commit_hash}' >> "$GITHUB_STEP_SUMMARY"
+          readback() {
+            local route="$1" expected="$2" attempt status
+            for attempt in {1..6}; do
+              status=$(curl --silent --show-error --max-time 14 --max-filesize 3000000 --output served --write-out '%{http_code}' "https://apparitioninstruments.co.uk$route") || true
+              if [[ "$status" = "200" ]] && cmp -s "$work/static/$expected" served; then
+                printf 'MATCH %s\n' "$route"
+                return
+              fi
+              if [[ "$attempt" != 6 ]]; then sleep 6; fi
+            done
+            printf 'Readback differs for %s (HTTP %s)\n' "$route" "$status" >&2
+            return 1
+          }
+          for route in / /account/ /checkout/; do
+            readback "$route" "${route#/}index.html"
+          done
+          jq -r '.changed[]' ascension94-inventory.json | while IFS= read -r path; do
+            readback "/${path%index.html}" "$path"
+          done
+          echo 'Exact sealed Admin assets and unchanged public storefront, account and checkout responses verified.' >> "$GITHUB_STEP_SUMMARY"
