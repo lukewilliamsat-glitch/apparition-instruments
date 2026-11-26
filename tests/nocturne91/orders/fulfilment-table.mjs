@@ -1,9 +1,7 @@
 import {createAdminAuth} from '../admin-auth.mjs?build=sentinel77a-c1';
 import {publicBackendConfig} from '../../backend/public-config.mjs?build=sentinel77a-c1';
 import {boundedJSON} from '../command/bounded-json.mjs?build=sentinel77a-c1';
-import {statusBadge} from '../application.mjs?build=unification78b-81b1';
 import {fulfilmentLabels, nextFulfilment} from './lifecycle.mjs?build=sentinel77a-c1';
-import {reasonDialog} from './fulfilment-corrections.mjs?build=sentinel77a-c1';
 
 const limit = 25;
 export function historicalCompletionEligible(order) {
@@ -40,8 +38,8 @@ async function changeOrder(operation, body) {
 
 const identity = order => ({id:order.id, updated_at:order.updatedAt, status:order.fulfilmentStatus});
 
-export function mountFulfilmentTable({document, root, message, update, getOrders, request=changeOrder,
-  confirm=description=>document.defaultView.confirm(description), askReason=reasonDialog}) {
+export function mountFulfilmentTable({document, root, message, update, getOrders, statusBadge, request=changeOrder,
+  confirm=description=>document.defaultView.confirm(description), askReason}) {
   const selected = new Map();
   let busy = false, bulkEnabled = false, concealed = false;
   const node = (tag,text) => {

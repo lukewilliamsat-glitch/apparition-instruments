@@ -23,6 +23,7 @@ let shouldSave=false, allowConfirm=false, finish;
 try {
 const {mountFulfilmentTable}=await import('/admin/orders/fulfilment-table.mjs');
 const view=mountFulfilmentTable({document,root:table,message,getOrders:()=>rows,
+ statusBadge:(doc,label)=>doc.createTextNode(label),
  update(changes) {
   for(const next of changes){
     const row=rows.find(row=>row.id===next.id);

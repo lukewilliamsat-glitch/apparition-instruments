@@ -32,6 +32,7 @@ def build(base, source, out):
     replace(orders+'index.html','./app.mjs?build=nocturne90','./app.mjs?build=nocturne91-orders')
     replace(orders+'index.html','</head>',
         '<link rel="stylesheet" href="./fulfilment.css?build=nocturne91-orders"></head>')
+    replace(orders+'app.mjs','import {mountFulfilmentCorrections}', 'import {mountFulfilmentCorrections, reasonDialog}')
     replace(orders+'app.mjs','const $=selector=>document.querySelector(selector);',
         """import {mountFulfilmentTable} from './fulfilment-table.mjs?build=nocturne91-orders';
 const $=selector=>document.querySelector(selector);
@@ -40,7 +41,7 @@ let fulfilmentTable, listEpoch=0;""")
         """  if(!financeFilter)mountFinancialControls();
   if(!fulfilmentTable){
    const table=$('#order-rows').closest('.admin-table-scroll');
-   fulfilmentTable=mountFulfilmentTable({document,root:table,message:$('#order-message'),getOrders:()=>records,update(changes){
+   fulfilmentTable=mountFulfilmentTable({document,root:table,message:$('#order-message'),getOrders:()=>records,statusBadge,askReason:reasonDialog,update(changes){
     const saved=new Map(changes.map(change=>[change.id,change]));
     const left=table.scrollLeft, top=table.scrollTop;
     if(changes.length)listEpoch++;

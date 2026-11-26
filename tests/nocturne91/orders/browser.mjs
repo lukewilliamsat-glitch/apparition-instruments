@@ -12,9 +12,10 @@ const browser=await chromium.launch({executablePath:process.env.QUARTERMASTER_CH
 try {
   for (const width of [1360,390]) {
     const view=await browser.newPage({viewport:{width,height:844}});
+    const outbound=[];
     await view.route('**/*',async route=>{
       const url=new URL(route.request().url());
-      if(url.origin!==origin)throw new Error('Unexpected fixture request '+url.origin);
+      if(url.origin!==origin){outbound.push(route.request().method()+' '+route.request().resourceType()+' '+url.origin+url.pathname);return route.abort();}
       if(url.pathname==='/')return route.fulfill({contentType:'text/html',body:fixture});
       const path=resolve(root,'.'+url.pathname);
       assert.ok(path.startsWith(root+sep));
@@ -26,6 +27,7 @@ try {
     view.on('requestfailed',request=>console.error(request.url(),request.failure()?.errorText));
     await view.goto(origin+'/');
     await view.waitForFunction(()=>document.querySelector('#result').textContent.length>0,{},{timeout:10000});
+    assert.deepEqual(outbound,[]);
     assert.equal(await view.locator('#result').textContent(),'PASS 91 orders');
     await view.close();
     console.log('PASS Orders browser '+width+' px');
