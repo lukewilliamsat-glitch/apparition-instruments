@@ -1,0 +1,59 @@
+name: UNITY 93 protected production gate
+on:
+  workflow_dispatch:
+    inputs:
+      execution_confirmed:
+        required: true
+        type: boolean
+        default: false
+      approved_source:
+        required: true
+        type: string
+      acceptance_run:
+        required: true
+        type: string
+      artifact_id:
+        required: true
+        type: string
+      candidate_sha256:
+        required: true
+        type: string
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: unity93-production-cutover
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/convergence92' && github.actor == 'lukewilliamsat-glitch' && github.run_attempt == 1 && inputs.execution_confirmed
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Verify exact accepted source and artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE: ${{ inputs.approved_source }}
+          RUN: ${{ inputs.acceptance_run }}
+          ARTIFACT: ${{ inputs.artifact_id }}
+          DIGEST: ${{ inputs.candidate_sha256 }}
+        run: |
+          set -euo pipefail
+          [[ "$SOURCE" =~ ^[a-f0-9]{40}$ && "$RUN" =~ ^[0-9]+$ && "$ARTIFACT" =~ ^[0-9]+$ && "$DIGEST" =~ ^[a-f0-9]{64}$ ]]
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN" > run.json
+          jq -e --arg source "$SOURCE" '.head_sha==$source and .conclusion=="success" and .run_attempt==1' run.json >/dev/null
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN/artifacts" > artifacts.json
+          jq -e --argjson id "$ARTIFACT" '.artifacts[]|select(.id==$id and .name=="nexus93-production-accepted" and .expired==false)' artifacts.json >/dev/null
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$ARTIFACT/zip" > artifact.zip
+          unzip -q artifact.zip -d accepted
+          printf '%s  accepted/nexus93-activation-review.zip\n' "$DIGEST" | sha256sum --check
+          echo 'Exact accepted activation package verified. This workflow performs no production mutation.' >> "$GITHUB_STEP_SUMMARY"
+  protected_release:
+    needs: verify
+    environment: phoenix66-production
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Record protected release gate
+        run: |
+          echo 'Protected gate passed. The separately authorised connected release executor must refresh production preflight, reconcile legacy Sessions, apply only the sealed migration sequence and deploy only the sealed Edge bundles. No activation is performed by this gate.' >> "$GITHUB_STEP_SUMMARY"

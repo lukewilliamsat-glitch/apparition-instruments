@@ -185,7 +185,7 @@ begin
  if h.state<>'held' then
   if h.state=next_state then return h.state;else raise exception 'Already resolved by another provider state';end if;
  end if;
- if next_state='expired' and h.ends_at>clock_timestamp() then raise exception 'Reservation expiry is not due';end if;
+ -- Signed/provider-verified unpaid expiry is authoritative, including early expiry.
  perform dominion79.locks(h.components);
  delete from dominion79.active_units where order_id=p_order;
  update dominion79.holds set state=next_state,resolved_at=clock_timestamp() where order_id=p_order;

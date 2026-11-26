@@ -1,8 +1,8 @@
-name: CONVERGENCE 92 settlement acceptance
+name: NEXUS GATE 93 activation acceptance
 on:
   push:
     branches: [engineering/convergence92]
-    paths: [tests/convergence92/**, .github/workflows/convergence92-verify.yml]
+    paths: [tests/convergence92/**, tests/convergence93/**, .github/workflows/convergence92-verify.yml]
 permissions:
   contents: read
 jobs:
@@ -36,13 +36,15 @@ jobs:
           npm install --prefix "$RUNNER_TEMP/client" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save pg@8.16.3
           if [[ "$TEST_SHAPE" = production ]]; then export PRODUCTION_SHAPE=1; fi
           PG_ORDERS_MODULE="$RUNNER_TEMP/client/node_modules/pg" node tests/convergence92/fixture.mjs
+          PG_ORDERS_MODULE="$RUNNER_TEMP/client/node_modules/pg" node tests/convergence93/fixture.mjs
+          node tests/convergence93/edge.test.mjs
           node tests/convergence92/edge.test.mjs
           node tests/convergence92/session.test.mjs
           node tests/convergence92/staging-config93.test.mjs
-          python3 tests/convergence92/seal.py "$RUNNER_TEMP/convergence92"
+          python3 tests/convergence93/seal.py "$RUNNER_TEMP/convergence92"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: convergence92-${{ matrix.shape }}-accepted
+          name: nexus93-${{ matrix.shape }}-accepted
           path: ${{ runner.temp }}/convergence92/*
           if-no-files-found: error
           retention-days: 30

@@ -53,7 +53,7 @@ export async function startCheckout(req:Request,env:Environment=Deno.env,request
  }});
  const finalStoreError=await availability(supabaseUrl,serviceKey,request);if(finalStoreError)return finalStoreError;
  if(env.get('UNITY92_CHECKOUT')==='enabled'){
-  try{return json(await reservedSession({database:supabaseUrl,serviceKey,stripeKey,order,ownerKey:owner?'account:'+owner.id:'guest:'+input.requestId,form,live:false,request}));}
+  try{return json(await reservedSession({database:supabaseUrl,serviceKey,stripeKey,order,ownerKey:owner?'account:'+owner.id:'guest:checkout',form,live:false,request}));}
   catch{return err('Secure reserved checkout needs reconciliation. Retry the same basket; do not start another payment.',502);}
  }
  const stripe=await request('https://api.stripe.com/v1/checkout/sessions',{method:'POST',headers:{Authorization:'Bearer '+stripeKey,'Content-Type':'application/x-www-form-urlencoded','Idempotency-Key':'apparition-'+order.id},body:form});
