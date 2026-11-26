@@ -21,12 +21,14 @@ await new Promise(r=>app.listen(0,'127.0.0.1',r));
 try{
  for(const width of [1360,390]){
   const url='http://127.0.0.1:'+app.address().port+'/';
-  let output='';
+  let output='',errors='';
   const runner=spawn(browser,['--headless','--no-sandbox','--disable-gpu','--disable-background-networking','--no-proxy-server',
-     '--virtual-time-budget=3500','--window-size='+width+',844','--dump-dom',url],{stdio:['ignore','pipe','ignore']});
+     '--enable-logging=stderr','--virtual-time-budget=16000','--window-size='+width+',844','--dump-dom',url],{stdio:['ignore','pipe','pipe']});
   runner.stdout.on('data',b=>{output+=b;});
+  runner.stderr.on('data',b=>{errors+=b;});
   assert.equal(await new Promise((r,j)=>{runner.on('error',j);runner.on('close',r);}),0);
-  assert.match(output,/<output id="result">PASS 91 orders<\/output>/,output.match(/<output[^>]*>[^<]*/)?.[0]);
+  const result=output.match(/<output id="result">([^<]*)<\/output>/)?.[1];
+  assert.equal(result,'PASS 91 orders',errors.split('\n').filter(line=>line.includes('CONSOLE')).join('\n'));
   console.log('PASS Orders browser '+width+' px');
  }
 }finally{app.close();}

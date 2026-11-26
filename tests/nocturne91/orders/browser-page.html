@@ -6,7 +6,6 @@
 <div id="table" style="overflow:auto;max-width:100%"></div>
 <output id="result"></output>
 <script type="module">
-import {mountFulfilmentTable} from '/admin/orders/fulfilment-table.mjs';
 const table=document.querySelector('#table'),message=document.querySelector('#message');
 const out=document.querySelector('#result');
 const assert=(condition,label)=>{if(!condition)throw new Error(label);};
@@ -21,6 +20,8 @@ const rows=[order('one','EBAY','ready_to_dispatch'),order('two','OTHER','pending
  order('three','EBAY','pending','refunded'),order('four','WEBSITE','pending')];
 const requests=[];
 let shouldSave=false, allowConfirm=false, finish;
+try {
+const {mountFulfilmentTable}=await import('/admin/orders/fulfilment-table.mjs');
 const view=mountFulfilmentTable({document,root:table,message,getOrders:()=>rows,
  update(changes) {
   for(const next of changes){
@@ -51,7 +52,6 @@ function render(){
  }
  view.sync(rows);
 }
-try {
  render();
  assert(!table.querySelector('[data-fulfilment-select="three"]'),'refund control');
  change(table.querySelector('[data-fulfilment-select="one"]'));
