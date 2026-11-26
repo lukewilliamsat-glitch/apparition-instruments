@@ -37,6 +37,8 @@ jobs:
           if [[ "$TEST_SHAPE" = production ]]; then export PRODUCTION_SHAPE=1; fi
           PG_ORDERS_MODULE="$RUNNER_TEMP/client/node_modules/pg" node tests/convergence92/fixture.mjs
           node tests/convergence92/edge.test.mjs
+          node tests/convergence92/session.test.mjs
+          node tests/convergence92/session.test.mjs
           python3 tests/convergence92/seal.py "$RUNNER_TEMP/convergence92"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
