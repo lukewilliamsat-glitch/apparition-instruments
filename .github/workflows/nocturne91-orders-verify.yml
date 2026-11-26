@@ -36,12 +36,12 @@ jobs:
           gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/15038133757/zip" > "$work/baseline.zip"
           unset GH_TOKEN
           unzip -q "$work/baseline.zip" -d "$work"
-          npm install --prefix "$work/client" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save pg@8.16.3
+          npm install --prefix "$work/client" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save pg@8.16.3 playwright-core@1.56.1
           PG_ORDERS_MODULE="$work/client/node_modules/pg" node tests/nocturne91/orders/fixture.mjs
           python3 tests/nocturne91/orders/seal.py "$work/nocturne90-dashboard-static.zip" tests/nocturne91/orders "$work"
           sha256sum "$work"/nocturne91-orders-* tests/nocturne91/orders/fulfilment.review.sql
           unzip -q "$work/nocturne91-orders-static.zip" -d "$work/static"
-          QUARTERMASTER_CHROMIUM=google-chrome node tests/nocturne91/orders/browser.mjs "$work/static"
+          ORDERS_PLAYWRIGHT_MODULE="$work/client/node_modules/playwright-core" QUARTERMASTER_CHROMIUM="$(command -v google-chrome)" node tests/nocturne91/orders/browser.mjs "$work/static"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: nocturne91-orders-sealed
