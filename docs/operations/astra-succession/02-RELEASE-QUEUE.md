@@ -2,7 +2,7 @@
 
 **Current operating policy.** Authorisation 90 requires connected integrations first, then isolated execution, protected runners, and the independently hosted Astra cloud browser only when essential. Owner browser use is prohibited. [Operating policy](07-OPERATING-POLICY.md).
 
-**Current production baseline · 26 November 2026.** NOCTURNE 91 Orders and ECLIPSE are live on canonical Cloudflare deployment `04971be9-6d8a-42f2-bad5-ae553dc8aeb6`; source `774783d9d098e38fb9e5e827e6b7ad6350699815`; immediate rollback `0a24545f-d66d-43f2-9221-5521493d9fca`. UNITY is paused, QUARTERMASTER is in workshop and existing live checkout and payments are unchanged. See the programme closure below.
+**Current production baseline · 26 November 2026.** NOCTURNE 91 Orders and ECLIPSE are live on canonical Cloudflare deployment `04971be9-6d8a-42f2-bad5-ae553dc8aeb6` at source `774783d9d098e38fb9e5e827e6b7ad6350699815`. The immediate rollback is `0a24545f-d66d-43f2-9221-5521493d9fca`. UNITY is paused, QUARTERMASTER is in workshop and existing live checkout and payments are unchanged. See the programme closure below.
 
 ## Authorisation 91 programme closure · 26 November 2026
 
@@ -29,7 +29,7 @@ The consolidated NEXUS and NOCTURNE delivery programmes are closed. The remainin
 
 Orders migration `20261126084943` (`nocturne91_guarded_order_fulfilment`), SQL SHA-256 `15e69e972c41ae1034a6a802a2f3c5ee5aeb3bcf3a83f9f1ffa6bc77934459ab`. Authenticated role execution still requires server-side Admin membership. Anonymous and service-role execution and direct authenticated Orders updates are denied. Existing transition and dispatch routine definitions were unchanged. Isolated PostgreSQL tested permissions, row-lock races, stale saves and atomic rejection. Both increments passed 1360 px and 390 px browser fixtures. Protected publication matched every changed Admin file plus storefront, account and checkout bytes. Production Edge versions remain checkout v16, status v10, Stripe webhook v15 and transactional email v15. No production test business transactions and no owner-browser access. Routine business feedback remains open.
 
-**Next major engineering objective.** Complete genuine isolated UNITY × COMMERCE settlement, keeping UNITY paused and live checkout unchanged. PHANTASM remains the next major product workstream after the clean production baseline. The remaining finance requirements are targeted work, rather than a further broad NEXUS or NOCTURNE pass.
+**Next major engineering objective.** Complete genuine isolated UNITY × COMMERCE settlement, keeping UNITY paused and live checkout unchanged. PHANTASM remains the next major product workstream after the clean production baseline. Track the remaining finance requirements under their existing IDs.
 
 **24 November 2026 · Ordered by production release dependency.** Isolated provider preparation may proceed independently when authorised. QUARTERMASTER 86A is live in workshop. UNITY remains paused pending genuine Stripe Sandbox settlement evidence. The owner’s operational walkthrough can proceed independently. Each later activation needs its own exact candidate and authority.
 
