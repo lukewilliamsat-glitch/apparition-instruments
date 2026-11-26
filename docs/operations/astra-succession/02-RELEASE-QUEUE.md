@@ -2,7 +2,43 @@
 
 **Current operating policy.** Authorisation 90 requires connected integrations first, then isolated execution, protected runners, and the independently hosted Astra cloud browser only when essential. Owner browser use is prohibited. [Operating policy](07-OPERATING-POLICY.md).
 
-**Current production baseline · 26 November 2026.** NOCTURNE 91 Orders and ECLIPSE are live on canonical Cloudflare deployment `04971be9-6d8a-42f2-bad5-ae553dc8aeb6` at source `774783d9d098e38fb9e5e827e6b7ad6350699815`. The immediate rollback is `0a24545f-d66d-43f2-9221-5521493d9fca`. UNITY is paused, QUARTERMASTER is in workshop and existing live checkout and payments are unchanged. See the programme closure below.
+**Current production baseline · 26 November 2026.** CONVERGENCE 92 complete-period reporting is live at `9a69e1ab-59fa-44e6-9e7e-03ed50d3d175`, source `e0b789640367088ccd3d38c856c8735408796c51`. Immediate static rollback is Authorisation 91 `04971be9-6d8a-42f2-bad5-ae553dc8aeb6`. QUARTERMASTER remains in workshop; production UNITY remains paused. Checkout v16, status v10, Stripe webhook v15 and transactional email v15 remain unchanged.
+
+## Authorisation 92 checkpoint · 26 November 2026
+
+CONVERGENCE 92 complete-period reporting is live at `9a69e1ab-59fa-44e6-9e7e-03ed50d3d175`, source `e0b789640367088ccd3d38c856c8735408796c51`. Immediate static rollback is Authorisation 91 `04971be9-6d8a-42f2-bad5-ae553dc8aeb6`. QUARTERMASTER remains in workshop; production UNITY remains paused. Checkout v16, status v10, Stripe webhook v15 and transactional email v15 remain unchanged.
+
+NEXUS and NOCTURNE remain closed. OM-AUTO-002 is closed for the delivered bounded complete-period reporting service. EC-AUTO-001 / EC-AUTO-003 historical constituent acquisition attribution remains open; current estimates are not historical actuals.
+
+### Genuine isolated UNITY × COMMERCE
+
+- Test-only account `acct_1UJURLIeVWpsCl5X`, staging `prwmowexhonguvtiywsy`. Disabled legacy `commerce67` was archived privately with history intact, zero active holds and its two triggers disabled. There is one reservation authority. Staging returned to paused with zero open holds after acceptance.
+- Installed staging migrations `20261126092118` (isolated runtime), `20261126092925` (provider event compatibility) and `20261126093440` (guarded durable plan). No production UNITY runtime, plan store, writer or checkout cutover was installed.
+- Genuine synthetic order AI-929201, `733a5704-dcc0-4d4d-9ad4-6ffb0ca2a4b3`, amount 1,234p GBP, authoritative saved BOM and immutable plan bound to Session `cs_test_a0XHqnCz9dMeetQRXZgRrXaFPtwiOCbsij0KZZDzjoFWvgKezJFH4UY53L`. Test payment completed in the independent cloud browser. No owner browser or live payment was used.
+- Stripe delivered signed `evt_1UfywCIeVWpsCl5XerCdWkuu` to staging Edge `convergence92-webhook` v1. Order paid, hold consumed, physical and batch stock 10 → 9, one consumption movement and attributable batch provenance. Provider intent `pi_3UfywBIeVWpsCl5X1gJLjqbI`.
+- Sandbox webhook `we_1UfysxIeVWpsCl5XnmVL5odH` uses endpoint-specific encrypted Vault custody (`convergence92_webhook`); the secret is absent from source, logs and reports. Receiver requires raw-body HMAC, five-minute timestamp tolerance, exact account/mode, order, plan, Session, amount and currency. Direct private relation access and anonymous/authenticated execution remain denied.
+- Genuine refund.created and refund.updated HTTP delivery passed after correcting the provider's omitted refund-object livemode field. Signed envelope mode remains mandatory. Cumulative 251p refunded; stock remains 9 and consumption count remains one. Refund `re_3UfywBIeVWpsCl5X1DZ5QdaO` independently proved corrected provider delivery.
+- The first 250p refund was recovered from a provider-read event using protected internal signing. Completion replay was likewise a controlled replay of the provider event, not a second Stripe HTTP resend. Stable settlement fields are fingerprinted across API versions. Native PostgreSQL covered event conflicts, expiry, failed and late payment, duplicate settlement, stock concurrency, denied roles and recovery. These isolated cases are separate from genuine provider delivery evidence.
+
+### Sealed integration review candidate
+
+Source `8e5fdc0a564b2a6bfc7bf50b5e7f5310e0e192e6` on `engineering/convergence92`; [acceptance 45838821024](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45838821024). Both staging and production-shaped PostgreSQL 17.6 passed against original stock/refund writers and the IRONCLAD trigger. [Production-shaped artifact 15125429669](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45838821024/artifacts/15125429669), staging artifact `15127660768`. Candidate ZIP SHA-256 `b249bd7729942e6c95689ef5b54ad146dad3de825cab7dcb0ea95b8f14cd6fd9`; manifest `c4dd858a8c9d50a19d0cbfd87969638e0358653d2c36ad8d3be03d4cd4a4dea2`.
+
+`tests/convergence92/` includes exact staging SQL, production-review SQL, receiver, guarded plan prepare/attach, checkout orchestration, original v16 source, production opt-in and staging checkout review entries, isolated tests and drain/recovery instructions. The orchestration verifies provider account before reserving, resumes the existing Session or uses the immutable plan's provider idempotency key, validates the returned binding and attaches transactionally. Its default production path reproduces v16 source. No automatic fallback after an uncertain reserved checkout.
+
+**Remaining activation gates.** Genuine settlement is accepted; ordinary create-checkout → plan → Stripe creation remains unaccepted as a deployed runtime. The connected Stripe credential cannot be exported, and Supabase's connected tools cannot provision Edge secrets. Independent signed-in staging Secrets inspection confirmed no custom Edge secrets. A secure owner entry of a test-only `STRIPE_SECRET_KEY` in apparition-staging is required for the normal checkout rehearsal; no credential belongs in chat. Finish endpoint routing, original webhook coexistence, stock availability and guest hold-abuse safeguards, provider resend/recovery and drain acceptance before declaring an exact production activation candidate ready. Production requires separately authorised installation, webhook/checkout cutover and activation. The present ZIP is an accepted settlement/integration review candidate, not activation approval.
+
+### OM-AUTO-002 · independently published
+
+[Acceptance 45794873212](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45794873212), source `e0b789640367088ccd3d38c856c8735408796c51`, [505-file artifact 15104865897](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45794873212/artifacts/15104865897). ZIP SHA-256 `61a0221ddb615565b0260fffb89fcf2174a3c7f0508bf50748f616da2e592ccc`; inventory `e08085402073f9e1017c354feb9109bf354aa7c46b084e6f82af75706ca9baca`.
+
+- Production migration `20261126094630`, `omniscience92_complete_period_reads`. Three bounded STABLE Admin read contracts use the unchanged finance membership predicate, empty search paths and five-second statement timeouts. Anonymous and service-role execution denied. Existing report functions and paid writer hashes unchanged.
+- New Edge `omniscience92-report` v1 retains JWT verification and forwards the genuine caller's ordinary JWT; it has no privileged report credential. Server aggregates complete selected periods in pages of 100, up to 10,000 orders and 10,000 expenses within 366 days, 45 seconds and bounded payloads. Scope revision checks reject concurrent changes. Headline totals are withheld on incomplete or exceeded bounds. Product summary is the top 100; detailed transactions and loaded-page exports remain paged.
+- Accepted financial calculation policy retained: recorded/estimated/unresolved coverage, refunds, recognised cost versus cash expenditure, contribution and director/business separation. Native fixture exceeded the former cap with 301 orders plus 301 expenses. Desktop 1360 px and mobile 390 px covered summaries, comparisons, paging and exports. Authenticated production business acceptance remains normal owner use, distinct from isolated browser acceptance.
+- [Single protected publication 45795276971](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45795276971) succeeded. Canonical Cloudflare `9a69e1ab-59fa-44e6-9e7e-03ed50d3d175`. All four changed Admin resources plus home, account and checkout matched sealed served bytes; 501 other static files were reused unchanged. No production test transactions or financial/inventory mutations.
+- Retain 91 deployment `04971be9-6d8a-42f2-bad5-ae553dc8aeb6` for immediate static rollback. Additive read objects can remain. Preserve original financial revisions and real business activity.
+
+**Next task.** Finish ordinary isolated reserved checkout using protected test credentials, then seal its accepted cutover/recovery composition. Do not repeat settlement history or reopen closed Admin programmes. Historical acquisition attribution stays individually scoped.
 
 ## Authorisation 91 programme closure · 26 November 2026
 
@@ -63,7 +99,7 @@ The single 84B-P deployment succeeded on 23 November 2026. Project `apparition-p
 
 - Use the [Astra operating policy](07-OPERATING-POLICY.md) and [FIRST LIGHT closure register](08-FIRST-LIGHT-CLOSURE.md) for current execution state.
 - The [83H queue at its pinned commit](https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/a76a689b4636861b41200da56c94f2bb6dd590f0/docs/operations/astra-succession/02-RELEASE-QUEUE.md) preserves the original exact FIRST LIGHT preflight inputs and historical dispatch instructions.
-- Keep production UNITY paused and QUARTERMASTER in read-only observe. Existing checkout, Orders, delivery, physical stock and finance remain on their established contracts. The 84C writer package runs only in protected staging.
+- Keep production UNITY paused and QUARTERMASTER in workshop. Existing checkout, Orders, delivery, physical stock and finance retain their established contracts. The 85C/86A writer engine remains operational; the older 84C checkpoint below is historical.
 
 ## Later candidates
 
