@@ -1,0 +1,37 @@
+name: ASCENSION 94 production baseline verification
+on:
+  push:
+    branches: [engineering/phoenix66-preview]
+    paths: [.github/workflows/ascension94-baseline.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verify:
+    environment: phoenix66-preview
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Verify canonical production and unchanged checkout application
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          endpoint="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/apparition-instruments"
+          curl -fsS --max-time 20 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$endpoint" > project.json
+          jq -e '.success and .result.canonical_deployment.id=="9a69e1ab-59fa-44e6-9e7e-03ed50d3d175" and .result.canonical_deployment.latest_stage.status=="success" and .result.canonical_deployment.deployment_trigger.metadata.commit_hash=="e0b789640367088ccd3d38c856c8735408796c51"' project.json >/dev/null
+          jq '.result.canonical_deployment|{id,environment,source:.deployment_trigger.metadata.commit_hash}' project.json >> "$GITHUB_STEP_SUMMARY"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/15104865897/zip" > baseline.zip
+          unzip -q baseline.zip -d accepted
+          echo '61a0221ddb615565b0260fffb89fcf2174a3c7f0508bf50748f616da2e592ccc  accepted/omniscience92-static.zip' | sha256sum -c -
+          unzip -q accepted/omniscience92-static.zip -d static
+          for path in index.html checkout/index.html account/index.html admin/orders/index.html; do
+            route="$path"
+            if [[ "$path" == index.html ]]; then route=''; fi
+            curl -fsS --max-time 20 "https://apparitioninstruments.co.uk/$route" -o served
+            cmp "static/$path" served
+            echo "MATCH $path"
+          done
+          echo 'Canonical baseline and storefront/account/checkout/Orders bytes verified. No mutations.' >> "$GITHUB_STEP_SUMMARY"
