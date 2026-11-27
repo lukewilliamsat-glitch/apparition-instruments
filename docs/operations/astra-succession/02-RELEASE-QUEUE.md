@@ -1,5 +1,15 @@
 # HOMECOMING release queue
 
+## PHANTASM 105 · METALLURGY LIVE · 27 November 2026
+
+CTS-only 2K base-colour, normal, roughness and height maps add multidirectional micro-scratches, fine grain, etched roughness variation and subtle handling character. Existing recessed identification normals combined with surface detail; secondary plated/machined metal responses refined. Both authoritative GLBs, capacitor materials, lighting, choreography, layout and business functionality retained.
+
+- Source `b9bfb1f6ad740cabfacef40deabbc1092ef03087`; build-only seal `46078840348`; artifact `15235089244`.
+- Static ZIP SHA-256 `6ac5b570c49d2e4631c34862b91f05c3e85ad2363a1805cb7f1fad64c215a18d`; manifest `8ba5568d25def8cd7cca27d0f28341f2042eb90ec77547c4523e378fab37a1be`.
+- Protected publication [46078986908](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/46078986908) succeeded once; canonical deployment `7abf7b25-f4c3-4070-8246-4df84b618ff7`, accepted source confirmed.
+- Immediate recovery `77931e67-a775-4099-8c20-1d1eeca31371`.
+- No browser, screenshots, rendered comparisons or formal visual acceptance performed, per Authorisation 105. Owner assesses the live result. Only build sealing, immutable asset preservation and protected publication/served-byte safeguards retained.
+
 ## PHANTASM 104 · CHIAROSCURO LIVE · 27 November 2026
 
 - Material overlay and studio-reflection environment refined; original SV-001/SV-002 GLBs retained byte-for-byte.
