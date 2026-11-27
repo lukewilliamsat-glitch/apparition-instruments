@@ -8,3 +8,4 @@
 #fallback svg{max-width:400px;width:100%;display:block}.real-harness{display:none}
 
 body:not(.no-webgl) main{height:600svh}body:not(.no-webgl) .chapter{position:fixed;inset:0;min-height:0;height:100svh;visibility:hidden;opacity:0;transition:opacity .4s}body:not(.no-webgl) .chapter.active{visibility:visible;opacity:1}body:not(.no-webgl) .chapter:not(.active) .copy{pointer-events:none}body.no-webgl .chapter{visibility:visible;opacity:1}body.no-webgl main{height:auto}
+@media(max-width:760px){body:not(.no-webgl) .chapter{padding-top:50svh}body:not(.no-webgl) .chapter h1,body:not(.no-webgl) .chapter h2{font-size:38px}body:not(.no-webgl) #anatomy .fine{display:none}body:not(.no-webgl) #signal{padding-top:32svh}body:not(.no-webgl) #signal h2{font-size:30px;margin-bottom:12px}body:not(.no-webgl) #signal .copy>p:not(.kicker){display:none}body:not(.no-webgl) #signal .forge-controls{margin-top:12px}body:not(.no-webgl) #signal .forge-controls label{margin-bottom:6px}}
