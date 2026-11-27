@@ -1,17 +1,11 @@
 # HOMECOMING release queue
 
-## PHANTASM 95 · CLOSED · 27 November 2026
+## PHANTASM 95R · RESTORED · 27 November 2026
 
-The Harness Awakens homepage is live at [apparitioninstruments.co.uk](https://apparitioninstruments.co.uk/).
+Owner rejected PHANTASM 95's visual direction. Status: technically delivered, visually rejected; creative redevelopment outstanding. No redesign authorised during recovery.
 
-- Canonical static deployment: `a353350c-971c-4c39-adc7-3f9b5a6a939c`.
-- [Protected publication 45969890735](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45969890735), [isolated acceptance 45969660908](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45969660908) and [independent live readback 45970435953](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45970435953) passed.
-- Genuine harness photography; four chapters; immediate shopping links; responsive and reduced-motion views. Only homepage HTML changes among existing files; all 504 other baseline resources remain identical. Existing business functionality is preserved.
-- [Release composition and verification](../phantasm95/RELEASE.md). Normal aesthetic feedback enters maintenance; no owner action remains for 95.
-- LEGACY static rollback: `14a0af2b-9ddf-4b64-9690-dc490ddbf476`. [Homepage-only recovery](../phantasm95/LEGACY.md); durable `phantasm95-legacy` source reference. Private archive retained outside the public site.
+LEGACY deployment `14a0af2b-9ddf-4b64-9690-dc490ddbf476` restored through Cloudflare rollback. Public homepage HTTP 200 and exact original bytes verified: SHA-256 `48eba7593d390a109dcb15e62eead0a605db390d894284718f53a45fb632c930`. UNITY, COMMERCE, ECLIPSE and QUARTERMASTER backend configuration and records untouched.
 
-## Continuity and remaining queue
+Rejected implementation retained in a private owner archive and existing source/artifact history. No duplicate homepage published.
 
-The complete pre-PHANTASM release register, historical evidence and existing HOMECOMING queue are preserved at [the Authorisation 94 closure](https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/ea1ebe5f7e8c1613fe712b4c0dd8b60033833e9e/docs/operations/astra-succession/02-RELEASE-QUEUE.md). This reference replaces duplication of that operational history here; no historical evidence is removed from Git.
-
-ASCENSION, NEXUS and NOCTURNE remain closed. SPECIMEN VAULT, THE ARCHITECT, GRIMOIRE and THE WORKBENCH remain separate future releases. The existing master roadmap and task register record LEG-041, LEG-042 and LEG-043 as complete; other requirements retain their scope and status.
+Previous release evidence and remaining queue are retained at [the prior register](https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/2f2c3bcc125dcb7b3268297fba1693aed5265cce/docs/operations/astra-succession/02-RELEASE-QUEUE.md). The previous visual completion status is superseded by this owner rejection.
