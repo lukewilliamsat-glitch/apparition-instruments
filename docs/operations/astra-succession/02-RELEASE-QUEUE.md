@@ -1,5 +1,9 @@
 # HOMECOMING release queue
 
+## PHANTASM 96 · LIVE · 27 November 2026
+
+Optional [PHANTASM experience](https://apparitioninstruments.co.uk/phantasm/) published at `81a5102c-0b1d-423c-a69c-9c2da7a63150`. [Protected run 45972365572](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45972365572); accepted artifact `15185666634`. Original homepage preserved with a bottom Enter PHANTASM button. Parallax, drifting component illustrations, reactive harness reveal and interactive Signal Forge paths included. Technical desktop/mobile, accessibility, reduced-motion and independent served-byte checks passed. [Receipt](../phantasm96/RELEASE.md). Existing operational functionality untouched. LEGACY rollback retained. Owner aesthetic feedback remains separate from technical acceptance.
+
 ## PHANTASM 95R · RESTORED · 27 November 2026
 
 Owner rejected PHANTASM 95's visual direction. Status: technically delivered, visually rejected; creative redevelopment outstanding. No redesign authorised during recovery.
