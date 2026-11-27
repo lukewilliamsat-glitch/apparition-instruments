@@ -1,0 +1,40 @@
+name: PHANTASM 99 WebGL and visual acceptance
+on:
+  push:
+    branches: [engineering/phantasm99]
+    paths: [tests/phantasm99/**, .github/workflows/phantasm99-verify.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Build isolated renderer, verify unchanged storefront and capture visual chapters
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/phantasm99"
+          mkdir -p "$work"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/15189168823/zip" > "$work/base.zip"
+          unset GH_TOKEN
+          unzip -q "$work/base.zip" -d "$work"
+          npm install --prefix "$work/client" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save three@0.180.0 esbuild@0.25.10 playwright-core@1.56.1 axe-core@4.11.0
+          cp -R tests/phantasm99/src "$work/src"
+          NODE_PATH="$work/client/node_modules" "$work/client/node_modules/.bin/esbuild" "$work/src/phantasm/scene.mjs" --bundle --minify --format=esm --outfile="$work/src/phantasm/scene.bundle.mjs"
+          cp "$work/client/node_modules/three/LICENSE" "$work/src/phantasm/THREE-LICENSE.txt"
+          python3 tests/phantasm99/seal.py "$work/phantasm98-static.zip" "$work/src" "$work"
+          unzip -q "$work/phantasm99-static.zip" -d "$work/static"
+          PHANTASM_PLAYWRIGHT="$work/client/node_modules/playwright-core" PHANTASM_CHROMIUM="$(command -v google-chrome)" PHANTASM_AXE="$work/client/node_modules/axe-core/axe.min.js" node tests/phantasm99/browser.mjs "$work/static"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: phantasm99-sealed
+          path: ${{ runner.temp }}/phantasm99/phantasm99-*
+          if-no-files-found: error
+          retention-days: 90
