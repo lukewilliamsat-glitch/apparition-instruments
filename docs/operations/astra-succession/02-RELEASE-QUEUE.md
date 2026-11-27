@@ -1,5 +1,14 @@
 # HOMECOMING release queue
 
+## PHANTASM 103 · precision corrections LIVE · 27 November 2026
+
+[PHANTASM](https://apparitioninstruments.co.uk/phantasm/) now presents bare straight-lead capacitors in Chapter I, smaller scene specimens, wider installed spacing, camera-facing print, recalculated photo-verified connection anchors and an outside lower ground loop.
+
+- Source `a25a99325ebf8af9bcb9b6918f4b0eb8ac41d598`; acceptance `46034356612`; artifact `15215159460`.
+- [Protected publication 46069059235](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/46069059235) succeeded once. Canonical deployment `ede554d1-2cbf-42a2-af44-7c6e22e5c7a9`; eleven independent live byte checks matched.
+- Focused desktop/mobile renders, forward/reverse continuity, reduced motion, accessibility and Signal Forge passed. Both SV assets unchanged. Only the PHANTASM scene bundle changed; homepage/CTA and business systems preserved.
+- Recovery `8a317092-4882-438f-961e-ca4a5a3ffc5d`; LEGACY retained. [Receipt](../phantasm103/CHECKPOINT.md).
+
 ## SPECIMEN VAULT 102 · SV-002 LIVE · 27 November 2026
 
 [PHANTASM](https://apparitioninstruments.co.uk/phantasm/) now uses original photo-informed CDE `715P22356KA3` geometry, red-orange epoxy and verified `CDE715P600V / 223J / 1523` dot-matrix print. 1.37-MB reusable GLB; straight-lead and installed configurations share one body. Installed leads remain attached and complete throughout forward/reverse assembly.
