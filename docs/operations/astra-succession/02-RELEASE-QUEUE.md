@@ -1,18 +1,15 @@
 # HOMECOMING release queue
 
-## PHANTASM 97 · LIVE · 27 November 2026
+## PHANTASM 98 · LIVE · 27 November 2026
 
-[Rebirth](https://apparitioninstruments.co.uk/phantasm/) replaces the secondary PHANTASM experience with a persistent Three.js WebGL environment. Canonical deployment `e9a510aa-9aef-49e5-a57c-fbc77f7183d6`; source `58155a7723e1d46a0b7dee22c2230cabf5c4888e`. [Protected publication 45975861731](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45975861731) succeeded once. Acceptance `45975573626`; exact artifact `15187420835`.
+[Synthesis](https://apparitioninstruments.co.uk/phantasm/) now uses a continuous, reversible scroll-controlled representative harness assembly. Eight persistent groups finish as four pots, two tone capacitors and two parallel-RC networks, with progressive formed leads, cloth wiring, sleeves and solder details. The completed assembly stays three-dimensional.
 
-- Procedural component studies, perspective camera movement, physically based materials, studio lighting, rotation/inspection, spatial pulses and the existing Signal Forge electrical-response engine. Genuine Apparition logo and a single genuine finished-harness photograph. Representative geometry is labelled; exact factory CAD is not claimed.
-- Actual desktop/mobile chapter frames and inspection close-ups reviewed before publication, with framing and lighting corrections. Reduced-motion, pause and no-WebGL fallback checks passed. Owner aesthetic acceptance remains separate from these technical and rendered visual checks.
-- Main homepage, Enter PHANTASM CTA and every resource outside PHANTASM remain byte-identical. Public readback matched nine critical resources. No commercial or backend changes.
-- Immediate static rollback `81a5102c-0b1d-423c-a69c-9c2da7a63150`; LEGACY `14a0af2b-9ddf-4b64-9690-dc490ddbf476` retained.
-
-[Full receipt and media/model provenance](../phantasm97/RELEASE.md). Optional Obsidian film slots are ready but no film or paid generation is enabled.
+- Source `5c49873ab09f2e76206144fb40b33dab019a5956`; acceptance `45982445760`; artifact `15189168823`.
+- [Protected publication 45982912189](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45982912189) succeeded once. Canonical deployment `7ba1d401-27da-405e-baf5-533490316a05` independently verified. Eight separate public readbacks matched the exact accepted bytes.
+- Desktop/mobile frames at 0/20/40/60/80/100 percent inspected. Persistent groups and repeatable forward–reverse–forward final poses verified. Signal Forge, reduced-motion and no-WebGL fallback acceptance passed. Owner aesthetic feedback remains separate.
+- Main homepage, Enter PHANTASM button and all resources outside PHANTASM remain byte-identical. No backend, checkout, account or business-record mutations.
+- Immediate recovery `e9a510aa-9aef-49e5-a57c-fbc77f7183d6`; LEGACY retained. [Release detail](../phantasm98/RELEASE.md).
 
 ## Continuity
 
-PHANTASM 95 and 96 were technically delivered but visually rejected by the owner. They are not recorded as owner-accepted creative work. The 97 redevelopment supersedes them as the current optional experience. Their source, artifacts and recovery references remain retained.
-
-[Previous register and established remaining queue](https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/1591b41119c7d2adcc67c201d466d93b3b9b3b6c/docs/operations/astra-succession/02-RELEASE-QUEUE.md). ASCENSION, NEXUS and NOCTURNE remain closed; other PHANTASM modules remain separate future scope.
+97's underlying concept and technical foundation were accepted by the owner for iterative refinement under 98. Earlier 95/96 visual rejections remain recorded. [Prior register and remaining queue](https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/5e01d323157bbbcd573b42c7100e13018af4c0f7/docs/operations/astra-succession/02-RELEASE-QUEUE.md). No unrelated programmes reopened.
