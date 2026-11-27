@@ -1,5 +1,15 @@
 # HOMECOMING release queue
 
+## 27 November 2026 · UNITY 94 immediate continuation
+
+The refreshed Supabase confirmation completed; the old expiry blocker is resolved. The previously approved one-table correction then rolled back on the already installed `dominion79.provider_events`. A bounded read established that **all three** foundations (`consuming`, `provider_events`, `provenance`) already exist, are empty, have the expected columns/defaults/constraints, and remain RLS-enabled with owner-only grants. Runtime routines, plan store and new webhook custody are absent; UNITY is paused. Do not retry the obsolete one-table installer.
+
+The complete narrowly scoped correction is `tests/ascension94/runtime.foundations.review.sql`, commit `96721b2f80fcd1ef869cb049e79dd3980e56b84f`, SHA-256 `ed24aba78710918fbcc50cac40c83fab07f0122aa86d583d7c742f2fd7c74b15`. [Focused acceptance 45960954908](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45960954908) passed preservation of all three table identities and rejection of column, grant, RLS and default drift. All accepted runtime functions/grants and the other five SQL steps are byte-identical. The standing 94 authority remains valid; confirmation of this additional exact pinned-SQL correction has been requested and remains pending. Execute promptly once confirmed, then continue the existing sealed installation, live custody, routing and cutover sequence. Never bypass mandatory approval.
+
+The 18 remaining sealed SQL/Edge inputs were checked against the accepted 93 manifest. Fresh live Stripe reads confirmed the same six legacy unpaid Sessions expired, with matching live GBP amounts. The receiver, legacy router and both checkout bundles are prepared from exact source `b6c60d66a30843c16300ee595113327c91d31fdb`. Do not re-run historical or staging acceptance. ECLIPSE remains published and is not reopened or retested.
+
+This checkpoint supersedes older 94 installer/confirmation instructions below.
+
 ## Authorisation 94 · ASCENSION · ECLIPSE live; UNITY installer confirmation blocked
 
 **Production application:** `14a0af2b-9ddf-4b64-9690-dc490ddbf476`, source `3dda2084bb2c1c2e8b9267d34644738114aa0c69`. [Protected publication 45903097105](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45903097105) succeeded once. Immediate static rollback: `9a69e1ab-59fa-44e6-9e7e-03ed50d3d175`, artifact `15104865897`. The 91 fallback remains preserved.

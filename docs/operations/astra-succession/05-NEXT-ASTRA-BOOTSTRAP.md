@@ -1,5 +1,10 @@
 # Next Astra bootstrap
 
+## Immediate continuation · 27 November 2026
+
+Follow the [latest 94 continuation checkpoint](02-RELEASE-QUEUE.md#27-november-2026--unity-94-immediate-continuation). Supabase confirmation now completes. All three dormant UNITY foundation tables already exist, so do not use the obsolete one-table installer. The complete guarded correction at `96721b2f80fcd1ef869cb049e79dd3980e56b84f`, SHA-256 `ed24aba78710918fbcc50cac40c83fab07f0122aa86d583d7c742f2fd7c74b15`, passed focused run `45960954908`; exact owner confirmation is pending. Once confirmed, apply it promptly, then the unchanged five SQL steps and sealed custody/Edge/cutover sequence. UNITY remains paused; no runtime/plans/new webhook installed. ECLIPSE stays closed and live.
+
+
 ## Current checkpoint · Authorisation 94
 
 ECLIPSE constituent costing is live at `14a0af2b-9ddf-4b64-9690-dc490ddbf476`; rollback is `9a69e1ab-59fa-44e6-9e7e-03ed50d3d175`. [Current release evidence and exact resume sequence](02-RELEASE-QUEUE.md#authorisation-94--ascension--eclipse-live-unity-installer-confirmation-blocked).
