@@ -13,6 +13,9 @@ with ZipFile(media) as z:
   if n.startswith('assets/phantasm95/'):f[n]=z.read(n)
 for p in src.rglob('*'):
  if p.is_file():f[p.relative_to(src).as_posix()]=p.read_bytes()
+cta=b'<section aria-label="PHANTASM experience" style="padding:50px 6%;text-align:center;border-top:1px solid #554832"><p class="eyebrow">AN OPTIONAL APPARITION EXPERIENCE</p><h2 style="font-size:clamp(30px,5vw,60px);margin:20px 0">The signal has another side.</h2><a class="button" href="/phantasm/">Enter PHANTASM <span aria-hidden="true"> &rarr;</span></a></section>'
+f['index.html']=before['index.html'].replace(b'</main>',cta+b'</main>')
+assert f['index.html'].replace(cta,b'')==before['index.html']
 assert all(f[n]==b for n,b in before.items() if n!='index.html')
 with ZipFile(out/'phantasm96-static.zip','w') as z:
  for n,b in sorted(f.items()):
