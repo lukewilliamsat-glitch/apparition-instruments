@@ -7,7 +7,7 @@ assert sha256(base.read_bytes()).hexdigest()=='5031a2b748a2f4eda7f89c22616c1e762
 with ZipFile(base) as z:before={n:z.read(n) for n in z.namelist()}
 f=before.copy()
 for file in (src/'phantasm').rglob('*'):
- if file.is_file() and file.name not in ['components.mjs','scene.mjs','assembly.mjs','tin-grain.mjs','specimen.mjs','orange-drop.mjs','materials104.mjs']:f['phantasm/'+str(file.relative_to(src/'phantasm'))]=file.read_bytes()
+ if file.is_file() and file.name not in ['components.mjs','scene.mjs','assembly.mjs','tin-grain.mjs','specimen.mjs','orange-drop.mjs','materials104.mjs','metallurgy105.mjs']:f['phantasm/'+str(file.relative_to(src/'phantasm'))]=file.read_bytes()
 assert all(f[n]==b for n,b in before.items() if not n.startswith('phantasm/'))
 assert f['index.html']==before['index.html']
 assert f['phantasm/assets/sv-001.glb']==before['phantasm/assets/sv-001.glb']

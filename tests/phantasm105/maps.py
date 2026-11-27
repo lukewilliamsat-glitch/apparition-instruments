@@ -10,6 +10,6 @@ for i in range(16000):
 h=grain+low*.06+(np.asarray(scratch,dtype='float32')/255-.5)*.19
 rough=np.clip(.43+low*.20+grain*1.5+(np.asarray(scratch)/255-.5)*.6,.26,.62)
 base=np.clip(211+low*13+grain*10,195,223).astype('uint8');rgb=np.stack([base,np.minimum(base.astype('int16')+2,255).astype('uint8'),np.minimum(base.astype('int16')+3,255).astype('uint8')],2)
-def save(a,name):Image.fromarray(a).save(out/name,format='WEBP',lossless=True,method=6)
+def save(a,name):Image.fromarray(a).save(out/name,format='WEBP',lossless=name!='cts105-normal.webp',quality=95,method=6)
 save(rgb,'cts105-colour.webp');save(np.uint8(np.clip(h*.7+.5,0,1)*255),'cts105-height.webp');save(np.uint8(rough*255),'cts105-roughness.webp')
 dy,dx=np.gradient(h);normal=np.stack([-dx*9,-dy*9,np.ones_like(h)],2);normal/=np.linalg.norm(normal,axis=2,keepdims=True);save(np.uint8((normal*.5+.5)*255),'cts105-normal.webp')
