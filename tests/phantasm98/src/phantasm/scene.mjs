@@ -4,7 +4,7 @@ const scene=new T.Scene();scene.fog=new T.FogExp2(0x090a09,.025);const camera=ne
 function wire(points,r=.04,mat=lib.materials.steel){const curve=new T.CatmullRomCurve3(points.map(p=>new T.Vector3(...p)));const geo=new T.TubeGeometry(curve,64,r,8,false),mesh=new T.Mesh(geo,mat);rig.add(mesh);wires.push({mesh,curve,count:geo.index.count});return mesh;}
 function part(id,obj,end,rotation,lo,hi){obj.traverse(o=>{if(o.isMesh)o.material=o.material.clone();});rig.add(obj);objects[id]=obj;parts.push({id,obj,end:new T.Vector3(...end),start:new T.Vector3(end[0]*1.8,end[1]+3+(parts.length%3),end[2]*1.5),rotation:new T.Euler(...rotation),lo,hi});}
 for(let row=0;row<2;row++){const z=row?1.8:-1.8;for(let col=0;col<2;col++)part('pot'+(row*2+col),lib.pot(),[col?2:-2,0,z],[Math.PI,0,0],.2,.4);
- const cap=lib.capacitor();while(cap.children.length>1)cap.remove(cap.children.at(-1));part('cap'+row,cap,[0,.7,z],[0,0,0],.4,.6);
+ const cap=lib.capacitor();while(cap.children.length>1)cap.remove(cap.children.at(-1));part('cap'+row,cap,[0,.85,z],[0,0,0],.4,.6);
  const bleed=new T.Group(),bc=lib.capacitor(true);while(bc.children.length>1)bc.remove(bc.children.at(-1));bc.scale.setScalar(.7);const br=lib.resistor();br.position.y=-.45;bleed.add(bc,br);part('bleed'+row,bleed,[-2,1.1,z-.75],[0,0,0],.4,.6);
  // Modern Les Paul terminal contracts from the existing wiring generator:
  // volume lug3 -> tone capacitor -> tone lug2; bleed parallel across volume lugs3/2.
