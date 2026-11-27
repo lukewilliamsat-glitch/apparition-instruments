@@ -7,11 +7,11 @@ export const layout=[{id:'pot0',role:'neck volume',p:[-2.85,0,-2.35],heading:Mat
 export function terminal(pot,lug){const x=(lug-2)*.59,z=1.735,h=pot.heading;return [pot.p[0]+x*Math.cos(h)+z*Math.sin(h),-.045,pot.p[2]+x*Math.sin(h)-z*Math.cos(h)];}
 export function createAssembly(lib){const rig=new T.Group(),parts=[],wires=[],anchors=[],objects={},connections=[];
  const part=(id,obj,end,rotation,lo,hi)=>{obj.traverse(o=>{if(o.isMesh)o.material=o.material.clone();});rig.add(obj);objects[id]=obj;parts.push({id,obj,end:new T.Vector3(...end),start:new T.Vector3(end[0]*1.55,end[1]+3+(parts.length%3),end[2]*1.45),rotation:new T.Euler(...rotation),lo,hi});};
- const wire=(points,r=.04,mat=lib.materials.edge,role='lead')=>{const curve=new T.CatmullRomCurve3(points.map(p=>new T.Vector3(...p)),false,'centripetal');const geo=new T.TubeGeometry(curve,144,r,12,false),mesh=new T.Mesh(geo,mat);rig.add(mesh);wires.push({mesh,curve,count:geo.index.count,role});return mesh;};
- const solder=(p,scale=1)=>{const o=lib.solder();o.position.set(...p);o.scale.multiplyScalar(scale);o.userData.restScale=o.scale.clone();rig.add(o);anchors.push(o);};
+ const wire=(points,r=.04,mat=lib.materials.edge,role='lead')=>{const curve=new T.CatmullRomCurve3(points.map(p=>new T.Vector3(...p)),false,'centripetal');const geo=new T.TubeGeometry(curve,144,r,12,false),mesh=new T.Mesh(geo,mat);mesh.castShadow=mesh.receiveShadow=true;rig.add(mesh);wires.push({mesh,curve,count:geo.index.count,role});return mesh;};
+ const solder=(p,scale=1)=>{const o=lib.solder();o.position.set(...p);o.scale.multiplyScalar(scale);o.userData.restScale=o.scale.clone();o.castShadow=o.receiveShadow=true;rig.add(o);anchors.push(o);};
  for(const p of layout){part(p.id,lib.pot(),p.p,[Math.PI,p.heading,0],.2,.4);objects[p.id].userData.role=p.role;
  // Ground end of each track is connected to its own case; other unused tone lug stays open.
- const t=terminal(p,1),ground=[p.p[0]+(p.heading>0?.72:-.72),.04,p.p[2]-.62];
+ const t=terminal(p,1),ground=[p.p[0]+(p.heading>0?.92:-.92),.04,p.p[2]-.42];
  wire([t,[t[0],.07,t[2]-.13],[ground[0]+(p.heading>0?.20:-.20),.13,ground[2]],ground],.04,lib.materials.edge,'lug-ground');solder(t,.65);solder(ground,.72);connections.push({from:p.id+':lug1-ground',to:p.id+':case'});}
  for(let row=0;row<2;row++){const v=layout[row*2],t=layout[row*2+1],vin=terminal(v,3),tw=terminal(t,2),center=[(vin[0]+tw[0])/2,.73,(vin[2]+tw[2])/2-.48];
  part('cap'+row,lib.capacitor(false),center,[-Math.PI/2,0,0],.4,.6);

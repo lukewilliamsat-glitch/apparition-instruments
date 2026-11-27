@@ -7,7 +7,7 @@ assert sha256(base.read_bytes()).hexdigest()=='4bcf37776f6c68468c79ead97ab033bbc
 with ZipFile(base) as z:before={n:z.read(n) for n in z.namelist()}
 f=before.copy()
 for file in (src/'phantasm').iterdir():
- if file.is_file() and file.name not in ['components.mjs','scene.mjs','assembly.mjs']:f['phantasm/'+file.name]=file.read_bytes()
+ if file.is_file() and file.name not in ['components.mjs','scene.mjs','assembly.mjs','tin-grain.mjs']:f['phantasm/'+file.name]=file.read_bytes()
 assert all(f[n]==b for n,b in before.items() if not n.startswith('phantasm/'))
 assert f['index.html']==before['index.html']
 with ZipFile(out/'phantasm100-static.zip','w') as z:
