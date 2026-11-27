@@ -1,0 +1,41 @@
+name: PHANTASM 106 build and seal only
+on:
+  push:
+    branches: [engineering/phantasm106]
+    paths: [tests/phantasm106/**, .github/workflows/phantasm106-verify.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Build replacement CTS materials and seal the static application
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/phantasm106"
+          mkdir -p "$work"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/15235089244/zip" > "$work/base.zip"
+          unset GH_TOKEN
+          unzip -q "$work/base.zip" -d "$work"
+          npm install --prefix "$work/client" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save three@0.180.0 esbuild@0.25.10 
+          cp -R tests/specimen102/src "$work/src"
+          cp tests/phantasm104/src/phantasm/* "$work/src/phantasm/"
+          cp tests/phantasm105/src/phantasm/* "$work/src/phantasm/"
+          cp tests/phantasm106/src/phantasm/* "$work/src/phantasm/"
+          NODE_PATH="$work/client/node_modules" "$work/client/node_modules/.bin/esbuild" "$work/src/phantasm/scene.mjs" --bundle --minify --format=esm --outfile="$work/src/phantasm/scene.bundle.mjs"
+          cp "$work/client/node_modules/three/LICENSE" "$work/src/phantasm/THREE-LICENSE.txt"
+          python3 tests/phantasm106/seal.py "$work/phantasm105-static.zip" "$work/src" "$work"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: phantasm106-sealed
+          path: ${{ runner.temp }}/phantasm106/phantasm106-*
+          if-no-files-found: error
+          retention-days: 90
