@@ -2,7 +2,7 @@ name: ASCENSION 94 constituent costing acceptance
 on:
   push:
     branches: [engineering/convergence92]
-    paths: [tests/ascension94/**, .github/workflows/ascension94-verify.yml]
+    paths: [tests/ascension94/constituents.sql, tests/ascension94/app.mjs, tests/ascension94/sql.test.mjs, tests/ascension94/browser.mjs, tests/ascension94/browser-page.html, tests/ascension94/seal.py]
 permissions:
   contents: read
   actions: read
