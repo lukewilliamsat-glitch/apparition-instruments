@@ -12,7 +12,7 @@ export function createAssembly(lib){const rig=new T.Group(),parts=[],wires=[],an
  for(const p of layout){part(p.id,lib.pot(),p.p,[Math.PI,p.heading,0],.2,.4);objects[p.id].userData.role=p.role;
  // Ground end of each track is connected to its own case; other unused tone lug stays open.
  const t=terminal(p,1),ground=[p.p[0]+(p.heading>0?.92:-.92),.04,p.p[2]-.42];
- wire([t,[t[0],.07,t[2]-.13],[ground[0]+(p.heading>0?.20:-.20),.13,ground[2]],ground],.04,lib.materials.edge,'lug-ground');solder(t,.65);solder(ground,.72);connections.push({from:p.id+':lug1-ground',to:p.id+':case'});}
+ wire([t,[t[0],.07,t[2]-.13],[ground[0]+(p.heading>0?.20:-.20),.13,ground[2]],ground],.04,lib.materials.edge,'lug-ground');solder(t,.65);solder([ground[0],.002,ground[2]],.72);connections.push({from:p.id+':lug1-ground',to:p.id+':case'});}
  for(let row=0;row<2;row++){const v=layout[row*2],t=layout[row*2+1],vin=terminal(v,3),tw=terminal(t,2),center=[(vin[0]+tw[0])/2,.73,(vin[2]+tw[2])/2-.48];
  part('cap'+row,lib.capacitor(false),center,[-Math.PI/2,0,0],.4,.6);
  const exits=[[-.95,-.61,0],[.95,-.61,0]].map(a=>[center[0]+a[0],center[1]+a[2],center[2]-a[1]]);
@@ -23,6 +23,7 @@ export function createAssembly(lib){const rig=new T.Group(),parts=[],wires=[],an
  // Continuous U-shaped common ground on the outside of the harness, as photographed.
  // Three spans connect all four cases; no invented signal-return paths through a capacitor.
  const grounds=layout.map(p=>[p.p[0],.065,p.p[2]-.78]);
+ const solderedCases=new Set();
  for(const [ai,bi,bend] of [[0,1,-1],[1,3,1],[3,2,1]]){const a=grounds[ai],b=grounds[bi];const across=ai===0||ai===3;const pts=across?[a,[a[0]+.35,.19,a[2]+bend*.5],[(a[0]+b[0])/2,.23,(a[2]+b[2])/2+bend*.6],[b[0]-.35,.18,b[2]+bend*.45],b]:[a,[a[0]+1.05,.16,a[2]+.6],[b[0]+1.07,.18,b[2]-.7],b];
- const path=new T.CatmullRomCurve3(pts.map(p=>new T.Vector3(...p)),false,'centripetal');wire([0,.02,.05,.1,.2,.4,.6,.8,.9,.95,.98,1].map(u=>path.getPoint(u).toArray()),.036,lib.materials.edge,'ground-conductor');wire([.045,.12,.24,.4,.6,.76,.88,.955].map(u=>path.getPoint(u).toArray()),.09,lib.materials.cloth,'ground-cloth');solder(a);solder(b);connections.push({from:layout[ai].id+':case',to:layout[bi].id+':case'});}
+ const path=new T.CatmullRomCurve3(pts.map(p=>new T.Vector3(...p)),false,'centripetal');wire([0,.02,.05,.1,.2,.4,.6,.8,.9,.95,.98,1].map(u=>path.getPoint(u).toArray()),.036,lib.materials.edge,'ground-conductor');wire([.045,.12,.24,.4,.6,.76,.88,.955].map(u=>path.getPoint(u).toArray()),.09,lib.materials.cloth,'ground-cloth');for(const i of [ai,bi])if(!solderedCases.has(i)){solderedCases.add(i);const g=grounds[i];solder([g[0],.002,g[2]]);}connections.push({from:layout[ai].id+':case',to:layout[bi].id+':case'});}
  return {rig,parts,wires,anchors,objects,connections};}
