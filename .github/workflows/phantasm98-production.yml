@@ -1,0 +1,108 @@
+name: PHANTASM 98 protected publication
+on:
+  push:
+    branches: [engineering/phoenix66-preview]
+    paths: [.github/release-intents/phantasm98.json]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: phoenix66-pages-publisher
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.event_name == 'push' && github.repository == 'lukewilliamsat-glitch/apparition-instruments' && github.ref == 'refs/heads/engineering/phoenix66-preview' && github.actor == 'lukewilliamsat-glitch' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - name: Validate release intent and exact acceptance receipt
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          intent='.github/release-intents/phantasm98.json'
+          gh api -H 'Accept: application/vnd.github.raw+json' "repos/$GITHUB_REPOSITORY/contents/$intent?ref=$GITHUB_SHA" |
+            jq -e '.authorisation == 98 and .publish == true and .source == "5c49873ab09f2e76206144fb40b33dab019a5956" and .artifact == 15189168823 and .rollback == "e9a510aa-9aef-49e5-a57c-fbc77f7183d6"' >/dev/null
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/45982445760" |
+            jq -e '.conclusion == "success" and .head_sha == "5c49873ab09f2e76206144fb40b33dab019a5956" and .head_branch == "engineering/phantasm98"' >/dev/null
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/15189168823" |
+            jq -e '.expired == false and .workflow_run.id == 45982445760 and .workflow_run.head_sha == "5c49873ab09f2e76206144fb40b33dab019a5956"' >/dev/null
+  production_gate:
+    needs: verify
+    environment: phoenix66-production
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Verify the protected production target
+        env:
+          APPROVED_TARGET: ${{ vars.PHOENIX66_APPROVED_TARGET }}
+        run: test "$APPROVED_TARGET" = 'apparition-instruments:production:43845328622'
+  publish:
+    needs: production_gate
+    environment: phoenix66-preview
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Download and verify the sealed acceptance artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/phantasm98"
+          mkdir -p "$work"
+          cd "$work"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/15189168823/zip" > sealed.zip
+          unset GH_TOKEN
+          unzip -q sealed.zip
+          sha256sum --check <<'SUMS'
+          bbfc4bad7ca2d6f6c735fb864082bc2845f16a41e00a545d3904ec39f00bb261  phantasm98-static.zip
+          3874f798013d7e5a53436f6c0c088ae495770a1dfa123dc662aedce0f674e4da  phantasm98-inventory.json
+          SUMS
+          unzip -q phantasm98-static.zip -d static
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.20.0'
+      - name: Prepare the approved Pages uploader
+        run: npm install --prefix "$RUNNER_TEMP/cloudflare-uploader" --ignore-scripts --no-audit --no-fund --package-lock=false --save=false wrangler@4.162.0
+      - name: Verify rollback, publish once and compare the served bytes
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PHOENIX66_PAGES_EDIT_TOKEN }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/phantasm98"
+          endpoint="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/apparition-instruments"
+          prior='e9a510aa-9aef-49e5-a57c-fbc77f7183d6'
+          prior_source='58155a7723e1d46a0b7dee22c2230cabf5c4888e'
+          candidate='5c49873ab09f2e76206144fb40b33dab019a5956'
+          project() { curl -fsS --max-time 12 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$endpoint"; }
+          project | jq -e --arg id "$prior" --arg source "$prior_source" \
+            '.success and (.result.domains|index("apparitioninstruments.co.uk")!=null) and .result.production_branch=="production" and .result.canonical_deployment.id==$id and .result.canonical_deployment.environment=="production" and .result.canonical_deployment.latest_stage.status=="success" and .result.canonical_deployment.deployment_trigger.metadata.commit_hash==$source' >/dev/null
+          curl -fsS --max-time 12 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$endpoint/deployments/$prior" |
+            jq -e --arg id "$prior" '.success and .result.id==$id and .result.environment=="production" and .result.latest_stage.status=="success"' >/dev/null
+          cd "$work"
+          "$RUNNER_TEMP/cloudflare-uploader/node_modules/.bin/wrangler" pages deploy "$work/static" \
+            --project-name=apparition-instruments --branch=production --commit-hash="$candidate" \
+            --commit-dirty=true --commit-message="PHANTASM 98 The Harness Awakens"
+          project | jq -e --arg old "$prior" --arg source "$candidate" \
+            'select(.success) | .result.canonical_deployment | select(.id!=$old and .environment=="production" and .latest_stage.status=="success" and .deployment_trigger.metadata.commit_hash==$source) | {id,environment,source:.deployment_trigger.metadata.commit_hash}' >> "$GITHUB_STEP_SUMMARY"
+          readback() {
+            local route="$1" expected="$2" attempt status
+            for attempt in {1..6}; do
+              status=$(curl --silent --show-error --max-time 14 --max-filesize 3000000 --output served --write-out '%{http_code}' "https://apparitioninstruments.co.uk$route") || true
+              if [[ "$status" = "200" ]] && cmp -s "$work/static/$expected" served; then
+                printf 'MATCH %s\n' "$route"
+                return
+              fi
+              if [[ "$attempt" != 6 ]]; then sleep 6; fi
+            done
+            printf 'Readback differs for %s (HTTP %s)\n' "$route" "$status" >&2
+            return 1
+          }
+          for route in / /account/ /checkout/ /basket/ /wiring-kits/ /components/ /admin/quartermaster/; do
+            readback "$route" "${route#/}index.html"
+          done
+          jq -r '.changed[],.added[]' phantasm98-inventory.json | while IFS= read -r path; do
+            readback "/${path%index.html}" "$path"
+          done
+          echo 'Exact PHANTASM homepage and media verified; existing commercial and Admin route bytes preserved.' >> "$GITHUB_STEP_SUMMARY"
