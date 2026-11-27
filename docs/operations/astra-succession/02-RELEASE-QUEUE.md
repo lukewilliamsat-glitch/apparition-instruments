@@ -1,5 +1,15 @@
 # HOMECOMING release queue
 
+## PHANTASM 104 · CHIAROSCURO LIVE · 27 November 2026
+
+- Material overlay and studio-reflection environment refined; original SV-001/SV-002 GLBs retained byte-for-byte.
+- Capacitors now use exactly two continuously morphed leads; sleeves follow those leads. Intermediate and reverse-scroll checks passed.
+- Short landscape viewports reserve header/footer space and allow overflowing copy to scroll. Desktop, portrait and landscape rendering, accessibility and Signal Forge checks passed.
+- Source `426133e4fbe0b5bef1d60a477e323b9921fa1906`; acceptance `46072192676`; sealed artifact `15234105677`.
+- [Protected publication 46073039718](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/46073039718) succeeded once. Deployment `77931e67-a775-4099-8c20-1d1eeca31371`; independent served-byte verification passed.
+- Only PHANTASM CSS and scene bundle changed; homepage and business files preserved. Immediate recovery `ede554d1-2cbf-42a2-af44-7c6e22e5c7a9`.
+- Fine scratches and recessed stamps remain subtle at normal viewing distance; real-time representative rendering, not photographic reproduction.
+
 ## PHANTASM 103 · precision corrections LIVE · 27 November 2026
 
 [PHANTASM](https://apparitioninstruments.co.uk/phantasm/) now presents bare straight-lead capacitors in Chapter I, smaller scene specimens, wider installed spacing, camera-facing print, recalculated photo-verified connection anchors and an outside lower ground loop.
