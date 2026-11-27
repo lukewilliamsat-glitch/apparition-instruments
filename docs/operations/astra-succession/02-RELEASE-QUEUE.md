@@ -1,14 +1,14 @@
 # HOMECOMING release queue
 
-## SPECIMEN VAULT 101 · SV-001 LIVE · 27 November 2026
+## SPECIMEN VAULT 102 · SV-002 LIVE · 27 November 2026
 
-[PHANTASM](https://apparitioninstruments.co.uk/phantasm/) now uses the exact converted CTS `450GT36K504B2S` CAD in all four pot positions. Original STEP remains private. Owner confirmed derived-web-model permission. Nine CAD bodies, 128,894 triangles and manufacturing details retained; prepared PBR materials and recessed target identity. Shared 1.38 MB GLB; private editable SV-001 master retained.
+[PHANTASM](https://apparitioninstruments.co.uk/phantasm/) now uses original photo-informed CDE `715P22356KA3` geometry, red-orange epoxy and verified `CDE715P600V / 223J / 1523` dot-matrix print. 1.37-MB reusable GLB; straight-lead and installed configurations share one body. Installed leads remain attached and complete throughout forward/reverse assembly.
 
-- Source `7f1971843ba47096457026980904d4c59cd64eac`; acceptance `46023683924`; artifact `15211281438`.
-- [Protected publication 46024687434](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/46024687434) succeeded once. Canonical deployment `fc59354c-0b8c-4baa-bfc2-bf04b0c331ee` independently verified; ten public byte checks matched.
-- Eight reference-comparison views plus desktop/mobile assembly milestones inspected. Dimensional bounds, shared geometry, reverse scroll, Signal Forge, reduced motion, fallback and accessibility accepted. Owner aesthetic feedback remains separate.
-- Homepage, existing six-component harness concept and business systems preserved. Immediate recovery `87dd4762-fc91-42e8-8be3-be214f5f2104`; LEGACY retained. [Release detail](../specimen101/RELEASE.md).
+- Source `bd468e700c89ee19f305a1f068bff57fdf0260a5`; acceptance `46029718000`; artifact `15214232921`.
+- [Protected publication46031405049](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/46031405049) succeeded once. Canonical deployment `8a317092-4882-438f-961e-ca4a5a3ffc5d` independently verified; eleven public byte checks matched.
+- Eight photographic-comparison views and settled desktop/mobile milestones inspected. Dimensional envelope, complete leads, reverse scroll, Signal Forge, pause, reduced motion, fallback and accessibility accepted. Owner aesthetic feedback remains separate.
+- Published SV-001 geometry/materials/textures retained byte-for-byte. Homepage/CTA, camera, ground routing and business systems preserved. Immediate recovery `fc59354c-0b8c-4baa-bfc2-bf04b0c331ee`; LEGACY retained. [Release detail](../specimen102/RELEASE.md). Private editable SV-002 master retained.
 
 ## Continuity
 
-100's simplified modern harness arrangement retained; only CTS asset preparation and local attachments/lighting refined. [Previous register and remaining queue](https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/eb0b0e2744bcf32d1cc7bac6b7e2be932a669f15/docs/operations/astra-succession/02-RELEASE-QUEUE.md). No unrelated programmes reopened.
+101's CTS foundation accepted by owner;102 focuses only on Orange Drop and local lead integration. [Previous register and remaining queue](https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/8ee1b384d1e74f70e4ef5f95a14ffb363693df1f/docs/operations/astra-succession/02-RELEASE-QUEUE.md). No unrelated programmes reopened.
