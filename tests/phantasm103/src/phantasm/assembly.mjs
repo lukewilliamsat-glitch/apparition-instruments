@@ -25,7 +25,6 @@ export function createAssembly(lib){const rig=new T.Group(),parts=[],wires=[],an
  const capObject=objects['cap'+row],specimenScale=.94;
  // Scene specimen adjustment only: sealed GLB unchanged. Do not thin the silver leads.
  capObject.traverse(o=>{if(o.name==='SV-002_epoxy_body')o.scale.multiplyScalar(specimenScale);if(o.name.startsWith('SV-002_straight_lead_')){o.position.x*=specimenScale;o.position.y+=.00675*(1-specimenScale);o.userData.straightLead=true;o.userData.fullScaleY=o.scale.y;o.userData.fullY=o.position.y;}});
- capObject.traverse(o=>{if(o.name==='SV-002_epoxy_body')o.scale.multiplyScalar(specimenScale);if(o.name.startsWith('SV-002_straight_lead_')){o.position.x*=specimenScale;o.position.y+=.00675*(1-specimenScale);o.userData.straightLead=true;o.userData.fullY=o.position.y;o.userData.fullScaleY=o.scale.y;}});
  const pose=new T.Matrix4().makeRotationFromEuler(parts.at(-1).rotation);pose.setPosition(...center);const inverse=pose.clone().invert();
  const exits=capObject.userData.exits.map(a=>new T.Vector3(...a).multiplyScalar(specimenScale).applyMatrix4(pose).toArray());
  parts.at(-1).openingRotation=new T.Euler(0,-.35,0);
