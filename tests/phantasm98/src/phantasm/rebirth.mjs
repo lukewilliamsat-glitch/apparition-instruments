@@ -12,3 +12,5 @@ try{if(new URL(location.href).searchParams.has('fallback'))throw Error('Fallback
 $('#volume').addEventListener('input',()=>scene?.inspect('pot'));$('#cap').addEventListener('input',()=>scene?.inspect('715'));$('#bleed').addEventListener('input',()=>scene?.inspect('bleed'));
 
 for(const a of document.querySelectorAll('.chapter-nav a,.descend'))a.addEventListener('click',e=>{if(document.body.classList.contains('no-webgl'))return;e.preventDefault();const p={void:0,anatomy:.25,signal:.84,revelation:.96}[a.hash.slice(1)];scrollTo({top:p*(document.documentElement.scrollHeight-innerHeight),behavior:reduced.matches?'instant':'smooth'});});
+
+new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting))response();},{threshold:.05}).observe($('#signal'));
