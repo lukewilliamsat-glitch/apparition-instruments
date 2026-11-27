@@ -1,0 +1,49 @@
+name: SPECIMEN VAULT 101 WebGL and visual acceptance
+on:
+  push:
+    branches: [engineering/specimen101]
+    paths: [tests/specimen101/**, .github/workflows/specimen101-verify.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Build isolated renderer, verify unchanged storefront and capture visual chapters
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/specimen101"
+          mkdir -p "$work"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/15206323267/zip" > "$work/base.zip"
+          unset GH_TOKEN
+          unzip -q "$work/base.zip" -d "$work"
+          npm install --prefix "$work/client" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save three@0.180.0 esbuild@0.25.10 playwright-core@1.56.1 axe-core@4.11.0
+          cp -R tests/specimen101/src "$work/src"
+          NODE_PATH="$work/client/node_modules" "$work/client/node_modules/.bin/esbuild" "$work/src/phantasm/scene.mjs" --bundle --minify --format=esm --outfile="$work/src/phantasm/scene.bundle.mjs"
+          cp "$work/client/node_modules/three/LICENSE" "$work/src/phantasm/THREE-LICENSE.txt"
+          python3 tests/specimen101/seal.py "$work/phantasm100-static.zip" "$work/src" "$work"
+          unzip -q "$work/specimen101-static.zip" -d "$work/static"
+          python3 - "$work" <<'PYDETAIL'
+          from pathlib import Path
+          import sys
+          work=Path(sys.argv[1]);s=(work/'src/phantasm/scene.mjs').read_text();studio=s[s.index('const studio='):s.index('const lib=library()')]
+          q=Path('tests/specimen101/details.mjs').read_text().replace('/*STUDIO*/',studio)
+          (work/'details.mjs').write_text(q)
+          (work/'static/details.html').write_text('<html><body style="margin:0;background:#090a09"><canvas></canvas><script type="module" src="/details.bundle.mjs"></script></body></html>')
+          PYDETAIL
+          NODE_PATH="$work/client/node_modules" "$work/client/node_modules/.bin/esbuild" "$work/details.mjs" --bundle --minify --format=esm --outfile="$work/static/details.bundle.mjs"
+          PHANTASM_PLAYWRIGHT="$work/client/node_modules/playwright-core" PHANTASM_CHROMIUM="$(command -v google-chrome)" PHANTASM_AXE="$work/client/node_modules/axe-core/axe.min.js" node tests/specimen101/browser.mjs "$work/static"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: specimen101-sealed
+          path: ${{ runner.temp }}/specimen101/specimen101-*
+          if-no-files-found: error
+          retention-days: 90
