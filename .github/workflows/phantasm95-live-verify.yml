@@ -1,0 +1,39 @@
+name: PHANTASM 95 independent live readback
+on:
+  push:
+    branches: [engineering/phantasm95]
+    paths: [.github/release-checks/phantasm95.json]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  readback:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Independently compare served production bytes without publication credentials
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/45969890735" | jq -e '.conclusion=="success"' >/dev/null
+          work="$RUNNER_TEMP/phantasm95-live"
+          mkdir -p "$work"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/15183869099/zip" > "$work/sealed.zip"
+          unset GH_TOKEN
+          unzip -q "$work/sealed.zip" -d "$work"
+          cd "$work"
+          sha256sum --check <<'SUMS'
+          ac62d077efcb80e7b36fdef29b8d4d7a42adae57d38b1a3cc7a7dca83cf3c9c9  phantasm95-static.zip
+          da5621b18870b80039565c7a0640555091f6d2a5d7418102bc981c27abea6139  phantasm95-inventory.json
+          SUMS
+          python3 "$GITHUB_WORKSPACE/tools/phantasm95-live-verify.py" "$work"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: phantasm95-independent-live-readback
+          path: ${{ runner.temp }}/phantasm95-live/phantasm95-live-readback.json
+          if-no-files-found: error
+          retention-days: 90
