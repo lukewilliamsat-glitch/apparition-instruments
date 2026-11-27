@@ -1,5 +1,15 @@
 # HOMECOMING release queue
 
+## PHANTASM 106 · SILVERSMITH LIVE · 27 November 2026
+
+Fresh CTS MeshPhysicalMaterial system replaces the rejected 105 overlays: no 105 colour, scratch normal, height/bump or roughness maps are loaded. Metalness remains physically metallic; separate casing, machined shaft/bushing, plate and terminal roughness settings; original recessed identification normal retained. A CTS-only PMREM studio environment supplies bright rectangular softbox reflections against dark reflected surroundings with a restrained warm edge. Main background, capacitor environment/materials, geometry, phenolic, routing, choreography, camera, layout and business functionality preserved.
+
+- Source `79bc91b5975265ad2a4a9caaba1fc8b3af69befb`; build-only seal `46080314727`; artifact `15236816785`.
+- ZIP SHA-256 `1ff0b9beb6e5ef8258e3ee5ae22ce3a2b5073158c85d8006342144f7f0cab9ea`; manifest `bef6573e4ecf17e5616a7ab475c485c5da074bbaa567d3ef6ff0e1ee16264c95`.
+- Protected publication [46080480517](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/46080480517) succeeded once; canonical deployment `5e415851-45dd-47cd-bb46-17f9295eab7d`, exact source confirmed.
+- Recovery `7abf7b25-f4c3-4070-8246-4df84b618ff7`. Geometry/assets unchanged; former 105 map files retained in static baseline but unused by runtime.
+- No browser, screenshots, visual comparisons or formal visual acceptance performed, as directed. Owner assesses live finish. Only build/seal and existing protected publication safeguards used.
+
 ## PHANTASM 105 · METALLURGY LIVE · 27 November 2026
 
 CTS-only 2K base-colour, normal, roughness and height maps add multidirectional micro-scratches, fine grain, etched roughness variation and subtle handling character. Existing recessed identification normals combined with surface detail; secondary plated/machined metal responses refined. Both authoritative GLBs, capacitor materials, lighting, choreography, layout and business functionality retained.
