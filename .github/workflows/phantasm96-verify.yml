@@ -1,0 +1,40 @@
+name: PHANTASM 96 homepage acceptance
+on:
+  push:
+    branches: [engineering/phantasm96]
+    paths: [tests/phantasm96/**, .github/workflows/phantasm96-verify.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Compose exact cumulative release and verify unchanged business bytes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/phantasm95"
+          mkdir -p "$work"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/15155734047/zip" > "$work/baseline.zip"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/15183869099/zip" > "$work/media.zip"
+          unzip -q "$work/media.zip" -d "$work"
+          unset GH_TOKEN
+          unzip -q "$work/baseline.zip" -d "$work"
+          python3 tests/phantasm96/seal.py "$work/ascension94-static.zip" "$work/phantasm95-static.zip" tests/phantasm96/src "$work"
+          unzip -q "$work/phantasm96-static.zip" -d "$work/static"
+          npm install --prefix "$work/client" --ignore-scripts --no-audit --no-fund --package-lock=false --no-save playwright-core@1.56.1 axe-core@4.11.0
+          PHANTASM_PLAYWRIGHT="$work/client/node_modules/playwright-core" PHANTASM_CHROMIUM="$(command -v google-chrome)" PHANTASM_AXE="$work/client/node_modules/axe-core/axe.min.js" node tests/phantasm96/browser.mjs "$work/static"
+          sha256sum "$work"/phantasm96-static.zip "$work"/phantasm96-inventory.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: phantasm96-sealed
+          path: ${{ runner.temp }}/phantasm95/phantasm96-*
+          if-no-files-found: error
+          retention-days: 90
