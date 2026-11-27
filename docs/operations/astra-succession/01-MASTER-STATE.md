@@ -1,5 +1,12 @@
 # Apparition Astra master state
 
+## Current baseline · Authorisation 94 CLOSED · 27 November 2026
+
+UNITY is live and **accepting** reservations through checkout v18; signed receiver v1 and legacy-compatible webhook v16 are ACTIVE. QUARTERMASTER remains in workshop. ECLIPSE/IRONCLAD/OMNISCIENCE and static deployment `14a0af2b-9ddf-4b64-9690-dc490ddbf476` are preserved. Six UNITY migrations installed once. No artificial live transactions were performed. [Exact production receipt, verification and recovery](02-RELEASE-QUEUE.md#authorisation-94--closed--27-november-2026).
+
+94 is closed under the owner's final execution directive. Do not reinstall, reactivate, repeat 93/94 acceptance, request old approvals, or follow obsolete paused/blocked instructions below. Use normal business operations for feedback; preserve three concurrent guest holds shop-wide and signed recovery/drain procedures. PHANTASM remains separately scoped. Earlier checkpoint sections are historical.
+
+
 **Current operating checkpoint · 26 November 2026**
 
 CONVERGENCE 92 complete-period reporting is live at `9a69e1ab-59fa-44e6-9e7e-03ed50d3d175`, source `e0b789640367088ccd3d38c856c8735408796c51`. Immediate static rollback is Authorisation 91 `04971be9-6d8a-42f2-bad5-ae553dc8aeb6`. QUARTERMASTER remains in workshop; production UNITY remains paused. Checkout v16, status v10, Stripe webhook v15 and transactional email v15 remain unchanged.

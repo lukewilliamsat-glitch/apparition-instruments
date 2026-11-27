@@ -1,5 +1,12 @@
 # Next Astra bootstrap
 
+## Current baseline · Authorisation 94 CLOSED · 27 November 2026
+
+UNITY is live and **accepting** reservations through checkout v18; signed receiver v1 and legacy-compatible webhook v16 are ACTIVE. QUARTERMASTER remains in workshop. ECLIPSE/IRONCLAD/OMNISCIENCE and static deployment `14a0af2b-9ddf-4b64-9690-dc490ddbf476` are preserved. Six UNITY migrations installed once. No artificial live transactions were performed. [Exact production receipt, verification and recovery](02-RELEASE-QUEUE.md#authorisation-94--closed--27-november-2026).
+
+94 is closed under the owner's final execution directive. Do not reinstall, reactivate, repeat 93/94 acceptance, request old approvals, or follow obsolete paused/blocked instructions below. Use normal business operations for feedback; preserve three concurrent guest holds shop-wide and signed recovery/drain procedures. PHANTASM remains separately scoped. Earlier checkpoint sections are historical.
+
+
 ## Immediate continuation · 27 November 2026
 
 Follow the [latest 94 continuation checkpoint](02-RELEASE-QUEUE.md#27-november-2026--unity-94-immediate-continuation). Supabase confirmation now completes. All three dormant UNITY foundation tables already exist, so do not use the obsolete one-table installer. The complete guarded correction at `96721b2f80fcd1ef869cb049e79dd3980e56b84f`, SHA-256 `ed24aba78710918fbcc50cac40c83fab07f0122aa86d583d7c742f2fd7c74b15`, passed focused run `45960954908`; exact owner confirmation is pending. Once confirmed, apply it promptly, then the unchanged five SQL steps and sealed custody/Edge/cutover sequence. UNITY remains paused; no runtime/plans/new webhook installed. ECLIPSE stays closed and live.

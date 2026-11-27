@@ -1,5 +1,35 @@
 # HOMECOMING release queue
 
+## Authorisation 94 · CLOSED · 27 November 2026
+
+**UNITY × COMMERCE is live.** Production `acdxpxvksvdwfajntzfx` lifecycle is **accepting**. The guarded paused → accepting transition updated exactly one singleton. Checkout **v18** serves the sealed reserved-session entry; the signed receiver **convergence93-webhook v1** and legacy-compatible **stripe-webhook v16** are ACTIVE. Checkout-status v10 and transactional-email v15 are unchanged. QUARTERMASTER remains in workshop; ECLIPSE, IRONCLAD and OMNISCIENCE are preserved.
+
+### Exact production receipt
+
+- Owner's final execution directive explicitly approved the three-table correction and necessary bounded technical corrections within 94. The final runtime is `tests/ascension94/runtime.foundations.review.sql`, source `96721b2f80fcd1ef869cb049e79dd3980e56b84f`, SHA-256 `ed24aba78710918fbcc50cac40c83fab07f0122aa86d583d7c742f2fd7c74b15`. [Focused compatibility 45960954908](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45960954908) passed. Existing empty foundation identities, defaults, constraints, ownership, RLS and grants were preserved. All accepted runtime function bodies/grants and the other five SQL steps stayed byte-identical.
+- Installed once: `20261127080237 unity94_runtime_foundations`; `20261127080249 unity94_plans`; `20261127080254 unity94_signed_receiver`; `20261127080259 unity94_checkout_binding`; `20261127080303 unity94_contact_coexistence`; `20261127080308 unity94_availability`.
+- The 18 remaining SQL/Edge inputs matched the original accepted 93 manifest, source `b6c60d66a30843c16300ee595113327c91d31fdb`, artifact `15132832207`, ZIP `37629e97c8337b69bd57c0b25558e80baabe899049361fa3d9672e9fd3e25aaa`. [93 acceptance 45849854941](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45849854941) and [protected gate 45854240218](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/45854240218) are retained; no historical/staging suite was repeated.
+- Live Stripe account `acct_1UJUR9I4E9fIeEmD`: new enabled endpoint `we_1UgK8TI4E9fIeEmDxoONmgH3` at `https://acdxpxvksvdwfajntzfx.supabase.co/functions/v1/convergence93-webhook`, API `2025-02-24.acacia`. Exactly one signing secret was passed directly into encrypted production Vault `convergence92_webhook`, never printed or persisted elsewhere. Events: Checkout completion, async success/failure, expiry and refund created/updated. Existing endpoint `we_1UJaEGI4E9fIeEmDqNsiPIvP` and its custody remain enabled and unchanged.
+- Deployments: receiver v1 bundle `93fc5a52fb1a7a35a6eff8f0d095468755c8732a3e89bb8a15c59e66578c38a6`; legacy router v16 `c652df38745ab79ea7ab3842043d9ad76dae32fce833ab8752abda884c9b7b2f`; dormant checkout v17 followed by active checkout v18 `827da62158cb6f48a9b47c9af73ead1671b1b9c3aae04310810dfa58ac76a081`. Every deployed reachable source file was independently read back and matched the sealed inputs. Supabase's normal bundle pruning omitted unused inputs only.
+
+### Production-specific verification
+
+- Fresh Stripe reads reconciled all six pending legacy Sessions: expired/unpaid, live mode, correct Session identity and GBP amount. A final DB read found the same six IDs before cutover. No unresolved Session was expired from local time.
+- All private runtime/plan/receipt relations have RLS and deny direct anon/authenticated/service-role SELECT. Prepare/attach/signed receiver are service-only with empty search paths and bounded timeouts. Anonymous real HTTP RPC requests were denied (401 / PostgreSQL 42501). Existing Admin membership, IRONCLAD and financial writer contracts were not broadened.
+- New receiver rejects unsigned and invalid HMAC requests with 400; the legacy receiver rejects them with 401. These were negative authentication probes, not fabricated Stripe events or business transactions. Public catalogue GET returned 200 under actual HTTP read-only semantics.
+- Activated checkout answered GET 405, invalid basket POST 400, wrong-origin POST 403 and allowed CORS preflight 204. Store ordering is OPEN. Deployed entrypoint injects the accepted reserved-checkout flag; the server-assigned guest owner retains the **three concurrent guest holds shop-wide** cap.
+- Reservation protection triggers on inventory, measurements and set membership are enabled. Original paid stock writer MD5 `bb9667b96e2aa3d8a557863434463294`, IRONCLAD writer `670b90a1c3ada73602fe89772ab1fc6a`, and ECLIPSE financial-save `e7226e9772be861465e0cd7f9b377f59` are unchanged.
+- Final bounded readback: UNITY accepting, QUARTERMASTER workshop, one encrypted new webhook custody record, zero new holds/plans/receipts/provenance. No artificial live order, payment, stock movement, financial revision or customer communication was created. Production live-payment settlement will first be exercised by genuine business use; the accepted genuine Sandbox settlement/replay/refund/concurrency/recovery evidence is reused, not relabelled as a live test.
+
+### Static baseline, recovery and closure
+
+Cloudflare independently confirms the existing ECLIPSE deployment `14a0af2b-9ddf-4b64-9690-dc490ddbf476`, source `3dda2084bb2c1c2e8b9267d34644738114aa0c69`. No new static publication or ECLIPSE retesting was performed in this completion pass. Its 505-file application and immediate static rollback `9a69e1ab-59fa-44e6-9e7e-03ed50d3d175` remain preserved.
+
+Recovery remains the accepted [93 drain and recovery procedure](../../../tests/convergence93/release.md#drain-and-recovery): guarded accepting → draining to stop new holds; retain signed settlement/refunds and same-plan retries; reconcile legitimate Sessions/holds before restoring legacy checkout v16/webhook v15. Keep additive signed recovery for historical refunds. Never rewind real orders, stock, contacts, financial revisions or audit history.
+
+**94 is technically delivered and closed.** No further owner review or artificial walkthrough is a release gate. Ordinary business feedback and evidence-dependent historical cost completion are normal operations/maintenance. NEXUS, NOCTURNE, OM-AUTO-002 and EC-AUTO-001/003 implementation remain closed. PHANTASM is the next separately scoped major roadmap objective; it was not started here. All older paused, approval-pending and installer-blocked checkpoints below are historical and superseded.
+
+
 ## 27 November 2026 · UNITY 94 immediate continuation
 
 The refreshed Supabase confirmation completed; the old expiry blocker is resolved. The previously approved one-table correction then rolled back on the already installed `dominion79.provider_events`. A bounded read established that **all three** foundations (`consuming`, `provider_events`, `provenance`) already exist, are empty, have the expected columns/defaults/constraints, and remain RLS-enabled with owner-only grants. Runtime routines, plan store and new webhook custody are absent; UNITY is paused. Do not retry the obsolete one-table installer.

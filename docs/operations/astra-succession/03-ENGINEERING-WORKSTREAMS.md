@@ -1,5 +1,12 @@
 # Engineering workstreams
 
+## Current baseline · Authorisation 94 CLOSED · 27 November 2026
+
+UNITY is live and **accepting** reservations through checkout v18; signed receiver v1 and legacy-compatible webhook v16 are ACTIVE. QUARTERMASTER remains in workshop. ECLIPSE/IRONCLAD/OMNISCIENCE and static deployment `14a0af2b-9ddf-4b64-9690-dc490ddbf476` are preserved. Six UNITY migrations installed once. No artificial live transactions were performed. [Exact production receipt, verification and recovery](02-RELEASE-QUEUE.md#authorisation-94--closed--27-november-2026).
+
+94 is closed under the owner's final execution directive. Do not reinstall, reactivate, repeat 93/94 acceptance, request old approvals, or follow obsolete paused/blocked instructions below. Use normal business operations for feedback; preserve three concurrent guest holds shop-wide and signed recovery/drain procedures. PHANTASM remains separately scoped. Earlier checkpoint sections are historical.
+
+
 Use the [evidence index](06-EVIDENCE-INDEX.md) for immutable commits, workflows and receipts. The [78B workspace matrix](https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/388a9b53f4898d32a561349b82be2ccd9715ab7f/docs/operations/grand-ascent78/unification-audit-78b.md#workspace-and-supersession-matrix) documents preserved routes and capabilities. Its staged C wording predates the [verified Release C publication](https://github.com/lukewilliamsat-glitch/apparition-instruments/blob/f2e10ec9fdac23e3b2c268a80dabf13697353d99/docs/operations/grand-ascent78/ascension79-live-c.md).
 
 ## Authorisation 93 restart
