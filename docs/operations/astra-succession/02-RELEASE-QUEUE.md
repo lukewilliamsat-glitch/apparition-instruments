@@ -1,5 +1,17 @@
 # HOMECOMING release queue
 
+## PHANTASM 107 · SPECULAR LIVE · 28 November 2026
+
+Rear-face recessed-identification material receives a dedicated asymmetric gradient softbox PMREM field, reduced roughness and stronger original stamp normal. Flat rear normals otherwise sample a uniform region of the sidewall environment; this change isolates their reflection field. Existing sidewall environment, secondary metals, capacitors and global lighting retained.
+
+Unrevealed non-persistent wire meshes and solder anchors now remain invisible until binding starts, excluding zero-draw-range/zero-scale objects from opening render/shadow passes. This addresses a potential source of the reported grey line without removing either legitimate capacitor lead. No visual verification performed; disappearance of the owner's specific screenshot artefact remains for owner assessment.
+
+- Source `37378b0ca22fa6326baa61e29b017ddeead6704e`; build-only seal `46133175440`; artifact `15258707180`.
+- ZIP SHA-256 `75b8629ff29e316c592e92b4b373cc688bda2b41f977d9d09d046b67ca23aa77`; manifest `7c90e9f15911799fba3c3be625a1000534b271b028a9e3e1075e9eba2a2342a4`.
+- Protected publication [46133307265](https://github.com/lukewilliamsat-glitch/apparition-instruments/actions/runs/46133307265) succeeded once. Canonical deployment `5641a0d9-7488-428b-9a17-85077c1c309c`, exact source confirmed.
+- Recovery `5e415851-45dd-47cd-bb46-17f9295eab7d`. Geometry, topology, animations, camera, page/mobile layout, Signal Forge and business files preserved.
+- No browser reviews, screenshots, visual comparisons or formal acceptance performed as directed. Owner assesses the live result.
+
 ## PHANTASM 106 · SILVERSMITH LIVE · 27 November 2026
 
 Fresh CTS MeshPhysicalMaterial system replaces the rejected 105 overlays: no 105 colour, scratch normal, height/bump or roughness maps are loaded. Metalness remains physically metallic; separate casing, machined shaft/bushing, plate and terminal roughness settings; original recessed identification normal retained. A CTS-only PMREM studio environment supplies bright rectangular softbox reflections against dark reflected surroundings with a restrained warm edge. Main background, capacitor environment/materials, geometry, phenolic, routing, choreography, camera, layout and business functionality preserved.
